@@ -1,10 +1,14 @@
-// custom typefaces
+// Custom typefaces
 import "typeface-montserrat"
 import "typeface-merriweather"
-// normalize CSS across browsers
-import "./src/normalize.css"
-// custom CSS styles
-import "./src/style.css"
 
-// Highlighting for code blocks
-import "prismjs/themes/prism.css"
+// Normalize CSS across browsers
+import "./src/normalize.css"
+
+// Custom CSS styles
+// import "./src/style.css"
+
+import "./src/styles/style.css"
+
+// Highlighting for code blocks (dark mode style)
+import "prismjs/themes/prism-okaidia.css"

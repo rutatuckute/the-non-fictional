@@ -2,13 +2,13 @@ module.exports = {
   siteMetadata: {
     title: `The Non Fictional`,
     author: {
-      name: `Kyle Mathews`,
-      summary: `who lives and works in San Francisco building useful things.`,
+      name: `Rūta Tučkutė`,
+      summary: `I never felt like writing anything fictional.`,
     },
-    description: `A starter blog demonstrating what Gatsby can do.`,
-    siteUrl: `https://gatsbystarterblogsource.gatsbyjs.io/`,
+    description: `Personal space dedicated to photography and writings.`,
+    siteUrl: `https://thenonfictional.com/`,
     social: {
-      twitter: `kylemathews`,
+      twitter: `rutatuckute`,
     },
   },
   plugins: [
