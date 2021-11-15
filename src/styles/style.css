@@ -343,31 +343,15 @@
 
 /* Navigation bar */
 
-.nav-header img {
-  width: 100px;
-  margin-left: -6px;
-  margin-bottom: -9px;
+.navbar-dark .navbar-nav .nav-link {
+  color: var(--color-primary);
+  margin-right: 1rem;
 }
 
-.navbar {
-  /* background: white; */
-  margin: 0;
-  padding: 1rem 0;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.navbar-item {
-  text-decoration:none;
-  margin-right: 2rem;
-}
-
-.navbar-item:hover {
-  text-decoration:none;
-  margin-right: 2rem;
+.navbar-dark .navbar-nav .nav-link:hover {
   color: orangered;
 }
+
 
 .navbar img {
   width: 100px;
@@ -375,106 +359,8 @@
   margin-bottom: -9px;
 }
 
-.navbar-item:first-child{
-  margin-right: auto;
-  margin-left: 2rem;
-}
-
-
-
-/* .navbar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.nav-center {
-  width: 90vw;
-  max-width: var(--max-width);
-}
-.nav-header {
-  height: 6rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  float:left;
-}
 .nav-header img {
   width: 100px;
   margin-left: -6px;
   margin-bottom: -9px;
 }
-.nav-btn {
-  padding: 0.15rem 0.75rem;
-}
-.nav-btn svg {
-  font-size: 1.5rem;
-}
-.nav-links {
-  height: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: var(--transition);
-}
-.show-links {
-  height: 23.9375rem;
-}
-
-.navbar-item {
-  display: block;
-  text-align: right;
-  font-size: 1.5rem;
-  letter-spacing: var(--letterSpacing);
-  padding: 1rem 0;
-  border-top: 1px solid var(--grey-500);
-  transition: var(--transition);
-  justify-content: flex-end;
-}
-.active-link {
-  color: var(--primary-500);
-}
-.contact-link {
-  display: flex;
-  justify-content: center;
-}
-.contact-link a {
-  padding: 0.15rem 1rem;
-}
-
-@media screen and (min-width: 992px) {
-  .navbar {
-    height: 6rem;
-  }
-  .nav-center {
-    display: flex;
-    align-items: center;
-  }
-  .nav-header {
-    padding: 0;
-    margin-right: 2rem;
-    height: auto;
-  }
-
-  .nav-btn {
-    display: none;
-  }
-  .nav-links {
-    height: auto !important;
-    flex-direction: row;
-    align-items: center;
-    width: 100%;
-  }
-  .navbar-item {
-    padding: 0;
-    border-top: none;
-    margin-right: 1rem;
-    font-size: 1rem;
-    text-decoration:none;
-  }
-  .contact-link {
-    width: 100%;
-    justify-content: flex-end;
-    align-items: center;
-    margin-right: 0;
-  }
-} */

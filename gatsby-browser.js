@@ -8,6 +8,8 @@ import "./src/normalize.css"
 // Custom CSS styles
 // import "./src/style.css"
 
+// import "./src/styles/style.css"
+import "bootstrap/dist/css/bootstrap.min.css"
 import "./src/styles/style.css"
 
 // Highlighting for code blocks (dark mode style)
