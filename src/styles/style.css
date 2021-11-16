@@ -352,14 +352,12 @@
   color: orangered;
 }
 
-
-.navbar img {
-  width: 100px;
-  margin-left: -6px;
-  margin-bottom: -9px;
+.navbar-dark .navbar-toggler {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
-.nav-header img {
+.navbar img {
   width: 100px;
   margin-left: -6px;
   margin-bottom: -9px;

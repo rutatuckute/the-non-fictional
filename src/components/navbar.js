@@ -1,5 +1,4 @@
 import * as React from "react"
-import { Link } from "gatsby"
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap'
 
 import logo from "../images/logo.jpeg"
@@ -8,14 +7,13 @@ import logo from "../images/logo.jpeg"
 const Navigation = () => {
 
     return (
-      <Navbar bg="black" variant="dark" sticky="top" expand="lg" className="test-test">
+      <Navbar bg="black" variant="dark" sticky="top" expand="lg">
         <Navbar.Brand>
-          {/* <img src={logo} alt="non fictional" /> */}
-          Logo
+          <img src={logo} alt="non fictional" />
         </Navbar.Brand>
         <Navbar.Toggle/>
         <Navbar.Collapse>
-        <Nav className="test">
+        <Nav className="justify-content-end" style={{ width: "100%" }}>
           <NavDropdown title="Blog">
             <NavDropdown.Item href="/blog">Coding</NavDropdown.Item>
             <NavDropdown.Item href="/blog">Data</NavDropdown.Item>
