@@ -1,7 +1,8 @@
 import * as React from "react"
 import { Link, graphql, useStaticQuery } from "gatsby"
+import {Card} from 'react-bootstrap'
 
-import Navbar from "./navbar"
+import Navigation from "./navbar"
 
 const Layout = ({ location, children }) => {
 
@@ -41,12 +42,19 @@ const Layout = ({ location, children }) => {
 
   return (
     <div className="global-wrapper" data-is-root-path={isRootPath}>
-      <Navbar/>
+      <Navigation/>
       <header className="global-header">{header}</header>
       <main>{children}</main>
-      <footer>
+      <Card className="text-center" bg="black">
+      <Card.Body>
+        <Card.Text>
+          © {new Date().getFullYear()} <span>{author}</span>
+        </Card.Text>
+      </Card.Body>
+      {/* <footer>
         © {new Date().getFullYear()} <span>{author}</span>
-      </footer>
+      </footer> */}
+      </Card>
     </div>
   )
 }

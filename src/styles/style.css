@@ -362,3 +362,9 @@
   margin-left: -6px;
   margin-bottom: -9px;
 }
+
+/* Footer */
+
+.card-text {
+  color:var(--color-primary);
+}

@@ -1,9 +1,8 @@
 import * as React from "react"
-import { Link, graphql } from "gatsby"
+import { graphql } from "gatsby"
 
 import Seo from "../components/seo"
 import Layout from "../components/layout"
-import NavBar from "../components/navbar"
 
 
 const IndexPage = ({ data, location }) => {
@@ -11,6 +10,16 @@ const IndexPage = ({ data, location }) => {
   return (
     <Layout location={location}>
     <Seo title="Landing Page"/>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '90vh'
+      }}
+    >
+      <h1></h1>
+    </div>
     </Layout>
   )
 }
