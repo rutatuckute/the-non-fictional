@@ -21,9 +21,10 @@ const BlogIndex = ({data, location}) => {
                 <Card.Title>{title}</Card.Title>
                 <Card.Img variant="top" src={post.frontmatter.cover_image}/>
                 <Card.Body>
-                  <Card.Text>{post.frontmatter.description}</Card.Text>
+                  <Card.Text>{post.frontmatter.category}</Card.Text>
+                  <Card.Text>{post.frontmatter.excerpt}</Card.Text>
                   <Card.Text>{post.frontmatter.date}</Card.Text>
-                  <Button className="category" href={post.fields.slug}>Continue Reading</Button>
+                  <Button className={post.frontmatter.category_id} href={post.fields.slug}>Continue Reading</Button>
                 </Card.Body>
               </Card>
 
@@ -54,8 +55,10 @@ export const pageQuery = graphql`
         frontmatter {
           date(formatString: "MMMM DD, YYYY")
           title
-          description
+          excerpt
           cover_image
+          category
+          category_id
         }
       }
     }

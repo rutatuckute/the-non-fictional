@@ -55,7 +55,8 @@
     --fontSize-6: 2.488rem;
     --fontSize-7: 2.986rem;
     --fontSize-8: 3.986rem;
-    --color-primary: #F1C40F;
+    --color-primary: orange;
+    --color-secondary: #F1C40F;
     --color-text: #2e353f;
     --color-text-light: #4f5969;
     --color-heading: #1a202c;
@@ -244,6 +245,7 @@
   a:hover,
   a:focus {
     text-decoration: none;
+    color: var(--color-secondary);
   }
   
   /* Custom classes */
@@ -349,7 +351,7 @@
 }
 
 .navbar-dark .navbar-nav .nav-link:hover {
-  color: orangered;
+  color: var(--color-secondary);
 }
 
 .navbar-dark .navbar-toggler {
@@ -387,7 +389,7 @@
   font-size: 14px;
 }
 
-.category {
+.Data {
   background-color: orange;
   border-color: orange;
   color:black;
