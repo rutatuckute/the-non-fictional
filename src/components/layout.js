@@ -45,7 +45,7 @@ const Layout = ({ location, children }) => {
       <Navigation/>
       <header className="global-header">{header}</header>
       <main>{children}</main>
-      <Card className="text-center" bg="black">
+      <Card className="footer" bg="black">
       <Card.Body>
         <Card.Text>
           © {new Date().getFullYear()} <span>{author}</span>

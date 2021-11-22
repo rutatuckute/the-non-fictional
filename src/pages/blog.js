@@ -1,5 +1,6 @@
 import * as React from "react"
 import { graphql, Link } from "gatsby"
+import { Card, Button, Container, Row } from 'react-bootstrap'
 
 import Layout from "../components/layout"
 
@@ -9,38 +10,28 @@ const BlogIndex = ({data, location}) => {
 
   return (
     <Layout location={location}>
-      <ol style={{ listStyle: `none` }}>
-        {posts.map(post => {
-          const title = post.frontmatter.title || post.fields.slug
+      <Container fluid>
+        <Row className="justify-content-md-center">
+          {posts.map(post => {
+            const title = post.frontmatter.title || post.fields.slug
 
-          return (
-            <li key={post.fields.slug}>
-              <article
-                className="post-list-item"
-                itemScope
-                itemType="http://schema.org/Article"
-              >
-                <header>
-                  <h2>
-                    <Link to={post.fields.slug} itemProp="url">
-                      <span itemProp="headline">{title}</span>
-                    </Link>
-                  </h2>
-                  <small>{post.frontmatter.date}</small>
-                </header>
-                <section>
-                  <p
-                    dangerouslySetInnerHTML={{
-                      __html: post.frontmatter.description || post.excerpt,
-                    }}
-                    itemProp="description"
-                  />
-                </section>
-              </article>
-            </li>
-          )
-        })}
-      </ol>
+            return (
+
+              <Card style={{ width: '18rem' }} border="secondary" key={post.fields.slug}>
+                <Card.Title>{title}</Card.Title>
+                <Card.Img variant="top" src={post.frontmatter.cover_image}/>
+                <Card.Body>
+                  <Card.Text>{post.frontmatter.description}</Card.Text>
+                  <Card.Text>{post.frontmatter.date}</Card.Text>
+                  <Button className="category" href={post.fields.slug}>Continue Reading</Button>
+                </Card.Body>
+              </Card>
+
+            )
+          })}
+
+        </Row>
+    </Container>
     </Layout>
   );
 };
@@ -64,6 +55,7 @@ export const pageQuery = graphql`
           date(formatString: "MMMM DD, YYYY")
           title
           description
+          cover_image
         }
       }
     }

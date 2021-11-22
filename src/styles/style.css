@@ -365,6 +365,30 @@
 
 /* Footer */
 
-.card-text {
+.footer .card-text {
   color:var(--color-primary);
+  text-align: center;
+  font-size: 15px;
+}
+
+
+/* Content card */
+
+.card {
+  margin-left: 20px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  margin-top: 20px;
+  background-color: black;
+}
+
+.card-text {
+  color:whitesmoke;
+  font-size: 14px;
+}
+
+.category {
+  background-color: orange;
+  border-color: orange;
+  color:black;
 }

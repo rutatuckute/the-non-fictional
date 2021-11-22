@@ -18,6 +18,7 @@ collections:
     fields:
       - {label: "Layout", name: "layout", widget: "hidden", default: "blog"}
       - {label: "Title", name: "title", widget: "string"}
+      - {label: "Category", name: "category", widget: "string"}
       - {label: "Publish Date", name: "date", widget: "datetime"}
       - {label: "Body", name: "body", widget: "markdown"}
       - {label: "Cover Image", name: "cover_image", widget: "image", required: true}
