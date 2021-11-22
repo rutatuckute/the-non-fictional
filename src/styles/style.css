@@ -57,6 +57,8 @@
     --fontSize-8: 3.986rem;
     --color-primary: orange;
     --color-secondary: #F1C40F;
+    --color-green: #8ac926;
+    --color-red: #ff5c5c;
     --color-text: #2e353f;
     --color-text-light: #4f5969;
     --color-heading: #1a202c;
@@ -382,25 +384,54 @@
   margin-right: 20px;
   margin-top: 20px;
   background-color: black;
+  width: var(--maxWidth-md);
 }
 
-.border-secondary {
+/* .border-secondary {
   border-color: var(--color-primary) !important;
-}
+} */
 
 .card-text {
   color:whitesmoke;
   font-size: 14px;
 }
 
+.card-title {
+  color:whitesmoke;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 20px;
+  margin-top: 10px;
+}
+
+/* Data Category */
+
 .data {
-  background-color: orange;
-  border-color: orange;
+  border-color: var(--color-primary) !important;
+}
+
+.data .btn-primary {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
   color:black;
 }
 
+/* General Theory Category */
+
 .general-theory {
-  background-color: greenyellow;
-  border-color: greenyellow;
+  border-color:var(--color-red) !important;
+}
+
+.general-theory .btn-primary {
+  border-color: var(--color-red);
+  background-color: var(--color-red);
+  color:black;
+}
+
+/* Curernt Affairs */
+
+.current-affairs {
+  border-color:var(--color-green);
+  background-color: var(--color-green);
   color:black;
 }

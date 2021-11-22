@@ -1,6 +1,8 @@
 import * as React from "react"
 import { graphql, Link } from "gatsby"
 import { Card, Button, Container, Row } from 'react-bootstrap'
+import { FaFolderOpen } from "react-icons/fa"
+import { MdOutlineDateRange } from "react-icons/md"
 
 import Layout from "../components/layout"
 
@@ -17,14 +19,16 @@ const BlogIndex = ({data, location}) => {
 
             return (
 
-              <Card style={{ width: '18rem' }} border="secondary" key={post.fields.slug}>
+              <Card border="secondary" key={post.fields.slug} className={post.frontmatter.category_id}>
                 <Card.Title>{title}</Card.Title>
                 <Card.Img variant="top" src={post.frontmatter.cover_image}/>
                 <Card.Body>
-                  <Card.Text>{post.frontmatter.category}</Card.Text>
+                  <Card.Text>
+                        <MdOutlineDateRange/> {post.frontmatter.date}{'  '}
+                        <FaFolderOpen/> {post.frontmatter.category}
+                  </Card.Text>
                   <Card.Text>{post.frontmatter.excerpt}</Card.Text>
-                  <Card.Text>{post.frontmatter.date}</Card.Text>
-                  <Button className={post.frontmatter.category_id} href={post.fields.slug}>Continue Reading</Button>
+                  <Button href={post.fields.slug}>Continue Reading</Button>
                 </Card.Body>
               </Card>
 
