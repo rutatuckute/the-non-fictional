@@ -18,7 +18,7 @@ const IndexPage = ({ data, location }) => {
         height: '90vh'
       }}
     >
-      <h1></h1>
+      <h1>{data.site.siteMetadata.title}</h1>
     </div>
     </Layout>
   )

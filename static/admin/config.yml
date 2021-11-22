@@ -14,11 +14,13 @@ collections:
     folder: "content/blog"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: '{{title}}/index'
     fields:
       - {label: "Layout", name: "layout", widget: "hidden", default: "blog"}
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Publish Date", name: "date", widget: "datetime"}
       - {label: "Body", name: "body", widget: "markdown"}
+      - {label: "Cover Image", name: "cover_image", widget: "image", required: true}
   - name: "photography"
     label: "Photography"
     folder: "content/photography"

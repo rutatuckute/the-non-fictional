@@ -1,4 +1,7 @@
+// https://www.gatsbyjs.com/docs/reference/config-files/gatsby-config/
+
 module.exports = {
+
   siteMetadata: {
     title: `The Non Fictional`,
     author: {
@@ -11,13 +14,29 @@ module.exports = {
       twitter: `rutatuckute`,
     },
   },
+
   plugins: [
+    `gatsby-plugin-styled-components`,
     `gatsby-plugin-image`,
+    `gatsby-plugin-sharp`,
+    `gatsby-transformer-sharp`,
+    `gatsby-remark-prismjs`,
+    `gatsby-remark-copy-linked-files`,
+    `gatsby-remark-smartypants`,
+    `gatsby-plugin-react-helmet`,
+
     {
       resolve: `gatsby-source-filesystem`,
       options: {
         path: `${__dirname}/content/blog`,
         name: `blog`,
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/content/photography`,
+        name: `photography`,
       },
     },
     {
@@ -43,14 +62,10 @@ module.exports = {
               wrapperStyle: `margin-bottom: 1.0725rem`,
             },
           },
-          `gatsby-remark-prismjs`,
-          `gatsby-remark-copy-linked-files`,
-          `gatsby-remark-smartypants`,
+
         ],
       },
     },
-    `gatsby-transformer-sharp`,
-    `gatsby-plugin-sharp`,
     // {
     //   resolve: `gatsby-plugin-google-analytics`,
     //   options: {
@@ -124,7 +139,6 @@ module.exports = {
         icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
       },
     },
-    `gatsby-plugin-react-helmet`,
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
