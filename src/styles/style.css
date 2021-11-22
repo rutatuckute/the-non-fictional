@@ -384,13 +384,23 @@
   background-color: black;
 }
 
+.border-secondary {
+  border-color: var(--color-primary) !important;
+}
+
 .card-text {
   color:whitesmoke;
   font-size: 14px;
 }
 
-.Data {
+.data {
   background-color: orange;
   border-color: orange;
+  color:black;
+}
+
+.general-theory {
+  background-color: greenyellow;
+  border-color: greenyellow;
   color:black;
 }
