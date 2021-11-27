@@ -375,6 +375,13 @@
   font-size: 15px;
 }
 
+/* Blog post */
+
+.blog-post {
+  color:whitesmoke;
+  font-size: 14px;
+}
+
 
 /* Content card */
 
@@ -404,6 +411,14 @@
   margin-top: 10px;
 }
 
+.btn-primary {
+  padding: 0.15rem 0.2rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color:black;
+}
+
+
 /* Data Category */
 
 .data {
@@ -413,7 +428,6 @@
 .data .btn-primary {
   border-color: var(--color-primary);
   background-color: var(--color-primary);
-  color:black;
 }
 
 /* General Theory Category */
@@ -425,7 +439,6 @@
 .general-theory .btn-primary {
   border-color: var(--color-red);
   background-color: var(--color-red);
-  color:black;
 }
 
 /* Curernt Affairs */

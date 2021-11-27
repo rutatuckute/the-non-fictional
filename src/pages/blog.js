@@ -1,8 +1,10 @@
 import * as React from "react"
 import { graphql, Link } from "gatsby"
 import { Card, Button, Container, Row } from 'react-bootstrap'
-import { FaFolderOpen } from "react-icons/fa"
+import { FaFolderOpen, FaCoffee } from "react-icons/fa"
 import { MdOutlineDateRange } from "react-icons/md"
+import { BsLightbulb } from "react-icons/bs"
+
 
 import Layout from "../components/layout"
 
@@ -24,8 +26,10 @@ const BlogIndex = ({data, location}) => {
                 <Card.Img variant="top" src={post.frontmatter.cover_image}/>
                 <Card.Body>
                   <Card.Text>
-                        <MdOutlineDateRange/> {post.frontmatter.date}{'  '}
-                        <FaFolderOpen/> {post.frontmatter.category}
+                        <MdOutlineDateRange/> {post.frontmatter.date}{'  '} &nbsp;&nbsp;
+                        <FaFolderOpen/> {post.frontmatter.category} &nbsp;&nbsp;
+                        <FaCoffee/> {post.timeToRead} min <br/>
+                        <BsLightbulb/> 
                   </Card.Text>
                   <Card.Text>{post.frontmatter.excerpt}</Card.Text>
                   <Button href={post.fields.slug}>Continue Reading</Button>
@@ -64,6 +68,7 @@ export const pageQuery = graphql`
           category
           category_id
         }
+        timeToRead
       }
     }
   }
