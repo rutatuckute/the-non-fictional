@@ -7,7 +7,7 @@ excerpt: Quantifying complex human interactions, converting mechanisms of the
   society into equations, filling models with data, perhaps all disposable
   information, and ultimately deriving causalities, and of utmost importance -
   factual wisdom - it was all assumed to establish « The General Theory ».
-date: 2021-11-22T16:32:55.598Z
+date: 2020-09-10T23:24:55.598Z
 cover_image: https://ucarecdn.com/7b779b2d-60e0-4d8a-9006-bba588787440/
 ---
 <!--StartFragment-->
