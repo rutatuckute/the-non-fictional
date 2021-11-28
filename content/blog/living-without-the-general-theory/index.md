@@ -18,3 +18,15 @@ Had it not been for the explanation and causality-seeking animal in me, economic
 <p style="text-align: center;">The clocks have been always striking thirteen.</p>
 
 ![](https://ucarecdn.com/de0fd9b3-d258-4162-b5e2-411b731e7221/)
+
+<p style="text-align: center;">
+
+Both the core question in economic modelling « what is the correct set of rules for the most satisfactory approximation of reality ? » and the eternal « how to make some sense out of life ? » raise in tandem, suffering from the very same - reluctance to integrate the fact that the world is a mere chaos governed by chance tangled in endless interactions and non-linearities.
+
+</p>
+
+<p style="text-align: center;">
+
+Not all is lost.
+
+</p>
