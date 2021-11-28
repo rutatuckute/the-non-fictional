@@ -3,6 +3,7 @@ layout: blog
 title: LIVING WITHOUT THE GENERAL THEORY
 category: General Theory
 category_id: general-theory
+topic: Econ 101 / Philosophy
 excerpt: Quantifying complex human interactions, converting mechanisms of the
   society into equations, filling models with data, perhaps all disposable
   information, and ultimately deriving causalities, and of utmost importance -
