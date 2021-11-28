@@ -1,5 +1,6 @@
 import * as React from "react"
 import { Link, graphql } from "gatsby"
+import { Card, Button, Container, Row } from 'react-bootstrap'
 
 import Bio from "../components/bio"
 import Layout from "../components/layout"
@@ -16,6 +17,7 @@ const BlogPostTemplate = ({ data, location }) => {
         title={post.frontmatter.title}
         description={post.frontmatter.description || post.excerpt}
       />
+      <Container fluid>
       <article
         className="blog-post"
         itemScope
@@ -61,6 +63,7 @@ const BlogPostTemplate = ({ data, location }) => {
           </li>
         </ul>
       </nav>
+      </Container>
     </Layout>
   )
 }

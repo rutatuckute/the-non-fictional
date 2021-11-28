@@ -29,7 +29,7 @@ const BlogIndex = ({data, location}) => {
                         <MdOutlineDateRange/> {post.frontmatter.date}{'  '} &nbsp;&nbsp;
                         <FaFolderOpen/> {post.frontmatter.category} &nbsp;&nbsp;
                         <FaCoffee/> {post.timeToRead} min <br/>
-                        <BsLightbulb/> 
+                        <BsLightbulb/> {post.frontmatter.topic}
                   </Card.Text>
                   <Card.Text>{post.frontmatter.excerpt}</Card.Text>
                   <Button href={post.fields.slug}>Continue Reading</Button>
@@ -67,6 +67,7 @@ export const pageQuery = graphql`
           cover_image
           category
           category_id
+          topic
         }
         timeToRead
       }
