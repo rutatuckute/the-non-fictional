@@ -1,6 +1,9 @@
 import * as React from "react"
 import { Link, graphql } from "gatsby"
 import { Card, Button, Container, Row } from 'react-bootstrap'
+import { FaFolderOpen, FaCoffee } from "react-icons/fa"
+import { MdOutlineDateRange } from "react-icons/md"
+import { BsLightbulb } from "react-icons/bs"
 
 import Bio from "../components/bio"
 import Layout from "../components/layout"
@@ -24,10 +27,14 @@ const BlogPostTemplate = ({ data, location }) => {
         itemType="http://schema.org/Article"
       >
         <header>
-          <h1 itemProp="headline">{post.frontmatter.title}</h1>
-          <p>{post.frontmatter.date}</p>
+          <h1 itemProp="headline" className={post.frontmatter.category_id}>{post.frontmatter.title}</h1>
+          <p>
+            <MdOutlineDateRange/> {post.frontmatter.date} &nbsp;&nbsp;
+            <FaFolderOpen/> {post.frontmatter.category} &nbsp;&nbsp;
+            <FaCoffee/> {post.timeToRead} min &nbsp;&nbsp;
+            <BsLightbulb/> {post.frontmatter.topic}
+          </p>
         </header>
-        {/* <img src={post.frontmatter.cover_image}></img> */}
         <section
           dangerouslySetInnerHTML={{ __html: post.html }}
           itemProp="articleBody"
@@ -89,6 +96,9 @@ export const pageQuery = graphql`
         title
         date(formatString: "MMMM DD, YYYY")
         cover_image
+        category
+        category_id
+        topic
       }
       timeToRead
     }
