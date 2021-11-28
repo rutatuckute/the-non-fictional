@@ -30,3 +30,9 @@ Both the core question in economic modelling « what is the correct set of rules
 Not all is lost.
 
 </p>
+
+
+
+#### CURIOSITY, CHANGE & DANGER
+
+in a set of tacit moral codes, realm of familiar and known, unique political doctrine, blindly clinging on to a theory. Alas, people often tend to cherry pick the facts that go in line with what they grew, if not were taught into believing instead. Try to confront your buddies with points of view that oppose their own - many would be reluctant. [Jeremy A. Frimer, Linda J. Skitka and Matt Motyl](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2953780) did, yielding the following result: people stick to the information that affirms their pre-existing beliefs. Worse still, in the same way as people did not evolve to be honest, or too little, turning their lies into *truths* and absolutes, our capacity to reason may have not evolved to help us gather greater knowledge.
