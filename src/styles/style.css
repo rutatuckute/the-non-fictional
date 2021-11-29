@@ -372,7 +372,7 @@
 
 .footer .card-text {
   color:var(--color-primary);
-  text-align: center;
+  text-align: center !important;
   font-size: 15px;
 }
 
@@ -385,6 +385,9 @@
   padding-left: 15%;
 }
 
+.blog-text {
+  word-spacing: 3px;
+}
 
 .general-theory {
   color: var(--color-red);
@@ -398,6 +401,10 @@
   color: var(--color-primary);
 }
 
+.current-affairs {
+  color: var(--color-green);
+}
+
 
 /* Content card */
 
@@ -407,13 +414,8 @@
   margin-right: 20px;
   margin-top: 20px;
   background-color: black;
-  width: var(--maxWidth-lg);
+  width: var(--maxWidth-md);
 }
-
-/* .border-secondary {
-  border-color: var(--color-primary) !important;
-} */
-
 
 .card-text {
   color:whitesmoke;
@@ -467,10 +469,13 @@
   background-color: var(--color-red);
 }
 
-/* Curernt Affairs */
+/* Curernt Affairs Category */
 
 .current-affairs {
-  border-color:var(--color-green);
+  border-color:var(--color-green) !important;
+}
+
+.current-affairs .btn-primary {
+  border-color: var(--color-green);
   background-color: var(--color-green);
-  color:black;
 }

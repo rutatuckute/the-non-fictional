@@ -91,14 +91,16 @@ for point in range(0, len(locations_list)):
 paris_map
 ```
 
-![](https://ucarecdn.com/f8310c8f-f7d1-41d1-b193-da89b21b75fc/)
+<img src="https://ucarecdn.com/f8310c8f-f7d1-41d1-b193-da89b21b75fc/" width="900"> &nbsp;
 
-*Locate Control* allows to get the position of your device:
+<span style="color: orange">Locate Control</span> allows to get the position of your device:
 
-![](https://ucarecdn.com/19b4447d-1bc8-4367-89e4-555ed92691ca/)
+<p style="text-align:center"><img src="https://ucarecdn.com/19b4447d-1bc8-4367-89e4-555ed92691ca/" width="600"></p>
 
-The full code can be found here:
+The full code can be found here: https://github.com/rutatuckute/hidalgo
 
-https://github.com/rutatuckute/hidalgo
+&nbsp;
 
-*Post Scriptum:* my know-how in python is as random as Parisians driving. I am amused by finding means of *how to get there* once the desired finality is clarified, building it block by block. Any in-depth comprehension on how the infrastructure behind truly works and else is, alas, lacking.
+- - -
+
+<em>Post Scriptum:</em> my know-how in python is as random as Parisians driving. I am amused by finding means of <em>how to get there</em> once the desired finality is clarified, building it block by block. Any in-depth comprehension on how the infrastructure behind truly works and else is, alas, lacking.
