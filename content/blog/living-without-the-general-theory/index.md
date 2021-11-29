@@ -14,7 +14,7 @@ cover_image: https://ucarecdn.com/860a894d-62aa-43c5-8443-41e23ffa96a3/
 - - -
 
 <p style="text-align: center;">
-Had it not been for the explanation and causality-seeking animal in me, economics would have never drawn my attention. I recall my prior expectations of groping for the sole truth about every plausible debate on economic policies and beyond. Quantifying complex human interactions, converting mechanisms of the society into equations, filling models with data, perhaps all disposable information, and ultimately deriving causalities, and of utmost importance - factual wisdom - it was all assumed to establish « The General Theory ». As for my own rulebook of conduct, I used to swing from one approach to another to shield myself with an illusion of control over the things I had none, or too little. Call it the paradox of the greatest self-deception. Hunting for <em>inattendu</em> at all costs, all while presuming the implied predictability. There is no such thing. No <em>General Theory</em>, no universal approach, no plan at all. Over the course, all of the great expectations were reduced to one reasoning to hold on to: in the presence of uncertainty, variables <em>de trop</em> and perpetually incomplete cognition, no idea can be built on a firm basis. All is to be relentlessly questioned, assumptions to be challenged, changes to be scrutinized and <em>models</em> to be revised in line with white noises, if not abolished.
+Had it not been for the explanation and causality-seeking animal in me, economics would have never drawn my attention. I recall my prior expectations of groping for the sole truth about every plausible debate on economic policies and beyond. Quantifying complex human interactions, converting mechanisms of the society into equations, filling models with data, perhaps all disposable information, and ultimately deriving causalities, and of utmost importance - factual wisdom - it was all assumed to establish <span style="color: #ff5c5c">« The General Theory »</span>. As for my own rulebook of conduct, I used to swing from one approach to another to shield myself with an illusion of control over the things I had none, or too little. Call it the paradox of the greatest self-deception. Hunting for <em>inattendu</em> at all costs, all while presuming the implied predictability. There is no such thing. No <em>General Theory</em>, no universal approach, no plan at all. Over the course, all of the great expectations were reduced to one reasoning to hold on to: in the presence of uncertainty, variables <em>de trop</em> and perpetually incomplete cognition, no idea can be built on a firm basis. All is to be relentlessly questioned, assumptions to be challenged, changes to be scrutinized and <em>models</em> to be revised in line with white noises, if not abolished.
 </p>
 
 <p style="text-align: center;">The clocks have been always striking thirteen.</p>
@@ -22,7 +22,7 @@ Had it not been for the explanation and causality-seeking animal in me, economic
 <p style="text-align:center"><img src="https://ucarecdn.com/de0fd9b3-d258-4162-b5e2-411b731e7221/" width="500"></p>
 
 <p style="text-align: center;">
-Both the core question in economic modelling « what is the correct set of rules for the most satisfactory approximation of reality ? » and the eternal « how to make some sense out of life ? » raise in tandem, suffering from the very same - reluctance to integrate the fact that the world is a mere chaos governed by chance tangled in endless interactions and non-linearities.
+Both the core question in economic modelling <span style="color: #ff5c5c">« what is the correct set of rules for the most satisfactory approximation of reality ? »</span> and the eternal <span style="color: #ff5c5c">« how to make some sense out of life ? »</span> raise in tandem, suffering from the very same - reluctance to integrate the fact that the world is a mere chaos governed by chance tangled in endless interactions and non-linearities.
 </p>
 
 <p style="text-align: center;">Not all is lost.</p>
@@ -48,13 +48,13 @@ If you are not questioning the status quo, in the case of an economy along with 
 
 Turning to economic modelling and beyond, « *all models are wrong, some are useful* » of the statistician George Box resumes fairly the essence of our attempts to model the complexity of reality. Are the brand-new and fancy tools applied to agent-based models, complexity economics and network theory our new paradigms ? Perhaps not, but starting on the individual level while examining economic outcomes and focusing on the extent to which rational and irrational (I will let you decide on the appropriate definition yourself) interplays affect them may as well unveil something previously unknown that matters. Yet, economies and financial markets are intrinsically dynamic due to the relentless adjustments of market participants. People respond to incentives and are ready and willing to alter their behavior in the light of changing conditions. No conclusions derived from theoretical frameworks nor empirical studies shall be considered as static. When given information and pre-setup conditions change, what do you do? 
 
-Focus on shocks and distortions. The problem is that the normal, the equilibrium, the optimal so thoroughly scrutinized by orthodox economists are usually irrelevant. While human heights may be, a vast majority of processes are not subject to the Gaussian distribution and the crucial dynamics in economies are indeed produced by substantial and consecutive shocks. This is undeniably what conditions our lives the greatest too.
+<span style="color: #ff5c5c">Focus on shocks and distortions.</span> The problem is that the normal, the equilibrium, the optimal so thoroughly scrutinized by orthodox economists are usually irrelevant. While human heights may be, a vast majority of processes are not subject to the Gaussian distribution and the crucial dynamics in economies are indeed produced by substantial and consecutive shocks. This is undeniably what conditions our lives the greatest too.
 
 &nbsp;
 
 <h4 class="general-theory">ART OF LIVING</h4>
 
-Above all, Ki-Taek may be the one to have taught his son and *in fine* us the greatest lesson of all - the one of the absence of *the* plan.
+Above all, Ki-Taek may be the one to have taught his son and *in fine* us the greatest lesson of all - <span style="color: #ff5c5c">the one of the absence of *the* plan.</span>
 
 <blockquote class="general-theory">
 <p class="general-theory" style="color: white;"><em>
