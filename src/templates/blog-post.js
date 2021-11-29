@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Link, graphql } from "gatsby"
 import { Card, Button, Container, Row } from 'react-bootstrap'
+
 import { FaFolderOpen, FaCoffee } from "react-icons/fa"
 import { MdOutlineDateRange } from "react-icons/md"
 import { BsLightbulb } from "react-icons/bs"

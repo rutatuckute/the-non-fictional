@@ -16,14 +16,8 @@ module.exports = {
   },
 
   plugins: [
-    `gatsby-plugin-image`,
-    `gatsby-plugin-sharp`,
-    `gatsby-transformer-sharp`,
-    `gatsby-remark-prismjs`,
-    `gatsby-remark-copy-linked-files`,
-    `gatsby-remark-smartypants`,
-    `gatsby-plugin-react-helmet`,
 
+    `gatsby-plugin-image`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {
@@ -54,18 +48,33 @@ module.exports = {
               wrapperStyle: `margin-bottom: 1.0725rem`,
             },
           },
-
+          {
+            resolve: `gatsby-transformer-remark`,
+            options: {
+              plugins: [
+                `gatsby-remark-reading-time`,
+              ],
+            },
+          },
+          {
+          resolve: `gatsby-transformer-remark`,
+          options: {
+              plugins: [{
+                resolve: `gatsby-remark-vscode`,
+                options: {
+                  theme: 'High Contrast'
+                }
+              }]
+            }
+          },
+          `gatsby-remark-prismjs`,
+          `gatsby-remark-copy-linked-files`,
+          `gatsby-remark-smartypants`,
         ],
       },
     },
-    {
-      resolve: `gatsby-transformer-remark`,
-      options: {
-        plugins: [
-          `gatsby-remark-reading-time`,
-        ],
-      },
-    },
+    `gatsby-transformer-sharp`,
+    `gatsby-plugin-sharp`,
     // {
     //   resolve: `gatsby-plugin-google-analytics`,
     //   options: {

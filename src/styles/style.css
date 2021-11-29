@@ -394,6 +394,10 @@
   color: var(--color-red);
 }
 
+.data {
+  color: var(--color-primary);
+}
+
 
 /* Content card */
 
