@@ -1,6 +1,6 @@
 backend:
   name: git-gateway
-  branch: master
+  branch: main
   repo: rutatuckute/the-non-fictional
 
 media_folder: "images/uploads"
