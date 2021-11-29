@@ -8,7 +8,7 @@ excerpt: "The aim of this piece is two-fold: (1) to provide you with a glimpse
   into the unbearable Parisian on-road conduct and (2) to show you how open bike
   data can be exploited to code some cool, yet as some would argue, useless
   stuff."
-date: 2021-11-29T11:16:43.706Z
+date: 2020-11-01T21:13:00.000Z
 cover_image: https://ucarecdn.com/e8d47d8a-8143-465b-bfa7-12548370557b/
 ---
 - - -
@@ -41,9 +41,7 @@ For Lithuanian folks, but not exclusively, check the link below:
 
 <h4 class="data">THE SCRIPT</h4>
 
-
 Alongside with <span style="color: orange">pandas, requests</span> and <span style="color: orange">json</span>, the main library to import is <span style="color: orange">folium</span> which allows to visualize data on a map. Data can be requested with a couple of lines of code:
-
 
 ```python
 information_url = "https://velib-metropole-opendata.smoove.pro/opendata/Velib_Metropole/station_information.json"
@@ -59,7 +57,6 @@ data_static = r_1.json()
 r_2 = requests.get(status_url)
 data_dynamic = r_2.json()
 ```
-
 
 Nested values have to be extracted from JSON using <span style="color: orange">json_extract</span> function so that a dataframe containing both static - <em>Vélib</em> stations names and coordinates - and dynamic - # of bikes and docks available - data could be put together. Data can be then plotted on a map using <span style="color: orange">folium</span>:
 
@@ -93,3 +90,15 @@ for point in range(0, len(locations_list)):
 
 paris_map
 ```
+
+![](https://ucarecdn.com/f8310c8f-f7d1-41d1-b193-da89b21b75fc/)
+
+*Locate Control* allows to get the position of your device:
+
+![](https://ucarecdn.com/19b4447d-1bc8-4367-89e4-555ed92691ca/)
+
+The full code can be found here:
+
+https://github.com/rutatuckute/hidalgo
+
+*Post Scriptum:* my know-how in python is as random as Parisians driving. I am amused by finding means of *how to get there* once the desired finality is clarified, building it block by block. Any in-depth comprehension on how the infrastructure behind truly works and else is, alas, lacking.
