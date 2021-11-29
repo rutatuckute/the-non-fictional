@@ -12,7 +12,7 @@ excerpt: For an outsider, Belarus remains as silent and little-known as if its
   since a quarter of a century as the country heads towards a presidential
   election on August 9th.
 date: 2020-07-26T08:51:32.564Z
-cover_image: https://ucarecdn.com/b6e5951e-1fed-440c-8110-0a4fee671496/
+cover_image: https://ucarecdn.com/d1539a2b-9a41-4f50-bbab-0c27fb33671b/
 ---
 For an outsider, Belarus remains as silent and little-known as if its dense ancient forests - the ones that once kept the Golden Horde away - were still covering up what is going on behind the scenes. Suck lack of interest is profoundly unjustified. Against all odds, political dynamics are radically shifting in « *Europe’s last dictatorship* », perhaps for the very first time since a quarter of a century as the country heads towards a presidential election on August 9th. 
 
