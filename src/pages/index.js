@@ -3,22 +3,22 @@ import { graphql } from "gatsby"
 
 import Seo from "../components/seo"
 import Layout from "../components/layout"
+import Blog from "./blog.js"
 
 
 const IndexPage = ({ data, location }) => {
   
   return (
     <Layout location={location}>
-    <Seo title="Landing Page"/>
+    <Seo title="The Non Fictional"/>
     <div
       style={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '90vh'
+        height: '40vh'
       }}
     >
-      <h1>{data.site.siteMetadata.title}</h1>
     </div>
     </Layout>
   )
