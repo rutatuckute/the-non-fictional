@@ -46,7 +46,7 @@ To my humble understanding, Lithuania and most notably Lithuanians can be compre
 
 My intent is not to bother you with heavy historic facts, but rather to introduce the <em>narrative</em>.
 
-![](https://ucarecdn.com/e212cbd3-16fd-405e-a8d0-e1bcff90bd12/)
+<img src="https://ucarecdn.com/e212cbd3-16fd-405e-a8d0-e1bcff90bd12/" width="1100"> &nbsp;
 
 Nearly unknown to most, the history of the statehood of Lithuania goes all the way back to the 13th century when a <em>soon-to-be</em> king Mindaugas consolidated Lithuanian lands. The Grand Duchy of Lithuania emerged. Skilled merchants, craftsmen, farmers and traders from Western Europe were invited to settle in Lithuania in exchange of tax concessions and pieces of land, among other privileges, under the rule of the duke Gemininas. Think of it as a sort of free economic zone of the 14th century with favourable tax conditions. Underpinned by great tolerance towards diverse religious and ethnic groups, the prosperity of the Grand Duchy of Lithuania reached its peak in the 15th century, with a territory stretching all the way to the Black Sea.
 
