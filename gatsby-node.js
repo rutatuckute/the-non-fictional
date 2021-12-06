@@ -4,10 +4,8 @@ const { createFilePath } = require(`gatsby-source-filesystem`)
 exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions
 
-  // Define a template for blog post
+  // Define a template for blog & photography posts
   const blogPost = path.resolve(`./src/templates/blog-post.js`)
-
-  // Define a template for photography post
   const photoPost = path.resolve(`./src/templates/photo-post.js`)
 
   // Get all markdown blog posts sorted by date
@@ -18,10 +16,14 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
           sort: { fields: [frontmatter___date], order: ASC }
           limit: 1000
         ) {
-          nodes {
-            id
-            fields {
-              slug
+          edges {
+            node {
+              fields {
+                slug
+              }
+              frontmatter {
+                  layout
+              }
             }
           }
         }
@@ -29,31 +31,14 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     `
   )
 
-  // Get all markdown photography posts
-  const resultPhoto = await graphql(
-      `
-        {
-          allMarkdownRemark {
-            nodes {
-              id
-              fields {
-                slug
-              }
-            }
-          }
-        }
-      `
-  )
-
-  if (result.errors || resultPhoto.errors) {
+  if (result.errors) {
     reporter.panicOnBuild(
       `There was an error loading your blog posts`
     )
     return
   }
 
-  const posts = result.data.allMarkdownRemark.nodes
-  const photos = resultPhoto.data.allMarkdownRemark.nodes
+  const posts = result.data.allMarkdownRemark.edges
 
   // Create blog posts pages
   // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
@@ -61,35 +46,38 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
   if (posts.length > 0) {
     posts.forEach((post, index) => {
-      const previousPostId = index === 0 ? null : posts[index - 1].id
-      const nextPostId = index === posts.length - 1 ? null : posts[index + 1].id
+      const previousPostId = index === 0 ? null : posts[index - 1].node
+      const nextPostId = index === posts.length - 1 ? null : posts[index + 1].node
 
-      createPage({
-        path: post.fields.slug,
-        component: blogPost,
-        context: {
-          id: post.id,
-          previousPostId,
-          nextPostId,
-        },
-      })
-    })
-  }
 
-  if (photos.length > 0) {
-    photos.forEach((photo, index) => {
-      createPage({
-        path: photo.fields.slug,
-        component: photoPost,
-        context: {
-          id: photo.id,
-        },
-      })
+      if (post.node.frontmatter.layout==='blog'){
+
+        createPage({
+          path: post.node.fields.slug,
+          component: blogPost,
+          context: {
+            slug: post.node.fields.slug,
+            previousPostId,
+            nextPostId,
+          },
+        })
+
+      } else {
+
+        createPage({
+          path: post.node.fields.slug,
+          component: photoPost,
+          context: {
+            slug: post.node.fields.slug,
+            previousPostId,
+            nextPostId,
+          },
+        })
+      }
     })
   }
 
 }
-
 
 exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions
@@ -137,6 +125,7 @@ exports.createSchemaCustomization = ({ actions }) => {
     }
 
     type Frontmatter {
+      layout: String
       title: String
       excerpt: String
       date: Date @dateformat
