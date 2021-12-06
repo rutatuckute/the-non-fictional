@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Link, graphql, useStaticQuery } from "gatsby"
-import {Card} from 'react-bootstrap'
+import {Card, Row} from 'react-bootstrap'
 
 import Navigation from "./navbar"
 
@@ -45,6 +45,7 @@ const Layout = ({ location, children }) => {
       <Navigation/>
       <header className="global-header">{header}</header>
       <main>{children}</main>
+      <Row className="justify-content-md-center">
       <Card className="footer" bg="black">
       <Card.Body>
         <Card.Text>
@@ -55,6 +56,7 @@ const Layout = ({ location, children }) => {
         © {new Date().getFullYear()} <span>{author}</span>
       </footer> */}
       </Card>
+      </Row>
     </div>
   )
 }

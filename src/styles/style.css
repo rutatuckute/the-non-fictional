@@ -414,7 +414,7 @@
   margin-right: 20px;
   margin-top: 20px;
   background-color: black;
-  width: var(--maxWidth-md);
+  width: var(--maxWidth-lg);
 }
 
 .card-text {
