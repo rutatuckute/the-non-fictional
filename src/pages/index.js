@@ -7,10 +7,12 @@ import Blog from "./blog.js"
 
 
 const IndexPage = ({ data, location }) => {
+
+  const description = data.site.siteMetadata.description
   
   return (
     <Layout location={location}>
-    <Seo title="The Non Fictional"/>
+    <Seo title="The Non Fictional" description={description}/>
     <div
       style={{
         display: 'flex',
@@ -31,6 +33,7 @@ export const pageQuery = graphql`
     site {
       siteMetadata {
         title
+        description
       }
     }
     allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {

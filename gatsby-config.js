@@ -137,8 +137,8 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Gatsby Starter Blog`,
-        short_name: `GatsbyJS`,
+        name: `The Non Fictional`,
+        short_name: `The Non Fictional`,
         start_url: `/`,
         background_color: `#1C2833`,
         // This will impact how browsers show your PWA/website
