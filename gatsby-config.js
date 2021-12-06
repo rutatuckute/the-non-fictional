@@ -67,20 +67,6 @@ module.exports = {
               }]
             }
           },
-          {
-            resolve: `@gatsby-contrib/gatsby-plugin-elasticlunr-search`,
-            options: {
-              fields: [`title`, `tags`, `html`],
-              resolvers: {
-                MarkdownRemark: {
-                  title: (node) => node.frontmatter.title,
-                  tags: (node) => node.frontmatter.tags,
-                  html: (node) => node.internal.content,
-                  path: (node) => node.frontmatter.slug,
-                },
-              },
-            },
-          },
           `gatsby-remark-prismjs`,
           `gatsby-remark-copy-linked-files`,
           `gatsby-remark-smartypants`,
