@@ -4,6 +4,21 @@ title: LIVING WITHOUT THE GENERAL THEORY
 category: General Theory
 category_id: general-theory
 topic: Econ 101 / Philosophy
+tags:
+  - philosophy
+  - economics
+  - reality
+  - hugo
+  - mercier
+  - dan
+  - sperber
+  - beliefs
+  - knowledge
+  - shocks
+  - distortions
+  - plan
+  - ki-taek
+  - parasite
 excerpt: Quantifying complex human interactions, converting mechanisms of the
   society into equations, filling models with data, perhaps all disposable
   information, and ultimately deriving causalities, and of utmost importance -
