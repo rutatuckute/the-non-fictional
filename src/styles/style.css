@@ -500,9 +500,15 @@ input::placeholder{
   background-color: var(--color-green);
 }
 
+/* Photography */
+
 .card-header {
   color: white;
   font-weight: bold;
   align-self: center;
-  font-size: 20px;
+  font-size: 15px;
+}
+
+.photo {
+  margin: 0px 0px 0px 0px;
 }

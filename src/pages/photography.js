@@ -1,6 +1,6 @@
 import * as React from "react"
 import { graphql } from "gatsby"
-import { Card } from 'react-bootstrap'
+import { Card, Row } from 'react-bootstrap'
 
 import Layout from "../components/layout"
 
@@ -10,16 +10,18 @@ const Photography = ({data, location}) => {
 
   return (
     <Layout location={location}>
+    <Row className="justify-content-md-center">
     {photos.map(photo => {
             const title = photo.frontmatter.title || photo.fields.slug
 
             return (
-              <Card>
+              <Card className="photo">
                 <Card.Img variant="top" src={photo.frontmatter.photo}/>
                 <Card.Header>{title}</Card.Header>
                 </Card>
             )
           })}
+    </Row>
     </Layout>
   );
 };
