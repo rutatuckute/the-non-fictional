@@ -22,6 +22,7 @@ collections:
       - {label: "Category", name: "category", widget: "string"}
       - {label: "Category Id", name: "category_id", widget: "string"}
       - {label: "Topics", name: "topic", widget: "string"}
+      - {label: "Tags", name: "tags", widget: "list"}
       - {label: "Excerpt", name: "excerpt", widget: "string"}
       - {label: "Publish Date", name: "date", widget: "datetime"}
       - {label: "Body", name: "body", widget: "markdown"}
