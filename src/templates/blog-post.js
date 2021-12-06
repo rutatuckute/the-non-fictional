@@ -10,10 +10,10 @@ import Bio from "../components/bio"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
-const BlogPostTemplate = ({ data, location }) => {
+const BlogPostTemplate = ({ data, pageContext, location }) => {
   const post = data.markdownRemark
   const siteTitle = data.site.siteMetadata?.title || `Title`
-  const { previous, next } = data
+  const { previous, next } = pageContext
 
   return (
     <Layout location={location} title={siteTitle}>
@@ -81,16 +81,14 @@ export default BlogPostTemplate
 
 export const pageQuery = graphql`
   query BlogPostBySlug(
-    $id: String!
-    $previousPostId: String
-    $nextPostId: String
+    $slug: String!
   ) {
     site {
       siteMetadata {
         title
       }
     }
-    markdownRemark(id: { eq: $id }) {
+    markdownRemark(fields: { slug: { eq: $slug } }) {
       id
       excerpt(pruneLength: 160)
       html
@@ -103,22 +101,6 @@ export const pageQuery = graphql`
         topic
       }
       timeToRead
-    }
-    previous: markdownRemark(id: { eq: $previousPostId }) {
-      fields {
-        slug
-      }
-      frontmatter {
-        title
-      }
-    }
-    next: markdownRemark(id: { eq: $nextPostId }) {
-      fields {
-        slug
-      }
-      frontmatter {
-        title
-      }
     }
   }
 `
