@@ -381,8 +381,8 @@
 .blog-post {
   color:white;
   font-size: 15px;
-  padding-right: 35%;
-  padding-left: 15%;
+  padding-right: 20%;
+  padding-left: 20%;
 }
 
 .blog-text {
@@ -402,7 +402,27 @@
 }
 
 .current-affairs {
-  color: var(--color-green);
+  color: var(--color-green)
+}
+
+input {
+  background-color: black;
+  border-color: var(--color-primary);
+  margin: 20px 10px 10px 10px;
+  color: var(--color-primary);
+  border-radius: 5px;
+}
+
+input:focus{
+  outline: none !important;
+}
+
+textarea:focus{
+  outline: none !important;
+}
+
+input::placeholder{
+  color:white;
 }
 
 
@@ -469,7 +489,7 @@
   background-color: var(--color-red);
 }
 
-/* Curernt Affairs Category */
+/* Current Affairs Category */
 
 .current-affairs {
   border-color:var(--color-green) !important;

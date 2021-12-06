@@ -1,20 +1,62 @@
 import * as React from "react"
+import { useState } from "react"
 import { graphql, Link } from "gatsby"
-import { Card, Button, Container, Row } from 'react-bootstrap'
+import { Card, Button, Container, Row, Col } from 'react-bootstrap'
 import { FaFolderOpen, FaCoffee } from "react-icons/fa"
 import { MdOutlineDateRange } from "react-icons/md"
 import { BsLightbulb } from "react-icons/bs"
+import { ImSearch } from "react-icons/im"
 
 
 import Layout from "../components/layout"
+import BlogDropdown from "../components/dropdown"
 
 const BlogIndex = ({data, location}) => {
-  const siteTitle = data.site.siteMetadata?.title || `Title`
-  const posts = data.allMarkdownRemark.nodes
+  const allPosts = data.allMarkdownRemark.nodes
+  const emptyQuery = ""
+
+  const [state, setState] = useState({
+    filteredData: [],
+    query: emptyQuery,
+  })
+
+  const handleInputChange = event => {
+
+    const query = event.target.value
+    const posts = data.allMarkdownRemark.nodes || []
+
+    const filteredData = posts.filter(post => {
+      const excerpt = post.frontmatter.excerpt
+      const title = post.frontmatter.title
+      const tags = post.frontmatter.tags
+
+      return (
+        excerpt.toLowerCase().includes(query.toLowerCase()) ||
+        title.toLowerCase().includes(query.toLowerCase()) ||
+        (tags && tags
+        .join(" ")
+        .toLowerCase()
+        .includes(query.toLowerCase()))
+      )
+    })
+
+    setState({
+      query,
+      filteredData,
+    })
+  }
+
+  const { filteredData, query } = state
+  const hasSearchResults = filteredData && query !== emptyQuery
+  const posts = hasSearchResults ? filteredData : allPosts
+
 
   return (
     <Layout location={location}>
       <Container fluid>
+        
+        <Row className="justify-content-md-center">
+        <Col sm={10}>
         <Row className="justify-content-md-center">
           {posts.map(post => {
             const title = post.frontmatter.title || post.fields.slug
@@ -35,11 +77,22 @@ const BlogIndex = ({data, location}) => {
                   <Button href={post.fields.slug}>Continue Reading</Button>
                 </Card.Body>
               </Card>
-
             )
           })}
-
+          </Row>
+          </Col>
+          <Col sm={2}>
+          {/* <BlogDropdown/> */}
+          <ImSearch color="orange"/>
+          <input
+              type="text"
+              aria-label="Search"
+              placeholder="Search..."
+              onChange={handleInputChange}
+          />
+        </Col>
         </Row>
+        
     </Container>
     </Layout>
   );
@@ -68,6 +121,7 @@ export const pageQuery = graphql`
           category
           category_id
           topic
+          tags
         }
         timeToRead
       }

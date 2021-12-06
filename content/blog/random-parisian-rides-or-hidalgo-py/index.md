@@ -101,7 +101,7 @@ for point in range(0, len(locations_list)):
 paris_map
 ```
 
-<img src="https://ucarecdn.com/f8310c8f-f7d1-41d1-b193-da89b21b75fc/" width="900"> &nbsp;
+<img src="https://ucarecdn.com/79f93325-d362-424b-8780-be13989bd6b6/" width="900"> &nbsp;
 
 <span style="color: orange">Locate Control</span> allows to get the position of your device:
 
