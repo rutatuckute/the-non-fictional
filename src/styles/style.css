@@ -499,3 +499,10 @@ input::placeholder{
   border-color: var(--color-green);
   background-color: var(--color-green);
 }
+
+.card-header {
+  color: white;
+  font-weight: bold;
+  align-self: center;
+  font-size: 20px;
+}

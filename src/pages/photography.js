@@ -1,5 +1,6 @@
 import * as React from "react"
 import { graphql } from "gatsby"
+import { Card } from 'react-bootstrap'
 
 import Layout from "../components/layout"
 
@@ -9,21 +10,14 @@ const Photography = ({data, location}) => {
 
   return (
     <Layout location={location}>
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '90vh'
-      }}
-    >
-      <h1>Photography</h1>
-    </div>
     {photos.map(photo => {
             const title = photo.frontmatter.title || photo.fields.slug
 
             return (
-              <h2>{title}</h2>
+              <Card>
+                <Card.Img variant="top" src={photo.frontmatter.photo}/>
+                <Card.Header>{title}</Card.Header>
+                </Card>
             )
           })}
     </Layout>
@@ -49,6 +43,7 @@ export const pageQuery = graphql`
         frontmatter {
           date(formatString: "MMMM DD, YYYY")
           title
+          photo
         }
       }
     }
