@@ -4,6 +4,16 @@ title: RANDOM PARISIAN RIDES OR HIDALGO.PY
 category: Data
 category_id: data
 topic: Paris / Python
+tags:
+  - python
+  - data
+  - velib
+  - paris
+  - folium
+  - map
+  - open
+  - source
+  - requests
 excerpt: "The aim of this piece is two-fold: (1) to provide you with a glimpse
   into the unbearable Parisian on-road conduct and (2) to show you how open bike
   data can be exploited to code some cool, yet as some would argue, useless
