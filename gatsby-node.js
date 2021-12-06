@@ -7,6 +7,9 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   // Define a template for blog post
   const blogPost = path.resolve(`./src/templates/blog-post.js`)
 
+  // Define a template for photography post
+  const photoPost = path.resolve(`./src/templates/photo-post.js`)
+
   // Get all markdown blog posts sorted by date
   const result = await graphql(
     `
@@ -26,15 +29,31 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     `
   )
 
-  if (result.errors) {
+  // Get all markdown photography posts
+  const resultPhoto = await graphql(
+      `
+        {
+          allMarkdownRemark {
+            nodes {
+              id
+              fields {
+                slug
+              }
+            }
+          }
+        }
+      `
+  )
+
+  if (result.errors || resultPhoto.errors) {
     reporter.panicOnBuild(
-      `There was an error loading your blog posts`,
-      result.errors
+      `There was an error loading your blog posts`
     )
     return
   }
 
   const posts = result.data.allMarkdownRemark.nodes
+  const photos = resultPhoto.data.allMarkdownRemark.nodes
 
   // Create blog posts pages
   // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
@@ -56,7 +75,21 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       })
     })
   }
+
+  if (photos.length > 0) {
+    photos.forEach((photo, index) => {
+      createPage({
+        path: photo.fields.slug,
+        component: photoPost,
+        context: {
+          id: photo.id,
+        },
+      })
+    })
+  }
+
 }
+
 
 exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions
@@ -71,6 +104,7 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
     })
   }
 }
+
 
 exports.createSchemaCustomization = ({ actions }) => {
   const { createTypes } = actions
