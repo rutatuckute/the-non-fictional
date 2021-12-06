@@ -4,6 +4,17 @@ title: "DECODING LITHUANIA: A TINY COUNTRY WITH REMINISCENCES OF GREATNESS"
 category: Current Affairs
 category_id: current-affairs
 topic: History / Lithuania / Politics
+tags:
+  - lithuania
+  - russia
+  - history
+  - politics
+  - soviet
+  - union
+  - robert
+  - conquest
+  - great
+  - terror
 excerpt: "To my humble understanding, Lithuania and most notably Lithuanians can
   be comprehended through two major pillars: (1) a long history of statehood or
   the « myth » of the ancient Baltic tribe,  arguably speaking the oldest
