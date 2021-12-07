@@ -24,7 +24,7 @@ excerpt: Quantifying complex human interactions, converting mechanisms of the
   information, and ultimately deriving causalities, and of utmost importance -
   factual wisdom - it was all assumed to establish « The General Theory ».
 date: 2020-09-10T23:24:00.000Z
-cover_image: https://ucarecdn.com/860a894d-62aa-43c5-8443-41e23ffa96a3/
+cover_image: https://ucarecdn.com/8ab43595-53eb-405f-8990-948b83eaad39/
 ---
 - - -
 
@@ -34,7 +34,7 @@ Had it not been for the explanation and causality-seeking animal in me, economic
 
 <p style="text-align: center;">The clocks have been always striking thirteen.</p>
 
-<p style="text-align:center"><img src="https://ucarecdn.com/de0fd9b3-d258-4162-b5e2-411b731e7221/" width="500"></p>
+<p style="text-align:center"><img src="https://ucarecdn.com/8ab43595-53eb-405f-8990-948b83eaad39/" width="500"></p>
 
 <p style="text-align: center;">
 Both the core question in economic modelling <span style="color: #ff5c5c">« what is the correct set of rules for the most satisfactory approximation of reality ? »</span> and the eternal <span style="color: #ff5c5c">« how to make some sense out of life ? »</span> raise in tandem, suffering from the very same - reluctance to integrate the fact that the world is a mere chaos governed by chance tangled in endless interactions and non-linearities.
