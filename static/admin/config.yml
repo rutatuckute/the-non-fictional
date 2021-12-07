@@ -35,6 +35,7 @@ collections:
     fields:
       - {label: "Layout", name: "layout", widget: "hidden", default: "photography"}
       - {label: "Title", name: "title", widget: "string"}
+      - {label: "Location", name: "location", widget: "string"}
       - {label: "Publish Date", name: "date", widget: "datetime"}
       - {label: "Body", name: "body", widget: "markdown"}
       - {label: "Photo", name: "photo", widget: "image", required: true}
