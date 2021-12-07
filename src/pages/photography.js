@@ -1,6 +1,9 @@
 import * as React from "react"
 import { graphql } from "gatsby"
+
 import { Card, Row } from 'react-bootstrap'
+import { BsPinMapFill } from "react-icons/bs"
+
 
 import Layout from "../components/layout"
 
@@ -18,6 +21,7 @@ const Photography = ({data, location}) => {
               <Card className="photo">
                 <Card.Img variant="top" src={photo.frontmatter.photo}/>
                 <Card.Header>{title}</Card.Header>
+                <Card.Header className="location"><BsPinMapFill/> {photo.frontmatter.location}</Card.Header>
                 </Card>
             )
           })}
@@ -45,6 +49,7 @@ export const pageQuery = graphql`
         frontmatter {
           date(formatString: "MMMM DD, YYYY")
           title
+          location
           photo
         }
       }
