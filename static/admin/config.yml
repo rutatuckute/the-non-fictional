@@ -36,6 +36,8 @@ collections:
       - {label: "Layout", name: "layout", widget: "hidden", default: "photography"}
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Location", name: "location", widget: "string"}
+      - {label: "Year", name: "year", widget: "string"}
+      - {label: "Tags", name: "tags", widget: "list"}
       - {label: "Publish Date", name: "date", widget: "datetime"}
       - {label: "Body", name: "body", widget: "markdown"}
       - {label: "Photo", name: "photo", widget: "image", required: true}
