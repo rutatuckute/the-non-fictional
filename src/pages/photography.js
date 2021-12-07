@@ -19,9 +19,9 @@ const Photography = ({data, location}) => {
 
             return (
               <Card className="photo">
-                <Card.Img variant="top" src={photo.frontmatter.photo}/>
+                <Card.Img className="photography-image" variant="top" src={photo.frontmatter.photo}/>
                 <Card.Header>{title}</Card.Header>
-                <Card.Header className="location"><BsPinMapFill/> {photo.frontmatter.location}</Card.Header>
+                <Card.Header className="location"><BsPinMapFill/> {photo.frontmatter.location} | {photo.frontmatter.year}</Card.Header>
                 </Card>
             )
           })}
@@ -50,6 +50,8 @@ export const pageQuery = graphql`
           date(formatString: "MMMM DD, YYYY")
           title
           location
+          year
+          tags
           photo
         }
       }
