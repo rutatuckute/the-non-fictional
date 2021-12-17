@@ -78,12 +78,12 @@ Above all, Ki-Taek may be the one to have taught his son and *in fine* us the gr
 <a class="general-theory" href="https://www.imdb.com/title/tt6751668/?ref_=tt_ch">Ki-taek, Parasite (2019)</a>
 </blockquote>
 
-How to combine the omnipresence of uncertain, unknown, unseen and the intensity of living *de haute de gamme*, intrinsically risky since it comes along with the juxtaposition of forceful euphoria, vast discoveries and great distress ? *Voilà*, one of the greatest challenges of the art of living. 
+How to combine the omnipresence of uncertain, unknown, unseen and the intensity of living *de haute de gamme*, intrinsically risky since it comes along with the juxtaposition of forceful euphoria, vast discoveries and great distress ? *Voilà*, one of the greatest challenges of the art of living.
 
 &nbsp;
 
 - - -
 
-<img class="icon" src="https://ucarecdn.com/f1e78f7f-c437-4a05-94b4-e8a3fb5f01f0/" width="30"><a class="general-theory" style="font-size: 12px;" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2953780">Jeremy A. Frimer, Linda J. Skitka & Matt Motyl (2017). *Liberals and Conservatives are Similarly Motivated to Avoid Exposure to One Another's Opinions.* Journal of Experimental Social Psychology.</a>
+<img class="icon" src="https://ucarecdn.com/f1e78f7f-c437-4a05-94b4-e8a3fb5f01f0/" width="30"><a class="general-theory" style="font-size: 14px;" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2953780">Jeremy A. Frimer, Linda J. Skitka & Matt Motyl (2017). *Liberals and Conservatives are Similarly Motivated to Avoid Exposure to One Another's Opinions.* Journal of Experimental Social Psychology.</a>
 
-<img class="icon" src="https://ucarecdn.com/148f4b56-0d80-4e8a-958b-365400126535/" width="30"><a class="general-theory" style="font-size: 12px;" href="https://www.hup.harvard.edu/catalog.php?isbn=9780674237827">Hugo Mercier & Dan Sperber (2019). *The Enigma of Reason.* Harvard University Press.</a>
+<img class="icon" src="https://ucarecdn.com/148f4b56-0d80-4e8a-958b-365400126535/" width="30"><a class="general-theory" style="font-size: 14px;" href="https://www.hup.harvard.edu/catalog.php?isbn=9780674237827">Hugo Mercier & Dan Sperber (2019). *The Enigma of Reason.* Harvard University Press.</a>

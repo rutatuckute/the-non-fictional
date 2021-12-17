@@ -81,7 +81,7 @@
 
   @media screen and (max-width: 1024px) {
     .blog-post {
-        font-size: 12px;
+        font-size: 14px;
     }
 
     .icon {
@@ -366,9 +366,9 @@
   
   @media (max-width: 42rem) {
     blockquote {
-      padding: var(--spacing-0) var(--spacing-0) var(--spacing-0) var(--spacing-4);
+      padding: var(--spacing-0) var(--spacing-2) var(--spacing-0) var(--spacing-4);
       margin-left: var(--spacing-0);
-      font-size: 12px;
+      font-size: 13px;
     }
     ul,
     ol {
@@ -430,6 +430,10 @@
 }
 
 .current-affairs {
+  color: var(--color-green)
+}
+
+.current-affairs:hover {
   color: var(--color-green)
 }
 

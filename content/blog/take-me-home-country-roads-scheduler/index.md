@@ -19,6 +19,7 @@ cover_image: https://ucarecdn.com/d28b4bb7-891c-4f8c-ac42-3d7dea701501/
 
 If there is one non-negotiable time of the year, it is Christmas. Yet, this piece is not about moral know-alls, nor about the global circumstances we find ourselves in. Instead, it may serve as both (1) a potential tool to plan your *so-much-craved* future getaways and (2) a trick to extract and save data at regular intervals from open sources without lifting a finger, *ou presque*.
 
+&nbsp;
 
 <h4 class="data">MOTIVATION & PROBLEM STATEMENT</h4>
 
@@ -26,6 +27,7 @@ In order to test and learn how to schedule a Python script that connects to an o
 
 Usually, one would frequently visit <em>Skyscanner</em> waiting for the price of a desired flight to drop or seeking the cheapest destinations. It may turn out to be laborious though.  Why not write a script to do it for you?
 
+&nbsp;
 
 <h4 class="data">FROM SKYSCANNER API TO PYTHON</h4>
 
@@ -82,6 +84,7 @@ writer.save()
 The full script can be found here:
 <a href="https://github.com/rutatuckute/skyscanner">https://github.com/rutatuckute/skyscanner</a>
 
+&nbsp;
 
 <h4 class="data">FROM PYTHON TO WINDOWS SCHEDULER</h4>
 
@@ -101,6 +104,7 @@ Once your Python script is ready, follow the steps below to create <em>Windows S
 
 All done ! Your script will be executed at your selected frequency or trigger event.
 
+&nbsp;
 
 <h4 class="data">OUTCOME & PRICE FLUCTUATIONS</h4>
 
