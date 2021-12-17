@@ -69,6 +69,36 @@
     --letterSpacing: 1px;
   }
   
+  /* Media queries */
+
+  @media screen and (min-width: 1024px) {
+    .blog-post {
+        font-size: 16px;
+        padding-right: 20%;
+        padding-left: 20%;
+    }
+  }
+
+  @media screen and (max-width: 1024px) {
+    .blog-post {
+        font-size: 12px;
+    }
+
+    .icon {
+      width: 10%;
+      height: 10%;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+
+    h1 {
+      font-size: var(--fontSize-1);
+    }
+  }
+
   /* HTML elements */
   
   *,
@@ -338,6 +368,7 @@
     blockquote {
       padding: var(--spacing-0) var(--spacing-0) var(--spacing-0) var(--spacing-4);
       margin-left: var(--spacing-0);
+      font-size: 12px;
     }
     ul,
     ol {
@@ -380,9 +411,6 @@
 
 .blog-post {
   color:white;
-  font-size: 15px;
-  padding-right: 20%;
-  padding-left: 20%;
 }
 
 .blog-text {
