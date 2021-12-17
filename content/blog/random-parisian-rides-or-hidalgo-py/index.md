@@ -101,11 +101,11 @@ for point in range(0, len(locations_list)):
 paris_map
 ```
 
-<img src="https://ucarecdn.com/79f93325-d362-424b-8780-be13989bd6b6/" width="900"> &nbsp;
+<img class="blog-post-img" src="https://ucarecdn.com/79f93325-d362-424b-8780-be13989bd6b6/" width="900"> &nbsp;
 
 <span style="color: orange">Locate Control</span> allows to get the position of your device:
 
-<p style="text-align:center"><img src="https://ucarecdn.com/19b4447d-1bc8-4367-89e4-555ed92691ca/" width="600"></p>
+<p style="text-align:center"><img class="blog-post-img" src="https://ucarecdn.com/19b4447d-1bc8-4367-89e4-555ed92691ca/" width="600"></p>
 
 The full code can be found here: https://github.com/rutatuckute/hidalgo
 

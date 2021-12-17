@@ -34,7 +34,7 @@ Had it not been for the explanation and causality-seeking animal in me, economic
 
 <p style="text-align: center;">The clocks have been always striking thirteen.</p>
 
-<p style="text-align:center"><img src="https://ucarecdn.com/8ab43595-53eb-405f-8990-948b83eaad39/" width="500"></p>
+<p style="text-align:center"><img class="blog-post-img" src="https://ucarecdn.com/8ab43595-53eb-405f-8990-948b83eaad39/" width="500"></p>
 
 <p style="text-align: center;">
 Both the core question in economic modelling <span style="color: #ff5c5c">« what is the correct set of rules for the most satisfactory approximation of reality ? »</span> and the eternal <span style="color: #ff5c5c">« how to make some sense out of life ? »</span> raise in tandem, suffering from the very same - reluctance to integrate the fact that the world is a mere chaos governed by chance tangled in endless interactions and non-linearities.
