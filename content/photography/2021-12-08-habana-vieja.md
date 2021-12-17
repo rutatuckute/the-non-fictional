@@ -7,6 +7,6 @@ tags:
   - Strangers
   - People
 date: 2021-12-08T08:57:44.914Z
-photo: https://ucarecdn.com/02871b00-6cdf-4eb5-9737-99b306c8e559/
+photo: https://ucarecdn.com/02871b00-6cdf-4eb5-9737-99b306c8e559/-/preview/-/quality/smart/
 ---
-havana
+![](https://ucarecdn.com/02871b00-6cdf-4eb5-9737-99b306c8e559/-/preview/-/quality/smart/)
