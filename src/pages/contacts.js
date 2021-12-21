@@ -4,7 +4,11 @@ import Layout from "../components/layout"
 const Contacts = ({location}) => {
   return (
     <Layout location={location}>
-      <form name="contact" method="POST" data-netlify="true">
+      <form name="contacts" method="POST" data-netlify="true">
+      <input 
+        type='hidden'
+        name='form-name'
+        value='contacts'/>
         <p>
           <label>Your Name: <input type="text" name="name" /></label>   
         </p>
