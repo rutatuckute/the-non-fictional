@@ -1,27 +1,11 @@
 import * as React from "react"
 import Layout from "../components/layout"
+import Form from "../components/form"
 
 const Contacts = ({location}) => {
   return (
     <Layout location={location}>
-      <form name="contacts" method="POST" data-netlify="true">
-      <input 
-        type='hidden'
-        name='form-name'
-        value='contacts'/>
-        <p>
-          <label>Your Name: <input type="text" name="name" /></label>   
-        </p>
-        <p>
-          <label>Your Email: <input type="email" name="email" /></label>
-        </p>
-        <p>
-          <label>Message: <textarea name="message"></textarea></label>
-        </p>
-        <p>
-          <button type="submit">Send</button>
-        </p>
-      </form>
+      <Form/>
     <div
       style={{
         display: 'flex',
