@@ -12,11 +12,11 @@ const ContactForm = () => {
                     <input type="hidden" name="form-name" value="contacts"/>
                     <Form.Group className="mb-3" controlId="formPlaintext">
                         <Form.Label>Name</Form.Label>
-                            <Form.Control type="text" defaultValue="Name" name="name"/>
+                            <Form.Control type="text" name="name"/>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email</Form.Label>
-                            <Form.Control type="email" placeholder="Enter email" name="email"/>
+                            <Form.Control type="email" name="email"/>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                             <Form.Label>Your message</Form.Label>
@@ -26,24 +26,6 @@ const ContactForm = () => {
                             Submit
                         </Button>
                     </Form>
-                    {/* <form name="contacts" method="post" data-netlify="true">
-                        <input type="hidden" name="form-name" value="contacts"/>
-                    <p>
-                    <label htmlFor="name">Name</label> <br />
-                    <input className="form-inputs" type="text" id="name" name="name" required />
-                    </p>
-                    <p>
-                    <label htmlFor="email">Email</label> <br />
-                    <input className="form-inputs" type="email" id="email" name="email" required />
-                    </p>
-                    <p>
-                    <label htmlFor="message">Your Message</label> <br />
-                    <textarea cols="40" row="5" id="message" name="message" required></textarea>
-                    </p>
-                    <p>
-                    <input type="submit" value="Submit" />
-                    </p>
-                </form> */}
                 </Card.Body>
             </Card>
         </Row>

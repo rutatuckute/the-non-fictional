@@ -608,8 +608,7 @@ select:-webkit-autofill:focus {
 
 textarea.form-control {
   background-color: black;
-  margin-top: 15px;
-  margin-left: 10px;
+  margin: 0;
   border-color: var(--color-primary);
   border-width: 2px;
   color: white;
@@ -618,12 +617,12 @@ textarea.form-control {
 
 textarea.form-control:focus {
   background-color: black;
-  margin-top: 15px;
-  margin-left: 10px;
+  margin: 0;
   border-color: var(--color-primary);
   border-width: 2px;
   color: white;
   height:150px;
+  box-shadow: none;
 }
 
 input.form-control {
@@ -631,6 +630,7 @@ input.form-control {
   border-color: var(--color-primary);
   border-width: 2px;
   color: white;
+  margin: 0;
 }
 
 input.form-control:focus {
@@ -638,6 +638,8 @@ input.form-control:focus {
   border-color: var(--color-primary);
   border-width: 2px;
   color: white;
+  margin: 0;
+  box-shadow: none;
 }
 
 input:-webkit-autofill,
