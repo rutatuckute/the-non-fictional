@@ -12,15 +12,15 @@ const ContactForm = () => {
                     <input type="hidden" name="form-name" value="contacts"/>
                     <Form.Group className="mb-3" controlId="formPlaintext">
                         <Form.Label>Name</Form.Label>
-                            <Form.Control type="text" defaultValue="Name" />
+                            <Form.Control type="text" defaultValue="Name" name="name"/>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email</Form.Label>
-                            <Form.Control type="email" placeholder="Enter email" />
+                            <Form.Control type="email" placeholder="Enter email" name="email"/>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                             <Form.Label>Your message</Form.Label>
-                            <Form.Control as="textarea" rows={3} />
+                            <Form.Control as="textarea" rows={3} name="message"/>
                         </Form.Group>
                         <Button variant="primary" type="submit">
                             Submit
