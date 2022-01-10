@@ -77,12 +77,20 @@
         padding-right: 20%;
         padding-left: 20%;
     }
+
+    p.bref{
+      margin-top: 150px;
+    }
   }
 
   @media screen and (max-width: 768px) {
     .main-heading a {
       font-size: 4.586rem;
-     }
+    }
+
+    p.bref{
+      margin-top: 50px;
+    }
   }
 
   @media screen and (max-width: 1024px) {
@@ -656,4 +664,19 @@ select:-webkit-autofill:focus {
   -webkit-text-fill-color: white;
   -webkit-box-shadow: 0 0 0px 1000px #000 inset;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+/* About */
+
+p.bref {
+  color: white;
+  text-align: center;
+}
+
+h1.bref {
+  margin-top: 50px;
+}
+
+.bref-container {
+  margin-bottom: 30vh;
 }
