@@ -24,7 +24,7 @@ excerpt: " I will not expose the invasion of Ukraine by Russia, its total
   into the traps of what has been assiduously developed and refined over decades
   by con liberators."
 date: 2022-03-15T21:26:06.605Z
-cover_image: https://ucarecdn.com/e6ffbb78-b5c2-45bc-bb0b-a1b7451c6a22/
+cover_image: https://ucarecdn.com/e23830b5-5c9f-4f4b-801b-4d6e6c28b36a/
 ---
 21st day of a full-scale war unleashed on a sovereign state in Europe in 2022.
 
