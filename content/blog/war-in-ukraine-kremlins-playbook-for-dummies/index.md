@@ -23,7 +23,7 @@ excerpt: " I will not expose the invasion of Ukraine by Russia, its total
   manner, a tiny part of the Kremlin’s Playbook. One shall be wary of getting
   into the traps of what has been assiduously developed and refined over decades
   by con liberators."
-date: 2022-03-15T21:26:06.605Z
+date: 2022-03-16T22:01:06.605Z
 cover_image: https://ucarecdn.com/e23830b5-5c9f-4f4b-801b-4d6e6c28b36a/
 ---
 - - -
