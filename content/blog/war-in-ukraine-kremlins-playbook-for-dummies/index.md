@@ -125,3 +125,17 @@ Let’s take somes excerpts from a <a class="current-affairs" href="https://www.
 This is certainly not exhaustive and shall be completed whenever needed.
 - - -
 
+<img class="icon" src="https://ucarecdn.com/f3ec0c3a-dec4-4047-b1cb-a8edf41ae64a/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.goodreads.com/book/show/9479238-day-of-the-oprichnik">Vladimir Sorokin (2006). *Day of the Oprichnik.*</a>
+<br>
+<img class="icon" src="https://ucarecdn.com/f3ec0c3a-dec4-4047-b1cb-a8edf41ae64a/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.goodreads.com/en/book/show/21413849-nothing-is-true-and-everything-is-possible">Peter Pomerantsev (2014). *Nothing Is True and Everything Is Possible: The Surreal Heart of the New Russia.*</a>
+
+<img class="icon" src="https://ucarecdn.com/0d50921a-2ce5-4120-bf08-df09f11ba21c/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.economist.com/by-invitation/2022/03/02/lithuanias-prime-minister-ingrida-simonyte-says-russias-invasion-was-predictable">The Economist (2022). *Lithuania’s prime minister, Ingrida Simonyte, says Russia’s invasion was predictable.*</a>
+
+<img class="icon" src="https://ucarecdn.com/8e85c0bb-45a4-4556-8b3a-1568cb3b45ce/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://euvsdisinfo.eu/">EUvsDisinfo</a>
+<br>
+<img class="icon" src="https://ucarecdn.com/8e85c0bb-45a4-4556-8b3a-1568cb3b45ce/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://arenaresearch.org/">Arena Research Program</a>
+
+<img class="icon" src="https://ucarecdn.com/9cfebffa-8145-4d4a-b670-e7f359ca7aa2/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.imdb.com/title/tt3560686/">Yuriy Bykov (2014). *The Fool.*</a>
+<br>
+<img class="icon" src="https://ucarecdn.com/9cfebffa-8145-4d4a-b670-e7f359ca7aa2/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.youtube.com/watch?v=N0NCzTIpJjs">An evening with Anne Applebaum | On propaganda & fake news (2020)</a>
+
