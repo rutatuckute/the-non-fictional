@@ -113,7 +113,7 @@ Disinformation works so strikingly well against the West thanks to what is actua
 
 <h4 class="current-affairs">NEWSPEAK & CENSORSHIP</h4>
 
-All these aformentioned tactics are enforced and masterly wrapped into the <span style="color: #8ac926">Newspeak</span>, which is then repeated over and over again by <span style="color: #8ac926">Russian nowadays <em>nomenclatura</em></span> - Sergey Lavrov, Maria Zakharova, Putin itself. Internally, ordinary citizens are subjected to the shackles of censorship. A <span style="color: #8ac926">thoughtcrime</span> could send you to jail for 15 years.
+All these aformentioned tactics are enforced and masterly wrapped into the <span style="color: #8ac926">Newspeak</span>, which is then repeated over and over again by <span style="color: #8ac926">Russian nowadays <em>nomenclatura</em></span> - Sergey Lavrov, Maria Zakharova, Putin himself. Internally, ordinary citizens are subjected to the shackles of censorship. A <span style="color: #8ac926">thoughtcrime</span> could send you to jail for 15 years.
 
 Let’s take somes excerpts from a <a class="current-affairs" href="https://www.mid.ru/en/press_service/minister_speeches/1802677/">recent interview with Lavrov</a> - it contains a full package of <span style="color: #8ac926">Big Lies, misleading information and whataboutism</span>.
 
