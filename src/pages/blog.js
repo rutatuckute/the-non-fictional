@@ -2,7 +2,7 @@ import * as React from "react"
 import { useState } from "react"
 import { graphql, Link } from "gatsby"
 import { Card, Button, Container, Row, Col } from 'react-bootstrap'
-import { FaFolderOpen, FaCoffee } from "react-icons/fa"
+import { FaFolderOpen, FaCoffee, FaTwitterSquare} from "react-icons/fa"
 import { MdOutlineDateRange } from "react-icons/md"
 import { BsLightbulb } from "react-icons/bs"
 import { ImSearch } from "react-icons/im"
@@ -62,7 +62,6 @@ const BlogIndex = ({data, location}) => {
             const title = post.frontmatter.title || post.fields.slug
 
             return (
-
               <Card border="secondary" key={post.fields.slug} className={post.frontmatter.category_id}>
                 <Card.Title>{title}</Card.Title>
                 <Card.Img variant="top" src={post.frontmatter.cover_image}/>
@@ -74,9 +73,11 @@ const BlogIndex = ({data, location}) => {
                         <BsLightbulb/> {post.frontmatter.topic}
                   </Card.Text>
                   <Card.Text>{post.frontmatter.excerpt}</Card.Text>
-                  <Button href={post.fields.slug}>Continue Reading</Button>
+                  <Button href={post.fields.slug}>Continue Reading</Button> &nbsp;&nbsp;
+                  <Button className="twitter-btn" href="https://twitter.com/share?ref_src=twsrc%5Etfw"><FaTwitterSquare size={23}/></Button>
                 </Card.Body>
               </Card>
+              
             )
           })}
           </Row>
