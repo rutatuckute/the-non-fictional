@@ -74,8 +74,10 @@ const BlogIndex = ({data, location}) => {
                   </Card.Text>
                   <Card.Text>{post.frontmatter.excerpt}</Card.Text>
                   <Button href={post.fields.slug}>Continue Reading</Button> &nbsp;&nbsp;
-                  <Button className="twitter-btn" href="https://twitter.com/share?ref_src=twsrc%5Etfw"><FaTwitterSquare size={23}/></Button>
+                  <Button className="twitter-share-button" href="https://twitter.com/share?ref_src=twsrc%5Etfw" data-show-count="false"><FaTwitterSquare size={23}/></Button>
+                  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                 </Card.Body>
+                <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
               </Card>
               
             )
