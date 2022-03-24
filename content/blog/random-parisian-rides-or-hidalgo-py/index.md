@@ -108,7 +108,7 @@ paris_map
 
 <p style="text-align:center"><img class="blog-post-img" src="https://ucarecdn.com/19b4447d-1bc8-4367-89e4-555ed92691ca/" width="600"></p>
 
-The full code can be found here: https://github.com/rutatuckute/hidalgo
+The full code can be found here: <a href="https://github.com/rutatuckute/the-non-fictional-scripts/tree/main/hidalgo">rutatuckute/the-non-fictional-scripts/hidalgo</a>
 
 &nbsp;
 
