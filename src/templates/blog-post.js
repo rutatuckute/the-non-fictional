@@ -34,9 +34,10 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
             <FaFolderOpen/> {post.frontmatter.category} &nbsp;&nbsp;
             <FaCoffee/> {post.timeToRead} min &nbsp;&nbsp;
             <BsLightbulb/> {post.frontmatter.topic} &nbsp;&nbsp;
-            {post.frontmatter.category_id=='data' ? <FaGithub/> : <></>}
+            {post.frontmatter.category_id=='data' ? <Button className="github-button" href={post.frontmatter.link}>
+              <FaGithub size={23}/>Github</Button> : <></>}
             &nbsp;&nbsp;
-            <Button className="twitter-share-button" href="https://twitter.com/share?ref_src=twsrc%5Etfw" data-show-count="false"><FaTwitterSquare size={23}/></Button>
+            <Button className="twitter-button" href="https://twitter.com/share?ref_src=twsrc%5Etfw" data-show-count="false"><FaTwitterSquare size={23}/>Tweet</Button>
             <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             
           </p>
@@ -104,6 +105,7 @@ export const pageQuery = graphql`
         category
         category_id
         topic
+        link
       }
       timeToRead
     }

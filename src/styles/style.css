@@ -680,3 +680,17 @@ h1.bref {
 .bref-container {
   margin-bottom: 30vh;
 }
+
+/* Buttons */
+
+.github-button {
+  background-color: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+.twitter-button {
+  background-color: #1DA1F2;
+  border-color: #1DA1F2;
+}
+
+
