@@ -2,7 +2,7 @@ import * as React from "react"
 import { Link, graphql } from "gatsby"
 import { Card, Button, Container, Row } from 'react-bootstrap'
 
-import { FaFolderOpen, FaCoffee, FaTwitterSquare} from "react-icons/fa"
+import { FaFolderOpen, FaCoffee, FaTwitterSquare, FaGithub} from "react-icons/fa"
 import { MdOutlineDateRange } from "react-icons/md"
 import { BsLightbulb } from "react-icons/bs"
 
@@ -33,9 +33,12 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
             <MdOutlineDateRange/> {post.frontmatter.date} &nbsp;&nbsp;
             <FaFolderOpen/> {post.frontmatter.category} &nbsp;&nbsp;
             <FaCoffee/> {post.timeToRead} min &nbsp;&nbsp;
-            <BsLightbulb/> {post.frontmatter.topic} &nbsp;&nbsp;&nbsp;&nbsp;
+            <BsLightbulb/> {post.frontmatter.topic} &nbsp;&nbsp;
+            {post.frontmatter.category_id=='data' ? <FaGithub/> : <></>}
+            &nbsp;&nbsp;
             <Button className="twitter-share-button" href="https://twitter.com/share?ref_src=twsrc%5Etfw" data-show-count="false"><FaTwitterSquare size={23}/></Button>
             <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            
           </p>
         </header>
         <section

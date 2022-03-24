@@ -82,7 +82,7 @@ writer.save()
 ```
 
 The full script can be found here:
-<a href="https://github.com/rutatuckute/skyscanner">https://github.com/rutatuckute/skyscanner</a>
+<a href="https://github.com/rutatuckute/the-non-fictional-scripts/tree/main/skyscanner">rutatuckute/the-non-fictional-scripts/skyscanner</a>
 
 &nbsp;
 

@@ -115,11 +115,6 @@
 
   /* HTML elements */
 
-  .data .twitter-btn .btn-primary {
-    border-color: blue !important;
-    background-color: blue !important;
-  }
-
   *,
   :after,
   :before {
