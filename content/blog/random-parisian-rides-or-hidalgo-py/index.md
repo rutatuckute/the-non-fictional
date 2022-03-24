@@ -14,6 +14,7 @@ tags:
   - open
   - source
   - requests
+link: https://github.com/rutatuckute/the-non-fictional-scripts/tree/main/hidalgo
 excerpt: "The aim of this piece is two-fold: (1) to provide you with a glimpse
   into the unbearable Parisian on-road conduct and (2) to show you how open bike
   data can be exploited to code some cool, yet as some would argue, useless
