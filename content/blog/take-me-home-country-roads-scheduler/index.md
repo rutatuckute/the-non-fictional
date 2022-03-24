@@ -7,6 +7,7 @@ topic: Python / Data
 tags:
   - Python
   - Data
+link: https://github.com/rutatuckute/the-non-fictional-scripts/tree/main/skyscanner
 excerpt: If there is one non-negotiable time of the year, it is Christmas. Yet,
   this piece is not about moral know-alls, nor about the global circumstances we
   find ourselves in. Instead, it may serve as both (1) a potential tool to plan
