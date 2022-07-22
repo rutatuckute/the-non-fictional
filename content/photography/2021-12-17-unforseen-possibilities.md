@@ -2,7 +2,7 @@
 layout: photography
 title: "& UNFORSEEN POSSIBILITIES"
 location: Stockholm, Sweden
-year: "2017"
+year: "2018"
 tags:
   - People
   - Strangers
