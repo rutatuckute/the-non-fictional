@@ -1,4 +1,3 @@
-// https://www.gatsbyjs.com/docs/reference/config-files/gatsby-config/
 
 module.exports = {
 
@@ -11,7 +10,7 @@ module.exports = {
     description: `Personal space dedicated to photography and writings.`,
     siteUrl: `https://thenonfictional.com/`,
     social: {
-      twitter: `rutatuckute`,
+      twitter: `@rutatuckute`,
     },
   },
 
@@ -147,12 +146,10 @@ module.exports = {
         name: `The Non Fictional`,
         short_name: `The Non Fictional`,
         start_url: `/`,
-        background_color: `#1C2833`,
-        // This will impact how browsers show your PWA/website
-        // https://css-tricks.com/meta-theme-color-and-trickery/
-        // theme_color: `#663399`,
+        background_color: `black`,
+        theme_color: `orange`,
         display: `minimal-ui`,
-        icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
+        icon: `src/images/logo.jpeg`,
       },
     },
     // this (optional) plugin enables Progressive Web App + Offline functionality
