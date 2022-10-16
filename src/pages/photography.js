@@ -29,11 +29,11 @@ const Photography = ({data, location}) => {
                           className="photography-image" 
                           variant="top"
                           src={photo.frontmatter.photo}/>
-                <p>
+                <p style={{margin:0, padding:0}}>
                 <a href={photo.fields.slug}><ImZoomIn color="white" size="20"/></a> &nbsp;
                 <ImNewTab color="white" size="20" onClick={() => { openInNewTab(photo.frontmatter.photo) }}/>
                 </p>
-                <Card.Header>{title}</Card.Header>
+                <Card.Header style={{margin:0, padding:0}}>{title}</Card.Header>
                 <Card.Header className="location"><BsPinMapFill/> {photo.frontmatter.location} | {photo.frontmatter.year}</Card.Header>
                 </Card>
             )
