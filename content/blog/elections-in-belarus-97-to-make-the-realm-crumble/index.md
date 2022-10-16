@@ -1,5 +1,6 @@
 ---
 layout: blog
+template: blog-post
 title: "ELECTIONS IN BELARUS: 97% TO MAKE THE REALM CRUMBLE"
 category: Current Affairs
 category_id: current-affairs

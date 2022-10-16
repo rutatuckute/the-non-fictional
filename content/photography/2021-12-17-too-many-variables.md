@@ -1,5 +1,6 @@
 ---
 layout: photography
+template: photo-post
 title: TOO MANY VARIABLES
 location: Stockholm, Sweden
 year: "2018"

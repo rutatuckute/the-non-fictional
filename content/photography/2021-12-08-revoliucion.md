@@ -1,5 +1,6 @@
 ---
 layout: photography
+template: photo-post
 title: REVOLIUCION
 location: Havana, Cuba
 year: "2018"

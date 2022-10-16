@@ -1,5 +1,6 @@
 ---
 layout: photography
+template: photo-post
 title: GARDEN OF THE HESPERIDES
 location: Paris, France
 year: "2017"

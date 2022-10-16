@@ -3,6 +3,7 @@ import { graphql } from "gatsby"
 
 import { Card, Row } from 'react-bootstrap'
 import { BsPinMapFill } from "react-icons/bs"
+import { ImZoomIn, ImNewTab } from "react-icons/im"
 
 
 import Layout from "../components/layout"
@@ -17,9 +18,21 @@ const Photography = ({data, location}) => {
     {photos.map(photo => {
             const title = photo.frontmatter.title || photo.fields.slug
 
+            const openInNewTab = (url) => {
+              const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
+              if (newWindow) newWindow.opener = null
+            }
+
             return (
               <Card className="photo">
-                <Card.Img className="photography-image" variant="top" src={photo.frontmatter.photo}/>
+                <Card.Img 
+                          className="photography-image" 
+                          variant="top"
+                          src={photo.frontmatter.photo}/>
+                <p>
+                <a href={photo.fields.slug}><ImZoomIn color="white" size="20"/></a> &nbsp;
+                <ImNewTab color="white" size="20" onClick={() => { openInNewTab(photo.frontmatter.photo) }}/>
+                </p>
                 <Card.Header>{title}</Card.Header>
                 <Card.Header className="location"><BsPinMapFill/> {photo.frontmatter.location} | {photo.frontmatter.year}</Card.Header>
                 </Card>
@@ -28,6 +41,7 @@ const Photography = ({data, location}) => {
     </Row>
     </Layout>
   );
+
 };
 
 export default Photography

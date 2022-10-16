@@ -1,5 +1,6 @@
 ---
 layout: photography
+template: photo-post
 title: LE GAILLON
 location: Paris, France
 year: "2019"

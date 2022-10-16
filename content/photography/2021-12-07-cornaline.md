@@ -1,5 +1,6 @@
 ---
 layout: photography
+template: photo-post
 title: CORNALINE
 location: Étretat, France
 year: "2020"

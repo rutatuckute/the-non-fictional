@@ -1,5 +1,6 @@
 ---
 layout: photography
+template: photo-post
 title: CIAO AMORE
 location: Paris, France
 year: "2019"

@@ -1,5 +1,6 @@
 ---
 layout: photography
+template: photo-post
 title: ENGLISCHER GARTEN
 location: Munich, Germany
 year: "2016"

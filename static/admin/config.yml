@@ -18,6 +18,7 @@ collections:
     path: '{{title}}/index'
     fields:
       - {label: "Layout", name: "layout", widget: "hidden", default: "blog"}
+      - {label: "Template", name: "template", widget: "hidden", default: "blog-post"}
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Category", name: "category", widget: "string"}
       - {label: "Category Id", name: "category_id", widget: "string"}
@@ -35,6 +36,7 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
       - {label: "Layout", name: "layout", widget: "hidden", default: "photography"}
+      - {label: "Template", name: "template", widget: "hidden", default: "photo-post"}
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Location", name: "location", widget: "string"}
       - {label: "Year", name: "year", widget: "string"}

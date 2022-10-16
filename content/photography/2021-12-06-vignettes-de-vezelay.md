@@ -1,5 +1,6 @@
 ---
 layout: photography
+template: photo-post
 title: VIGNETTES DE VEZELAY
 location: Vézelay, France
 year: "2020"

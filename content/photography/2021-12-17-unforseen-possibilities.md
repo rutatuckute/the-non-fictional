@@ -1,5 +1,6 @@
 ---
 layout: photography
+template: photo-post
 title: "& UNFORSEEN POSSIBILITIES"
 location: Stockholm, Sweden
 year: "2018"

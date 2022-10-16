@@ -576,6 +576,11 @@ input::placeholder{
   object-fit: cover !important;
 }
 
+.photography-full {
+  width: 100% !important;
+  object-fit: fill !important;
+}
+
 
 /* Contact Form */
 

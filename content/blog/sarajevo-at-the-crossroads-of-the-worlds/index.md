@@ -1,5 +1,6 @@
 ---
 layout: blog
+template: blog-post
 title: "SARAJEVO: AT THE CROSSROADS OF THE WORLDS"
 category: General Theory
 category_id: general-theory

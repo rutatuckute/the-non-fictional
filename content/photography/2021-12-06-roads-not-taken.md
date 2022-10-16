@@ -1,5 +1,6 @@
 ---
 layout: photography
+template: photo-post
 title: ROADS NOT TAKEN
 location: Paris, France
 year: "2019"

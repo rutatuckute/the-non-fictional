@@ -1,5 +1,6 @@
 ---
 layout: photography
+template: photo-post
 title: RESIDENCE
 location: Paris, France
 year: "2019"

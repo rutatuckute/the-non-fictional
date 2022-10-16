@@ -1,5 +1,6 @@
 ---
 layout: photography
+template: photo-post
 title: EXCLUSIVE CREATION
 location: Tenerife, Canary Islands, Spain
 year: "2017"

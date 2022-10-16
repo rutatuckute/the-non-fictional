@@ -1,5 +1,6 @@
 ---
 layout: blog
+template: blog-post
 title: "WAR IN UKRAINE: KREMLIN'S PLAYBOOK FOR DUMMIES"
 category: Current Affairs
 category_id: current-affairs

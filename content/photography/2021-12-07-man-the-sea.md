@@ -1,5 +1,6 @@
 ---
 layout: photography
+template: photo-post
 title: MAN & THE SEA
 location: Belfast, Northern Ireland
 year: "2020"

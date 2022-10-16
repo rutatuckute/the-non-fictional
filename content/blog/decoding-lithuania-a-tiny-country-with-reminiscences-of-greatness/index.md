@@ -1,5 +1,6 @@
 ---
 layout: blog
+template: blog-post
 title: "DECODING LITHUANIA: A TINY COUNTRY WITH REMINISCENCES OF GREATNESS"
 category: Current Affairs
 category_id: current-affairs

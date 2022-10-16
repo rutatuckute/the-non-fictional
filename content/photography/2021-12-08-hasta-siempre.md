@@ -1,5 +1,6 @@
 ---
 layout: photography
+template: photo-post
 title: HASTA SIEMPRE
 location: Havana, Cuba
 year: "2018"

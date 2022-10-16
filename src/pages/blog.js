@@ -7,7 +7,6 @@ import { MdOutlineDateRange } from "react-icons/md"
 import { BsLightbulb } from "react-icons/bs"
 import { ImSearch } from "react-icons/im"
 
-
 import Layout from "../components/layout"
 import BlogDropdown from "../components/dropdown"
 
