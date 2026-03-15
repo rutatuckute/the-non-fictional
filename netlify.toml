@@ -4,4 +4,6 @@ publish = "public"
 
 [[plugins]]
 package = "@netlify/plugin-gatsby"
-enabled = false
+
+  [plugins.inputs]
+  enabled = false
