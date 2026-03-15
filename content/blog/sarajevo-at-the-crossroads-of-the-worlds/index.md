@@ -3,7 +3,7 @@ layout: blog
 template: blog-post
 title: "SARAJEVO: AT THE CROSSROADS OF THE WORLDS"
 category: General Theory
-category_id: general-theory
+category_id: essays
 topic: Journeys / Sarajevo
 tags:
   - journey
@@ -17,8 +17,7 @@ tags:
   - visit
 link: https://github.com/rutatuckute/the-non-fictional-scripts/tree/main/sarajevo
 excerpt: The experience of Sarajevo lies in the hazard of the questions asked
-  and the answers received in the surroundings I found myself in. The very same
-  is also true for how we go through life. The following narratives on Sarajevo
+  and the answers received in the surroundings I found myself in. The following narratives on Sarajevo
   are the resulting outcome - my mere impressions with a little bit of context
   from the past to make the present more comprehensible.
 date: 2022-07-22T10:51:32.407Z

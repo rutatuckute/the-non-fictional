@@ -11,6 +11,7 @@ import "./src/normalize.css"
 // import "./src/styles/style.css"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "./src/styles/style.css"
+import "bootstrap-icons/font/bootstrap-icons.css"
 
 // Highlighting for code blocks (dark mode style)
 import "prismjs/themes/prism-okaidia.css"

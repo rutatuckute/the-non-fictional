@@ -1,4 +1,3 @@
-
 module.exports = {
 
   siteMetadata: {
@@ -15,8 +14,21 @@ module.exports = {
   },
 
   plugins: [
-
+    // --- Core / images ---
     `gatsby-plugin-image`,
+    `gatsby-transformer-sharp`,
+    `gatsby-plugin-sharp`,
+
+    `gatsby-plugin-sitemap`,
+
+    {
+      resolve: `gatsby-plugin-robots-txt`,
+      options: {
+        policy: [{ userAgent: `*`, allow: `/` }],
+      },
+    },
+
+    // --- Content sources ---
     {
       resolve: `gatsby-source-filesystem`,
       options: {
@@ -38,6 +50,8 @@ module.exports = {
         path: `${__dirname}/src/images`,
       },
     },
+
+    // --- Markdown transformer ---
     {
       resolve: `gatsby-transformer-remark`,
       options: {
@@ -45,7 +59,9 @@ module.exports = {
           {
             resolve: `gatsby-remark-images`,
             options: {
-              maxWidth: 630,
+              maxWidth: 720,
+              linkImagesToOriginal: false,
+              showCaptions: true,
             },
           },
           {
@@ -55,38 +71,19 @@ module.exports = {
             },
           },
           {
-            resolve: `gatsby-transformer-remark`,
+            resolve: `gatsby-remark-vscode`,
             options: {
-              plugins: [
-                `gatsby-remark-reading-time`,
-              ],
+              theme: `High Contrast`,
             },
           },
-          {
-          resolve: `gatsby-transformer-remark`,
-          options: {
-              plugins: [{
-                resolve: `gatsby-remark-vscode`,
-                options: {
-                  theme: 'High Contrast'
-                }
-              }]
-            }
-          },
-          `gatsby-remark-prismjs`,
+
           `gatsby-remark-copy-linked-files`,
           `gatsby-remark-smartypants`,
         ],
       },
     },
-    `gatsby-transformer-sharp`,
-    `gatsby-plugin-sharp`,
-    // {
-    //   resolve: `gatsby-plugin-google-analytics`,
-    //   options: {
-    //     trackingId: `ADD YOUR TRACKING ID HERE`,
-    //   },
-    // },
+
+        // --- RSS feed ---
     {
       resolve: `gatsby-plugin-feed`,
       options: {
@@ -104,56 +101,50 @@ module.exports = {
         `,
         feeds: [
           {
-            serialize: ({ query: { site, allMarkdownRemark } }) => {
-              return allMarkdownRemark.nodes.map(node => {
-                return Object.assign({}, node.frontmatter, {
+            serialize: ({ query: { site, allMarkdownRemark } }) =>
+              allMarkdownRemark.nodes.map((node) =>
+                Object.assign({}, node.frontmatter, {
                   description: node.excerpt,
                   date: node.frontmatter.date,
                   url: site.siteMetadata.siteUrl + node.fields.slug,
                   guid: site.siteMetadata.siteUrl + node.fields.slug,
                   custom_elements: [{ "content:encoded": node.html }],
                 })
-              })
-            },
+              ),
             query: `
               {
-                allMarkdownRemark(
-                  sort: { order: DESC, fields: [frontmatter___date] },
-                ) {
+                allMarkdownRemark(sort: { order: DESC, fields: [frontmatter___date] }) {
                   nodes {
                     excerpt
                     html
-                    fields {
-                      slug
-                    }
-                    frontmatter {
-                      title
-                      date
-                    }
+                    fields { slug }
+                    frontmatter { title date }
                   }
                 }
               }
             `,
-            output: "/rss.xml",
-            title: "Gatsby Starter Blog RSS Feed",
+            output: `/rss.xml`,
+            title: `The Non Fictional — RSS`,
           },
         ],
       },
     },
+
+    // --- PWA manifest ---
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
         name: `The Non Fictional`,
         short_name: `The Non Fictional`,
         start_url: `/`,
-        background_color: `black`,
-        theme_color: `orange`,
+        background_color: `#000000`,
+        theme_color: `#FFA500`,
         display: `minimal-ui`,
         icon: `src/images/logo.jpeg`,
       },
     },
-    // this (optional) plugin enables Progressive Web App + Offline functionality
-    // To learn more, visit: https://gatsby.dev/offline
+
+    // Optional offline support (enable if you want PWA caching)
     // `gatsby-plugin-offline`,
   ],
 }

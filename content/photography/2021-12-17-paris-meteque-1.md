@@ -8,6 +8,7 @@ tags:
   - City
   - Strangers
   - People
+type: strangers
 date: 2021-12-17T21:07:03.286Z
 photo: "https://ucarecdn.com/\r
 

@@ -3,7 +3,7 @@ layout: blog
 template: blog-post
 title: "WAR IN UKRAINE: KREMLIN'S PLAYBOOK FOR DUMMIES"
 category: Current Affairs
-category_id: current-affairs
+category_id: essays
 topic: War / Ukraine / Russia
 tags:
   - war
@@ -13,14 +13,7 @@ tags:
   - disinformation
   - whataboutism
   - kremlin
-excerpt: " I will not expose the invasion of Ukraine by Russia, its total
-  illegitimacy and brutality. I will not debunk the pseudo-argument on NATO
-  expansion as the culprit (think again), nor will I remind how the West was «
-  greedy and delusional » (they were and, to a certain extent, still are). There
-  is no reason a single Russian soldier should have ever crossed the border and
-  stepped onto Ukrainian soil. Period. The rest is the devastating spiral of war
-  and synergies or both intended and unintended consequences, and it will only
-  get worse. Rather, I will make a humble effort to assemble, in a concise
+excerpt: " A humble effort to assemble, in a concise
   manner, a tiny part of the Kremlin’s Playbook. One shall be wary of getting
   into the traps of what has been assiduously developed and refined over decades
   by con liberators."
