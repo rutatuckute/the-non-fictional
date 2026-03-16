@@ -8,7 +8,6 @@ import { BsLightbulb } from "react-icons/bs"
 
 import Bio from "../components/bio"
 import Layout from "../components/layout"
-import Seo from "../components/seo"
 
 const BlogPostTemplate = ({ data, pageContext, location }) => {
   const post = data.markdownRemark
@@ -17,10 +16,6 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
 
   return (
     <Layout location={location} title={siteTitle}>
-      <Seo
-        title={post.frontmatter.title}
-        description={post.frontmatter.description || post.excerpt}
-      />
       <Container fluid>
       <article
         className="blog-post"
@@ -85,6 +80,34 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
 
 export default BlogPostTemplate
 
+export const Head = ({ data }) => {
+  const siteTitle = data.site.siteMetadata?.title || "The Non Fictional"
+  const post = data.markdownRemark
+
+  const title = post.frontmatter.title
+  const description = post.excerpt
+  const canonical = `${data.site.siteMetadata.siteUrl}${post.fields.slug}`
+
+  return (
+    <>
+      <title>{title} | {siteTitle}</title>
+      <link rel="canonical" href={canonical} />
+      <meta name="description" content={description} />
+
+      {/* OpenGraph */}
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content={canonical} />
+
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+    </>
+  )
+}
+
 export const pageQuery = graphql`
   query BlogPostBySlug(
     $slug: String!
@@ -92,12 +115,19 @@ export const pageQuery = graphql`
     site {
       siteMetadata {
         title
+        siteUrl
       }
     }
     markdownRemark(fields: { slug: { eq: $slug } }) {
       id
       excerpt(pruneLength: 160)
       html
+      fields {
+        slug
+        readingTime {
+          text
+        }
+      }
       frontmatter {
         title
         date(formatString: "MMMM DD, YYYY")
@@ -107,7 +137,6 @@ export const pageQuery = graphql`
         topic
         link
       }
-      timeToRead
     }
   }
 `

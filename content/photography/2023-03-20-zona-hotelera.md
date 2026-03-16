@@ -1,11 +1,11 @@
 ---
 layout: photography
-template: photo-post
 title: ZONA HOTELERA
 location: Holbox, Quintana Roo, Mexico
 year: "2020"
 tags:
   - Landscape
+type: scenes
 date: 2023-03-20T12:10:33.145Z
 photo: https://ucarecdn.com/e1792231-7746-40eb-9b61-1b886994dcab/
 ---

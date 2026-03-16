@@ -6,6 +6,7 @@ year: "2022"
 tags:
   - People
   - Strangers
+type: strangers
 date: 2022-10-16T16:56:19.332Z
 photo: |-
   https://ucarecdn.com/

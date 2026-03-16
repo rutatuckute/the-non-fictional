@@ -6,6 +6,7 @@ location: Paris, France
 year: "2019"
 tags:
   - Portrait
+type: portraits
 date: 2021-12-17T20:50:18.121Z
 photo: "https://ucarecdn.com/\r
 

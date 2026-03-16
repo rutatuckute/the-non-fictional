@@ -3,7 +3,7 @@ layout: blog
 template: blog-post
 title: "ELECTIONS IN BELARUS: 97% TO MAKE THE REALM CRUMBLE"
 category: Current Affairs
-category_id: current-affairs
+category_id: essays
 topic: Politics / Belarus
 tags:
   - belarus
@@ -14,10 +14,7 @@ tags:
   - lukashenka
   - sasha
   - tikhanovskaya
-excerpt: For an outsider, Belarus remains as silent and little-known as if its
-  dense ancient forests - the ones that once kept the Golden Horde away - were
-  still covering up what is going on behind the scenes. Suck lack of interest is
-  profoundly unjustified. Against all odds, political dynamics are radically
+excerpt: Against all odds, political dynamics are radically
   shifting in « Europe’s last dictatorship », perhaps for the very first time
   since a quarter of a century as the country heads towards a presidential
   election on August 9th.

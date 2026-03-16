@@ -3,7 +3,7 @@ layout: blog
 template: blog-post
 title: "DECODING LITHUANIA: A TINY COUNTRY WITH REMINISCENCES OF GREATNESS"
 category: Current Affairs
-category_id: current-affairs
+category_id: essays
 topic: History / Lithuania / Politics
 tags:
   - lithuania
@@ -17,13 +17,8 @@ tags:
   - great
   - terror
 excerpt: "To my humble understanding, Lithuania and most notably Lithuanians can
-  be comprehended through two major pillars: (1) a long history of statehood or
-  the « myth » of the ancient Baltic tribe,  arguably speaking the oldest
-  surviving indo-European language - the very last pagans of Europe - who once
-  ruled the largest medieval European state stretching all the way from the
-  Baltic to the Black Sea and (2) collective trauma unleashed by 50 years of
-  Soviet occupation, worse still, exacerbated by international ignorance and
-  attempts to shake off the shackles of the homo sovieticus."
+  be comprehended through two major pillars: (1) a long history of statehood and (2) collective trauma unleashed by 50 years of
+  Soviet occupation."
 date: 2021-03-11T23:55:51.258Z
 cover_image: https://ucarecdn.com/93f215bd-b53e-4bae-b702-a45c99860aa8/
 ---

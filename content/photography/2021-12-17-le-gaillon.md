@@ -6,6 +6,7 @@ location: Paris, France
 year: "2019"
 tags:
   - City
+type: scenes
 date: 2021-12-17T21:04:56.457Z
 photo: "https://ucarecdn.com/\r
 

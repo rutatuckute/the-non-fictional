@@ -1,4 +1,5 @@
-import * as React from "react"
+import * as React from "react" 
+import logo from "../images/logo.jpeg"
 import { Link, graphql, useStaticQuery } from "gatsby"
 import {Card, Row} from 'react-bootstrap'
 
@@ -42,23 +43,34 @@ const Layout = ({ location, children }) => {
 
   return (
     <div className="global-wrapper" data-is-root-path={isRootPath}>
-      <Navigation/>
-      <header className="global-header">{header}</header>
+      <header className="global-header">
+        <div className="hero-inner">
+          <div className="hero-logo">
+            <Link to="/">
+              <img src={logo} alt="The Non Fictional logo" />
+            </Link>
+          </div>
+          {header}
+          <div className="hero-divider" />
+          <Navigation />
+          <div className="hero-divider" />
+        </div>
+      </header>
+
       <main>{children}</main>
+
       <Row className="justify-content-md-center">
-      <Card className="footer" bg="black">
-      <Card.Body>
-        <Card.Text>
-          © {new Date().getFullYear()} <span>{author}</span>
-        </Card.Text>
-      </Card.Body>
-      {/* <footer>
-        © {new Date().getFullYear()} <span>{author}</span>
-      </footer> */}
-      </Card>
+        <Card className="footer" bg="black">
+          <Card.Body>
+            <Card.Text>
+              © {new Date().getFullYear()} <span>{author}</span>
+            </Card.Text>
+          </Card.Body>
+        </Card>
       </Row>
     </div>
   )
+
 }
 
 export default Layout

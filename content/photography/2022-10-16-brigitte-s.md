@@ -1,12 +1,12 @@
 ---
 layout: photography
-template: photo-post
 title: BRIGITTE(S)
 location: Deauville, France
 year: "2019"
 tags:
   - People
   - Strangers
+type: strangers
 date: 2022-10-16T22:13:34.423Z
 photo: |-
   https://ucarecdn.com/

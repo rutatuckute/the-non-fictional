@@ -7,6 +7,7 @@ year: "2020"
 tags:
   - City
   - Landscape
+type: scenes
 date: 2021-12-17T21:05:41.889Z
 photo: "https://ucarecdn.com/\r
 

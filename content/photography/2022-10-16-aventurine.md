@@ -6,6 +6,7 @@ location: Paris, France
 year: "2019"
 tags:
   - Lights
+type: lights
 date: 2022-10-16T22:29:31.498Z
 photo: |-
   https://ucarecdn.com/
