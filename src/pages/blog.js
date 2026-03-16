@@ -137,7 +137,7 @@ const BlogIndex = ({ data, location }) => {
 
         {posts.length === 0 ? (
           <div className="writing-empty">
-            No matches. Try a different filter or search term.
+            Nothing matched your search yet.
           </div>
         ) : null}
       </div>
