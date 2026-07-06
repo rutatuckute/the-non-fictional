@@ -132,6 +132,13 @@
     background-color: black;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
+  }
+
+  img,
+  video,
+  iframe {
+    max-width: 100%;
   }
   
   footer {
@@ -295,8 +302,20 @@
   /* Custom classes */
   
   .global-wrapper {
+    width: 100%;
+    max-width: 100%;
     margin: var(--spacing-0) auto;
     padding: var(--spacing-10) var(--spacing-6);
+  }
+
+  .global-wrapper main {
+    min-width: 0;
+  }
+
+  .global-wrapper > .row {
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
   }
   
   /* .global-wrapper[data-is-root-path="true"] .bio {
@@ -331,7 +350,7 @@
   }
 
   .hero-divider {
-    width: 92vw;
+    width: 100%;
     max-width: 1200px;
     height: 1px;
     margin: 0.6rem 0 0.8rem;
@@ -442,6 +461,8 @@
 
 .main-nav .nav {
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .main-nav .nav-link {
@@ -461,6 +482,60 @@
   color: var(--color-secondary);
 }
 
+@media screen and (max-width: 480px) {
+  .global-wrapper {
+    padding: var(--spacing-5) var(--spacing-3);
+  }
+
+  .global-header {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .hero-logo img {
+    width: 60px;
+  }
+
+  .main-heading,
+  .global-wrapper[data-is-root-path="true"] .main-heading {
+    font-size: clamp(1.85rem, 10vw, 2.35rem);
+    line-height: 1.08;
+    margin: 0.55rem 0 0.7rem;
+  }
+
+  .header-link-home {
+    font-size: clamp(1.45rem, 8vw, 1.9rem);
+    line-height: 1.1;
+    text-align: center;
+  }
+
+  .hero-divider {
+    margin: 0.45rem 0 0.6rem;
+  }
+
+  .main-nav {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .main-nav .nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.35rem 0.75rem;
+    width: 100%;
+    max-width: 20rem;
+  }
+
+  .main-nav .nav-link {
+    margin: 0;
+    padding: 0.2rem 0.1rem;
+    text-align: center;
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+  }
+}
+
 /* Footer */
 .footer .card-text {
   color:var(--color-primary);
@@ -469,6 +544,7 @@
 }
 
 .home-container {
+  width: 100%;
   max-width: 1100px;
   margin: 0 auto;
   padding: 1.5rem 1rem;
@@ -476,6 +552,7 @@
 
 /* Main page */
 .home-container {
+  width: 100%;
   max-width: 1100px;
   margin: 0 auto;
   padding: 1.5rem 1rem;
@@ -495,7 +572,9 @@
 }
 
 .selected-rule {
-  width: 100%;
+  flex: 1 1 8rem;
+  width: auto;
+  min-width: 4rem;
   height: 1px;
   background: linear-gradient(
     to right,
@@ -520,6 +599,7 @@
   align-items: center;
   gap: 1rem;
   margin: 1.5rem 0 1.25rem;
+  min-width: 0;
 }
 
 .selected-title a {
@@ -578,6 +658,11 @@
   opacity: 1;
 }
 
+.selected-left .selected-title {
+  display: block;
+  margin: 0 0 0.75rem;
+}
+
 @media screen and (max-width: 768px) {
   .selected-grid {
     grid-template-columns: 1fr;
@@ -586,6 +671,38 @@
 
   .selected-image {
     height: 220px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .home-container {
+    padding: 1rem 0 0.5rem;
+  }
+
+  .selected {
+    margin-top: 0.75rem;
+  }
+
+  .selected-title {
+    gap: 0.6rem;
+    margin: 1.1rem 0 0.9rem;
+  }
+
+  .selected-heading {
+    font-size: 1rem;
+  }
+
+  .selected-rule {
+    min-width: 4rem;
+  }
+
+  .selected-excerpt {
+    font-size: 0.9rem;
+  }
+
+  .selected-image {
+    height: 200px;
+    border-radius: 8px;
   }
 }
 
@@ -709,6 +826,26 @@
   }
 }
 
+@media screen and (max-width: 480px) {
+  .writing-section {
+    margin-top: 3rem;
+  }
+
+  .writing-grid {
+    gap: 1rem;
+  }
+
+  .writing-col {
+    padding: 1.25rem 1rem 1.15rem;
+    border-radius: 10px;
+  }
+
+  .writing-col-title {
+    font-size: 0.86rem;
+    letter-spacing: 0.08em;
+  }
+}
+
 /* Photography section */
 .photo-section {
   margin-top: 5.5rem; /* consistent spacing */
@@ -784,6 +921,21 @@
   }
 }
 
+@media screen and (max-width: 480px) {
+  .photo-section {
+    margin-top: 3rem;
+  }
+
+  .photo-grid {
+    gap: 0.75rem;
+  }
+
+  .photo-image {
+    height: 210px;
+    border-radius: 8px;
+  }
+}
+
 /* Blog post */
 .blog-post {
   color:white;
@@ -849,12 +1001,10 @@ input::placeholder{
 /* Content card */
 
 .card {
-  margin-left: 20px;
-  margin-bottom: 20px;
-  margin-right: 20px;
-  margin-top: 20px;
+  margin: 20px auto;
   background-color: black;
-  width: var(--maxWidth-lg);
+  width: min(var(--maxWidth-lg), calc(100vw - 2rem));
+  max-width: 100%;
 }
 
 .card-text {
@@ -1091,6 +1241,7 @@ h1.bref {
   align-items: center;
   justify-content: space-between;
   gap: 1.25rem;
+  min-width: 0;
 }
 
 .writing-title-page {
@@ -1107,6 +1258,7 @@ h1.bref {
   align-items: center;
   min-width: 0; /* allows divider to shrink */
   flex: 1;
+  flex-wrap: wrap;
 }
 
 .writing-tab {
@@ -1136,12 +1288,15 @@ h1.bref {
 .writing-grid {
   margin-top: 2rem;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
   gap: 1.4rem;
+  min-width: 0;
 }
 
 .writing-card {
   display: block;
+  min-width: 0;
+  width: 100%;
   text-decoration: none;
   border-radius: 14px;
   overflow: hidden;
@@ -1180,12 +1335,18 @@ h1.bref {
 .writing-card-kicker {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.55rem;
   font-size: 0.78rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   opacity: 0.9;
   margin-bottom: 0.65rem;
+}
+
+.writing-card-kicker > span,
+.writing-card-meta > span {
+  min-width: 0;
 }
 
 .writing-card-dot {
@@ -1200,6 +1361,7 @@ h1.bref {
 .writing-card-topic,
 .writing-card-sep {
   color: rgba(255,255,255,0.75);
+  overflow-wrap: anywhere;
 }
 
 .writing-card-title {
@@ -1208,6 +1370,7 @@ h1.bref {
   font-size: 1.25rem;
   font-weight: 900;
   line-height: 1.15;
+  overflow-wrap: anywhere;
 }
 
 .writing-card-excerpt {
@@ -1215,6 +1378,7 @@ h1.bref {
   color: rgba(255,255,255,0.74);
   font-size: 0.92rem;
   line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 .writing-card-meta {
@@ -1223,6 +1387,7 @@ h1.bref {
   color: rgba(255,255,255,0.55);
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.55rem;
 }
 
@@ -1320,6 +1485,7 @@ h1.bref {
   align-items: center;
   justify-content: space-between;
   gap: 1.25rem;
+  min-width: 0;
 }
 
 .photo-tabs {
@@ -1328,6 +1494,7 @@ h1.bref {
   align-items: center;
   min-width: 0;
   flex: 1;
+  flex-wrap: wrap;
 }
 
 .photo-tab {
@@ -1357,13 +1524,16 @@ h1.bref {
 .photo-grid-page {
   margin-top: 2rem;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
   gap: 1.5rem;
+  min-width: 0;
 }
 
 .photo-card-page {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  width: 100%;
 }
 
 .photo-card-image-wrap {
@@ -1422,6 +1592,7 @@ h1.bref {
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 .photo-card-location {
@@ -1430,7 +1601,9 @@ h1.bref {
   font-size: 0.82rem;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.35rem;
+  overflow-wrap: anywhere;
 }
 
 .photo-empty {
@@ -1497,7 +1670,9 @@ h1.bref {
 }
 
 .search-box {
-  width: 220px;
+  width: min(220px, 100%);
+  max-width: 100%;
+  flex: 0 1 220px;
   display: flex;
   align-items: center;
   gap: 0.45rem;
@@ -1593,4 +1768,108 @@ h1.bref {
 
 .essays-button {
   --btn-color: var(--color-red);
+}
+
+@media screen and (max-width: 480px) {
+  .writing-page,
+  .photo-page {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+@media screen and (max-width: 980px) {
+  .writing-page .writing-grid,
+  .photo-grid-page {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .writing-page,
+  .photo-page {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .writing-controls,
+  .photo-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.9rem;
+  }
+
+  .writing-tabs,
+  .photo-tabs {
+    gap: 0.75rem 1rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .writing-tabs-divider,
+  .photo-tabs-divider {
+    display: none;
+  }
+
+  .search-box {
+    width: 100%;
+    flex-basis: auto;
+  }
+
+  .writing-page .writing-grid,
+  .photo-grid-page {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .writing-card,
+  .photo-card-page {
+    max-width: 100%;
+  }
+
+  .writing-card-body {
+    padding: 1rem;
+  }
+
+  .writing-card-media {
+    height: 150px;
+  }
+
+  .writing-card-title {
+    font-size: 1.08rem;
+  }
+
+  .writing-card-kicker {
+    gap: 0.35rem 0.45rem;
+    letter-spacing: 0.08em;
+  }
+
+  .photo-card-image {
+    height: 220px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .writing-tab,
+  .photo-tab {
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+  }
+
+  .photo-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem 0.75rem;
+  }
+
+  .photo-tab {
+    text-align: left;
+  }
+
+  .writing-card-body {
+    padding: 0.9rem;
+  }
+
+  .photo-card-image {
+    height: 200px;
+  }
 }
