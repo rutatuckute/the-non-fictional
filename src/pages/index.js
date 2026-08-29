@@ -1,139 +1,64 @@
 import * as React from "react"
 import { graphql, Link } from "gatsby"
-import Layout from "../components/layout"
+
+import Masthead from "../components/masthead"
+import ArchiveField from "../components/redesign/ArchiveField"
+import ArchiveScrolly from "../components/redesign/ArchiveScrolly"
+import { enrichSampleWorks } from "../components/redesign/archiveFieldData"
+import SiteFooter from "../components/site-footer"
+import * as styles from "./redesign-lab.module.css"
 
 const IndexPage = ({ data, location }) => {
-  const blogPosts = data.blog.nodes
-  const photoPosts = data.photos.nodes
-
-  // 1) Selected post: manual first, else fallback to latest
-  const manualSelected = blogPosts.find(
-    (p) => p.frontmatter?.selected === true
+  const works = React.useMemo(
+    () => enrichSampleWorks(data.allMarkdownRemark.nodes),
+    [data.allMarkdownRemark.nodes]
   )
-  const selected = manualSelected || blogPosts[0]
-  const rest = blogPosts.filter((p) => p.id !== selected?.id)
-
-  // 2) Group by category_id
-  const groups = { data: [], reflections: [], essays: [] }
-  for (const p of rest) {
-    const k = (p.frontmatter?.category_id || "").toLowerCase()
-    if (k in groups) groups[k].push(p)
-  }
-
-  const take = (arr, n) => arr.slice(0, n)
 
   return (
-    <Layout location={location}>
-      <div className="home-container">
-    {selected && (
-        <section className={`selected ${selected.frontmatter.category_id}`}>
-            <div className="selected-title">
-            <h4 className="selected-heading">In focus</h4>
-            <div className="selected-rule" />
-            </div>
+    <div className={styles.page}>
+      <div className={styles.frame}>
+        <Masthead location={location} />
 
-            <div className="selected-grid">
-            <div className="selected-left">
-                <h5 className={`selected-title ${selected.frontmatter.category_id}`}>
-                <Link to={selected.fields.slug}>
-                    {selected.frontmatter.title}
+        <main className={styles.main}>
+          <section className={styles.hero} aria-labelledby="hero-title">
+            <div className={styles.heroCopy}>
+              <p className={styles.heroKicker}>
+                Photography <span aria-hidden="true">&middot;</span> Writings
+              </p>
+              <h1 className={styles.heroTitle} id="hero-title">
+                <span>I need</span>
+                <span>structure</span>
+                <span>to think.</span>
+              </h1>
+              <p className={styles.heroIntro}>
+                So I'm building one:{" "}
+                <span className={styles.introHighlight}>essays</span> about how
+                things work, (un)structured{" "}
+                <span className={styles.introHighlight}>reflections</span>, the
+                stories <span className={styles.introHighlight}>data</span> can
+                tell, and{" "}
+                <span className={styles.introHighlight}>photographs</span> on
+                film. I never felt like writing anything fictional - only
+                questioning, starting with myself.{" "}
+                <Link className={styles.heroLink} to="/contacts/">
+                  Argue with me.
                 </Link>
-                </h5>
-
-                <div className="selected-date">
-                {selected.frontmatter.date}
-                </div>
-
-                <p className="selected-excerpt">
-                {selected.frontmatter.excerpt || selected.excerpt}
-                </p>
-
-                <Link to={selected.fields.slug} className={`outline-button ${selected.frontmatter.category_id}-button`}>
-                Continue reading
-                </Link>
+              </p>
             </div>
 
-            {selected.frontmatter.cover_image && (
-                <Link className="selected-right" to={selected.fields.slug} aria-label="Read selected post">
-                <img
-                    className="selected-image"
-                    src={selected.frontmatter.cover_image}
-                    alt={selected.frontmatter.title || "Selected post image"}
-                    loading="lazy"
-                />
-                </Link>
-            )}
-            </div>
-        </section>
-        )}
+            <figure className={styles.fieldFigure} id="archive-field">
+              <ArchiveField className={styles.archiveField} works={works} />
+            </figure>
+          </section>
 
-        {/* Writing columns */}
-        <section className="writing-section">
-           <div className="selected-title">
-            <h4 className="selected-heading">Latest pieces</h4>
-            <div className="selected-rule" />
-            </div>
-          <div className="writing-grid">
-            <WritingColumn title="Essays" category="essays" posts={take(groups.essays, 3)} moreTo="/blog?type=essays" />
-            <WritingColumn title="Reflections" category="reflections" posts={take(groups.reflections, 3)} moreTo="/blog?type=reflections" />
-            <WritingColumn title="Data" category="data" posts={take(groups.data, 3)} moreTo="/blog?type=data" />
-          </div>
-        </section>
+          <ArchiveScrolly works={works} />
+        </main>
 
-      {/* Photography */}
-      <section className="photo-section">
-            <div className="selected-title">
-            <h4 className="selected-heading">Photography</h4>
-            <div className="selected-rule" />
-            
-      <Link to="/photography" className="outline-button photography-button">
-        Gallery
-      </Link>
-        </div>
-
-        <div className="photo-grid">
-        {photoPosts.slice(0, 6).map((p) => (
-          <div key={p.id} className="photo-item">
-            <img
-              src={p.frontmatter.photo}
-              alt={p.frontmatter.title || "Photo"}
-              className="photo-image"
-            />
-          </div>
-        ))}
-        </div>
-      </section>
-
+        <SiteFooter />
       </div>
-    </Layout>
+    </div>
   )
 }
-
-const WritingColumn = ({ title, posts, moreTo, category }) => (
-  <section className={`writing-col ${category}`}>
-    <header className="writing-col-head">
-      <h3 className="writing-col-title">{title}</h3>
-    </header>
-
-    <div className="writing-col-items">
-      {posts.map((p) => (
-        <article key={p.id} className="writing-item">
-          <Link to={p.fields.slug} className="writing-item-link">
-            {p.frontmatter.title}
-          </Link>
-          <div className="writing-item-date">{p.frontmatter.date}</div>
-        </article>
-      ))}
-    </div>
-    <br></br>
-
-    <Link to={moreTo} className={`outline-button ${category}-button`}>
-        More
-      </Link>
-
-  </section>
-)
-
 
 export default IndexPage
 
@@ -141,53 +66,34 @@ export const Head = ({ data }) => (
   <>
     <title>{data.site.siteMetadata.title}</title>
     <meta name="description" content={data.site.siteMetadata.description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossOrigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&display=swap"
+    />
   </>
 )
 
-export const pageQuery = graphql`
-  query HomePage {
+export const query = graphql`
+  query HomePageMetadata {
     site {
       siteMetadata {
         title
         description
       }
     }
-
-    blog: allMarkdownRemark(
-      sort: { frontmatter: { date: DESC } }
-      filter: { frontmatter: { layout: { eq: "blog" } } }
-      limit: 50
-    ) {
+    allMarkdownRemark {
       nodes {
-        id
-        excerpt(pruneLength: 220)
-        fields {
-          slug
-        }
         frontmatter {
+          date
+          layout
           title
-          date(formatString: "MMMM DD, YYYY")
-          excerpt
-          cover_image
-          category_id
-          selected
-        }
-      }
-    }
-
-    photos: allMarkdownRemark(
-      sort: { frontmatter: { date: DESC } }
-      filter: { frontmatter: { layout: { ne: "blog" } } }
-      limit: 30
-    ) {
-      nodes {
-        id
-        fields {
-          slug
-        }
-        frontmatter {
-          title
-          photo
+          year
         }
       }
     }

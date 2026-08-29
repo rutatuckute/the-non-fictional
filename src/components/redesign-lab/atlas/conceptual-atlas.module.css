@@ -1,0 +1,77 @@
+.atlasStage {
+  position: relative;
+  display: block;
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--lab-background);
+}
+
+.atlas {
+  position: absolute;
+  top: var(--lab-space-4);
+  bottom: var(--lab-space-6);
+  left: var(--lab-space-6);
+  display: block;
+  width: 80%;
+  height: calc(100% - var(--lab-space-4) - var(--lab-space-6));
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.outerLandmass {
+  fill: #070808;
+  stroke: rgba(232, 228, 220, 0.34);
+  stroke-width: 0.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.internalBoundary {
+  fill: none;
+  stroke: rgba(232, 228, 220, 0.29);
+  stroke-width: 0.72;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.labels {
+  pointer-events: none;
+}
+
+.territoryTitle {
+  fill: var(--lab-text-primary);
+  font-family: var(--lab-font-title);
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0;
+  opacity: 0.78;
+}
+
+.dominantTitle {
+  font-size: 20px;
+  opacity: 0.88;
+}
+
+@media (max-width: 48rem) {
+  .atlas {
+    right: var(--lab-space-1);
+    bottom: var(--lab-space-4);
+    left: var(--lab-space-1);
+    width: calc(100% - (2 * var(--lab-space-1)));
+    height: calc(100% - (2 * var(--lab-space-4)));
+  }
+
+  .territoryTitle {
+    font-size: 28px;
+  }
+
+  .dominantTitle {
+    font-size: 31px;
+  }
+}

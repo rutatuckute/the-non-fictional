@@ -29,9 +29,17 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
 }
 
 exports.createPages = async ({ graphql, actions, reporter }) => {
-  const { createPage } = actions
+  const { createPage, createRedirect } = actions
+
+  createRedirect({
+    fromPath: `/redesign-lab/`,
+    toPath: `/`,
+    isPermanent: true,
+    redirectInBrowser: true,
+  })
 
   const blogPost = path.resolve(`./src/templates/blog-post.js`)
+  const photoPost = path.resolve(`./src/templates/photo-post.js`)
 
   const result = await graphql(`
     {
@@ -62,6 +70,9 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   }
 
   const blogPosts = posts.filter((post) => post.frontmatter?.layout === "blog")
+  const photoPosts = posts.filter(
+    (post) => post.frontmatter?.layout === "photography"
+  )
 
   blogPosts.forEach((post, index) => {
     const slug = post?.fields?.slug
@@ -82,6 +93,21 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
         previousPostId,
         nextPostId,
       },
+    })
+  })
+
+  photoPosts.forEach((post) => {
+    const slug = post?.fields?.slug
+
+    if (!slug) {
+      reporter.warn(`Skipping a photo because slug is missing (id=${post.id})`)
+      return
+    }
+
+    createPage({
+      path: slug,
+      component: photoPost,
+      context: { slug },
     })
   })
 }

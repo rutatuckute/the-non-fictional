@@ -47,7 +47,7 @@ const BlogIndex = ({ data, location }) => {
     <Layout location={location}>
       <div className="writing-page">
 
-       <header className="writing-head">
+       <div className="writing-head">
         <div className="writing-controls">
             <nav className="writing-tabs" aria-label="Writing filters">
             {FILTERS.map((f) => (
@@ -77,7 +77,7 @@ const BlogIndex = ({ data, location }) => {
             />
           </div>
         </div>
-        </header>
+        </div>
 
         <section className="writing-grid" aria-label="Writing list">
           {posts.map((p) => {
