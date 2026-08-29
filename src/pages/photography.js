@@ -50,7 +50,7 @@ const Photography = ({ data, location }) => {
   return (
     <Layout location={location}>
       <div className="photo-page">
-        <header className="photo-head">
+        <div className="photo-head">
           <div className="photo-controls">
             <nav className="photo-tabs" aria-label="Photography filters">
               {FILTERS.map((f) => (
@@ -80,7 +80,7 @@ const Photography = ({ data, location }) => {
             />
           </div>
           </div>
-        </header>
+        </div>
 
         <section className="photo-grid-page">
           {photos.map((photo) => {

@@ -6,7 +6,6 @@ import { FaFolderOpen, FaCoffee, FaTwitterSquare, FaGithub} from "react-icons/fa
 import { MdOutlineDateRange } from "react-icons/md"
 import { BsLightbulb } from "react-icons/bs"
 
-import Bio from "../components/bio"
 import Layout from "../components/layout"
 
 const BlogPostTemplate = ({ data, pageContext, location }) => {
@@ -15,14 +14,14 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
   const { previous, next } = pageContext
 
   return (
-    <Layout location={location} title={siteTitle}>
+    <Layout location={location} title={siteTitle} activeSection="writings">
       <Container fluid>
       <article
         className="blog-post"
         itemScope
         itemType="http://schema.org/Article"
       >
-        <header>
+        <div>
           <h1 itemProp="headline" className={post.frontmatter.category_id}>{post.frontmatter.title}</h1>
           <p>
             <MdOutlineDateRange/> {post.frontmatter.date} &nbsp;&nbsp;
@@ -36,16 +35,13 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
             <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             
           </p>
-        </header>
+        </div>
         <section
           className="blog-text"
           dangerouslySetInnerHTML={{ __html: post.html }}
           itemProp="articleBody"
         />
         <hr />
-        {/* <footer>
-          <Bio />
-        </footer> */}
       </article>
       <nav className="blog-post-nav">
         <ul

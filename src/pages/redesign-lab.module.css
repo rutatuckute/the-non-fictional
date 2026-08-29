@@ -555,21 +555,6 @@
   aspect-ratio: auto;
 }
 
-.footer {
-  width: calc(100% - 52px);
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: var(--lab-space-6) 0 var(--lab-space-8);
-  border-top: 1px solid var(--lab-rule);
-  color: var(--lab-ink-muted);
-  font-family: var(--lab-font-metadata);
-  font-size: 0.625rem;
-  font-weight: 400;
-  line-height: 1.5;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .archiveField [data-element="work"],
   .archiveField [data-layer="connections"],
@@ -679,9 +664,6 @@
     padding-inline: 24px;
   }
 
-  .footer {
-    width: calc(100% - 48px);
-  }
 }
 
 @media (max-width: 30rem) {
