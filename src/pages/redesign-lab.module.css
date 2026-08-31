@@ -697,17 +697,6 @@
   text-decoration: none;
 }
 
-.railFoot {
-  margin: auto 0 0;
-  padding-top: 22px;
-  color: var(--lab-ink-muted);
-  font-family: var(--lab-font-metadata);
-  font-size: 9.5px;
-  letter-spacing: 0.13em;
-  line-height: 1.8;
-  text-transform: uppercase;
-}
-
 .scrollyArchiveField {
   width: 100%;
   height: 88vh;
@@ -763,10 +752,6 @@
 
   .rail[data-open="true"] {
     transform: none;
-  }
-
-  .railFoot {
-    margin-top: 18px;
   }
 
   .railImage {

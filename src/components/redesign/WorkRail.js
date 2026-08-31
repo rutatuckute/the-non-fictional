@@ -39,7 +39,6 @@ const getMetadataRows = work => {
                 : work.year,
           },
           { label: "Place", value: work.location },
-          { label: "Type", value: work.type },
         ]
 
   return rows.filter(row => row.value)
@@ -56,23 +55,7 @@ const getKindLabel = work => {
     : "Standalone"
 }
 
-const getMeetingsLine = (work, connections) => {
-  const met = connections.filter(
-    connection => connection.from === work.id || connection.to === work.id
-  )
-
-  if (met.length === 0) {
-    return "No meetings — nothing else was made on this ground"
-  }
-
-  const places = [...new Set(met.map(connection => connection.place))]
-
-  return `Meets ${
-    met.length === 1 ? "one work" : `${met.length} works`
-  } in ${places.join(" & ")}`
-}
-
-const WorkRail = ({ connections = [], onClose, work }) => {
+const WorkRail = ({ onClose, work }) => {
   React.useEffect(() => {
     if (!work) {
       return undefined
@@ -152,17 +135,22 @@ const WorkRail = ({ connections = [], onClose, work }) => {
             </ul>
           ) : null}
 
-          <Link className={styles.railGo} to={work.slug}>
+          {/* Photographs have no page of their own, so they open in the
+              photography page's lightbox at the right frame. */}
+          <Link
+            className={styles.railGo}
+            to={
+              work.kind === "writing"
+                ? work.slug
+                : `/photography/?frame=${work.slug.replace(/^\/|\/$/g, "")}`
+            }
+          >
             {work.kind === "writing"
               ? "Read it ↗"
               : work.frameCount > 1
                 ? "See the frames ↗"
                 : "See the frame ↗"}
           </Link>
-
-          <p className={styles.railFoot}>
-            {getMeetingsLine(work, connections)}
-          </p>
         </>
       ) : null}
     </aside>
