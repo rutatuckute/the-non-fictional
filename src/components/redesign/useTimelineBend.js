@@ -9,12 +9,20 @@ const TIMELINE_LINEAR_TRANSITION_MS = 900
 const TIMELINE_LINEAR_HOLD_MS = 250
 const TIMELINE_BEND_MS = 1100
 const TIMELINE_YEAR_FADE_MS = 300
+// A replayed bend dwells on the straight timeline far longer than the first
+// pass, so someone who asked to see it again has time to actually read it.
+const TIMELINE_REPLAY_HOLD_MS = 3600
 
-const useTimelineBend = ({ active, prefersReducedMotion }) => {
+const useTimelineBend = ({ active, prefersReducedMotion, bendDelayMs }) => {
   const [timelinePhase, setTimelinePhase] = React.useState(
     TIMELINE_PHASES.linear
   )
   const [timelineBendProgress, setTimelineBendProgress] = React.useState(0)
+  const [replayToken, setReplayToken] = React.useState(0)
+
+  const replayTimeline = React.useCallback(() => {
+    setReplayToken(token => token + 1)
+  }, [])
 
   React.useEffect(() => {
     let bendTimer
@@ -24,6 +32,9 @@ const useTimelineBend = ({ active, prefersReducedMotion }) => {
     if (!active) {
       setTimelinePhase(TIMELINE_PHASES.linear)
       setTimelineBendProgress(0)
+      // Leaving the scene clears the replay, so re-entering it plays the
+      // original short-hold bend rather than the slow replay timing.
+      setReplayToken(0)
       return undefined
     }
 
@@ -58,16 +69,18 @@ const useTimelineBend = ({ active, prefersReducedMotion }) => {
       }
 
       animationFrame = window.requestAnimationFrame(updateBend)
-    }, TIMELINE_LINEAR_TRANSITION_MS + TIMELINE_LINEAR_HOLD_MS)
+    }, replayToken === 0
+      ? bendDelayMs ?? TIMELINE_LINEAR_TRANSITION_MS + TIMELINE_LINEAR_HOLD_MS
+      : TIMELINE_LINEAR_TRANSITION_MS + TIMELINE_REPLAY_HOLD_MS)
 
     return () => {
       cancelled = true
       window.clearTimeout(bendTimer)
       window.cancelAnimationFrame(animationFrame)
     }
-  }, [active, prefersReducedMotion])
+  }, [active, bendDelayMs, prefersReducedMotion, replayToken])
 
-  return { timelineBendProgress, timelinePhase }
+  return { replayTimeline, timelineBendProgress, timelinePhase }
 }
 
 export {
@@ -75,6 +88,7 @@ export {
   TIMELINE_LINEAR_HOLD_MS,
   TIMELINE_LINEAR_TRANSITION_MS,
   TIMELINE_PHASES,
+  TIMELINE_REPLAY_HOLD_MS,
   TIMELINE_YEAR_FADE_MS,
 }
 export default useTimelineBend

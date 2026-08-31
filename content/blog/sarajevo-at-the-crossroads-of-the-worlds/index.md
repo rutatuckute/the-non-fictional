@@ -4,6 +4,7 @@ template: blog-post
 title: "SARAJEVO: AT THE CROSSROADS OF THE WORLDS"
 category: General Theory
 category_id: essays
+inquiry: connection
 topic: Journeys / Sarajevo
 tags:
   - journey

@@ -1,6 +1,5 @@
 import {
   WORK_MARK_SCALE,
-  connections,
   createSeededRandom,
   markStyles,
 } from "./archiveFieldData"
@@ -212,6 +211,22 @@ const shortenTitle = (title, maximumLength) => {
     : normalized
 }
 
+// Row spacing shared by every format zone, derived from whichever format
+// needs the most rows. Zones then stack their marks top-down at a uniform
+// rhythm rather than each spreading its own items over the full height.
+const getSharedRowGap = (works, columnsByFormat, availableHeight) => {
+  const maximumRows = Math.max(
+    ...FORMAT_ORDER.map(format =>
+      Math.ceil(
+        works.filter(work => work.format === format).length /
+          columnsByFormat[format]
+      )
+    )
+  )
+
+  return maximumRows > 1 ? availableHeight / (maximumRows - 1) : 0
+}
+
 const createFormatLayout = (
   works,
   viewBoxWidth,
@@ -226,6 +241,14 @@ const createFormatLayout = (
     const gap = 14
     const zoneWidth = (viewBoxWidth - EDGE_PADDING * 2 - gap) / 2
     const zoneHeight = (viewBoxHeight - EDGE_PADDING * 2 - gap) / 2
+    const availableHeight = zoneHeight - viewBoxHeight * 0.169
+    // One shared row spacing, set by the fullest zone, so a sparse format
+    // stacks from the top instead of stretching to fill its zone.
+    const rowGap = getSharedRowGap(
+      works,
+      COMPACT_FORMAT_COLUMNS,
+      availableHeight
+    )
 
     FORMAT_ORDER.forEach((format, index) => {
       const column = index % 2
@@ -234,10 +257,7 @@ const createFormatLayout = (
       const top = EDGE_PADDING + row * (zoneHeight + gap)
       const items = works.filter(work => work.format === format)
       const columns = COMPACT_FORMAT_COLUMNS[format]
-      const rows = Math.ceil(items.length / columns)
       const startY = top + viewBoxHeight * 0.146
-      const availableHeight = zoneHeight - viewBoxHeight * 0.169
-      const rowGap = rows > 1 ? availableHeight / (rows - 1) : 0
       const cellWidth = zoneWidth / columns
 
       zones.push({
@@ -268,16 +288,20 @@ const createFormatLayout = (
 
   const zoneGap = 12
   const availableWidth = viewBoxWidth - EDGE_PADDING * 2 - zoneGap * 3
+  const startY = viewBoxHeight * 0.215
+  // One shared row spacing, set by the fullest zone, so a sparse format
+  // stacks from the top instead of stretching to fill the column.
+  const rowGap = getSharedRowGap(
+    works,
+    FORMAT_COLUMNS,
+    viewBoxHeight - startY - 28
+  )
   let cursor = EDGE_PADDING
 
   FORMAT_ORDER.forEach(format => {
     const width = availableWidth * FORMAT_ZONE_WEIGHTS[format]
     const items = works.filter(work => work.format === format)
     const columns = FORMAT_COLUMNS[format]
-    const rows = Math.ceil(items.length / columns)
-    const startY = viewBoxHeight * 0.215
-    const rowGap =
-      rows > 1 ? (viewBoxHeight - startY - 28) / (rows - 1) : 0
     const cellWidth = width / columns
 
     zones.push({
@@ -308,7 +332,7 @@ const createFormatLayout = (
   return { labels, positions, zones }
 }
 
-const createNetworkLayout = (works, viewBoxWidth, viewBoxHeight) => {
+const createNetworkLayout = (works, viewBoxWidth, viewBoxHeight, connections) => {
   const random = createSeededRandom(73)
   const workById = Object.fromEntries(works.map(work => [work.id, work]))
   const connectedIds = new Set(
@@ -642,7 +666,7 @@ export const createVisualLayouts = (
   works,
   viewBoxWidth,
   viewBoxHeight,
-  { compact = false, photographyColumns = 13 } = {}
+  { compact = false, photographyColumns = 13, connections = [] } = {}
 ) => {
   const inquiryTerritories = createInquiryTerritories(
     viewBoxWidth,
@@ -666,7 +690,12 @@ export const createVisualLayouts = (
     viewBoxHeight,
     compact
   )
-  const network = createNetworkLayout(works, viewBoxWidth, viewBoxHeight)
+  const network = createNetworkLayout(
+    works,
+    viewBoxWidth,
+    viewBoxHeight,
+    connections
+  )
   const timelineValues = createTimelineValues(works)
   const timelineLinear = createLinearTimelineLayout(
     works,

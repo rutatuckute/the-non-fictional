@@ -4,6 +4,7 @@ template: blog-post
 title: LIVING WITHOUT THE GENERAL THEORY
 category: General Theory
 category_id: essays
+inquiry: reality
 selected: true
 topic: Econ 101 / Philosophy
 tags:

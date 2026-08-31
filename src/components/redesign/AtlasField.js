@@ -1,11 +1,6 @@
 import * as React from "react"
 
-import {
-  WORK_MARK_SCALE,
-  connections,
-  markStyles,
-  sampleWorks,
-} from "./archiveFieldData"
+import { WORK_MARK_SCALE, markStyles } from "./archiveFieldData"
 import {
   TIMELINE_BEND_MS,
   TIMELINE_PHASES,
@@ -15,8 +10,8 @@ import {
 const UNRELATED_NODE_OPACITY = 0.18
 const UNCONNECTED_NODE_OPACITY = 0.35
 const FORMAT_LABELS = {
-  essay: "ESSAY",
-  reflection: "REFLECTION",
+  essay: "ESSAYS",
+  reflection: "REFLECTIONS",
   data: "DATA",
   photography: "PHOTOGRAPHY",
 }
@@ -55,7 +50,7 @@ const WritingMark = ({ format, style }) => (
   </>
 )
 
-const PhotographyMark = ({ style }) => {
+const PhotographyMark = ({ style, photo }) => {
   const extent = style.extent * WORK_MARK_SCALE
   const armLength = style.armLength * WORK_MARK_SCALE
   const corners = [
@@ -65,18 +60,34 @@ const PhotographyMark = ({ style }) => {
     [extent, extent, -1, -1],
   ]
 
-  return corners.map(([x, y, directionX, directionY], index) => (
-    <path
-      key={`photography-${index}`}
-      data-element="mark-stroke"
-      data-kind="photography"
-      d={`M ${x + directionX * armLength} ${y} L ${x} ${y} L ${x} ${
-        y + directionY * armLength
-      }`}
-      strokeWidth={style.strokeWidth * WORK_MARK_SCALE}
-      opacity={style.opacity}
-    />
-  ))
+  return (
+    <>
+      {photo ? (
+        <image
+          data-element="mark-photo"
+          href={photo}
+          xlinkHref={photo}
+          x={-extent}
+          y={-extent}
+          width={extent * 2}
+          height={extent * 2}
+          preserveAspectRatio="xMidYMid slice"
+        />
+      ) : null}
+      {corners.map(([x, y, directionX, directionY], index) => (
+        <path
+          key={`photography-${index}`}
+          data-element="mark-stroke"
+          data-kind="photography"
+          d={`M ${x + directionX * armLength} ${y} L ${x} ${y} L ${x} ${
+            y + directionY * armLength
+          }`}
+          strokeWidth={style.strokeWidth * WORK_MARK_SCALE}
+          opacity={style.opacity}
+        />
+      ))}
+    </>
+  )
 }
 
 const WorkMark = ({ work }) => {
@@ -85,7 +96,7 @@ const WorkMark = ({ work }) => {
   return work.kind === "writing" ? (
     <WritingMark format={work.format} style={markStyle} />
   ) : (
-    <PhotographyMark style={markStyle} />
+    <PhotographyMark style={markStyle} photo={work.photo} />
   )
 }
 
@@ -125,6 +136,7 @@ const AtlasField = ({
   className,
   connectedWorkIds = new Set(),
   connectionPositions,
+  connections = [],
   connectionsVisible,
   description,
   formatIndexVisible = false,
@@ -134,10 +146,6 @@ const AtlasField = ({
   inquiryTerritories = [],
   inquiryLabelsVisible,
   layout,
-  onWorkBlur,
-  onWorkFocus,
-  onWorkHover,
-  onWorkLeave,
   onWorkSelect,
   positions,
   territoriesVisible,
@@ -148,14 +156,10 @@ const AtlasField = ({
   title,
   transitionsEnabled,
   workTitlesVisible = formatIndexVisible,
-  works = sampleWorks,
+  works = [],
 }) => {
   const networkMode = layout === "network"
-  const circularTimelineMode =
-    layout === "timeline" && timelinePhase === TIMELINE_PHASES.circular
-  const networkInteractive =
-    (networkMode || circularTimelineMode) &&
-    Boolean(onWorkFocus || onWorkHover || onWorkSelect)
+  const interactive = Boolean(onWorkSelect)
   const timelineAnnotationOpacity = Math.max(
     0,
     1 -
@@ -177,7 +181,7 @@ const AtlasField = ({
       }
     })
     return related
-  }, [activeWorkId])
+  }, [activeWorkId, connections])
 
   const getWorkOpacity = work => {
     if (!networkMode) {
@@ -349,15 +353,17 @@ const AtlasField = ({
               data-work-id={work.id}
               data-kind={work.kind}
               data-format={work.format}
-              role={networkInteractive ? "button" : undefined}
-              tabIndex={networkInteractive ? 0 : -1}
+              role={interactive ? "button" : undefined}
+              tabIndex={interactive ? 0 : -1}
               transform={`translate(${x} ${y})`}
               style={{ opacity: getWorkOpacity(work) }}
-              onBlur={() => onWorkBlur?.(work.id)}
               onClick={() => onWorkSelect?.(work.id)}
-              onFocus={() => onWorkFocus?.(work.id)}
-              onMouseEnter={() => onWorkHover?.(work.id)}
-              onMouseLeave={() => onWorkLeave?.(work.id)}
+              onKeyDown={event => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault()
+                  onWorkSelect?.(work.id)
+                }
+              }}
             >
               <WorkMark work={work} />
             </g>

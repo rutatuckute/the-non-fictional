@@ -4,15 +4,28 @@ import { graphql, Link } from "gatsby"
 import Masthead from "../components/masthead"
 import ArchiveField from "../components/redesign/ArchiveField"
 import ArchiveScrolly from "../components/redesign/ArchiveScrolly"
-import { enrichSampleWorks } from "../components/redesign/archiveFieldData"
+import {
+  buildWorks,
+  deriveConnections,
+} from "../components/redesign/archiveFieldData"
+import WorkRail from "../components/redesign/WorkRail"
 import SiteFooter from "../components/site-footer"
 import * as styles from "./redesign-lab.module.css"
 
 const IndexPage = ({ data, location }) => {
   const works = React.useMemo(
-    () => enrichSampleWorks(data.allMarkdownRemark.nodes),
+    () => buildWorks(data.allMarkdownRemark.nodes),
     [data.allMarkdownRemark.nodes]
   )
+  const connections = React.useMemo(() => deriveConnections(works), [works])
+  // Selection lives here so the hero and the scrolly share one rail.
+  const [selectedWorkId, setSelectedWorkId] = React.useState(null)
+  const selectedWork =
+    works.find(work => work.id === selectedWorkId) || null
+  const selectWork = React.useCallback(workId => {
+    setSelectedWorkId(current => (current === workId ? null : workId))
+  }, [])
+  const closeRail = React.useCallback(() => setSelectedWorkId(null), [])
 
   return (
     <div className={styles.page}>
@@ -47,15 +60,32 @@ const IndexPage = ({ data, location }) => {
             </div>
 
             <figure className={styles.fieldFigure} id="archive-field">
-              <ArchiveField className={styles.archiveField} works={works} />
+              <ArchiveField
+                className={styles.archiveField}
+                connections={connections}
+                selectedWorkId={selectedWorkId}
+                works={works}
+                onWorkSelect={selectWork}
+              />
             </figure>
           </section>
 
-          <ArchiveScrolly works={works} />
+          <ArchiveScrolly
+            connections={connections}
+            selectedWorkId={selectedWorkId}
+            works={works}
+            onWorkSelect={selectWork}
+          />
         </main>
 
         <SiteFooter />
       </div>
+
+      <WorkRail
+        connections={connections}
+        work={selectedWork}
+        onClose={closeRail}
+      />
     </div>
   )
 }
@@ -89,10 +119,28 @@ export const query = graphql`
     }
     allMarkdownRemark {
       nodes {
+        fields {
+          slug
+          readingTime {
+            text
+          }
+        }
         frontmatter {
+          category
+          category_id
+          cover_image
           date
+          excerpt
+          inquiry
           layout
+          link
+          location
+          photo
+          series
+          tags
           title
+          topic
+          type
           year
         }
       }

@@ -1,0 +1,172 @@
+import * as React from "react"
+import { Link } from "gatsby"
+
+import * as styles from "../../pages/redesign-lab.module.css"
+
+const FORMAT_LABELS = {
+  essay: "Essay",
+  reflection: "Reflection",
+  data: "Data",
+  photography: "Photograph",
+}
+
+const formatDate = value =>
+  value
+    ? new Date(value).toLocaleDateString("en-GB", {
+        year: "numeric",
+        month: "long",
+      })
+    : null
+
+// Writings and photographs carry different frontmatter, so each contributes
+// the rows it actually has; anything missing is dropped rather than left blank.
+const getMetadataRows = work => {
+  const rows =
+    work.kind === "writing"
+      ? [
+          { label: "Inquiry", value: work.inquiry },
+          { label: "Category", value: work.category },
+          { label: "Topic", value: work.topic },
+          { label: "Published", value: formatDate(work.date) },
+          { label: "Reading", value: work.readingTime },
+        ]
+      : [
+          {
+            label: "Made",
+            value:
+              work.yearRange && work.yearRange[0] !== work.yearRange[1]
+                ? `${work.yearRange[0]}–${work.yearRange[1]}`
+                : work.year,
+          },
+          { label: "Place", value: work.location },
+          { label: "Type", value: work.type },
+        ]
+
+  return rows.filter(row => row.value)
+}
+
+// "Essay" for writings; for photographs either a frame count or "Standalone".
+const getKindLabel = work => {
+  if (work.kind === "writing") {
+    return FORMAT_LABELS[work.format] || work.format
+  }
+
+  return work.frameCount > 1
+    ? `Series · ${work.frameCount} frames`
+    : "Standalone"
+}
+
+const getMeetingsLine = (work, connections) => {
+  const met = connections.filter(
+    connection => connection.from === work.id || connection.to === work.id
+  )
+
+  if (met.length === 0) {
+    return "No meetings — nothing else was made on this ground"
+  }
+
+  const places = [...new Set(met.map(connection => connection.place))]
+
+  return `Meets ${
+    met.length === 1 ? "one work" : `${met.length} works`
+  } in ${places.join(" & ")}`
+}
+
+const WorkRail = ({ connections = [], onClose, work }) => {
+  React.useEffect(() => {
+    if (!work) {
+      return undefined
+    }
+
+    const onKeyDown = event => {
+      if (event.key === "Escape") {
+        onClose()
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown)
+    return () => document.removeEventListener("keydown", onKeyDown)
+  }, [onClose, work])
+
+  return (
+    <aside
+      className={styles.rail}
+      data-open={work ? "true" : "false"}
+      aria-hidden={work ? undefined : "true"}
+      aria-label="Selected work"
+    >
+      {work ? (
+        <>
+          <button
+            className={styles.railClose}
+            type="button"
+            onClick={onClose}
+          >
+            Close ✕
+          </button>
+
+          <p className={styles.railEyebrow}>
+            <i data-format={work.format} aria-hidden="true" />
+            {work.kind === "writing" ? "Writing" : "Photography"}
+            {" · "}
+            {getKindLabel(work)}
+          </p>
+
+          {work.frames?.length > 1 ? (
+            <ul className={styles.railFrames}>
+              {work.frames.map(frame => (
+                <li key={frame.id}>
+                  <img src={frame.photo} alt={frame.title} loading="lazy" />
+                </li>
+              ))}
+            </ul>
+          ) : work.image ? (
+            <img
+              className={styles.railImage}
+              src={work.image}
+              alt={work.title}
+              loading="lazy"
+            />
+          ) : null}
+
+          <h2 className={styles.railTitle}>{work.title}</h2>
+
+          <dl className={styles.railMeta}>
+            {getMetadataRows(work).map(row => (
+              <React.Fragment key={row.label}>
+                <dt>{row.label}</dt>
+                <dd>{row.value}</dd>
+              </React.Fragment>
+            ))}
+          </dl>
+
+          {work.excerpt ? (
+            <p className={styles.railBlurb}>{work.excerpt}</p>
+          ) : null}
+
+          {work.tags?.length ? (
+            <ul className={styles.railTags}>
+              {work.tags.slice(0, 8).map(tag => (
+                <li key={tag}>{tag}</li>
+              ))}
+            </ul>
+          ) : null}
+
+          <Link className={styles.railGo} to={work.slug}>
+            {work.kind === "writing"
+              ? "Read it ↗"
+              : work.frameCount > 1
+                ? "See the frames ↗"
+                : "See the frame ↗"}
+          </Link>
+
+          <p className={styles.railFoot}>
+            {getMeetingsLine(work, connections)}
+          </p>
+        </>
+      ) : null}
+    </aside>
+  )
+}
+
+export default WorkRail

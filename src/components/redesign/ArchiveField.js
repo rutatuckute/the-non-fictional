@@ -1,7 +1,7 @@
 import * as React from "react"
 
 import AtlasField from "./AtlasField"
-import { getPhotographyColumns, sampleWorks } from "./archiveFieldData"
+import { getPhotographyColumns } from "./archiveFieldData"
 import {
   createVisualLayouts,
   interpolateTimelinePositions,
@@ -21,7 +21,13 @@ const HERO_FADE_MS = 450
 const HERO_CONNECTION_DELAY_MS = 500
 const HERO_CONNECTION_FADE_MS = 500
 
-const ArchiveField = ({ className, works = sampleWorks }) => {
+const ArchiveField = ({
+  className,
+  connections = [],
+  selectedWorkId = null,
+  works = [],
+  onWorkSelect,
+}) => {
   const [heroScene, setHeroScene] = React.useState(0)
   const [connectionsReady, setConnectionsReady] = React.useState(false)
   const prefersReducedMotion = usePrefersReducedMotion()
@@ -33,8 +39,9 @@ const ArchiveField = ({ className, works = sampleWorks }) => {
       createVisualLayouts(works, HERO_VIEWBOX_WIDTH, HERO_VIEWBOX_HEIGHT, {
         compact,
         photographyColumns,
+        connections,
       }),
-    [compact, photographyColumns, works]
+    [compact, connections, photographyColumns, works]
   )
 
   React.useEffect(() => {
@@ -42,23 +49,35 @@ const ArchiveField = ({ className, works = sampleWorks }) => {
       return undefined
     }
 
-    if (prefersReducedMotion) {
-      setHeroScene(VISUAL_SCENES.length - 1)
+    setHeroScene(prefersReducedMotion ? VISUAL_SCENES.length - 1 : 0)
+  }, [prefersReducedMotion])
+
+  React.useEffect(() => {
+    if (prefersReducedMotion !== false) {
       return undefined
     }
 
-    setHeroScene(0)
-    const timer = window.setInterval(() => {
+    // The timeline scene shows two states — the straight line, then the bend
+    // into a circle — so it holds for two intervals and every state on screen
+    // gets the same amount of time.
+    const duration =
+      VISUAL_SCENES[heroScene].layout === "timeline"
+        ? HERO_STATE_INTERVAL_MS * 2
+        : HERO_STATE_INTERVAL_MS
+    const timer = window.setTimeout(() => {
       setHeroScene(currentScene => (currentScene + 1) % VISUAL_SCENES.length)
-    }, HERO_STATE_INTERVAL_MS)
+    }, duration)
 
-    return () => window.clearInterval(timer)
-  }, [prefersReducedMotion])
+    return () => window.clearTimeout(timer)
+  }, [heroScene, prefersReducedMotion])
 
   const scene = VISUAL_SCENES[heroScene]
   const { timelineBendProgress, timelinePhase } = useTimelineBend({
     active: scene.layout === "timeline",
     prefersReducedMotion,
+    // Bend exactly one interval in, so the straight line and the circle each
+    // get a full slot.
+    bendDelayMs: HERO_STATE_INTERVAL_MS,
   })
   const positions = React.useMemo(
     () =>
@@ -93,9 +112,11 @@ const ArchiveField = ({ className, works = sampleWorks }) => {
 
   return (
     <AtlasField
+      activeWorkId={selectedWorkId}
       className={className}
       connectedWorkIds={heroLayouts.connectedWorkIds}
       connectionPositions={heroLayouts.network}
+      connections={connections}
       connectionsVisible={connectionsReady}
       description="The archive cycles through five views: unsorted works, four formats, recurring inquiries, a relationship network, and a chronology that bends into a circle."
       formatIndexVisible={scene.formatIndexVisible}
@@ -115,6 +136,7 @@ const ArchiveField = ({ className, works = sampleWorks }) => {
       transitionsEnabled={prefersReducedMotion === false}
       workTitlesVisible={scene.workTitlesVisible}
       works={works}
+      onWorkSelect={onWorkSelect}
     />
   )
 }
