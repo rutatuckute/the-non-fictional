@@ -1,5 +1,4 @@
 import * as React from "react"
-import { Link } from "gatsby"
 
 import { photoUrl } from "./photoData"
 import * as styles from "../../pages/photography.module.css"
@@ -79,9 +78,12 @@ const Lightbox = ({ frames, index, onClose, onStep }) => {
       ) : null}
 
       <figure className={styles.lightboxFigure}>
+        {/* The frame fills up to 80vh, so budget for a large 2x screen and ease
+            off the compression — this is the one place the photograph is
+            actually meant to be looked at. */}
         <img
           className={styles.lightboxImage}
-          src={photoUrl(frame.photo, 1600)}
+          src={photoUrl(frame.photo, 2200, "normal")}
           alt={frame.title}
         />
         <figcaption className={styles.lightboxCaption}>
@@ -90,14 +92,13 @@ const Lightbox = ({ frames, index, onClose, onStep }) => {
             {[frame.location, frame.year].filter(Boolean).join(" · ")}
             {frame.series ? ` · ${frame.seriesName}` : ""}
           </span>
-          <span className={styles.lightboxActions}>
-            <Link to={frame.slug}>Open frame page ↗</Link>
-            {frames.length > 1 ? (
+          {frames.length > 1 ? (
+            <span className={styles.lightboxActions}>
               <span className={styles.lightboxCount}>
                 {index + 1} / {frames.length}
               </span>
-            ) : null}
-          </span>
+            </span>
+          ) : null}
         </figcaption>
       </figure>
     </div>
