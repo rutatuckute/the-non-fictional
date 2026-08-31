@@ -82,7 +82,6 @@ const IndexPage = ({ data, location }) => {
       </div>
 
       <WorkRail
-        connections={connections}
         work={selectedWork}
         onClose={closeRail}
       />

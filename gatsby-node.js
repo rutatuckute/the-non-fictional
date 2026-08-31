@@ -39,7 +39,6 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   })
 
   const blogPost = path.resolve(`./src/templates/blog-post.js`)
-  const photoPost = path.resolve(`./src/templates/photo-post.js`)
 
   const result = await graphql(`
     {
@@ -96,6 +95,10 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     })
   })
 
+  // Photographs no longer get a page of their own — the photography page's
+  // lightbox is the only place a frame is shown. The old per-photo URLs are
+  // indexed and linked, so each one redirects to its frame in that lightbox
+  // rather than 404ing.
   photoPosts.forEach((post) => {
     const slug = post?.fields?.slug
 
@@ -104,10 +107,11 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       return
     }
 
-    createPage({
-      path: slug,
-      component: photoPost,
-      context: { slug },
+    createRedirect({
+      fromPath: slug,
+      toPath: `/photography/?frame=${slug.replace(/^\/|\/$/g, "")}`,
+      isPermanent: true,
+      redirectInBrowser: true,
     })
   })
 }
