@@ -107,12 +107,29 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       return
     }
 
+    const ref = slug.replace(/^\/|\/$/g, "")
+    const toPath = `/photography/?frame=${encodeURIComponent(ref)}`
+
     createRedirect({
       fromPath: slug,
-      toPath: `/photography/?frame=${slug.replace(/^\/|\/$/g, "")}`,
+      toPath,
       isPermanent: true,
       redirectInBrowser: true,
     })
+
+    // Four slugs carry diacritics (lutèce, laumės). A browser requests those
+    // percent-encoded, which does not match the raw UTF-8 path written to
+    // _redirects, so those URLs 404. Register the encoded form as well.
+    const encodedSlug = encodeURI(slug)
+
+    if (encodedSlug !== slug) {
+      createRedirect({
+        fromPath: encodedSlug,
+        toPath,
+        isPermanent: true,
+        redirectInBrowser: true,
+      })
+    }
   })
 }
 
