@@ -4,6 +4,7 @@ template: blog-post
 title: RANDOM PARISIAN RIDES OR HIDALGO.PY
 category: Data
 category_id: data
+inquiry: systems
 topic: Paris / Python
 tags:
   - python

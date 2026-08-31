@@ -4,6 +4,7 @@ template: blog-post
 title: TAKE ME HOME, COUNTRY ROADS SCHEDULER
 category: Data
 category_id: data
+inquiry: systems
 topic: Python / Data
 tags:
   - Python

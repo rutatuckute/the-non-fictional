@@ -4,6 +4,7 @@ template: blog-post
 title: "WAR IN UKRAINE: KREMLIN'S PLAYBOOK FOR DUMMIES"
 category: Current Affairs
 category_id: essays
+inquiry: power
 topic: War / Ukraine / Russia
 tags:
   - war

@@ -2,7 +2,7 @@ import * as React from "react"
 
 import * as styles from "../../pages/redesign-lab.module.css"
 import AtlasField from "./AtlasField"
-import { getPhotographyColumns, sampleWorks } from "./archiveFieldData"
+import { getPhotographyColumns } from "./archiveFieldData"
 import {
   createVisualLayouts,
   interpolateTimelinePositions,
@@ -11,7 +11,7 @@ import {
   usePrefersReducedMotion,
   useViewportWidth,
 } from "./useFieldEnvironment"
-import useTimelineBend from "./useTimelineBend"
+import useTimelineBend, { TIMELINE_PHASES } from "./useTimelineBend"
 import { VISUAL_SCENES } from "./visualScenes"
 
 const SCROLLY_VIEWBOX_WIDTH = 720
@@ -49,12 +49,14 @@ const SCROLL_STEPS = [
   },
 ]
 
-const ArchiveScrolly = ({ works = sampleWorks }) => {
+const ArchiveScrolly = ({
+  connections = [],
+  selectedWorkId = null,
+  works = [],
+  onWorkSelect,
+}) => {
   const [activeScrollStep, setActiveScrollStep] = React.useState(0)
   const [connectionsReady, setConnectionsReady] = React.useState(false)
-  const [hoveredWorkId, setHoveredWorkId] = React.useState(null)
-  const [focusedWorkId, setFocusedWorkId] = React.useState(null)
-  const [selectedWorkId, setSelectedWorkId] = React.useState(null)
   const stepElements = React.useRef([])
   const prefersReducedMotion = usePrefersReducedMotion()
   const viewportWidth = useViewportWidth()
@@ -66,9 +68,9 @@ const ArchiveScrolly = ({ works = sampleWorks }) => {
         works,
         SCROLLY_VIEWBOX_WIDTH,
         SCROLLY_VIEWBOX_HEIGHT,
-        { compact, photographyColumns }
+        { compact, photographyColumns, connections }
       ),
-    [compact, photographyColumns, works]
+    [compact, connections, photographyColumns, works]
   )
 
   React.useEffect(() => {
@@ -97,10 +99,17 @@ const ArchiveScrolly = ({ works = sampleWorks }) => {
   }, [])
 
   const scene = VISUAL_SCENES[activeScrollStep]
-  const { timelineBendProgress, timelinePhase } = useTimelineBend({
-    active: scene.layout === "timeline",
-    prefersReducedMotion,
-  })
+  const { replayTimeline, timelineBendProgress, timelinePhase } =
+    useTimelineBend({
+      active: scene.layout === "timeline",
+      prefersReducedMotion,
+    })
+  // Reduced motion skips the bend altogether, so there is nothing to replay.
+  const canReplayTimeline =
+    prefersReducedMotion === false &&
+    scene.layout === "timeline" &&
+    timelinePhase === TIMELINE_PHASES.circular &&
+    timelineBendProgress === 1
   const positions = React.useMemo(
     () =>
       scene.layout === "timeline"
@@ -132,15 +141,7 @@ const ArchiveScrolly = ({ works = sampleWorks }) => {
     return () => window.clearTimeout(timer)
   }, [prefersReducedMotion, scene.connectionsVisible])
 
-  React.useEffect(() => {
-    if (scene.layout !== "network") {
-      setHoveredWorkId(null)
-      setFocusedWorkId(null)
-      setSelectedWorkId(null)
-    }
-  }, [scene.layout])
-
-  const activeWorkId = hoveredWorkId || focusedWorkId || selectedWorkId
+  const activeWorkId = selectedWorkId
 
   return (
     <section className={styles.scrollySection} aria-label="Archive structure">
@@ -171,6 +172,7 @@ const ArchiveScrolly = ({ works = sampleWorks }) => {
             className={`${styles.archiveField} ${styles.scrollyArchiveField}`}
             connectedWorkIds={scrollLayouts.connectedWorkIds}
             connectionPositions={scrollLayouts.network}
+            connections={connections}
             connectionsVisible={connectionsReady}
             description="The archive changes across five scroll scenes: unsorted works, four formats, recurring inquiries, a relationship network, and a chronology that bends into a circle."
             formatIndexVisible={scene.formatIndexVisible}
@@ -190,18 +192,19 @@ const ArchiveScrolly = ({ works = sampleWorks }) => {
             transitionsEnabled={prefersReducedMotion === false}
             workTitlesVisible={scene.workTitlesVisible}
             works={works}
-            onWorkBlur={workId => {
-              setFocusedWorkId(current => (current === workId ? null : current))
-            }}
-            onWorkFocus={setFocusedWorkId}
-            onWorkHover={setHoveredWorkId}
-            onWorkLeave={workId => {
-              setHoveredWorkId(current => (current === workId ? null : current))
-            }}
-            onWorkSelect={workId => {
-              setSelectedWorkId(current => (current === workId ? null : workId))
-            }}
+            onWorkSelect={onWorkSelect}
           />
+
+          <button
+            className={styles.timelineReplay}
+            data-visible={canReplayTimeline ? "true" : "false"}
+            type="button"
+            tabIndex={canReplayTimeline ? 0 : -1}
+            aria-hidden={canReplayTimeline ? undefined : "true"}
+            onClick={replayTimeline}
+          >
+            Back to time
+          </button>
         </div>
       </div>
     </section>

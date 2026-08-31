@@ -144,9 +144,12 @@ exports.createSchemaCustomization = ({ actions }) => {
       cover_image: String
       category: String
       category_id: String
+      inquiry: String
+      link: String
       selected: Boolean
       photo: String
       location: String
+      series: String
       year: String
       tags: [String]
       type: String
