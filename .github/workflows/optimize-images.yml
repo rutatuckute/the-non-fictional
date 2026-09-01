@@ -1,17 +1,18 @@
 name: Optimize images
 
-# Uploads made through /admin are committed straight to the repository by the
-# CMS, so nothing local ever runs on them and a full-size camera file would sit
-# in git history at full size forever. This normalises whatever arrives and
-# commits the result back.
+# Uploads made through /admin are committed by the CMS, so nothing local ever
+# runs on them and a full-size camera file would otherwise be committed at full
+# size. This normalises whatever arrives and commits the result back.
 #
-# The push below uses GITHUB_TOKEN, and GitHub deliberately does not re-trigger
-# workflows for those, so this cannot loop. Netlify still receives the push and
-# rebuilds with the optimised files.
+# It runs on the pull request rather than on master for two reasons: master
+# requires a pull request and grants no bypass, so a push straight to it would
+# be rejected; and fixing the file before the branch is merged keeps the
+# oversized blob out of master's history entirely rather than rewriting it after
+# the fact.
 
 on:
-  push:
-    branches: [master]
+  pull_request:
+    types: [opened, synchronize, reopened]
     paths:
       - "static/images/uploads/**"
   workflow_dispatch:
@@ -21,9 +22,15 @@ permissions:
 
 jobs:
   optimize:
+    # A fork's token is read-only, so the push below could not succeed.
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Check out the PR's own branch, not the merge commit, so the commit
+          # below lands somewhere that can actually be pushed.
+          ref: ${{ github.head_ref }}
 
       - uses: actions/setup-node@v4
         with:
@@ -48,4 +55,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add static/images/uploads
           git commit -m "Optimise uploaded images"
-          git push
+          git push origin HEAD:${{ github.head_ref }}

@@ -3,6 +3,11 @@ backend:
   branch: master
   repo: rutatuckute/the-non-fictional
 
+# master requires a pull request, so entries cannot be committed straight to it.
+# Editorial workflow gives each entry its own branch and PR: Save keeps a draft,
+# and Publish merges it once the deploy preview is green.
+publish_mode: editorial_workflow
+
 # Media lives in the repo and is resized on demand by Netlify's Image CDN,
 # so uploads are ordinary git commits and there is no third-party media service.
 media_folder: "static/images/uploads"
