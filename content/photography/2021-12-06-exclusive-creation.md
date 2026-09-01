@@ -8,6 +8,6 @@ tags:
   - Nature
 type: scenes
 date: 2021-12-06T22:01:54.682Z
-photo: https://ucarecdn.com/547f7772-446d-4083-81c9-ac0bb03a4255/-/preview/-/quality/smart/
+photo: /images/uploads/photo-exclusive-creation.jpg
 ---
-![](https://ucarecdn.com/547f7772-446d-4083-81c9-ac0bb03a4255/-/preview/-/quality/smart/)
+![](/images/uploads/photo-exclusive-creation.jpg)

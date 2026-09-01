@@ -3,6 +3,7 @@ import { useMemo, useState } from "react"
 import { graphql, Link } from "gatsby"
 
 import Layout from "../components/layout"
+import PhotoImage from "../components/photo-image"
 
 const FILTERS = [
   { key: "all", label: "All" },
@@ -97,11 +98,11 @@ const BlogIndex = ({ data, location }) => {
               >
                 {!isReflection && fm.cover_image ? (
                   <div className="writing-card-media">
-                    <img
+                    <PhotoImage
                       className="writing-card-img"
-                      src={fm.cover_image}
+                      source={fm.cover_image}
+                      px={720}
                       alt={fm.title || "Cover"}
-                      loading="lazy"
                     />
                   </div>
                 ) : (

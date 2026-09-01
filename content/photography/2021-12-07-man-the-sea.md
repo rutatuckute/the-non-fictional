@@ -8,6 +8,6 @@ tags:
   - People
 type: strangers
 date: 2021-12-07T20:26:17.841Z
-photo: https://ucarecdn.com/bf0355d1-60db-4935-bd23-c57dd44a64f7/-/preview/-/quality/smart/
+photo: /images/uploads/photo-man-the-sea.jpg
 ---
-![](https://ucarecdn.com/bf0355d1-60db-4935-bd23-c57dd44a64f7/-/preview/-/quality/smart/)
+![](/images/uploads/photo-man-the-sea.jpg)

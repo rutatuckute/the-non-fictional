@@ -7,6 +7,34 @@ import { MdOutlineDateRange } from "react-icons/md"
 import { BsLightbulb } from "react-icons/bs"
 
 import Layout from "../components/layout"
+import { photoUrl } from "../components/photography/photoData"
+
+// Markdown bodies write plain <img> tags with an explicit width, so they never
+// pass through PhotoImage. Rewrite their sources onto the same Image CDN the
+// rest of the site uses, budgeting twice the declared width for 2x screens —
+// otherwise an icon declared at 30px still pulls a full-size master.
+const withResizedImages = (html) =>
+  html.replace(
+    /<img([^>]*?)src=["'](\/images\/uploads\/[^"']+)["']([^>]*?)>/g,
+    (tag, before, src, after) => {
+      if (src.endsWith(".svg")) {
+        return tag
+      }
+
+      const declared = `${before} ${after}`.match(/width=["']?(\d+)/)
+      const px = Math.min(declared ? Number(declared[1]) * 2 : 1440, 2560)
+
+      // This markup is injected as a string, so there is no React handler to
+      // hang a fallback on — an inline one keeps these images as resilient as
+      // the rest, dropping to the file in the repo if the CDN does not answer.
+      const fallback = `this.onerror=null;this.src='${src}'`
+
+      return `<img${before}src="${photoUrl(src, px, "normal").replace(
+        /&/g,
+        "&amp;"
+      )}" loading="lazy" decoding="async" onerror="${fallback}"${after}>`
+    }
+  )
 
 const BlogPostTemplate = ({ data, pageContext, location }) => {
   const post = data.markdownRemark
@@ -38,7 +66,7 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
         </div>
         <section
           className="blog-text"
-          dangerouslySetInnerHTML={{ __html: post.html }}
+          dangerouslySetInnerHTML={{ __html: withResizedImages(post.html) }}
           itemProp="articleBody"
         />
         <hr />

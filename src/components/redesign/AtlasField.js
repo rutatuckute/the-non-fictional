@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import { WORK_MARK_SCALE, markStyles } from "./archiveFieldData"
+import { photoUrl, preferredFormat } from "../photography/photoData"
 import {
   TIMELINE_BEND_MS,
   TIMELINE_PHASES,
@@ -52,6 +53,20 @@ const WritingMark = ({ format, style }) => (
 
 const PhotographyMark = ({ style, photo }) => {
   const extent = style.extent * WORK_MARK_SCALE
+  const [failed, setFailed] = React.useState(false)
+
+  React.useEffect(() => setFailed(false), [photo])
+
+  // These marks are a few dozen pixels across at most. An <image> in SVG has no
+  // <picture> to negotiate through, so the format is named outright: left to
+  // negotiate, the CDN answers with JPEG, which is bigger than the WebP that
+  // wins at this size. Naming it also means nothing falls back on its own, so
+  // a failed transform drops to the file in the repo the same way PhotoImage
+  // does — without which these marks are the one thing on the page that stays
+  // blank under `gatsby develop`.
+  const markPhoto = failed
+    ? photo
+    : photoUrl(photo, 200, "lightest", preferredFormat(200))
   const armLength = style.armLength * WORK_MARK_SCALE
   const corners = [
     [-extent, -extent, 1, 1],
@@ -65,8 +80,9 @@ const PhotographyMark = ({ style, photo }) => {
       {photo ? (
         <image
           data-element="mark-photo"
-          href={photo}
-          xlinkHref={photo}
+          href={markPhoto}
+          xlinkHref={markPhoto}
+          onError={() => setFailed(true)}
           x={-extent}
           y={-extent}
           width={extent * 2}

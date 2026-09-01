@@ -8,6 +8,6 @@ tags:
   - People
 type: portraits
 date: 2021-12-06T22:33:02.840Z
-photo: https://ucarecdn.com/c4cae434-09df-4ba7-9118-0bee2d167397/-/preview/-/quality/smart/
+photo: /images/uploads/photo-garden-of-the-hesperides.jpg
 ---
-![](https://ucarecdn.com/c4cae434-09df-4ba7-9118-0bee2d167397/-/preview/-/quality/smart/)
+![](/images/uploads/photo-garden-of-the-hesperides.jpg)

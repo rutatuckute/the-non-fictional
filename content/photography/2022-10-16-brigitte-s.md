@@ -8,6 +8,6 @@ tags:
   - Strangers
 type: strangers
 date: 2022-10-16T22:13:34.423Z
-photo: https://ucarecdn.com/1150dfa0-abaf-4348-a503-95909efd272b/-/preview/-/quality/smart/-/format/auto/
+photo: /images/uploads/photo-brigitte-s.jpg
 ---
-![](https://ucarecdn.com/1150dfa0-abaf-4348-a503-95909efd272b/-/preview/-/quality/smart/-/format/auto/)
+![](/images/uploads/photo-brigitte-s.jpg)

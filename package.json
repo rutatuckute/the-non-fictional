@@ -49,11 +49,13 @@
   },
   "scripts": {
     "build": "gatsby build",
+    "clean": "gatsby clean",
     "develop": "gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "start": "gatsby develop",
+    "images:check": "node scripts/optimize-images.js --check",
+    "images:optimize": "node scripts/optimize-images.js",
     "serve": "gatsby serve",
-    "clean": "gatsby clean",
+    "start": "gatsby develop",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
   },
   "engines": {

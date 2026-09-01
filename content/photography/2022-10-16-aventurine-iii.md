@@ -9,6 +9,6 @@ tags:
 type: lights
 series: aventurine
 date: 2022-10-16T22:31:23.768Z
-photo: https://ucarecdn.com/17f44efd-093c-4bae-a986-b7c3f12fd18d/-/preview/-/quality/smart/-/format/auto/
+photo: /images/uploads/photo-aventurine-iii.jpg
 ---
-![](https://ucarecdn.com/17f44efd-093c-4bae-a986-b7c3f12fd18d/-/preview/-/quality/smart/-/format/auto/)
+![](/images/uploads/photo-aventurine-iii.jpg)

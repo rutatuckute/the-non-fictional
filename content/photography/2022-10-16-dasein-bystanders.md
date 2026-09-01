@@ -8,6 +8,6 @@ tags:
   - Strangers
 type: strangers
 date: 2022-10-16T16:56:19.332Z
-photo: https://ucarecdn.com/7f84e111-661c-45a5-bc18-ef764177fb5f/-/preview/-/quality/smart/-/format/auto/
+photo: /images/uploads/photo-dasein-bystanders.jpg
 ---
-![](https://ucarecdn.com/7f84e111-661c-45a5-bc18-ef764177fb5f/-/preview/-/quality/smart/-/format/auto/)
+![](/images/uploads/photo-dasein-bystanders.jpg)

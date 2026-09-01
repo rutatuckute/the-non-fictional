@@ -2,6 +2,7 @@ import * as React from "react"
 import { Link } from "gatsby"
 
 import * as styles from "../../pages/redesign-lab.module.css"
+import PhotoImage from "../photo-image"
 
 const FORMAT_LABELS = {
   essay: "Essay",
@@ -99,16 +100,16 @@ const WorkRail = ({ onClose, work }) => {
             <ul className={styles.railFrames}>
               {work.frames.map(frame => (
                 <li key={frame.id}>
-                  <img src={frame.photo} alt={frame.title} loading="lazy" />
+                  <PhotoImage source={frame.photo} px={420} alt={frame.title} />
                 </li>
               ))}
             </ul>
           ) : work.image ? (
-            <img
+            <PhotoImage
               className={styles.railImage}
-              src={work.image}
+              source={work.image}
+              px={860}
               alt={work.title}
-              loading="lazy"
             />
           ) : null}
 

@@ -1,0 +1,51 @@
+name: Optimize images
+
+# Uploads made through /admin are committed straight to the repository by the
+# CMS, so nothing local ever runs on them and a full-size camera file would sit
+# in git history at full size forever. This normalises whatever arrives and
+# commits the result back.
+#
+# The push below uses GITHUB_TOKEN, and GitHub deliberately does not re-trigger
+# workflows for those, so this cannot loop. Netlify still receives the push and
+# rebuilds with the optimised files.
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "static/images/uploads/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # The script imports nothing but sharp, so there is no reason to install
+      # the whole Gatsby toolchain here.
+      - name: Install sharp
+        run: npm install --no-save sharp@0.32.6
+
+      - name: Optimize
+        run: npm run images:optimize
+
+      - name: Commit any changes
+        run: |
+          if git diff --quiet -- static/images/uploads; then
+            echo "Nothing to optimise."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add static/images/uploads
+          git commit -m "Optimise uploaded images"
+          git push

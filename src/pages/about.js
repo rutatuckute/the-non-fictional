@@ -1,6 +1,7 @@
 import * as React from "react"
 import Layout from "../components/layout"
 import { Container, Row, Col } from 'react-bootstrap'
+import PhotoImage from "../components/photo-image"
 
 
 const About = ({ location }) => {
@@ -13,7 +14,13 @@ const About = ({ location }) => {
           <h1 class="bref">In Brief</h1>
         </Col>
         <Col md="auto">
-          <img src="https://ucarecdn.com/92e473be-2fa6-443b-9f58-998156630420/iconII.png" style={{height:"300px"}}></img>
+          <PhotoImage
+            source="/images/uploads/site-about-icon.png"
+            px={640}
+            quality="normal"
+            alt=""
+            style={{ height: "300px" }}
+          />
         </Col>
         <Col md="auto">
           <p class="bref">I never felt like writing anything fictional.</p>

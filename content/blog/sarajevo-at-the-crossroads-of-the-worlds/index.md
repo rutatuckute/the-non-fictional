@@ -22,7 +22,7 @@ excerpt: The experience of Sarajevo lies in the hazard of the questions asked
   are the resulting outcome - my mere impressions with a little bit of context
   from the past to make the present more comprehensible.
 date: 2022-07-22T10:51:32.407Z
-cover_image: https://ucarecdn.com/7c6de11f-db9d-4640-831a-e69f41d806b6/
+cover_image: /images/uploads/blog-sarajevo-at-the-crossroads-of-the-worlds-cover.jpg
 ---
 - - -
 
@@ -58,7 +58,7 @@ What was it like in Sarajevo during the longest military siege of modern history
 
 <h4 class="general-theory">SIGHTS</h4>
 
-<p style="text-align:center"><img class="blog-post-img" src="https://ucarecdn.com/55161f8d-73ab-440d-82ef-6949318dc86b/-/preview/-/quality/smart/" width="1100"></p> &nbsp;
+<p style="text-align:center"><img class="blog-post-img" src="/images/uploads/blog-sarajevo-at-the-crossroads-of-the-worlds-b1.jpg" width="1100"></p> &nbsp;
 
 
 -  <span style="color: #ff5c5c">**Markale:**</span> When in Markale, the bustling market in the center of Sarajevo, look for a <span style="color: #ff5c5c">rose</span> under your feet. This monument marks the single highest number of human casualties caused by mortar shells during the Siege of Sarajevo. At his time, the marketplace was roofless, yet people would still come, even if only a few could actually afford to buy food as prices were reaching new heights on a daily basis.
@@ -85,12 +85,12 @@ As for wars, and most notably interventions outside your territory, leading narr
 
 ---
 
-<img class="icon" src="https://ucarecdn.com/055737d8-6439-4244-b019-4361c3c56cfb/" width="30"><a class="general-theory" style="font-size: 14px;" href="https://www.imdb.com/title/tt8633462/">Jasmila Žbanić (2020). *Quo Vadis, Aida?*</a>
+<img class="icon" src="/images/uploads/blog-sarajevo-at-the-crossroads-of-the-worlds-b2.png" width="30"><a class="general-theory" style="font-size: 14px;" href="https://www.imdb.com/title/tt8633462/">Jasmila Žbanić (2020). *Quo Vadis, Aida?*</a>
 <br>
-<img class="icon" src="https://ucarecdn.com/055737d8-6439-4244-b019-4361c3c56cfb/" width="30"><a class="general-theory" style="font-size: 14px;" href="https://www.youtube.com/watch?v=tj9Zw5fN3rE&list=PLdw7wnKe0wiUSNdugFGpnSfm6wt-9gvUt/">BBC (1995). *The Death of Yugoslavia.*</a>
+<img class="icon" src="/images/uploads/blog-sarajevo-at-the-crossroads-of-the-worlds-b2.png" width="30"><a class="general-theory" style="font-size: 14px;" href="https://www.youtube.com/watch?v=tj9Zw5fN3rE&list=PLdw7wnKe0wiUSNdugFGpnSfm6wt-9gvUt/">BBC (1995). *The Death of Yugoslavia.*</a>
 
-<img class="icon" src="https://ucarecdn.com/f1e78f7f-c437-4a05-94b4-e8a3fb5f01f0/" width="30"><a class="general-theory" style="font-size: 14px;" href="https://aeon.co/essays/is-neuroscience-getting-closer-to-explaining-evil-behaviour">Noga Arikha (2018). *Is neuroscience getting closer to explaining evil behaviour?*</a>
+<img class="icon" src="/images/uploads/blog-living-without-the-general-theory-b1.svg" width="30"><a class="general-theory" style="font-size: 14px;" href="https://aeon.co/essays/is-neuroscience-getting-closer-to-explaining-evil-behaviour">Noga Arikha (2018). *Is neuroscience getting closer to explaining evil behaviour?*</a>
 <br>
-<img class="icon" src="https://ucarecdn.com/f1e78f7f-c437-4a05-94b4-e8a3fb5f01f0/" width="30"><a class="general-theory" style="font-size: 14px;" href="https://www.washingtonpost.com/archive/opinions/1999/02/28/why-the-balkans-demand-amorality/3a47a86e-4733-4852-9677-9b70c47a510e/">Robert D. Kaplan (1999). *Why the Balkans Demand Amorality.*</a>
+<img class="icon" src="/images/uploads/blog-living-without-the-general-theory-b1.svg" width="30"><a class="general-theory" style="font-size: 14px;" href="https://www.washingtonpost.com/archive/opinions/1999/02/28/why-the-balkans-demand-amorality/3a47a86e-4733-4852-9677-9b70c47a510e/">Robert D. Kaplan (1999). *Why the Balkans Demand Amorality.*</a>
 
-<img class="icon" src="https://ucarecdn.com/7329f525-125f-43a4-a892-627c3e552592/" width="30"><a class="general-theory" style="font-size: 14px;" href="https://open.spotify.com/artist/02IFYoziC7CpQRK8fbehUY/">Dubioza kolektiv</a>
+<img class="icon" src="/images/uploads/blog-sarajevo-at-the-crossroads-of-the-worlds-b3.png" width="30"><a class="general-theory" style="font-size: 14px;" href="https://open.spotify.com/artist/02IFYoziC7CpQRK8fbehUY/">Dubioza kolektiv</a>
