@@ -3,11 +3,10 @@ backend:
   branch: master
   repo: rutatuckute/the-non-fictional
 
-media_folder: "images/uploads"
-media_library:
-  name: uploadcare
-  config:
-    publicKey: 6edb3445593ce1385afa
+# Media lives in the repo and is resized on demand by Netlify's Image CDN,
+# so uploads are ordinary git commits and there is no third-party media service.
+media_folder: "static/images/uploads"
+public_folder: "/images/uploads"
 
 collections:
   - name: "blog"
@@ -41,6 +40,16 @@ collections:
       - {label: "Location", name: "location", widget: "string"}
       - {label: "Year", name: "year", widget: "string"}
       - {label: "Tags", name: "tags", widget: "list"}
+      # Drives the type chips on the photography page. A frame saved without one
+      # shows in the contact sheet but matches no type filter.
+      - label: "Type"
+        name: "type"
+        widget: "select"
+        options: ["portraits", "strangers", "scenes", "lights"]
+        required: true
+      # Frames sharing a series slug are grouped in the Series view. Leave empty
+      # for a standalone frame.
+      - {label: "Series", name: "series", widget: "string", required: false}
       - {label: "Publish Date", name: "date", widget: "datetime"}
       - {label: "Body", name: "body", widget: "markdown"}
       - {label: "Photo", name: "photo", widget: "image", required: true}

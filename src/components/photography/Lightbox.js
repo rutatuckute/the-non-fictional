@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { photoUrl } from "./photoData"
+import PhotoImage from "../photo-image"
 import * as styles from "../../pages/photography.module.css"
 
 const Lightbox = ({ frames, index, onClose, onStep }) => {
@@ -81,10 +81,13 @@ const Lightbox = ({ frames, index, onClose, onStep }) => {
         {/* The frame fills up to 80vh, so budget for a large 2x screen and ease
             off the compression — this is the one place the photograph is
             actually meant to be looked at. */}
-        <img
+        <PhotoImage
           className={styles.lightboxImage}
-          src={photoUrl(frame.photo, 2200, "normal")}
+          source={frame.photo}
+          px={2200}
+          quality="normal"
           alt={frame.title}
+          loading="eager"
         />
         <figcaption className={styles.lightboxCaption}>
           <span className={styles.lightboxTitle}>{frame.title}</span>

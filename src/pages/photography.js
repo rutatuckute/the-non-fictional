@@ -2,6 +2,7 @@ import * as React from "react"
 import { graphql } from "gatsby"
 
 import Masthead from "../components/masthead"
+import PhotoImage from "../components/photo-image"
 import SiteFooter from "../components/site-footer"
 import Lightbox from "../components/photography/Lightbox"
 import FilterSelect from "../components/photography/FilterSelect"
@@ -12,7 +13,6 @@ import {
   buildFrames,
   groupSeries,
   isFiltering,
-  photoUrl,
 } from "../components/photography/photoData"
 import * as styles from "./photography.module.css"
 
@@ -94,11 +94,12 @@ const Frame = ({ frame, onOpen, px, quality, ratio }) => (
       onClick={() => onOpen(frame)}
       aria-label={`Open ${frame.title}`}
     >
-      <img
+      <PhotoImage
         className={styles.frameImage}
-        src={photoUrl(frame.photo, px, quality)}
+        source={frame.photo}
+        px={px}
+        quality={quality}
         alt={frame.title}
-        loading="lazy"
       />
       <figcaption className={styles.frameCaption}>
         <b>{frame.title}</b>

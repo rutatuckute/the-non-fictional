@@ -1,8 +1,8 @@
 import * as React from "react"
 import { Link } from "gatsby"
 
-import logo from "../images/logo.jpeg"
 import * as styles from "./masthead.module.css"
+import PhotoImage from "./photo-image"
 
 const navigation = [
   { label: "STRUCTURE", to: "/", section: "structure" },
@@ -53,7 +53,14 @@ const Masthead = ({ location, activeSection }) => {
   return (
     <header className={styles.header}>
       <Link className={styles.brand} to="/" aria-label="The Non Fictional home">
-        <img className={styles.brandLogo} src={logo} alt="" />
+        <PhotoImage
+          className={styles.brandLogo}
+          source="/images/logo.png"
+          px={160}
+          quality="normal"
+          loading="eager"
+          alt=""
+        />
         <span>The Non Fictional</span>
       </Link>
 

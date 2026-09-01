@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import { WORK_MARK_SCALE, markStyles } from "./archiveFieldData"
+import { photoUrl } from "../photography/photoData"
 import {
   TIMELINE_BEND_MS,
   TIMELINE_PHASES,
@@ -52,6 +53,10 @@ const WritingMark = ({ format, style }) => (
 
 const PhotographyMark = ({ style, photo }) => {
   const extent = style.extent * WORK_MARK_SCALE
+  // These marks are a few dozen pixels across at most. An <image> in SVG has no
+  // <picture> to negotiate with, so no format is forced and the CDN picks one
+  // from the request's Accept header.
+  const markPhoto = photoUrl(photo, 200, "lightest")
   const armLength = style.armLength * WORK_MARK_SCALE
   const corners = [
     [-extent, -extent, 1, 1],
@@ -65,8 +70,8 @@ const PhotographyMark = ({ style, photo }) => {
       {photo ? (
         <image
           data-element="mark-photo"
-          href={photo}
-          xlinkHref={photo}
+          href={markPhoto}
+          xlinkHref={markPhoto}
           x={-extent}
           y={-extent}
           width={extent * 2}

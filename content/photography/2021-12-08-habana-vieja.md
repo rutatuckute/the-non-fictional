@@ -8,6 +8,6 @@ tags:
   - People
 type: strangers
 date: 2021-12-08T08:57:44.914Z
-photo: https://ucarecdn.com/02871b00-6cdf-4eb5-9737-99b306c8e559/-/preview/-/quality/smart/
+photo: /images/uploads/photo-habana-vieja.jpg
 ---
-![](https://ucarecdn.com/02871b00-6cdf-4eb5-9737-99b306c8e559/-/preview/-/quality/smart/)
+![](/images/uploads/photo-habana-vieja.jpg)

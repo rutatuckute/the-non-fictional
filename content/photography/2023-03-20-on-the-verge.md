@@ -8,6 +8,6 @@ tags:
   - Nature
 type: scenes
 date: 2023-03-20T12:15:07.145Z
-photo: https://ucarecdn.com/79e1c113-913e-4135-958b-7470d256154f/
+photo: /images/uploads/photo-on-the-verge.jpg
 ---
-![](https://ucarecdn.com/72a3781a-ca73-46f9-ae7f-3963bb7b5ee7/)
+![](/images/uploads/photo-on-the-verge-b1.jpg)

@@ -19,7 +19,7 @@ excerpt: " A humble effort to assemble, in a concise
   into the traps of what has been assiduously developed and refined over decades
   by con liberators."
 date: 2022-03-16T22:01:06.605Z
-cover_image: https://ucarecdn.com/e23830b5-5c9f-4f4b-801b-4d6e6c28b36a/
+cover_image: /images/uploads/blog-war-in-ukraine-kremlins-playbook-for-dummies-cover.jpg
 ---
 - - -
 
@@ -112,7 +112,7 @@ All these aformentioned tactics are enforced and masterly wrapped into the <span
 
 Let’s take somes excerpts from a <a class="current-affairs" href="https://www.mid.ru/en/press_service/minister_speeches/1802677/">recent interview with Lavrov</a> - it contains a full package of <span style="color: #8ac926">Big Lies, misleading information and whataboutism</span>.
 
-<p style="text-align:center"><img class="blog-post-img" src="https://ucarecdn.com/78e371f6-4f0b-47bf-b877-c732df4e2b98/-/preview/-/quality/smart/" width="900"></p> &nbsp;
+<p style="text-align:center"><img class="blog-post-img" src="/images/uploads/blog-war-in-ukraine-kremlins-playbook-for-dummies-b1.jpg" width="900"></p> &nbsp;
 
 &nbsp;
 
@@ -120,18 +120,18 @@ Let’s take somes excerpts from a <a class="current-affairs" href="https://www.
 This is certainly not exhaustive and shall be completed whenever needed.
 - - -
 
-<img class="icon" src="https://ucarecdn.com/f3ec0c3a-dec4-4047-b1cb-a8edf41ae64a/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.goodreads.com/book/show/9479238-day-of-the-oprichnik">Vladimir Sorokin (2006). *Day of the Oprichnik.*</a>
+<img class="icon" src="/images/uploads/blog-decoding-lithuania-a-tiny-country-with-reminiscences-of-greatness-b2.svg" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.goodreads.com/book/show/9479238-day-of-the-oprichnik">Vladimir Sorokin (2006). *Day of the Oprichnik.*</a>
 <br>
-<img class="icon" src="https://ucarecdn.com/f3ec0c3a-dec4-4047-b1cb-a8edf41ae64a/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.goodreads.com/en/book/show/21413849-nothing-is-true-and-everything-is-possible">Peter Pomerantsev (2014). *Nothing Is True and Everything Is Possible: The Surreal Heart of the New Russia.*</a>
+<img class="icon" src="/images/uploads/blog-decoding-lithuania-a-tiny-country-with-reminiscences-of-greatness-b2.svg" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.goodreads.com/en/book/show/21413849-nothing-is-true-and-everything-is-possible">Peter Pomerantsev (2014). *Nothing Is True and Everything Is Possible: The Surreal Heart of the New Russia.*</a>
 
-<img class="icon" src="https://ucarecdn.com/0d50921a-2ce5-4120-bf08-df09f11ba21c/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.economist.com/by-invitation/2022/03/02/lithuanias-prime-minister-ingrida-simonyte-says-russias-invasion-was-predictable">The Economist (2022). *Lithuania’s prime minister, Ingrida Simonyte, says Russia’s invasion was predictable.*</a>
+<img class="icon" src="/images/uploads/blog-war-in-ukraine-kremlins-playbook-for-dummies-b2.png" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.economist.com/by-invitation/2022/03/02/lithuanias-prime-minister-ingrida-simonyte-says-russias-invasion-was-predictable">The Economist (2022). *Lithuania’s prime minister, Ingrida Simonyte, says Russia’s invasion was predictable.*</a>
 
-<img class="icon" src="https://ucarecdn.com/8e85c0bb-45a4-4556-8b3a-1568cb3b45ce/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://euvsdisinfo.eu/">EUvsDisinfo</a>
+<img class="icon" src="/images/uploads/blog-war-in-ukraine-kremlins-playbook-for-dummies-b3.png" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://euvsdisinfo.eu/">EUvsDisinfo</a>
 <br>
-<img class="icon" src="https://ucarecdn.com/8e85c0bb-45a4-4556-8b3a-1568cb3b45ce/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://arenaresearch.org/">Arena Research Program</a>
+<img class="icon" src="/images/uploads/blog-war-in-ukraine-kremlins-playbook-for-dummies-b3.png" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://arenaresearch.org/">Arena Research Program</a>
 
-<img class="icon" src="https://ucarecdn.com/9cfebffa-8145-4d4a-b670-e7f359ca7aa2/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.imdb.com/title/tt6464290/">Šarūnas Bartas (2017). *Frost.*</a>
+<img class="icon" src="/images/uploads/blog-war-in-ukraine-kremlins-playbook-for-dummies-b4.png" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.imdb.com/title/tt6464290/">Šarūnas Bartas (2017). *Frost.*</a>
 <br>
-<img class="icon" src="https://ucarecdn.com/9cfebffa-8145-4d4a-b670-e7f359ca7aa2/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.imdb.com/title/tt3560686/">Yuriy Bykov (2014). *The Fool.*</a>
+<img class="icon" src="/images/uploads/blog-war-in-ukraine-kremlins-playbook-for-dummies-b4.png" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.imdb.com/title/tt3560686/">Yuriy Bykov (2014). *The Fool.*</a>
 <br>
-<img class="icon" src="https://ucarecdn.com/9cfebffa-8145-4d4a-b670-e7f359ca7aa2/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.youtube.com/watch?v=N0NCzTIpJjs">An evening with Anne Applebaum | On propaganda & fake news (2020)</a>
+<img class="icon" src="/images/uploads/blog-war-in-ukraine-kremlins-playbook-for-dummies-b4.png" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.youtube.com/watch?v=N0NCzTIpJjs">An evening with Anne Applebaum | On propaganda & fake news (2020)</a>

@@ -22,7 +22,7 @@ excerpt: "The aim of this piece is two-fold: (1) to provide you with a glimpse
   data can be exploited to code some cool, yet as some would argue, useless
   stuff."
 date: 2020-11-01T21:13:00.000Z
-cover_image: https://ucarecdn.com/e8d47d8a-8143-465b-bfa7-12548370557b/
+cover_image: /images/uploads/blog-random-parisian-rides-or-hidalgo-py-cover.jpg
 ---
 - - -
 
@@ -104,11 +104,11 @@ for point in range(0, len(locations_list)):
 paris_map
 ```
 
-<img class="blog-post-img" src="https://ucarecdn.com/79f93325-d362-424b-8780-be13989bd6b6/" width="900"> &nbsp;
+<img class="blog-post-img" src="/images/uploads/blog-random-parisian-rides-or-hidalgo-py-b1.jpg" width="900"> &nbsp;
 
 <span style="color: orange">Locate Control</span> allows to get the position of your device:
 
-<p style="text-align:center"><img class="blog-post-img" src="https://ucarecdn.com/19b4447d-1bc8-4367-89e4-555ed92691ca/" width="600"></p>
+<p style="text-align:center"><img class="blog-post-img" src="/images/uploads/blog-random-parisian-rides-or-hidalgo-py-b2.jpg" width="600"></p>
 
 The full code can be found here: <a href="https://github.com/rutatuckute/the-non-fictional-scripts/tree/main/hidalgo">rutatuckute/the-non-fictional-scripts/hidalgo</a>
 

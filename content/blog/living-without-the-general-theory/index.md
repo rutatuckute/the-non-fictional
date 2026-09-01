@@ -27,7 +27,7 @@ excerpt: Quantifying complex human interactions, converting mechanisms of the
   information, and ultimately deriving causalities, and of utmost importance -
   factual wisdom - it was all assumed to establish « The General Theory ».
 date: 2020-09-10T23:24:00.000Z
-cover_image: https://ucarecdn.com/8ab43595-53eb-405f-8990-948b83eaad39/
+cover_image: /images/uploads/blog-living-without-the-general-theory-cover.jpg
 ---
 - - -
 
@@ -37,7 +37,7 @@ Had it not been for the explanation and causality-seeking animal in me, economic
 
 <p style="text-align: center;">The clocks have been always striking thirteen.</p>
 
-<p style="text-align:center"><img class="blog-post-img" src="https://ucarecdn.com/8ab43595-53eb-405f-8990-948b83eaad39/" width="500"></p>
+<p style="text-align:center"><img class="blog-post-img" src="/images/uploads/blog-living-without-the-general-theory-cover.jpg" width="500"></p>
 
 <p style="text-align: center;">
 Both the core question in economic modelling <span style="color: #ff5c5c">« what is the correct set of rules for the most satisfactory approximation of reality ? »</span> and the eternal <span style="color: #ff5c5c">« how to make some sense out of life ? »</span> raise in tandem, suffering from the very same - reluctance to integrate the fact that the world is a mere chaos governed by chance tangled in endless interactions and non-linearities.
@@ -87,6 +87,6 @@ How to combine the omnipresence of uncertain, unknown, unseen and the intensity 
 
 - - -
 
-<img class="icon" src="https://ucarecdn.com/f1e78f7f-c437-4a05-94b4-e8a3fb5f01f0/" width="30"><a class="general-theory" style="font-size: 14px;" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2953780">Jeremy A. Frimer, Linda J. Skitka & Matt Motyl (2017). *Liberals and Conservatives are Similarly Motivated to Avoid Exposure to One Another's Opinions.* Journal of Experimental Social Psychology.</a>
+<img class="icon" src="/images/uploads/blog-living-without-the-general-theory-b1.svg" width="30"><a class="general-theory" style="font-size: 14px;" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2953780">Jeremy A. Frimer, Linda J. Skitka & Matt Motyl (2017). *Liberals and Conservatives are Similarly Motivated to Avoid Exposure to One Another's Opinions.* Journal of Experimental Social Psychology.</a>
 
-<img class="icon" src="https://ucarecdn.com/148f4b56-0d80-4e8a-958b-365400126535/" width="30"><a class="general-theory" style="font-size: 14px;" href="https://www.hup.harvard.edu/catalog.php?isbn=9780674237827">Hugo Mercier & Dan Sperber (2019). *The Enigma of Reason.* Harvard University Press.</a>
+<img class="icon" src="/images/uploads/blog-living-without-the-general-theory-b2.svg" width="30"><a class="general-theory" style="font-size: 14px;" href="https://www.hup.harvard.edu/catalog.php?isbn=9780674237827">Hugo Mercier & Dan Sperber (2019). *The Enigma of Reason.* Harvard University Press.</a>

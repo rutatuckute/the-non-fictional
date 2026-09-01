@@ -16,7 +16,7 @@ excerpt: If there is one non-negotiable time of the year, it is Christmas. Yet,
   your so-much-craved future getaways and (2) a trick to extract and save data
   at regular intervals from open sources without lifting a finger, ou presque.
 date: 2020-12-21T15:07:05.623Z
-cover_image: https://ucarecdn.com/d28b4bb7-891c-4f8c-ac42-3d7dea701501/
+cover_image: /images/uploads/blog-take-me-home-country-roads-scheduler-cover.jpg
 ---
 - - -
 
@@ -95,15 +95,15 @@ Once your Python script is ready, follow the steps below to create <em>Windows S
 
 <ul><li>Save your Python script as<em> .py</em></li><li>Create a batch file to run your Python script by opening <em>Notepad </em>and writing the following: "<em>path where your python exe is stored</em>" "<em>path where your python script is stored</em>" pause. Ironically enough, to check where your <em>python exe</em> is, all you need to do is run <em>where python </em>on your <em>Command Prompt</em>.</li></ul>
 
-<p style="text-align:center"><img class="blog-post-img" src="https://ucarecdn.com/b6bb2982-71ed-4ea3-b9be-0dd0d1f5a762/" width="800"></p>
+<p style="text-align:center"><img class="blog-post-img" src="/images/uploads/blog-take-me-home-country-roads-scheduler-b1.jpg" width="800"></p>
 
 <ul><li>Save your Notepad file with .bat extension as per below:</li></ul>
 
-<p style="text-align:center"><img class="blog-post-img" src="https://ucarecdn.com/c9f62240-e69c-4f1c-bcc9-de1b3244d9f3/" width="700"></p>
+<p style="text-align:center"><img class="blog-post-img" src="/images/uploads/blog-take-me-home-country-roads-scheduler-b2.jpg" width="700"></p>
 
 <ul><li>Schedule your Python script using Windows Scheduler which can be found as per below:</li></ul>
 
-<p style="text-align:center"><img class="blog-post-img" src="https://ucarecdn.com/b6ad18f3-a0b1-4f33-87c5-d96ab7271624/" width="700"></p>
+<p style="text-align:center"><img class="blog-post-img" src="/images/uploads/blog-take-me-home-country-roads-scheduler-b3.jpg" width="700"></p>
 
 All done ! Your script will be executed at your selected frequency or trigger event.
 
@@ -113,6 +113,6 @@ All done ! Your script will be executed at your selected frequency or trigger ev
 
 The script allowed me to collect 18-days data on the minimum price for my round-trip flight. Unsurprisingly, it skyrockets prior to Christmas, the effect exacerbated by a significant reduction in flight frequency.
 
-<p style="text-align:center"><img class="blog-post-img" src="https://ucarecdn.com/d28b4bb7-891c-4f8c-ac42-3d7dea701501/" width="500"></p>
+<p style="text-align:center"><img class="blog-post-img" src="/images/uploads/blog-take-me-home-country-roads-scheduler-cover.jpg" width="500"></p>
 
 At the end of the day, both having a clue on how to connect to an open source API and schedule your script are handy skills to have. Regardless of whether you will use it to plan your next trip - a daring assumption nowadays - or to automate data extraction for any other purpose.

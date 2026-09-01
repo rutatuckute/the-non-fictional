@@ -8,6 +8,6 @@ tags:
   - People
 type: strangers
 date: 2021-12-08T08:59:22.488Z
-photo: https://ucarecdn.com/f8763dc9-ebe2-4d41-9743-3f455f016439/-/preview/-/quality/smart/
+photo: /images/uploads/photo-revoliucion.jpg
 ---
-![](https://ucarecdn.com/f8763dc9-ebe2-4d41-9743-3f455f016439/-/preview/-/quality/smart/)
+![](/images/uploads/photo-revoliucion.jpg)

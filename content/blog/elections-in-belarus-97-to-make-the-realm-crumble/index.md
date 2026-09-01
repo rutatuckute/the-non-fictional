@@ -20,7 +20,7 @@ excerpt: Against all odds, political dynamics are radically
   since a quarter of a century as the country heads towards a presidential
   election on August 9th.
 date: 2020-07-26T08:51:32.564Z
-cover_image: https://ucarecdn.com/d1539a2b-9a41-4f50-bbab-0c27fb33671b/
+cover_image: /images/uploads/blog-elections-in-belarus-97-to-make-the-realm-crumble-cover.jpg
 ---
 - - -
 
@@ -32,7 +32,7 @@ In the aftermath of the Soviet empire’s collapse in 1990-91, the Baltic states
 
 The timing for heading to the polls can be hardly any better. Alongside with a disastrous handling of the COVID-19 pandemic - which was no less of a mockery than once *en vigueur* <span style="color: #8ac926">« <em>social parasite</em> »</span> tax obliging the unemployed to pay - the scars of a severe recession and years of mounting poverty create a cumulus of discontent. Beyond the economic woes, not one but several substantial candidates emerged. Yet, elections are no ordinary thing in a country like Belarus. The first and foremost challenge consists of obtaining the official registration as intimidation, arrests and criminal investigations may follow. Repressions of those who bravely speak up their political stance are common practice too. « *It is better to die standing than to live on your knees*  » does indeed sound paradoxical from a president who himself banned gatherings back in 2011 making it nearly impossible to protest peacefully. In a European country with the lowest rate of press freedom, questioning the president and its <span style="color: #8ac926"><em>nomenklatura</em></span> is considered a criminal offense. How many actually support Lukashenka is hard to tell as independent polls covering the election are unauthorized, albeit a popular meme of <span style="color: #8ac926">« <em>Sasha 3%</em> »</span> born from an online survey carried out by private news websites may provide a glimpse. Who would Belarusians rather see leading their country in a new direction?
 
-<p style="text-align:center"><img class="blog-post-img" src="https://ucarecdn.com/4a57f2df-5d7b-4d1b-befa-838d85aea422/" width=900></p>
+<p style="text-align:center"><img class="blog-post-img" src="/images/uploads/blog-elections-in-belarus-97-to-make-the-realm-crumble-b1.jpg" width=900></p>
 
 
 Meet the key players. A prominent blogger <span style="color: #8ac926">Siarhei Tikhanouski</span> who gathered crowds determined to get rid off « *the cockroach* » is now detained and facing criminal charges. Widely perceived as the biggest threat with a record number of signatures collected, <span style="color: #8ac926">Viktar Babaryka</span>, formerly in charge of  Belgazprombank, was arrested on suspicion of tax evasion and money laundering. As for the ex-ambassador to the United States and founder of High Tech Park, the Silicon Valley of Belarus, <span style="color: #8ac926">Valery Tsepkalo</span> was disqualified after the Central Election Committee invalidated a great number of his collected signatures. At the end of the day, the system found a way to deal with each from the core of the opposition.

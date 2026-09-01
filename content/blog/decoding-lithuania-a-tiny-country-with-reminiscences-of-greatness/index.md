@@ -21,7 +21,7 @@ excerpt: "To my humble understanding, Lithuania and most notably Lithuanians can
   be comprehended through two major pillars: (1) a long history of statehood and (2) collective trauma unleashed by 50 years of
   Soviet occupation."
 date: 2021-03-11T23:55:51.258Z
-cover_image: https://ucarecdn.com/93f215bd-b53e-4bae-b702-a45c99860aa8/
+cover_image: /images/uploads/blog-decoding-lithuania-a-tiny-country-with-reminiscences-of-greatness-cover.jpg
 ---
 - - -
 
@@ -43,7 +43,7 @@ To my humble understanding, Lithuania and most notably Lithuanians can be compre
 
 My intent is not to bother you with heavy historic facts, but rather to introduce the <span style="color: #8ac926"><em>narrative</em></span>.
 
-<img class="blog-post-img" src="https://ucarecdn.com/3c745144-30b0-49d1-8c6f-07ae802fbfeb/-/preview/-/quality/smart/" width="1100"> &nbsp;
+<img class="blog-post-img" src="/images/uploads/blog-decoding-lithuania-a-tiny-country-with-reminiscences-of-greatness-b1.jpg" width="1100"> &nbsp;
 
 Nearly unknown to most, the history of the statehood of Lithuania goes all the way back to the 13th century when a <em>soon-to-be</em> king Mindaugas consolidated Lithuanian lands. <span style="color: #8ac926">The Grand Duchy of Lithuania</span> emerged. Skilled merchants, craftsmen, farmers and traders from Western Europe were invited to settle in Lithuania in exchange of tax concessions and pieces of land, among other privileges, under the rule of the duke Gemininas. Think of it as a sort of free economic zone of the 14th century with favourable tax conditions. Underpinned by great tolerance towards diverse religious and ethnic groups, the prosperity of the Grand Duchy of Lithuania reached its peak in the 15th century, with a territory stretching all the way to the Black Sea.
 
@@ -84,4 +84,4 @@ May this article serve as an introduction to a larger series of articles that wo
 
 - - -
 
-<img class="icon" src="https://ucarecdn.com/f3ec0c3a-dec4-4047-b1cb-a8edf41ae64a/" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.goodreads.com/book/show/52137.The_Great_Terror">Robert Conquest (1968). *The Great Terror.*</a>
+<img class="icon" src="/images/uploads/blog-decoding-lithuania-a-tiny-country-with-reminiscences-of-greatness-b2.svg" width="30"><a class="current-affairs" style="font-size: 14px;" href="https://www.goodreads.com/book/show/52137.The_Great_Terror">Robert Conquest (1968). *The Great Terror.*</a>
