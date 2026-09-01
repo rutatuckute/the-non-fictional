@@ -1,11 +1,12 @@
 import * as React from "react"
 
-import { photoUrl } from "./photography/photoData"
+import { photoUrl, preferredFormat } from "./photography/photoData"
 
-// Every photograph on the site goes through here. AVIF is offered first and
-// roughly halves the bytes of the WebP the CDN would otherwise negotiate; the
-// <img> keeps no `fm` of its own, so a browser without AVIF still gets whatever
-// Netlify decides it can take. Nothing is forced on an old browser.
+// Every photograph on the site goes through here. The <source> asks for
+// whichever format actually wins at this size (see preferredFormat), and the
+// <img> keeps no `fm` of its own, so a browser that cannot take the offered
+// format still gets whatever Netlify decides it can. Nothing is forced on an
+// old browser.
 //
 // The <picture> is display:contents so it leaves no box of its own — the <img>
 // lays out as a direct child of whatever wraps it, and the existing frame and
@@ -19,12 +20,26 @@ const PhotoImage = ({
   loading = "lazy",
   ...rest
 }) => {
+  const [failed, setFailed] = React.useState(false)
+
+  // The lightbox steps between photographs without remounting, so a failure on
+  // one frame must not stick to the next.
+  React.useEffect(() => setFailed(false), [source])
+
   if (!source) {
     return null
   }
 
-  // Vectors have nothing to resize, and the CDN would only rasterise them.
-  if (source.endsWith(".svg")) {
+  // Two cases render a bare <img>: vectors, which have nothing to resize, and
+  // anything the CDN failed to serve, which falls back to the file in the repo.
+  //
+  // The fallback has to drop the <picture> rather than reassign the <img> src.
+  // Once the browser has chosen a <source> it goes on choosing it, so pointing
+  // the inner <img> at the original is ignored for as long as that <source> is
+  // still on offer — the only way back to the plain file is to stop offering
+  // it. This is also what makes the site legible under `gatsby develop`, which
+  // serves no /.netlify/images at all.
+  if (failed || source.endsWith(".svg")) {
     return (
       <img
         className={className}
@@ -37,30 +52,21 @@ const PhotoImage = ({
     )
   }
 
-  // If the CDN ever fails to answer, fall back to the file in the repo rather
-  // than showing a broken frame. It is the unresized master, so this costs
-  // bytes — which is the point: it only happens when the alternative is nothing.
-  const onError = (event) => {
-    const img = event.currentTarget
-
-    if (img.dataset.fallback) {
-      return
-    }
-
-    img.dataset.fallback = "1"
-    img.src = source
-  }
+  const format = preferredFormat(px)
 
   return (
     <picture style={{ display: "contents" }}>
-      <source type="image/avif" srcSet={photoUrl(source, px, quality, "avif")} />
+      <source
+        type={`image/${format}`}
+        srcSet={photoUrl(source, px, quality, format)}
+      />
       <img
         className={className}
         src={photoUrl(source, px, quality)}
         alt={alt}
         loading={loading}
         decoding="async"
-        onError={onError}
+        onError={() => setFailed(true)}
         {...rest}
       />
     </picture>

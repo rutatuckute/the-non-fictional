@@ -24,10 +24,15 @@ const withResizedImages = (html) =>
       const declared = `${before} ${after}`.match(/width=["']?(\d+)/)
       const px = Math.min(declared ? Number(declared[1]) * 2 : 1440, 2560)
 
+      // This markup is injected as a string, so there is no React handler to
+      // hang a fallback on — an inline one keeps these images as resilient as
+      // the rest, dropping to the file in the repo if the CDN does not answer.
+      const fallback = `this.onerror=null;this.src='${src}'`
+
       return `<img${before}src="${photoUrl(src, px, "normal").replace(
         /&/g,
         "&amp;"
-      )}" loading="lazy" decoding="async"${after}>`
+      )}" loading="lazy" decoding="async" onerror="${fallback}"${after}>`
     }
   )
 
