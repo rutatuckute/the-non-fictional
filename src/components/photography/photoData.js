@@ -44,25 +44,13 @@ export const splitLocation = (location) => {
 
 // A series takes the shortest of its members' titles, so "AVENTURINE" wins
 // over "AVENTURINE III" — the same rule the homepage archive field uses.
-const shortestTitle = (members) =>
-  members
-    .map((member) => member.title)
-    .reduce((shortest, candidate) =>
-      candidate.length < shortest.length ? candidate : shortest
-    )
+// "ciao-amore" -> "Ciao amore". The slug is the series' identity, so its
+// display name is derived from it rather than from the shortest member title,
+// which shifted whenever a frame was added or renamed.
+export const seriesLabel = (slug) => {
+  const words = (slug || "").split("-").filter(Boolean).join(" ")
 
-const seriesNames = (frames) => {
-  const bySeries = new Map()
-
-  frames.forEach((frame) => {
-    if (!frame.series) return
-    if (!bySeries.has(frame.series)) bySeries.set(frame.series, [])
-    bySeries.get(frame.series).push(frame)
-  })
-
-  return new Map(
-    [...bySeries.entries()].map(([id, members]) => [id, shortestTitle(members)])
-  )
+  return words ? words[0].toUpperCase() + words.slice(1) : ""
 }
 
 const ROMAN = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 }
@@ -154,17 +142,12 @@ export const buildFrames = (nodes) => {
         type: fm.type || null,
         tags: fm.tags || [],
         series: fm.series || null,
+        seriesName: fm.series ? seriesLabel(fm.series) : null,
       }
     })
     .sort(byYearRollTitle)
 
-  // Stamp the series display name onto every member here, so no consumer has
-  // to resolve the slug ("ciao-amore") back to a title on its own.
-  const names = seriesNames(frames)
-
-  return frames.map((frame) =>
-    frame.series ? { ...frame, seriesName: names.get(frame.series) } : frame
-  )
+  return frames
 }
 
 // Series keep the order they first appear in.
@@ -183,7 +166,7 @@ export const groupSeries = (frames) => {
 
   const series = order.map((id) => {
     const members = bySeries.get(id)
-    const name = members[0].seriesName || shortestTitle(members)
+    const name = members[0].seriesName || seriesLabel(id)
     const years = members.map((member) => member.year).filter(Boolean)
 
     return {
@@ -213,13 +196,21 @@ const countBy = (frames, pick) => {
   return counts
 }
 
-// Type stays a short chip row. Place and year are dropdowns, which have no
-// wrapping cost — so every city is listed individually rather than folding the
-// single-frame ones into an "Elsewhere" bucket.
+// The cities lived in rather than passed through. Editorial, not derivable
+// from the frames, so it is listed here; a city only reaches the filter once it
+// actually has frames, which is why London can sit in this list unseen.
+const LIVED_IN = ["Vilnius", "Paris", "London"]
+
+// Type stays a short chip row. Lived, place and year are dropdowns, which have
+// no wrapping cost. Place lists countries: cities made the list long and mostly
+// one frame deep, and the places worth singling out are the lived-in ones.
 export const buildFilterGroups = (frames) => {
   const byCount = (a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0]))
   const types = [...countBy(frames, (f) => f.type).entries()].sort(byCount)
-  const cities = [...countBy(frames, (f) => f.city).entries()].sort(byCount)
+  const lived = [
+    ...countBy(frames, (f) => (LIVED_IN.includes(f.city) ? f.city : null)).entries(),
+  ].sort(byCount)
+  const countries = [...countBy(frames, (f) => f.country).entries()].sort(byCount)
   const years = [...countBy(frames, (f) => f.year).entries()].sort(
     (a, b) => Number(b[0]) - Number(a[0])
   )
@@ -228,7 +219,8 @@ export const buildFilterGroups = (frames) => {
 
   return {
     type: asOptions(types),
-    place: asOptions(cities),
+    lived: asOptions(lived),
+    place: asOptions(countries),
     year: asOptions(years),
   }
 }
@@ -241,11 +233,12 @@ export const applyFilters = (frames, filters) =>
   frames.filter(
     (frame) =>
       matches(filters.type, frame.type) &&
-      matches(filters.place, frame.city) &&
+      matches(filters.lived, frame.city) &&
+      matches(filters.place, frame.country) &&
       matches(filters.year, frame.year)
   )
 
-export const EMPTY_FILTERS = { type: [], place: [], year: [] }
+export const EMPTY_FILTERS = { type: [], lived: [], place: [], year: [] }
 
 export const isFiltering = (filters) =>
   Object.values(filters).some((chosen) => chosen.length > 0)

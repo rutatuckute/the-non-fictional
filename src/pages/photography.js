@@ -32,7 +32,12 @@ const VIEWS = { contact: "Contact sheet", series: "Series" }
 const SERIES_LEAD = { px: 1680, quality: "normal" }
 const SERIES_REST = { px: 560, quality: "lighter" }
 
-const FILTER_LABELS = { type: "Type", place: "Place", year: "Year" }
+const FILTER_LABELS = {
+  type: "Type",
+  lived: "Lived",
+  place: "Place",
+  year: "Year",
+}
 
 const icon = children => (
   <svg
@@ -287,7 +292,7 @@ const Photography = ({ data, location }) => {
             <div className={styles.group}>
               <span className={styles.groupLabel}>Space/Time</span>
               <div className={styles.groupChips}>
-                {["place", "year"].map(group => (
+                {["lived", "place", "year"].map(group => (
                   <FilterSelect
                     key={group}
                     label={FILTER_LABELS[group]}
