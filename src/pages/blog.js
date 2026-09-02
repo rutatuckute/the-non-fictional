@@ -44,7 +44,6 @@ const Card = ({ post }) => {
   return (
     <Link className={styles.card} data-form={form} to={post.fields.slug}>
       <div className={styles.cover}>
-        <div className={styles.coverInk} />
         {fm.cover_image ? (
           <PhotoImage
             className={styles.coverImage}
@@ -53,7 +52,6 @@ const Card = ({ post }) => {
             alt=""
           />
         ) : null}
-        <div className={styles.coverGrain} />
       </div>
 
       <div className={styles.cardBody}>
@@ -97,6 +95,12 @@ const WritingsIndex = ({ data, location }) => {
     })
   }, [form, posts, query])
 
+  const filtering = form !== "all" || query.trim() !== ""
+  const clear = () => {
+    setForm("all")
+    setQuery("")
+  }
+
   const years = posts.map(p => p.frontmatter?.year).filter(Boolean)
   const span = years.length
     ? `${Math.min(...years)}–${Math.max(...years)}`
@@ -109,51 +113,69 @@ const WritingsIndex = ({ data, location }) => {
       <main className={styles.main}>
         <header className={styles.header}>
           <div className={styles.headerMain}>
-            <h1 className={styles.title}>Writings</h1>
-            <p className={styles.range}>
+            <p className={styles.kicker}>
               {posts.length} {posts.length === 1 ? "piece" : "pieces"}
               {span ? ` · ${span}` : ""}
             </p>
+            <h1 className={styles.title}>Writings</h1>
           </div>
 
           <div className={styles.controls}>
-            <div className={styles.chips}>
-              <button
-                className={styles.chip}
-                type="button"
-                data-on={form === "all" ? "true" : "false"}
-                aria-pressed={form === "all"}
-                onClick={() => setForm("all")}
-              >
-                All <span className={styles.chipCount}>{posts.length}</span>
-              </button>
-              {Object.entries(FORMS)
-                .filter(([id]) => counts[id])
-                .map(([id, label]) => (
-                  <button
-                    className={styles.chip}
-                    key={id}
-                    type="button"
-                    data-on={form === id ? "true" : "false"}
-                    aria-pressed={form === id}
-                    onClick={() => setForm(id)}
-                  >
-                    {label} <span className={styles.chipCount}>{counts[id]}</span>
-                  </button>
-                ))}
+            <div className={styles.group}>
+              <span className={styles.groupLabel}>Form</span>
+              <div className={styles.groupChips}>
+                <button
+                  className={styles.chip}
+                  type="button"
+                  data-on={form === "all" ? "true" : "false"}
+                  aria-pressed={form === "all"}
+                  onClick={() => setForm("all")}
+                >
+                  All <span className={styles.chipCount}>{posts.length}</span>
+                </button>
+                {Object.entries(FORMS)
+                  .filter(([id]) => counts[id])
+                  .map(([id, label]) => (
+                    <button
+                      className={styles.chip}
+                      key={id}
+                      type="button"
+                      data-on={form === id ? "true" : "false"}
+                      aria-pressed={form === id}
+                      onClick={() => setForm(id)}
+                    >
+                      {label}{" "}
+                      <span className={styles.chipCount}>{counts[id]}</span>
+                    </button>
+                  ))}
+              </div>
             </div>
 
-            <div className={styles.search}>
-              <SearchIcon />
-              <input
-                className={styles.searchInput}
-                type="search"
-                placeholder="Search"
-                aria-label="Search writings"
-                value={query}
-                onChange={event => setQuery(event.target.value)}
-              />
+            <div className={styles.group}>
+              <span className={styles.groupLabel}>Search</span>
+              <div className={styles.search}>
+                <SearchIcon />
+                <input
+                  className={styles.searchInput}
+                  type="search"
+                  placeholder="Title, topic, tag"
+                  aria-label="Search writings"
+                  value={query}
+                  onChange={event => setQuery(event.target.value)}
+                />
+              </div>
             </div>
+
+            <p className={styles.count}>
+              {filtering
+                ? `${visible.length} of ${posts.length} pieces`
+                : `${posts.length} pieces`}
+              {filtering ? (
+                <button className={styles.clear} type="button" onClick={clear}>
+                  Clear
+                </button>
+              ) : null}
+            </p>
           </div>
         </header>
 

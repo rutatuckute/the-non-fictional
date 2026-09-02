@@ -1,5 +1,6 @@
-/* The writings index, on the same tokens as the homepage and photography.
-   Every value here is the site's; nothing new is invented. */
+/* The writings index. Header, controls and grid follow photography.module.css
+   so the two archives read as one place; only the card body differs, because a
+   piece needs a title and a summary where a frame needs neither. */
 .page {
   --void: #0b0a09;
   --raised: #131211;
@@ -49,7 +50,7 @@
 .main {
   flex: 1;
   width: 100%;
-  max-width: 1320px;
+  max-width: 1420px;
   margin: 0 auto;
   padding: 0 26px;
 }
@@ -59,9 +60,9 @@
 .header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, auto);
-  align-items: end;
-  gap: 28px 48px;
-  padding: 40px 0 22px;
+  align-items: start;
+  gap: 32px 48px;
+  padding: 40px 0 26px;
   border-bottom: 1px solid var(--rule);
 }
 
@@ -69,8 +70,20 @@
   min-width: 0;
 }
 
-.title {
+/* Photography puts the section name here and its statement in the title. Until
+   this page has a line of its own, the two are swapped: the facts take the
+   small line and the title stays the plain word. */
+.kicker {
   margin: 0;
+  color: var(--brand);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 12px 0 14px;
   color: var(--ink);
   font-family: var(--font-title);
   font-size: clamp(30px, 5vw, 54px);
@@ -80,35 +93,47 @@
   text-wrap: balance;
 }
 
-/* Facts about the archive rather than a tagline: how many pieces and how far
-   back they run. Both come from the posts, so neither can go stale. */
-.range {
-  margin: 14px 0 0;
-  color: var(--ink-3);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
+/* ── controls ── */
 
 .controls {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
+  gap: 7px;
   min-width: 0;
+  max-width: 30rem;
+  padding-top: 4px;
 }
 
-.chips {
+.group {
+  display: grid;
+  /* Photography reserves 5.75rem because "SPACE/TIME" needs it. Nothing here
+     runs past "SEARCH", so the column comes in — same treatment, less gap. */
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+}
+
+.groupLabel {
+  padding-top: 8px;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.groupChips {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
+  min-width: 0;
 }
 
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   padding: 5px 9px;
   border: 1px solid var(--rule-strong);
   background: none;
@@ -141,7 +166,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  width: min(240px, 100%);
+  width: 100%;
   padding: 0 9px;
   border: 1px solid var(--rule-strong);
   transition: border-color 150ms ease;
@@ -149,6 +174,15 @@
 
 .search:focus-within {
   border-color: var(--brand);
+}
+
+.searchIcon {
+  flex: 0 0 12px;
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1.8;
 }
 
 .searchInput {
@@ -166,28 +200,42 @@
 
 .searchInput::placeholder {
   color: var(--ink-3);
-  text-transform: uppercase;
   letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-.searchIcon {
-  flex: 0 0 12px;
-  width: 12px;
-  height: 12px;
-  fill: none;
-  stroke: var(--ink-3);
-  stroke-width: 1.8;
+.count {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.clear {
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--brand);
+  background: none;
+  color: var(--brand);
+  font: inherit;
+  cursor: pointer;
 }
 
 /* ── the grid ── */
 
-/* Seven pieces, not seventy. Wide tracks give three per row, so the last row
-   holds one card rather than leaving three empty slots in a four-up grid. */
+/* The contact sheet's 2px gutter, at a track wide enough for a title and a
+   summary. Three per row at seven pieces, so the last row holds one rather
+   than leaving three empty slots. */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
-  gap: 3px;
-  margin: 26px 0 0;
+  gap: 2px;
+  margin: 26px 0 44px;
 }
 
 .card {
@@ -195,15 +243,8 @@
   flex-direction: column;
   min-width: 0;
   background: var(--raised);
-  border: 1px solid var(--rule);
   text-decoration: none;
   color: inherit;
-  transition: border-color 200ms ease;
-}
-
-.card:hover,
-.card:focus-visible {
-  border-color: var(--ink-3);
 }
 
 .card[data-form="essays"] {
@@ -218,38 +259,34 @@
   --form: var(--data);
 }
 
-/* Duotone: the photograph in greyscale, multiplied over the form colour, with
-   a grain overlay. Seven covers shot years apart read as one set. */
 .cover {
   position: relative;
   aspect-ratio: 3 / 2;
   overflow: hidden;
-  isolation: isolate;
   background: var(--raised);
 }
 
-.coverInk {
-  position: absolute;
-  inset: 0;
-  background: var(--form, var(--brand));
-}
-
 .coverImage {
-  position: absolute;
-  inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(1) contrast(1.22) brightness(0.96);
-  mix-blend-mode: multiply;
+  transition: opacity 250ms ease;
 }
 
-.coverGrain {
-  position: absolute;
-  inset: 0;
-  mix-blend-mode: overlay;
-  opacity: 0.5;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+/* Photography dims a frame on hover rather than moving it. */
+.card:hover .coverImage,
+.card:focus-visible .coverImage {
+  opacity: 0.82;
+}
+
+/* With the covers left as shot, the form colour is carried by a rule along the
+   top of the card and by the form name below — the only category cue left. */
+.card::before {
+  content: "";
+  display: block;
+  height: 2px;
+  background: var(--form, var(--brand));
 }
 
 .cardBody {
@@ -257,14 +294,14 @@
   flex-direction: column;
   gap: 9px;
   flex: 1;
-  padding: 17px 18px 20px;
+  padding: 16px 17px 18px;
 }
 
 .cardTitle {
   margin: 0;
   color: var(--ink);
   font-family: var(--font-title);
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 600;
   line-height: 1.16;
   letter-spacing: -0.02em;
@@ -272,8 +309,13 @@
   text-wrap: balance;
 }
 
-/* The excerpts run 215 to 381 characters, so they are clamped rather than left
-   to set the height of every card in the row. */
+.card:hover .cardTitle,
+.card:focus-visible .cardTitle {
+  color: var(--form, var(--brand));
+}
+
+/* The excerpts run 215 to 381 characters, so they clamp rather than set the
+   height of every card in the row. */
 .cardExcerpt {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -293,11 +335,11 @@
   gap: 6px 10px;
   margin-top: auto;
   padding-top: 4px;
+  color: var(--ink-3);
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ink-3);
 }
 
 .cardForm {
@@ -318,9 +360,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card,
+  .coverImage,
   .chip,
-  .search {
+  .search,
+  .cardTitle {
     transition: none;
   }
 }
@@ -328,17 +371,13 @@
 @media (max-width: 60rem) {
   .header {
     grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-    gap: 20px;
+    gap: 24px;
     padding-top: 32px;
   }
 
   .controls {
-    align-items: stretch;
-  }
-
-  .search {
-    width: 100%;
+    max-width: none;
+    padding-top: 0;
   }
 }
 
@@ -346,10 +385,24 @@
   .main {
     padding: 0 16px;
   }
+
+  /* A 4.5rem label column leaves too little for the chips to wrap into, so the
+     label sits above its row instead. */
+  .group {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 7px;
+  }
+
+  .groupLabel {
+    padding-top: 0;
+    text-align: left;
+  }
+
+  .count {
+    margin-left: 0;
+  }
 }
 
-/* A finger is not a cursor: the controls stay dense for a fine pointer and
-   take the full target where the pointer is coarse. */
 @media (pointer: coarse) {
   .chip,
   .searchInput {
