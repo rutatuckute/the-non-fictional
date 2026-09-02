@@ -203,14 +203,6 @@ const createInquiryPositions = (
   return positions
 }
 
-const shortenTitle = (title, maximumLength) => {
-  const normalized = title.toUpperCase()
-
-  return normalized.length > maximumLength
-    ? `${normalized.slice(0, maximumLength - 1)}…`
-    : normalized
-}
-
 // Row spacing shared by every format zone, derived from whichever format
 // needs the most rows. Zones then stack their marks top-down at a uniform
 // rhythm rather than each spreading its own items over the full height.
@@ -234,7 +226,6 @@ const createFormatLayout = (
   compact
 ) => {
   const positions = {}
-  const labels = {}
   const zones = []
 
   if (compact) {
@@ -276,14 +267,10 @@ const createFormatLayout = (
           x: left + cellWidth * (itemIndex % columns) + cellWidth / 2,
           y: startY + Math.floor(itemIndex / columns) * rowGap,
         }
-        labels[work.id] = shortenTitle(
-          work.title,
-          format === "photography" ? 5 : 12
-        )
       })
     })
 
-    return { labels, positions, zones }
+    return { positions, zones }
   }
 
   const zoneGap = 12
@@ -320,16 +307,12 @@ const createFormatLayout = (
         x: cursor + cellWidth * (itemIndex % columns) + cellWidth / 2,
         y: startY + Math.floor(itemIndex / columns) * rowGap,
       }
-      labels[work.id] = shortenTitle(
-        work.title,
-        Math.max(4, Math.floor(cellWidth / 5.2) - 1)
-      )
     })
 
     cursor += width + zoneGap
   })
 
-  return { labels, positions, zones }
+  return { positions, zones }
 }
 
 const createNetworkLayout = (works, viewBoxWidth, viewBoxHeight, connections) => {
@@ -666,7 +649,11 @@ export const createVisualLayouts = (
   works,
   viewBoxWidth,
   viewBoxHeight,
-  { compact = false, photographyColumns = 13, connections = [] } = {}
+  {
+    compact = false,
+    photographyColumns = 13,
+    connections = [],
+  } = {}
 ) => {
   const inquiryTerritories = createInquiryTerritories(
     viewBoxWidth,
@@ -714,7 +701,6 @@ export const createVisualLayouts = (
 
   return {
     connectedWorkIds: network.connectedIds,
-    formatLabels: formats.labels,
     formatZones: formats.zones,
     formats: formats.positions,
     inquiries,

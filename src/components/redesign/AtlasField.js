@@ -155,8 +155,9 @@ const AtlasField = ({
   connections = [],
   connectionsVisible,
   description,
+  fieldRef,
+  fieldScale = 1,
   formatIndexVisible = false,
-  formatLabels = {},
   formatZones = [],
   idPrefix,
   inquiryTerritories = [],
@@ -171,7 +172,6 @@ const AtlasField = ({
   timelineVisible = false,
   title,
   transitionsEnabled,
-  workTitlesVisible = formatIndexVisible,
   works = [],
 }) => {
   const networkMode = layout === "network"
@@ -209,13 +209,17 @@ const AtlasField = ({
     return connectedWorkIds.has(work.id) ? 1 : UNCONNECTED_NODE_OPACITY
   }
 
+  // The scale goes onto the element the labels live in, so the stylesheet can
+  // divide it back out and hold them at one rendered size; see useFieldScale.
   return (
     <svg
+      ref={fieldRef}
       className={className}
       viewBox={`0 0 ${timelineData?.viewBoxWidth || 620} ${
         timelineData?.viewBoxHeight || 520
       }`}
       preserveAspectRatio="xMidYMid meet"
+      style={{ "--field-scale": fieldScale }}
       role="img"
       aria-labelledby={`${idPrefix}-title ${idPrefix}-description`}
     >
@@ -282,14 +286,14 @@ const AtlasField = ({
                 x={timelineData.axisLeft}
                 y={timelineData.axisY - timelineData.branchOffset}
               >
-                ASKING ↑
+                ASKING
               </text>
               <text
                 data-element="timeline-branch-label"
                 x={timelineData.axisLeft}
                 y={timelineData.axisY + timelineData.branchOffset}
               >
-                DOCUMENTING ↓
+                DOCUMENTING
               </text>
               {timelineData.undated ? (
                 <text
@@ -447,28 +451,6 @@ const AtlasField = ({
             </text>
           </g>
         ))}
-      </g>
-
-      <g
-        aria-hidden="true"
-        data-layer="work-titles"
-        data-visible={workTitlesVisible ? "true" : "false"}
-      >
-        {works.map(work => {
-          const { x, y } = positions[work.id]
-          return (
-            <text
-              key={work.id}
-              data-element="work-title"
-              x={x}
-              y={y - 11}
-              textAnchor="middle"
-            >
-              <title>{work.title || work.id}</title>
-              {formatLabels[work.id] || work.id.toUpperCase()}
-            </text>
-          )
-        })}
       </g>
     </svg>
   )

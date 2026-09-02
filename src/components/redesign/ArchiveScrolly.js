@@ -8,6 +8,7 @@ import {
   interpolateTimelinePositions,
 } from "./scrollFieldLayouts"
 import {
+  useFieldScale,
   usePrefersReducedMotion,
   useViewportWidth,
 } from "./useFieldEnvironment"
@@ -62,6 +63,12 @@ const ArchiveScrolly = ({
   const viewportWidth = useViewportWidth()
   const compact = viewportWidth < 980
   const photographyColumns = getPhotographyColumns(viewportWidth)
+  // Measured for the format headings, counts, inquiry and timeline labels,
+  // which are counter-scaled against it in CSS.
+  const [fieldRef, fieldScale] = useFieldScale(
+    SCROLLY_VIEWBOX_WIDTH,
+    SCROLLY_VIEWBOX_HEIGHT
+  )
   const scrollLayouts = React.useMemo(
     () =>
       createVisualLayouts(
@@ -175,8 +182,9 @@ const ArchiveScrolly = ({
             connections={connections}
             connectionsVisible={connectionsReady}
             description="The archive changes across five scroll scenes: unsorted works, four formats, recurring inquiries, a relationship network, and a chronology that bends into a circle."
+            fieldRef={fieldRef}
+            fieldScale={fieldScale}
             formatIndexVisible={scene.formatIndexVisible}
-            formatLabels={scrollLayouts.formatLabels}
             formatZones={scrollLayouts.formatZones}
             idPrefix="scroll-archive-field"
             inquiryTerritories={scrollLayouts.inquiryTerritories}
@@ -190,7 +198,6 @@ const ArchiveScrolly = ({
             timelineVisible={scene.timelineVisible}
             title="Five structures for the archive"
             transitionsEnabled={prefersReducedMotion === false}
-            workTitlesVisible={scene.workTitlesVisible}
             works={works}
             onWorkSelect={onWorkSelect}
           />

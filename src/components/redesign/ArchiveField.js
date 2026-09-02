@@ -7,6 +7,7 @@ import {
   interpolateTimelinePositions,
 } from "./scrollFieldLayouts"
 import {
+  useFieldScale,
   usePrefersReducedMotion,
   useViewportWidth,
 } from "./useFieldEnvironment"
@@ -34,6 +35,12 @@ const ArchiveField = ({
   const viewportWidth = useViewportWidth()
   const compact = viewportWidth < 980
   const photographyColumns = getPhotographyColumns(viewportWidth)
+  // Measured for the format headings, counts, inquiry and timeline labels,
+  // which are counter-scaled against it in CSS.
+  const [fieldRef, fieldScale] = useFieldScale(
+    HERO_VIEWBOX_WIDTH,
+    HERO_VIEWBOX_HEIGHT
+  )
   const heroLayouts = React.useMemo(
     () =>
       createVisualLayouts(works, HERO_VIEWBOX_WIDTH, HERO_VIEWBOX_HEIGHT, {
@@ -119,8 +126,9 @@ const ArchiveField = ({
       connections={connections}
       connectionsVisible={connectionsReady}
       description="The archive cycles through five views: unsorted works, four formats, recurring inquiries, a relationship network, and a chronology that bends into a circle."
+      fieldRef={fieldRef}
+      fieldScale={fieldScale}
       formatIndexVisible={scene.formatIndexVisible}
-      formatLabels={heroLayouts.formatLabels}
       formatZones={heroLayouts.formatZones}
       idPrefix="hero-archive-field"
       inquiryTerritories={heroLayouts.inquiryTerritories}
@@ -134,7 +142,6 @@ const ArchiveField = ({
       timelineVisible={scene.timelineVisible}
       title="A field of published works"
       transitionsEnabled={prefersReducedMotion === false}
-      workTitlesVisible={scene.workTitlesVisible}
       works={works}
       onWorkSelect={onWorkSelect}
     />
