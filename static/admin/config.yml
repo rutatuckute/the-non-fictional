@@ -25,10 +25,23 @@ collections:
       - {label: "Template", name: "template", widget: "hidden", default: "blog-post"}
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Category", name: "category", widget: "string"}
-      - {label: "Category Id", name: "category_id", widget: "string"}
+      # A free string here is how four posts ended up with section headings
+      # classed against a taxonomy the filters no longer use. These three are
+      # the only values the writings index knows about.
+      - label: "Category Id"
+        name: "category_id"
+        widget: "select"
+        options: ["essays", "reflections", "data"]
+      # Every existing post carries an inquiry, but the form never offered one,
+      # so it was written in by hand each time. The article page shows it.
+      - label: "Inquiry"
+        name: "inquiry"
+        widget: "select"
+        options: ["systems", "reality", "agency", "power", "connection", "memory"]
       - {label: "Topics", name: "topic", widget: "string"}
       - {label: "Tags", name: "tags", widget: "list"}
-      - {label: "Link", name: "link", widget: "string"}
+      # Only the data pieces link out to a repository.
+      - {label: "Link", name: "link", widget: "string", required: false}
       - {label: "Excerpt", name: "excerpt", widget: "string"}
       - {label: "Publish Date", name: "date", widget: "datetime"}
       - {label: "Body", name: "body", widget: "markdown"}

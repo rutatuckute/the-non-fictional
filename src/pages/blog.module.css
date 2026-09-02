@@ -1,0 +1,358 @@
+/* The writings index, on the same tokens as the homepage and photography.
+   Every value here is the site's; nothing new is invented. */
+.page {
+  --void: #0b0a09;
+  --raised: #131211;
+  --rule: #2b2926;
+  --rule-strong: #665e54;
+  --rule-subtle: #1b1a18;
+  --ink: #eee8df;
+  --ink-2: #9b958b;
+  --ink-3: #8a837a;
+  --brand: #ffa500;
+  --essays: #f2762b;
+  --reflections: #c08ae8;
+  --data: #6ecb78;
+  --font-body: "Source Serif 4", Georgia, serif;
+  --font-title: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--void);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 300;
+}
+
+.page * {
+  box-sizing: border-box;
+}
+
+/* The global stylesheet loads on every page and paints h2-h6 #1a202c, which is
+   1.21:1 on this ground. :where() keeps the specificity at .page alone, so any
+   heading rule below still wins. */
+.page :where(h1, h2, h3, h4, h5, h6) {
+  color: inherit;
+}
+
+.page :focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 26px;
+}
+
+/* ── header ── */
+
+.header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+  align-items: end;
+  gap: 28px 48px;
+  padding: 40px 0 22px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.headerMain {
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-title);
+  font-size: clamp(30px, 5vw, 54px);
+  font-weight: 800;
+  line-height: 0.97;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+/* Facts about the archive rather than a tagline: how many pieces and how far
+   back they run. Both come from the posts, so neither can go stale. */
+.range {
+  margin: 14px 0 0;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 9px;
+  border: 1px solid var(--rule-strong);
+  background: none;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.chip:hover,
+.chip:focus-visible {
+  color: var(--ink);
+  border-color: var(--ink-3);
+}
+
+.chip[data-on="true"] {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--void);
+}
+
+.chipCount {
+  opacity: 0.7;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: min(240px, 100%);
+  padding: 0 9px;
+  border: 1px solid var(--rule-strong);
+  transition: border-color 150ms ease;
+}
+
+.search:focus-within {
+  border-color: var(--brand);
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.searchIcon {
+  flex: 0 0 12px;
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1.8;
+}
+
+/* ── the grid ── */
+
+/* Seven pieces, not seventy. Wide tracks give three per row, so the last row
+   holds one card rather than leaving three empty slots in a four-up grid. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  gap: 3px;
+  margin: 26px 0 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--raised);
+  border: 1px solid var(--rule);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 200ms ease;
+}
+
+.card:hover,
+.card:focus-visible {
+  border-color: var(--ink-3);
+}
+
+.card[data-form="essays"] {
+  --form: var(--essays);
+}
+
+.card[data-form="reflections"] {
+  --form: var(--reflections);
+}
+
+.card[data-form="data"] {
+  --form: var(--data);
+}
+
+/* Duotone: the photograph in greyscale, multiplied over the form colour, with
+   a grain overlay. Seven covers shot years apart read as one set. */
+.cover {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--raised);
+}
+
+.coverInk {
+  position: absolute;
+  inset: 0;
+  background: var(--form, var(--brand));
+}
+
+.coverImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.22) brightness(0.96);
+  mix-blend-mode: multiply;
+}
+
+.coverGrain {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: 1;
+  padding: 17px 18px 20px;
+}
+
+.cardTitle {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-title);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  text-wrap: balance;
+}
+
+/* The excerpts run 215 to 381 characters, so they are clamped rather than left
+   to set the height of every card in the row. */
+.cardExcerpt {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.cardFoot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin-top: auto;
+  padding-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.cardForm {
+  color: var(--form, var(--brand));
+}
+
+.cardWhen {
+  margin-left: auto;
+}
+
+.empty {
+  padding: 60px 0;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .chip,
+  .search {
+    transition: none;
+  }
+}
+
+@media (max-width: 60rem) {
+  .header {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 20px;
+    padding-top: 32px;
+  }
+
+  .controls {
+    align-items: stretch;
+  }
+
+  .search {
+    width: 100%;
+  }
+}
+
+@media (max-width: 48rem) {
+  .main {
+    padding: 0 16px;
+  }
+}
+
+/* A finger is not a cursor: the controls stay dense for a fine pointer and
+   take the full target where the pointer is coarse. */
+@media (pointer: coarse) {
+  .chip,
+  .searchInput {
+    min-height: 44px;
+  }
+}

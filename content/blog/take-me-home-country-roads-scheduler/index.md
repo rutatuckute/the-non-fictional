@@ -22,17 +22,15 @@ cover_image: /images/uploads/blog-take-me-home-country-roads-scheduler-cover.jpg
 
 If there is one non-negotiable time of the year, it is Christmas. Yet, this piece is not about moral know-alls, nor about the global circumstances we find ourselves in. Instead, it may serve as both (1) a potential tool to plan your *so-much-craved* future getaways and (2) a trick to extract and save data at regular intervals from open sources without lifting a finger, *ou presque*.
 
-&nbsp;
 
-<h4 class="data">MOTIVATION & PROBLEM STATEMENT</h4>
+<h4>MOTIVATION & PROBLEM STATEMENT</h4>
 
 In order to test and learn how to schedule a Python script that connects to an open source API and saves data on one's computer, I set myself a simple task. The underlying idea was to track the price fluctuations of my round-trip Christmas flight back home PARIS-VILNIUS-PARIS.
 
 Usually, one would frequently visit <em>Skyscanner</em> waiting for the price of a desired flight to drop or seeking the cheapest destinations. It may turn out to be laborious though.  Why not write a script to do it for you?
 
-&nbsp;
 
-<h4 class="data">FROM SKYSCANNER API TO PYTHON</h4>
+<h4>FROM SKYSCANNER API TO PYTHON</h4>
 
 Skyscanner API can be accessed via RapidAPI - you need to create your account at <a href="https://rapidapi.com/">https://rapidapi.com</a>. Once on RapidAPI, look for Skyscanner Flight Search and make an API request. It is greatly intuitive and straightforward to use as the code - available in multiple programming languages - will adapt to your specified criteria such as destinations and dates.
 
@@ -87,32 +85,30 @@ writer.save()
 The full script can be found here:
 <a href="https://github.com/rutatuckute/the-non-fictional-scripts/tree/main/skyscanner">rutatuckute/the-non-fictional-scripts/skyscanner</a>
 
-&nbsp;
 
-<h4 class="data">FROM PYTHON TO WINDOWS SCHEDULER</h4>
+<h4>FROM PYTHON TO WINDOWS SCHEDULER</h4>
 
 Once your Python script is ready, follow the steps below to create <em>Windows Scheduler </em>to run your script daily:
 
 <ul><li>Save your Python script as<em> .py</em></li><li>Create a batch file to run your Python script by opening <em>Notepad </em>and writing the following: "<em>path where your python exe is stored</em>" "<em>path where your python script is stored</em>" pause. Ironically enough, to check where your <em>python exe</em> is, all you need to do is run <em>where python </em>on your <em>Command Prompt</em>.</li></ul>
 
-<p style="text-align:center"><img class="blog-post-img" src="/images/uploads/blog-take-me-home-country-roads-scheduler-b1.jpg" width="800"></p>
+<p><img class="blog-post-img" src="/images/uploads/blog-take-me-home-country-roads-scheduler-b1.jpg" width="800"></p>
 
 <ul><li>Save your Notepad file with .bat extension as per below:</li></ul>
 
-<p style="text-align:center"><img class="blog-post-img" src="/images/uploads/blog-take-me-home-country-roads-scheduler-b2.jpg" width="700"></p>
+<p><img class="blog-post-img" src="/images/uploads/blog-take-me-home-country-roads-scheduler-b2.jpg" width="700"></p>
 
 <ul><li>Schedule your Python script using Windows Scheduler which can be found as per below:</li></ul>
 
-<p style="text-align:center"><img class="blog-post-img" src="/images/uploads/blog-take-me-home-country-roads-scheduler-b3.jpg" width="700"></p>
+<p><img class="blog-post-img" src="/images/uploads/blog-take-me-home-country-roads-scheduler-b3.jpg" width="700"></p>
 
 All done ! Your script will be executed at your selected frequency or trigger event.
 
-&nbsp;
 
-<h4 class="data">OUTCOME & PRICE FLUCTUATIONS</h4>
+<h4>OUTCOME & PRICE FLUCTUATIONS</h4>
 
 The script allowed me to collect 18-days data on the minimum price for my round-trip flight. Unsurprisingly, it skyrockets prior to Christmas, the effect exacerbated by a significant reduction in flight frequency.
 
-<p style="text-align:center"><img class="blog-post-img" src="/images/uploads/blog-take-me-home-country-roads-scheduler-cover.jpg" width="500"></p>
+<p><img class="blog-post-img" src="/images/uploads/blog-take-me-home-country-roads-scheduler-cover.jpg" width="500"></p>
 
 At the end of the day, both having a clue on how to connect to an open source API and schedule your script are handy skills to have. Regardless of whether you will use it to plan your next trip - a daring assumption nowadays - or to automate data extraction for any other purpose.

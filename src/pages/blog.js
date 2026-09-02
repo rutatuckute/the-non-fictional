@@ -1,152 +1,179 @@
 import * as React from "react"
-import { useMemo, useState } from "react"
 import { graphql, Link } from "gatsby"
 
-import Layout from "../components/layout"
+import Masthead from "../components/masthead"
 import PhotoImage from "../components/photo-image"
+import SiteFooter from "../components/site-footer"
+import * as styles from "./blog.module.css"
 
-const FILTERS = [
-  { key: "all", label: "All" },
-  { key: "essays", label: "Essays" },
-  { key: "reflections", label: "Reflections" },
-  { key: "data", label: "Data" },
-]
-
-const getHaystack = (post) => {
-  const fm = post.frontmatter || {}
-  const parts = [
-    fm.title || "",
-    fm.excerpt || "",
-    fm.topic || "",
-    fm.category || "",
-    ...(fm.tags || []),
-  ]
-  return parts.join(" ").toLowerCase()
+// Only the forms the index actually knows about. A form with nothing published
+// under it is left out rather than shown as a tab that can never return a
+// result — reflections sat there for a long time doing exactly that.
+const FORMS = {
+  essays: "Essays",
+  reflections: "Reflections",
+  data: "Data",
 }
 
-const BlogIndex = ({ data, location }) => {
-  const allPosts = data?.allMarkdownRemark?.nodes ?? []
+const searchable = post => {
+  const fm = post.frontmatter || {}
+  return [
+    fm.title,
+    fm.excerpt,
+    fm.topic,
+    fm.category,
+    fm.inquiry,
+    ...(fm.tags || []),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase()
+}
 
-  const [query, setQuery] = useState("")
-  const [active, setActive] = useState("all")
+const SearchIcon = () => (
+  <svg className={styles.searchIcon} viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="10.5" cy="10.5" r="6.5" />
+    <line x1="15.5" y1="15.5" x2="21" y2="21" />
+  </svg>
+)
 
-  // Filter + search
-  const posts = useMemo(() => {
-    const q = query.trim().toLowerCase()
-
-    return allPosts.filter((p) => {
-      const cat = p.frontmatter?.category_id || ""
-      const passType = active === "all" ? true : cat === active
-      if (!passType) return false
-
-      if (!q) return true
-      return getHaystack(p).includes(q)
-    })
-  }, [allPosts, query, active])
+const Card = ({ post }) => {
+  const fm = post.frontmatter || {}
+  const form = FORMS[fm.category_id] ? fm.category_id : "essays"
 
   return (
-    <Layout location={location}>
-      <div className="writing-page">
-
-       <div className="writing-head">
-        <div className="writing-controls">
-            <nav className="writing-tabs" aria-label="Writing filters">
-            {FILTERS.map((f) => (
-                <button
-                key={f.key}
-                type="button"
-                className={`writing-tab ${active === f.key ? "is-active" : ""}`}
-                onClick={() => setActive(f.key)}
-                >
-                {f.label}
-                </button>
-            ))}
-            <div className="writing-tabs-divider" />
-            </nav>
-
-          <div className="search-box">
-            <span className="search-icon-wrap">
-              <i className="bi bi-search search-icon"></i>
-            </span>
-
-            <input
-              className="search-input"
-              type="search"
-              placeholder="Search..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </div>
-        </div>
-        </div>
-
-        <section className="writing-grid" aria-label="Writing list">
-          {posts.map((p) => {
-            const slug = p.fields?.slug
-            if (!slug) return null
-
-            const fm = p.frontmatter || {}
-            const catId = fm.category_id || "data"
-            const isReflection = catId === "general-theory"
-
-            return (
-              <Link
-                key={p.id}
-                to={slug}
-                className={`writing-card ${catId}`}
-                aria-label={fm.title || "Post"}
-              >
-                {!isReflection && fm.cover_image ? (
-                  <div className="writing-card-media">
-                    <PhotoImage
-                      className="writing-card-img"
-                      source={fm.cover_image}
-                      px={720}
-                      alt={fm.title || "Cover"}
-                    />
-                  </div>
-                ) : (
-                  <div className="writing-card-media writing-card-media--none" />
-                )}
-
-                <div className="writing-card-body">
-                  <div className="writing-card-kicker">
-                    <span className="writing-card-dot" aria-hidden />
-                    <span className="writing-card-type">
-                      {FILTERS.find((x) => x.key === catId)?.label || "Writing"}
-                    </span>
-                    {fm.topic ? <span className="writing-card-sep">/</span> : null}
-                    {fm.topic ? <span className="writing-card-topic">{fm.topic}</span> : null}
-                  </div>
-
-                  <h2 className="writing-card-title">{fm.title}</h2>
-
-                  <p className="writing-card-excerpt">
-                    {fm.excerpt || p.excerpt}
-                  </p>
-
-                  <div className="writing-card-meta">
-                    <span>{fm.date}</span>
-                    <span className="writing-card-meta-sep">·</span>
-                    <span>{p.timeToRead} min</span>
-                  </div>
-                </div>
-              </Link>
-            )
-          })}
-        </section>
-
-        {posts.length === 0 ? (
-          <div className="writing-empty">
-            Nothing matched your search yet.
-          </div>
+    <Link className={styles.card} data-form={form} to={post.fields.slug}>
+      <div className={styles.cover}>
+        <div className={styles.coverInk} />
+        {fm.cover_image ? (
+          <PhotoImage
+            className={styles.coverImage}
+            source={fm.cover_image}
+            px={760}
+            alt=""
+          />
         ) : null}
+        <div className={styles.coverGrain} />
       </div>
-    </Layout>
+
+      <div className={styles.cardBody}>
+        <h2 className={styles.cardTitle}>{fm.title}</h2>
+        {fm.excerpt || post.excerpt ? (
+          <p className={styles.cardExcerpt}>{fm.excerpt || post.excerpt}</p>
+        ) : null}
+        <div className={styles.cardFoot}>
+          <span className={styles.cardForm}>{FORMS[form]}</span>
+          {fm.inquiry ? <span>{fm.inquiry}</span> : null}
+          <span className={styles.cardWhen}>
+            {fm.year} · {post.timeToRead} min
+          </span>
+        </div>
+      </div>
+    </Link>
   )
 }
 
-export default BlogIndex
+const WritingsIndex = ({ data, location }) => {
+  const posts = data?.allMarkdownRemark?.nodes ?? []
+  const [form, setForm] = React.useState("all")
+  const [query, setQuery] = React.useState("")
+
+  // Counts come from the posts, so a form appears in the filter row the moment
+  // something is published under it and never before.
+  const counts = React.useMemo(() => {
+    const out = {}
+    posts.forEach(p => {
+      const id = p.frontmatter?.category_id
+      if (FORMS[id]) out[id] = (out[id] || 0) + 1
+    })
+    return out
+  }, [posts])
+
+  const visible = React.useMemo(() => {
+    const q = query.trim().toLowerCase()
+    return posts.filter(p => {
+      if (form !== "all" && p.frontmatter?.category_id !== form) return false
+      return q ? searchable(p).includes(q) : true
+    })
+  }, [form, posts, query])
+
+  const years = posts.map(p => p.frontmatter?.year).filter(Boolean)
+  const span = years.length
+    ? `${Math.min(...years)}–${Math.max(...years)}`
+    : null
+
+  return (
+    <div className={styles.page}>
+      <Masthead location={location} activeSection="writings" />
+
+      <main className={styles.main}>
+        <header className={styles.header}>
+          <div className={styles.headerMain}>
+            <h1 className={styles.title}>Writings</h1>
+            <p className={styles.range}>
+              {posts.length} {posts.length === 1 ? "piece" : "pieces"}
+              {span ? ` · ${span}` : ""}
+            </p>
+          </div>
+
+          <div className={styles.controls}>
+            <div className={styles.chips}>
+              <button
+                className={styles.chip}
+                type="button"
+                data-on={form === "all" ? "true" : "false"}
+                aria-pressed={form === "all"}
+                onClick={() => setForm("all")}
+              >
+                All <span className={styles.chipCount}>{posts.length}</span>
+              </button>
+              {Object.entries(FORMS)
+                .filter(([id]) => counts[id])
+                .map(([id, label]) => (
+                  <button
+                    className={styles.chip}
+                    key={id}
+                    type="button"
+                    data-on={form === id ? "true" : "false"}
+                    aria-pressed={form === id}
+                    onClick={() => setForm(id)}
+                  >
+                    {label} <span className={styles.chipCount}>{counts[id]}</span>
+                  </button>
+                ))}
+            </div>
+
+            <div className={styles.search}>
+              <SearchIcon />
+              <input
+                className={styles.searchInput}
+                type="search"
+                placeholder="Search"
+                aria-label="Search writings"
+                value={query}
+                onChange={event => setQuery(event.target.value)}
+              />
+            </div>
+          </div>
+        </header>
+
+        {visible.length ? (
+          <section className={styles.grid} aria-label="Writings">
+            {visible.map(post => (
+              <Card key={post.id} post={post} />
+            ))}
+          </section>
+        ) : (
+          <p className={styles.empty}>Nothing matches that.</p>
+        )}
+      </main>
+
+      <SiteFooter />
+    </div>
+  )
+}
+
+export default WritingsIndex
 
 export const Head = ({ data }) => {
   const siteTitle = data?.site?.siteMetadata?.title || "The Non Fictional"
@@ -155,14 +182,24 @@ export const Head = ({ data }) => {
       <title>Writings | {siteTitle}</title>
       <meta
         name="description"
-        content="Data, reflections, and inquiries — writings on The Non Fictional."
+        content="Essays and data pieces on The Non Fictional — questioning, starting with myself."
+      />
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossOrigin="anonymous"
+      />
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&display=swap"
       />
     </>
   )
 }
 
 export const pageQuery = graphql`
-  query WritingIndexPage {
+  query WritingsIndexPage {
     site {
       siteMetadata {
         title
@@ -174,21 +211,21 @@ export const pageQuery = graphql`
     ) {
       nodes {
         id
-        excerpt(pruneLength: 160)
+        excerpt(pruneLength: 200)
+        timeToRead
         fields {
           slug
         }
         frontmatter {
-          date(formatString: "MMMM DD, YYYY")
           title
           excerpt
           cover_image
-          category
           category_id
+          inquiry
           topic
           tags
+          year: date(formatString: "YYYY")
         }
-        timeToRead
       }
     }
   }

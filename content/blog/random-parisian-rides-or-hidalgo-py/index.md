@@ -26,7 +26,7 @@ cover_image: /images/uploads/blog-random-parisian-rides-or-hidalgo-py-cover.jpg
 ---
 - - -
 
-<p style="text-align: center;">
+<p>
 The aim of this piece is two-fold: (1) to provide you with a glimpse into the unbearable Parisian on-road conduct and (2) to show you how open bike data can be exploited to code some cool, yet as some would argue, useless stuff.
 </p>
 
@@ -38,9 +38,8 @@ On a positive note and despite my inner rage, it pushed me to use open data to w
 
 Let's get straight to the point shall we.
 
-&nbsp;
 
-<h4 class="data">DATA</h4>
+<h4>DATA</h4>
 
 Data on Parisian bicycle scheme can be found:
 
@@ -50,9 +49,8 @@ For Lithuanian folks, but not exclusively, check the link below:
 
 <https://developer.jcdecaux.com/#/home>
 
-&nbsp;
 
-<h4 class="data">THE SCRIPT</h4>
+<h4>THE SCRIPT</h4>
 
 Alongside with <span style="color: orange">pandas, requests</span> and <span style="color: orange">json</span>, the main library to import is <span style="color: orange">folium</span> which allows to visualize data on a map. Data can be requested with a couple of lines of code:
 
@@ -108,11 +106,10 @@ paris_map
 
 <span style="color: orange">Locate Control</span> allows to get the position of your device:
 
-<p style="text-align:center"><img class="blog-post-img" src="/images/uploads/blog-random-parisian-rides-or-hidalgo-py-b2.jpg" width="600"></p>
+<p><img class="blog-post-img" src="/images/uploads/blog-random-parisian-rides-or-hidalgo-py-b2.jpg" width="600"></p>
 
 The full code can be found here: <a href="https://github.com/rutatuckute/the-non-fictional-scripts/tree/main/hidalgo">rutatuckute/the-non-fictional-scripts/hidalgo</a>
 
-&nbsp;
 
 - - -
 
