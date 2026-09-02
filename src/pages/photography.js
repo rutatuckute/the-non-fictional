@@ -141,7 +141,7 @@ const Photography = ({ data, location }) => {
   const [filters, setFilters] = React.useState(EMPTY_FILTERS)
   const [openRef, setOpenRef] = React.useState(null)
   const [view, setView] = React.useState("contact")
-  const [size, setSize] = React.useState("md")
+  const [size, setSize] = React.useState("lg")
 
   const filtering = isFiltering(filters)
   const visible = React.useMemo(
