@@ -1,5 +1,11 @@
 [build]
-command = "npm run build"
+# Clean first. Netlify's build cache has twice now published a stylesheet
+# missing changes that were present in the commit being built — the CSS module
+# came back from cache and the deploy looked successful while serving stale
+# styles. A clean build costs about 24s here, since no images are processed at
+# build time any more, which is cheap against a deploy that silently ships the
+# wrong CSS.
+command = "npm run clean && npm run build"
 publish = "public"
 
 [build.environment]
