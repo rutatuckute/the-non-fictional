@@ -20,7 +20,10 @@
   --lab-data: #6ecb78;
   --lab-photography: #4fbbd4;
   --lab-inquiry: #e8e2d8;
-  --lab-connector-rest: #4a443c;
+  /* 3.02:1 on --lab-void. At #4a443c the connections were 1.63:1 once their
+     0.75 opacity composited — the relationships the field exists to show were
+     the least visible thing in it. Also the timeline axis and ticks. */
+  --lab-connector-rest: #6b6459;
   --lab-connector-hover: #6e675e;
   --lab-connector-selected: #ffa500;
   --lab-background: var(--lab-void);
@@ -62,6 +65,21 @@
 .page,
 .page * {
   box-sizing: border-box;
+}
+
+/* The global stylesheet loads on every page and paints h2-h6 #1a202c, which is
+   1.21:1 here. Components have been opting out one at a time; this opts the
+   whole surface out once. :where() keeps the specificity at .page alone, so any
+   heading rule below still wins. */
+.page :where(h1, h2, h3, h4, h5, h6) {
+  color: inherit;
+}
+
+/* Focus was signalled by colour alone, or removed outright on the field marks.
+   On the root so controls added later inherit it. */
+.page :focus-visible {
+  outline: 2px solid var(--lab-accent);
+  outline-offset: 2px;
 }
 
 .page,
@@ -142,7 +160,7 @@
   font-size: 0.6875rem;
   font-weight: 500;
   line-height: 1.4;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -248,9 +266,11 @@
 
 .archiveField [data-element="inquiry-territory"] {
   fill: var(--lab-inquiry);
-  fill-opacity: 0.05;
+  /* At 0.05/0.16 the territories were ~1.15:1 and ~1.4:1 — a scene about
+     grouping that drew no visible groups. */
+  fill-opacity: 0.09;
   stroke: var(--lab-inquiry);
-  stroke-opacity: 0.16;
+  stroke-opacity: 0.3;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
@@ -301,7 +321,9 @@
 }
 
 .archiveField [data-element="connection"][data-dimmed="true"] {
-  opacity: 0.1;
+  /* 0.1 put these under 1.1:1 — dimmed read as gone. Enough to recede from
+     the emphasised pair without leaving the reader guessing what was there. */
+  opacity: 0.25;
 }
 
 .archiveField [data-format="essay"] {
@@ -335,12 +357,11 @@
   opacity: 0.94;
 }
 
-.archiveField [data-element="work"]:focus-visible {
-  outline: none;
-}
-
+/* The ring above carries this now; the stroke also thickens, because a mark is
+   a few pixels of hairline and a recolour alone is easy to miss. */
 .archiveField [data-element="work"]:focus-visible [data-element="mark-stroke"] {
   stroke: var(--lab-brand);
+  stroke-width: 3;
 }
 
 .archiveField [data-layer="format-rules"],
@@ -456,7 +477,9 @@
   max-width: 25rem;
   padding: 2px 0 2px 22px;
   border-left: 2px solid var(--lab-rule);
-  opacity: 0.3;
+  /* 0.3 left the inactive copy at ~2.4:1. Still clearly the background state,
+     but readable if the eye lands on it mid-scroll. */
+  opacity: 0.5;
   transition: opacity 300ms ease, border-color 300ms ease;
 }
 
@@ -468,9 +491,9 @@
 .stepKicker {
   color: var(--lab-brand);
   font-family: var(--lab-font-metadata);
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 500;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.12em;
 }
 
 .stepContent h3 {
@@ -511,7 +534,7 @@
   background: var(--lab-raised);
   color: var(--lab-ink-secondary);
   font-family: var(--lab-font-metadata);
-  font-size: 0.5625rem;
+  font-size: 0.6875rem;
   letter-spacing: 0.09em;
   text-transform: uppercase;
   cursor: pointer;
@@ -559,8 +582,8 @@
   background: none;
   color: var(--lab-ink-muted);
   font-family: var(--lab-font-metadata);
-  font-size: 10px;
-  letter-spacing: 0.16em;
+  font-size: 11px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
   transition: color 150ms ease;
@@ -578,8 +601,8 @@
   margin: 10px 0 0;
   color: var(--lab-ink-muted);
   font-family: var(--lab-font-metadata);
-  font-size: 9.5px;
-  letter-spacing: 0.19em;
+  font-size: 11px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -645,7 +668,7 @@
 
 .railMeta {
   display: grid;
-  grid-template-columns: 68px minmax(0, 1fr);
+  grid-template-columns: 84px minmax(0, 1fr);
   gap: 7px 14px;
   margin: 0 0 20px;
   padding: 14px 0;
@@ -659,8 +682,8 @@
 .railMeta dt {
   padding-top: 1px;
   color: var(--lab-ink-muted);
-  font-size: 9px;
-  letter-spacing: 0.14em;
+  font-size: 11px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -690,7 +713,7 @@
   border: 1px solid var(--lab-rule);
   color: var(--lab-ink-muted);
   font-family: var(--lab-font-metadata);
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -701,8 +724,8 @@
   border-bottom: 1px solid var(--lab-accent);
   color: var(--lab-accent);
   font-family: var(--lab-font-metadata);
-  font-size: 10.5px;
-  letter-spacing: 0.15em;
+  font-size: 12px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
 }
@@ -827,7 +850,7 @@
 
   .heroKicker {
     margin-bottom: var(--lab-space-6);
-    font-size: 0.5625rem;
+    font-size: 0.6875rem;
   }
 
   .heroIntro {
