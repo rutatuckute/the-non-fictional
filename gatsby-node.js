@@ -172,6 +172,7 @@ exports.createSchemaCustomization = ({ actions }) => {
       location: String
       series: String
       year: String
+      roll: Int
       tags: [String]
       type: String
       topic: String

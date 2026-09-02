@@ -65,28 +65,98 @@ const seriesNames = (frames) => {
   )
 }
 
+const ROMAN = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 }
+
+const parseRoman = (numeral) => {
+  let total = 0
+
+  for (let i = 0; i < numeral.length; i += 1) {
+    const value = ROMAN[numeral[i]]
+    const next = ROMAN[numeral[i + 1]]
+
+    if (!value) {
+      return null
+    }
+
+    total += next && next > value ? -value : value
+  }
+
+  return total
+}
+
+// "AVENTURINE III" -> { base: "AVENTURINE", index: 3 }. Frames within one
+// series share a title and differ only by a trailing numeral, which cannot be
+// compared as text: "IX" precedes "V" alphabetically but is the larger of the
+// two. An unnumbered title is the first of its series, so it counts as 1 and
+// "AVENTURINE" still comes before "AVENTURINE II".
+export const splitTitleIndex = (title) => {
+  const match = (title || "").match(/^(.*\S)\s+([IVXLCDM]+|\d+)$/)
+
+  if (!match) {
+    return { base: title || "", index: 1 }
+  }
+
+  const [, base, numeral] = match
+  const index = /^\d+$/.test(numeral) ? Number(numeral) : parseRoman(numeral)
+
+  return index ? { base, index } : { base: title, index: 1 }
+}
+
+// Newest first: by year, then by roll within that year, then by title so a
+// series reads forwards. A frame with no roll still appears, but after the
+// numbered ones for its year, so an unfilled field cannot jump a frame to the
+// front.
+const byYearRollTitle = (a, b) => {
+  const yearA = Number(a.year) || 0
+  const yearB = Number(b.year) || 0
+
+  if (yearA !== yearB) {
+    return yearB - yearA
+  }
+
+  if (a.roll !== b.roll) {
+    if (a.roll === null) return 1
+    if (b.roll === null) return -1
+
+    return b.roll - a.roll
+  }
+
+  // Same year and roll — which is every frame until the rolls are filled in.
+  // A series reads forwards, so the numeral ascends even though year and roll
+  // descend.
+  const base = a.titleBase.localeCompare(b.titleBase)
+
+  return base !== 0 ? base : a.titleIndex - b.titleIndex
+}
+
 export const buildFrames = (nodes) => {
   const frames = nodes
     .filter((node) => node.fields?.slug)
     .map((node) => {
       const fm = node.frontmatter || {}
       const { city, country } = splitLocation(fm.location)
+      const title = fm.title || node.fields.slug
+      const { base, index } = splitTitleIndex(title)
 
       return {
         slug: node.fields.slug,
         // The query-string form used to deep-link the lightbox.
         ref: node.fields.slug.replace(/^\/|\/$/g, ""),
-        title: fm.title || node.fields.slug,
+        title,
+        titleBase: base,
+        titleIndex: index,
         photo: fm.photo || null,
         location: fm.location || null,
         city,
         country,
         year: fm.year || null,
+        roll: Number.isFinite(fm.roll) ? fm.roll : null,
         type: fm.type || null,
         tags: fm.tags || [],
         series: fm.series || null,
       }
     })
+    .sort(byYearRollTitle)
 
   // Stamp the series display name onto every member here, so no consumer has
   // to resolve the slug ("ciao-amore") back to a title on its own.

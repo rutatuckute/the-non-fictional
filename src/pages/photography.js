@@ -456,6 +456,7 @@ export const pageQuery = graphql`
           title
           location
           year
+          roll
           tags
           photo
           type
