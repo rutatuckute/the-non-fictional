@@ -96,12 +96,14 @@ const KIT = [
     // and the dropdown cannot drift apart.
     value: LIVED_IN.join(" · "),
     now: "true",
-    // A roof over a wall — rectilinear like the camera and film marks, and
-    // reads as somewhere lived rather than the generic pin of a place shot.
+    // A folded map. A pin was the other candidate, but it is a circle and a
+    // teardrop against three hard-cornered marks, and reads as one point rather
+    // than the several places this line names.
     icon: icon(
       <>
-        <path d="M4 10.5 12 4l8 6.5" />
-        <path d="M6 10v10h12V10" />
+        <path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z" />
+        <path d="M9 4v14" />
+        <path d="M15 6v14" />
       </>
     ),
   },
