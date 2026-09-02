@@ -644,6 +644,20 @@
 }
 
 @media (max-width: 60rem) {
+  /* The controls column is sized by its content — chips, labels and selects —
+     which is wider than a phone, and the two-column header never collapsed. It
+     stacks under the title from here down. */
+  .header {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding-top: 32px;
+  }
+
+  .controls {
+    max-width: none;
+    padding-top: 0;
+  }
+
   .seriesLayout {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -656,6 +670,36 @@
 @media (max-width: 48rem) {
   .main {
     padding: 0 16px;
+  }
+
+  /* A 5rem label column leaves too little for the chips to wrap into, so the
+     label sits above its row instead. */
+  .group {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 7px;
+  }
+
+  .groupLabel {
+    padding-top: 0;
+    text-align: left;
+  }
+
+  /* Kit is the widest thing under the title; a smaller column gap lets it wrap
+     to two per row rather than pushing past the edge. */
+  .kit {
+    gap: 12px 22px;
+  }
+
+  /* The menu is absolutely positioned and its options do not wrap, so a long
+     place name could run past the viewport. Cap it against the screen and let
+     it scroll instead. */
+  .selectMenu {
+    max-width: calc(100vw - 32px);
+    overflow-x: auto;
+  }
+
+  .selectValue {
+    max-width: 9rem;
   }
 
   .bar {

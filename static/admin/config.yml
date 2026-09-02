@@ -44,6 +44,10 @@ collections:
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Location", name: "location", widget: "string"}
       - {label: "Year", name: "year", widget: "string"}
+      # Frames are ordered by year and then by roll, newest first. A frame left
+      # without a roll still shows, but sorts after the numbered ones for its
+      # year.
+      - {label: "Roll", name: "roll", widget: "number", value_type: "int", required: false, min: 1}
       - {label: "Tags", name: "tags", widget: "list"}
       # Drives the type chips on the photography page. A frame saved without one
       # shows in the contact sheet but matches no type filter.

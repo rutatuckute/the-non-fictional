@@ -65,6 +65,33 @@ const seriesNames = (frames) => {
   )
 }
 
+// Newest first: by year, then by roll within that year. A frame with no roll
+// yet still appears, but after the numbered ones for its year, so an unfilled
+// field never jumps a frame to the front. Ties keep the order the query gave
+// them, which is date descending.
+const byYearThenRoll = (a, b) => {
+  const yearA = Number(a.year) || 0
+  const yearB = Number(b.year) || 0
+
+  if (yearA !== yearB) {
+    return yearB - yearA
+  }
+
+  if (a.roll === b.roll) {
+    return 0
+  }
+
+  if (a.roll === null) {
+    return 1
+  }
+
+  if (b.roll === null) {
+    return -1
+  }
+
+  return b.roll - a.roll
+}
+
 export const buildFrames = (nodes) => {
   const frames = nodes
     .filter((node) => node.fields?.slug)
@@ -82,11 +109,13 @@ export const buildFrames = (nodes) => {
         city,
         country,
         year: fm.year || null,
+        roll: Number.isFinite(fm.roll) ? fm.roll : null,
         type: fm.type || null,
         tags: fm.tags || [],
         series: fm.series || null,
       }
     })
+    .sort(byYearThenRoll)
 
   // Stamp the series display name onto every member here, so no consumer has
   // to resolve the slug ("ciao-amore") back to a title on its own.
