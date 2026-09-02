@@ -226,7 +226,7 @@ const Photography = ({ data, location }) => {
         <header className={styles.header}>
           <div className={styles.headerMain}>
             <p className={styles.kicker}>Photography</p>
-            <h1 className={styles.title}>On film, mostly.</h1>
+            <h1 className={styles.title}>On film, for a reason.</h1>
             <ul className={styles.kit}>
               {KIT.map(item => (
                 <li
