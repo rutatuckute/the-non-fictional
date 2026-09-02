@@ -2,7 +2,7 @@
 layout: photography
 template: photo-post
 title: JUST MARRIED III
-location: Radiškis
+location: Radiškis, Lithuania
 year: "2026"
 tags:
   - Portraits
