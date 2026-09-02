@@ -10,11 +10,12 @@ name: Optimize images
 # oversized blob out of master's history entirely rather than rewriting it after
 # the fact.
 
+# No paths filter. This is a required check, and a required check that does not
+# run leaves a pull request pending for ever — so it runs on every pull request
+# and simply finds nothing to do when no image changed.
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    paths:
-      - "static/images/uploads/**"
   workflow_dispatch:
 
 permissions:
