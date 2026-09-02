@@ -4,7 +4,7 @@ template: photo-post
 title: KARIN THE GREAT III
 location: Strängnäs, Sweden
 year: "2026"
-roll: 104
+roll: 121
 tags:
   - Portrait
   - People
