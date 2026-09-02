@@ -22,8 +22,13 @@ permissions:
 
 jobs:
   optimize:
-    # A fork's token is read-only, so the push below could not succeed.
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    # A fork's token is read-only, so the push below could not succeed. The
+    # check has to be scoped to pull_request events: on workflow_dispatch there
+    # is no pull_request in the payload, and an unscoped guard skips the whole
+    # job, which makes the manual trigger useless for verifying the workflow.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -44,7 +49,11 @@ jobs:
       - name: Optimize
         run: npm run images:optimize
 
+      # Only a pull request has a branch to push to. A manual run is a dry check
+      # that the install and the script still work; master takes no direct push
+      # anyway, so there is nothing to commit to.
       - name: Commit any changes
+        if: github.event_name == 'pull_request'
         run: |
           if git diff --quiet -- static/images/uploads; then
             echo "Nothing to optimise."
