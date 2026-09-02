@@ -7,6 +7,8 @@
   --lab-ink-secondary: #9b958b;
   --lab-ink-muted: #6a645c;
   --lab-content-max: 1680px;
+  /* Masthead is 76px plus its 1px rule, and sits in normal flow. */
+  --lab-masthead-h: 77px;
   --lab-brand: #ffa500;
   --lab-essay: #f2762b;
   --lab-reflection: #c08ae8;
@@ -103,14 +105,20 @@
      growing and the rest of a wide screen was empty — while the scrolly
      section below it stayed centred, leaving the two visibly out of line. */
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.03fr);
-  align-content: start;
+  /* Centred rather than top-aligned, because the hero is now as tall as the
+     screen and starting at the top would just move the empty space. */
+  align-content: center;
   align-items: start;
   flex: 1;
   column-gap: var(--lab-space-4);
   row-gap: var(--lab-space-12);
   width: 100%;
   max-width: var(--lab-content-max);
+  /* The first screen is the copy and its field, nothing else. At 42rem the
+     hero ended well above the fold on a large monitor and the section below
+     showed through under it. */
   min-height: 42rem;
+  min-height: calc(100svh - var(--lab-masthead-h));
   margin: 0 auto;
   padding: clamp(52px, 4vw, 64px) clamp(72px, 6.5vw, 140px) 64px;
 }
