@@ -141,7 +141,7 @@ const Photography = ({ data, location }) => {
   const [filters, setFilters] = React.useState(EMPTY_FILTERS)
   const [openRef, setOpenRef] = React.useState(null)
   const [view, setView] = React.useState("contact")
-  const [size, setSize] = React.useState("md")
+  const [size, setSize] = React.useState("lg")
 
   const filtering = isFiltering(filters)
   const visible = React.useMemo(
@@ -226,7 +226,7 @@ const Photography = ({ data, location }) => {
         <header className={styles.header}>
           <div className={styles.headerMain}>
             <p className={styles.kicker}>Photography</p>
-            <h1 className={styles.title}>On film, mostly.</h1>
+            <h1 className={styles.title}>On film, for a reason.</h1>
             <ul className={styles.kit}>
               {KIT.map(item => (
                 <li

@@ -67,9 +67,9 @@
 .controls {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 7px;
   min-width: 0;
-  max-width: 34rem;
+  max-width: 30rem;
   padding-top: 4px;
 }
 
@@ -164,11 +164,11 @@
    stay aligned down the left edge of the control stack. */
 .group {
   display: grid;
-  /* 5rem left "SPACE/TIME" under a pixel of slack once the label went to 11px,
-     so it would wrap on any metric variance. The chips take the rest. */
+  /* 5rem leaves "SPACE/TIME" under a pixel of slack at 11px uppercase, so it
+     wraps on any metric variance. The chips take the rest. */
   grid-template-columns: 5.75rem minmax(0, 1fr);
   align-items: start;
-  gap: 12px;
+  gap: 10px;
 }
 
 .groupLabel {
@@ -184,15 +184,15 @@
 .groupChips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 5px;
   min-width: 0;
 }
 
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 8px 12px;
+  gap: 6px;
+  padding: 5px 9px;
   border: 1px solid var(--rule-strong);
   background: none;
   color: var(--ink-3);
@@ -226,8 +226,8 @@
 .selectButton {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 10px 8px 12px;
+  gap: 6px;
+  padding: 5px 7px 5px 9px;
   border: 1px solid var(--rule-strong);
   background: none;
   color: var(--ink-3);
@@ -256,7 +256,7 @@
 
 .selectValue {
   color: var(--ink);
-  max-width: 12rem;
+  max-width: 8rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -742,7 +742,7 @@
   }
 
   .selectValue {
-    max-width: 9rem;
+    max-width: 7rem;
   }
 
   .bar {
