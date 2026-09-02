@@ -4,10 +4,12 @@ import * as styles from "../../pages/redesign-lab.module.css"
 import AtlasField from "./AtlasField"
 import { getPhotographyColumns } from "./archiveFieldData"
 import {
+  FIELD_TITLE_PX,
   createVisualLayouts,
   interpolateTimelinePositions,
 } from "./scrollFieldLayouts"
 import {
+  useFieldScale,
   usePrefersReducedMotion,
   useViewportWidth,
 } from "./useFieldEnvironment"
@@ -62,15 +64,22 @@ const ArchiveScrolly = ({
   const viewportWidth = useViewportWidth()
   const compact = viewportWidth < 980
   const photographyColumns = getPhotographyColumns(viewportWidth)
+  const [fieldRef, fieldScale] = useFieldScale(
+    SCROLLY_VIEWBOX_WIDTH,
+    SCROLLY_VIEWBOX_HEIGHT
+  )
+  // Quantised so a drag-resize does not rebuild the layout on every frame; the
+  // labels themselves follow the exact scale through CSS.
+  const titleUnits = FIELD_TITLE_PX / (Math.round(fieldScale * 50) / 50)
   const scrollLayouts = React.useMemo(
     () =>
       createVisualLayouts(
         works,
         SCROLLY_VIEWBOX_WIDTH,
         SCROLLY_VIEWBOX_HEIGHT,
-        { compact, photographyColumns, connections }
+        { compact, photographyColumns, connections, titleUnits }
       ),
-    [compact, connections, photographyColumns, works]
+    [compact, connections, photographyColumns, titleUnits, works]
   )
 
   React.useEffect(() => {
@@ -175,6 +184,8 @@ const ArchiveScrolly = ({
             connections={connections}
             connectionsVisible={connectionsReady}
             description="The archive changes across five scroll scenes: unsorted works, four formats, recurring inquiries, a relationship network, and a chronology that bends into a circle."
+            fieldRef={fieldRef}
+            fieldScale={fieldScale}
             formatIndexVisible={scene.formatIndexVisible}
             formatLabels={scrollLayouts.formatLabels}
             formatZones={scrollLayouts.formatZones}

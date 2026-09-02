@@ -3,10 +3,12 @@ import * as React from "react"
 import AtlasField from "./AtlasField"
 import { getPhotographyColumns } from "./archiveFieldData"
 import {
+  FIELD_TITLE_PX,
   createVisualLayouts,
   interpolateTimelinePositions,
 } from "./scrollFieldLayouts"
 import {
+  useFieldScale,
   usePrefersReducedMotion,
   useViewportWidth,
 } from "./useFieldEnvironment"
@@ -34,14 +36,22 @@ const ArchiveField = ({
   const viewportWidth = useViewportWidth()
   const compact = viewportWidth < 980
   const photographyColumns = getPhotographyColumns(viewportWidth)
+  const [fieldRef, fieldScale] = useFieldScale(
+    HERO_VIEWBOX_WIDTH,
+    HERO_VIEWBOX_HEIGHT
+  )
+  // Quantised so a drag-resize does not rebuild the layout on every frame; the
+  // labels themselves follow the exact scale through CSS.
+  const titleUnits = FIELD_TITLE_PX / (Math.round(fieldScale * 50) / 50)
   const heroLayouts = React.useMemo(
     () =>
       createVisualLayouts(works, HERO_VIEWBOX_WIDTH, HERO_VIEWBOX_HEIGHT, {
         compact,
         photographyColumns,
         connections,
+        titleUnits,
       }),
-    [compact, connections, photographyColumns, works]
+    [compact, connections, photographyColumns, titleUnits, works]
   )
 
   React.useEffect(() => {
@@ -119,6 +129,8 @@ const ArchiveField = ({
       connections={connections}
       connectionsVisible={connectionsReady}
       description="The archive cycles through five views: unsorted works, four formats, recurring inquiries, a relationship network, and a chronology that bends into a circle."
+      fieldRef={fieldRef}
+      fieldScale={fieldScale}
       formatIndexVisible={scene.formatIndexVisible}
       formatLabels={heroLayouts.formatLabels}
       formatZones={heroLayouts.formatZones}

@@ -155,6 +155,8 @@ const AtlasField = ({
   connections = [],
   connectionsVisible,
   description,
+  fieldRef,
+  fieldScale = 1,
   formatIndexVisible = false,
   formatLabels = {},
   formatZones = [],
@@ -209,13 +211,17 @@ const AtlasField = ({
     return connectedWorkIds.has(work.id) ? 1 : UNCONNECTED_NODE_OPACITY
   }
 
+  // The scale goes onto the element the labels live in, so the stylesheet can
+  // divide it back out and hold them at one rendered size; see useFieldScale.
   return (
     <svg
+      ref={fieldRef}
       className={className}
       viewBox={`0 0 ${timelineData?.viewBoxWidth || 620} ${
         timelineData?.viewBoxHeight || 520
       }`}
       preserveAspectRatio="xMidYMid meet"
+      style={{ "--field-scale": fieldScale }}
       role="img"
       aria-labelledby={`${idPrefix}-title ${idPrefix}-description`}
     >
@@ -455,7 +461,17 @@ const AtlasField = ({
         data-visible={workTitlesVisible ? "true" : "false"}
       >
         {works.map(work => {
+          const label = formatLabels[work.id]
+
+          // A cell too narrow to hold a readable title gets no label at all —
+          // the mark and the format heading carry it, and the full title is a
+          // click away in the rail. See MINIMUM_TITLE_CHARACTERS.
+          if (!label) {
+            return null
+          }
+
           const { x, y } = positions[work.id]
+
           return (
             <text
               key={work.id}
@@ -465,7 +481,7 @@ const AtlasField = ({
               textAnchor="middle"
             >
               <title>{work.title || work.id}</title>
-              {formatLabels[work.id] || work.id.toUpperCase()}
+              {label}
             </text>
           )
         })}

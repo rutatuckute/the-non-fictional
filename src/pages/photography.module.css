@@ -2,10 +2,15 @@
   --void: #0b0a09;
   --raised: #131211;
   --rule: #2b2926;
+  /* --rule is 1.36:1 — fine for a decorative hairline, invisible as the edge
+     of a control. This clears the 3:1 that non-text UI needs. */
+  --rule-strong: #665e54;
   --rule-subtle: #1b1a18;
   --ink: #eee8df;
   --ink-2: #9b958b;
-  --ink-3: #6a645c;
+  /* 5.28:1 on --void. The former #6a645c was 3.38:1, under the 4.5:1 text
+     this size needs, and it was the resting colour of every control here. */
+  --ink-3: #8a837a;
   --brand: #ffa500;
   --font-body: "Source Serif 4", Georgia, serif;
   --font-title: "Bricolage Grotesque", system-ui, sans-serif;
@@ -170,7 +175,7 @@
   align-items: center;
   gap: 7px;
   padding: 8px 12px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule-strong);
   background: none;
   color: var(--ink-3);
   font-family: var(--font-mono);
@@ -205,7 +210,7 @@
   align-items: center;
   gap: 8px;
   padding: 8px 10px 8px 12px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule-strong);
   background: none;
   color: var(--ink-3);
   font-family: var(--font-mono);
@@ -265,7 +270,7 @@
   overflow-y: auto;
   padding: 4px;
   background: var(--raised);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--rule-strong);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
 }
 
@@ -472,9 +477,9 @@
   background: linear-gradient(transparent, rgba(11, 10, 9, 0.92));
   color: var(--ink-2);
   font-family: var(--font-mono);
-  font-size: 8.5px;
-  letter-spacing: 0.11em;
-  line-height: 1.5;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  line-height: 1.45;
   text-align: left;
   text-transform: uppercase;
   opacity: 0;
@@ -490,6 +495,15 @@
 .frameButton:hover .frameCaption,
 .frameButton:focus-visible .frameCaption {
   opacity: 1;
+}
+
+/* A touch screen has no hover, so the caption would never appear and the
+   frames would carry no title, place or year at all. Show it outright there
+   rather than making the lightbox the only way to identify a photograph. */
+@media (hover: none) {
+  .frameCaption {
+    opacity: 1;
+  }
 }
 
 .empty {

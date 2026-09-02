@@ -6,6 +6,13 @@ import {
 
 const COLLISION_GAP = 9
 const EDGE_PADDING = 20
+// The rendered size a work title holds to, in CSS pixels, whatever the field
+// is drawn at. The stylesheet divides the drawn scale back out of this and the
+// layout multiplies it in, so the two stay in step — keep this equal to the
+// work-title font-size in redesign-lab.module.css. It is a pixel under the 11
+// the standalone labels take because titles sit in a dense grid of cells,
+// where every extra pixel costs characters.
+export const FIELD_TITLE_PX = 10
 const SCATTER_MAX_ATTEMPTS = 30000
 const FORMAT_ORDER = ["essay", "reflection", "data", "photography"]
 const FORMAT_ZONE_WEIGHTS = {
@@ -211,6 +218,25 @@ const shortenTitle = (title, maximumLength) => {
     : normalized
 }
 
+// IBM Plex Mono advances 0.6em a glyph and the label adds 0.08em of tracking,
+// so a character occupies this fraction of the font size. The titles used to
+// be cut against a hard-coded 5.2, which was this ratio at the old 7.5px —
+// deriving it keeps the fit correct now the size is set by the drawn scale.
+const MONO_ADVANCE_RATIO = 0.68
+// Four letters and an ellipsis is the least that still reads as a title, and
+// it leaves short ones ("ADELE") whole. Below that the label is dropped and
+// the mark carries the work on its own, rather than showing "A F…".
+const MINIMUM_TITLE_CHARACTERS = 5
+
+const fitTitle = (title, cellWidth, titleUnits) => {
+  const maximumLength =
+    Math.floor(cellWidth / (titleUnits * MONO_ADVANCE_RATIO)) - 1
+
+  return maximumLength < MINIMUM_TITLE_CHARACTERS
+    ? null
+    : shortenTitle(title, maximumLength)
+}
+
 // Row spacing shared by every format zone, derived from whichever format
 // needs the most rows. Zones then stack their marks top-down at a uniform
 // rhythm rather than each spreading its own items over the full height.
@@ -231,7 +257,8 @@ const createFormatLayout = (
   works,
   viewBoxWidth,
   viewBoxHeight,
-  compact
+  compact,
+  titleUnits
 ) => {
   const positions = {}
   const labels = {}
@@ -276,10 +303,7 @@ const createFormatLayout = (
           x: left + cellWidth * (itemIndex % columns) + cellWidth / 2,
           y: startY + Math.floor(itemIndex / columns) * rowGap,
         }
-        labels[work.id] = shortenTitle(
-          work.title,
-          format === "photography" ? 5 : 12
-        )
+        labels[work.id] = fitTitle(work.title, cellWidth, titleUnits)
       })
     })
 
@@ -320,10 +344,7 @@ const createFormatLayout = (
         x: cursor + cellWidth * (itemIndex % columns) + cellWidth / 2,
         y: startY + Math.floor(itemIndex / columns) * rowGap,
       }
-      labels[work.id] = shortenTitle(
-        work.title,
-        Math.max(4, Math.floor(cellWidth / 5.2) - 1)
-      )
+      labels[work.id] = fitTitle(work.title, cellWidth, titleUnits)
     })
 
     cursor += width + zoneGap
@@ -666,7 +687,15 @@ export const createVisualLayouts = (
   works,
   viewBoxWidth,
   viewBoxHeight,
-  { compact = false, photographyColumns = 13, connections = [] } = {}
+  {
+    compact = false,
+    photographyColumns = 13,
+    connections = [],
+    // Work titles are sized in user units but read at a fixed number of CSS
+    // pixels, so how much of a title fits a cell depends on how large the
+    // field is drawn. The caller measures that and passes the result here.
+    titleUnits = FIELD_TITLE_PX,
+  } = {}
 ) => {
   const inquiryTerritories = createInquiryTerritories(
     viewBoxWidth,
@@ -688,7 +717,8 @@ export const createVisualLayouts = (
     works,
     viewBoxWidth,
     viewBoxHeight,
-    compact
+    compact,
+    titleUnits
   )
   const network = createNetworkLayout(
     works,

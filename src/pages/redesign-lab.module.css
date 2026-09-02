@@ -2,10 +2,15 @@
   --lab-void: #0b0a09;
   --lab-raised: #131211;
   --lab-rule: #2b2926;
+  /* --lab-rule is 1.36:1 — fine for a decorative hairline, invisible as the
+     edge of a control. This clears the 3:1 that non-text UI needs. */
+  --lab-rule-strong: #665e54;
   --lab-rule-subtle: #1b1a18;
   --lab-ink: #eee8df;
   --lab-ink-secondary: #9b958b;
-  --lab-ink-muted: #6a645c;
+  /* 5.28:1 on --lab-void. The former #6a645c was 3.38:1, which is under the
+     4.5:1 that text this size needs, and it carried every label on the page. */
+  --lab-ink-muted: #8a837a;
   --lab-content-max: 1680px;
   /* Masthead is 76px plus its 1px rule, and sits in normal flow. */
   --lab-masthead-h: 77px;
@@ -250,10 +255,14 @@
   vector-effect: non-scaling-stroke;
 }
 
+/* Label sizes are in SVG user units, so they shrink with the field — about
+   5px once it is in a narrow column, while non-scaling-stroke holds every line
+   steady. Dividing out the drawn scale (set on the <svg> by useFieldScale)
+   pins each label to the CSS pixel size named here at any width. */
 .archiveField [data-element="inquiry-label"] {
   fill: var(--lab-ink-muted);
   font-family: var(--lab-font-metadata);
-  font-size: 7px;
+  font-size: calc(11px / var(--field-scale, 1));
   font-weight: 500;
   letter-spacing: 0.08em;
   pointer-events: none;
@@ -337,7 +346,10 @@
 .archiveField [data-element="work-title"] {
   fill: var(--lab-ink-muted);
   font-family: var(--lab-font-metadata);
-  font-size: 7.5px;
+  /* 10px, not the 11px the standalone labels take: these sit in a dense grid
+     and FIELD_TITLE_PX in scrollFieldLayouts.js must match this number, since
+     it decides how many characters fit a cell. */
+  font-size: calc(10px / var(--field-scale, 1));
   font-weight: 500;
   letter-spacing: 0.08em;
   pointer-events: none;
@@ -379,12 +391,12 @@
 
 .archiveField [data-element="format-heading"] {
   fill: var(--mark-color);
-  font-size: 8px;
+  font-size: calc(12px / var(--field-scale, 1));
 }
 
 .archiveField [data-element="format-count"] {
   fill: var(--lab-ink-muted);
-  font-size: 7px;
+  font-size: calc(11px / var(--field-scale, 1));
 }
 
 .archiveField [data-element="timeline-axis"],
@@ -404,7 +416,7 @@
 .archiveField [data-element="timeline-branch-label"],
 .archiveField [data-element="timeline-undated-label"] {
   fill: var(--lab-ink-muted);
-  font-size: 7px;
+  font-size: calc(11px / var(--field-scale, 1));
 }
 
 .archiveField [data-element="timeline-year-label"][data-visible="false"] {
@@ -510,7 +522,7 @@
   bottom: 8%;
   z-index: 1;
   padding: 4px 10px;
-  border: 1px solid var(--lab-rule);
+  border: 1px solid var(--lab-rule-strong);
   background: var(--lab-raised);
   color: var(--lab-ink-secondary);
   font-family: var(--lab-font-metadata);
