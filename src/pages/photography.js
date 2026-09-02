@@ -13,6 +13,7 @@ import {
   buildFrames,
   groupSeries,
   isFiltering,
+  LIVED_IN,
 } from "../components/photography/photoData"
 import * as styles from "./photography.module.css"
 
@@ -86,6 +87,21 @@ const KIT = [
       <>
         <path d="M7 9V5h12v10h-4" />
         <rect x="3" y="9" width="12" height="10" />
+      </>
+    ),
+  },
+  {
+    label: "Lived in",
+    // Same constant the Lived filter is built from, so the line under the title
+    // and the dropdown cannot drift apart.
+    value: LIVED_IN.join(" · "),
+    now: "true",
+    // A roof over a wall — rectilinear like the camera and film marks, and
+    // reads as somewhere lived rather than the generic pin of a place shot.
+    icon: icon(
+      <>
+        <path d="M4 10.5 12 4l8 6.5" />
+        <path d="M6 10v10h12V10" />
       </>
     ),
   },

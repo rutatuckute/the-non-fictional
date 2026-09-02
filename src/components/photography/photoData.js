@@ -199,7 +199,7 @@ const countBy = (frames, pick) => {
 // The cities lived in rather than passed through. Editorial, not derivable
 // from the frames, so it is listed here; a city only reaches the filter once it
 // actually has frames, which is why London can sit in this list unseen.
-const LIVED_IN = ["Vilnius", "Paris", "London"]
+export const LIVED_IN = ["Vilnius", "Paris", "London"]
 
 // Type stays a short chip row. Lived, place and year are dropdowns, which have
 // no wrapping cost. Place lists countries: cities made the list long and mostly
