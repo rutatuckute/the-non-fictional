@@ -4,7 +4,6 @@ import * as styles from "../../pages/redesign-lab.module.css"
 import AtlasField from "./AtlasField"
 import { getPhotographyColumns } from "./archiveFieldData"
 import {
-  FIELD_TITLE_PX,
   createVisualLayouts,
   interpolateTimelinePositions,
 } from "./scrollFieldLayouts"
@@ -64,22 +63,23 @@ const ArchiveScrolly = ({
   const viewportWidth = useViewportWidth()
   const compact = viewportWidth < 980
   const photographyColumns = getPhotographyColumns(viewportWidth)
+  // Still measured, because the format headings, counts, inquiry and timeline
+  // labels are all counter-scaled against it in CSS. No titleUnits though:
+  // this field draws no work titles, so nothing would read the fitting, and
+  // depending on it would rebuild the layout on every resize step.
   const [fieldRef, fieldScale] = useFieldScale(
     SCROLLY_VIEWBOX_WIDTH,
     SCROLLY_VIEWBOX_HEIGHT
   )
-  // Quantised so a drag-resize does not rebuild the layout on every frame; the
-  // labels themselves follow the exact scale through CSS.
-  const titleUnits = FIELD_TITLE_PX / (Math.round(fieldScale * 50) / 50)
   const scrollLayouts = React.useMemo(
     () =>
       createVisualLayouts(
         works,
         SCROLLY_VIEWBOX_WIDTH,
         SCROLLY_VIEWBOX_HEIGHT,
-        { compact, photographyColumns, connections, titleUnits }
+        { compact, photographyColumns, connections }
       ),
-    [compact, connections, photographyColumns, titleUnits, works]
+    [compact, connections, photographyColumns, works]
   )
 
   React.useEffect(() => {
@@ -201,7 +201,7 @@ const ArchiveScrolly = ({
             timelineVisible={scene.timelineVisible}
             title="Five structures for the archive"
             transitionsEnabled={prefersReducedMotion === false}
-            workTitlesVisible={scene.workTitlesVisible}
+            workTitlesVisible={false}
             works={works}
             onWorkSelect={onWorkSelect}
           />

@@ -288,14 +288,14 @@ const AtlasField = ({
                 x={timelineData.axisLeft}
                 y={timelineData.axisY - timelineData.branchOffset}
               >
-                ASKING ↑
+                ASKING
               </text>
               <text
                 data-element="timeline-branch-label"
                 x={timelineData.axisLeft}
                 y={timelineData.axisY + timelineData.branchOffset}
               >
-                DOCUMENTING ↓
+                DOCUMENTING
               </text>
               {timelineData.undated ? (
                 <text
