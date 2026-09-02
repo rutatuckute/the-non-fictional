@@ -13,6 +13,7 @@ import {
   buildFrames,
   groupSeries,
   isFiltering,
+  LIVED_IN,
 } from "../components/photography/photoData"
 import * as styles from "./photography.module.css"
 
@@ -86,6 +87,23 @@ const KIT = [
       <>
         <path d="M7 9V5h12v10h-4" />
         <rect x="3" y="9" width="12" height="10" />
+      </>
+    ),
+  },
+  {
+    label: "Lived in",
+    // Same constant the Lived filter is built from, so the line under the title
+    // and the dropdown cannot drift apart.
+    value: LIVED_IN.join(" · "),
+    now: "true",
+    // A folded map. A pin was the other candidate, but it is a circle and a
+    // teardrop against three hard-cornered marks, and reads as one point rather
+    // than the several places this line names.
+    icon: icon(
+      <>
+        <path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z" />
+        <path d="M9 4v14" />
+        <path d="M15 6v14" />
       </>
     ),
   },
