@@ -1,7 +1,7 @@
 ---
 layout: photography
 template: photo-post
-title: JUST MARRIED I
+title: JUST MARRIED
 location: Radiškis, Lithuania
 year: "2026"
 tags:
