@@ -63,10 +63,8 @@ const ArchiveScrolly = ({
   const viewportWidth = useViewportWidth()
   const compact = viewportWidth < 980
   const photographyColumns = getPhotographyColumns(viewportWidth)
-  // Still measured, because the format headings, counts, inquiry and timeline
-  // labels are all counter-scaled against it in CSS. No titleUnits though:
-  // this field draws no work titles, so nothing would read the fitting, and
-  // depending on it would rebuild the layout on every resize step.
+  // Measured for the format headings, counts, inquiry and timeline labels,
+  // which are counter-scaled against it in CSS.
   const [fieldRef, fieldScale] = useFieldScale(
     SCROLLY_VIEWBOX_WIDTH,
     SCROLLY_VIEWBOX_HEIGHT
@@ -187,7 +185,6 @@ const ArchiveScrolly = ({
             fieldRef={fieldRef}
             fieldScale={fieldScale}
             formatIndexVisible={scene.formatIndexVisible}
-            formatLabels={scrollLayouts.formatLabels}
             formatZones={scrollLayouts.formatZones}
             idPrefix="scroll-archive-field"
             inquiryTerritories={scrollLayouts.inquiryTerritories}
@@ -201,7 +198,6 @@ const ArchiveScrolly = ({
             timelineVisible={scene.timelineVisible}
             title="Five structures for the archive"
             transitionsEnabled={prefersReducedMotion === false}
-            workTitlesVisible={false}
             works={works}
             onWorkSelect={onWorkSelect}
           />

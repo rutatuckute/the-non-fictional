@@ -158,7 +158,6 @@ const AtlasField = ({
   fieldRef,
   fieldScale = 1,
   formatIndexVisible = false,
-  formatLabels = {},
   formatZones = [],
   idPrefix,
   inquiryTerritories = [],
@@ -173,7 +172,6 @@ const AtlasField = ({
   timelineVisible = false,
   title,
   transitionsEnabled,
-  workTitlesVisible = formatIndexVisible,
   works = [],
 }) => {
   const networkMode = layout === "network"
@@ -453,38 +451,6 @@ const AtlasField = ({
             </text>
           </g>
         ))}
-      </g>
-
-      <g
-        aria-hidden="true"
-        data-layer="work-titles"
-        data-visible={workTitlesVisible ? "true" : "false"}
-      >
-        {works.map(work => {
-          const label = formatLabels[work.id]
-
-          // A cell too narrow to hold a readable title gets no label at all —
-          // the mark and the format heading carry it, and the full title is a
-          // click away in the rail. See MINIMUM_TITLE_CHARACTERS.
-          if (!label) {
-            return null
-          }
-
-          const { x, y } = positions[work.id]
-
-          return (
-            <text
-              key={work.id}
-              data-element="work-title"
-              x={x}
-              y={y - 11}
-              textAnchor="middle"
-            >
-              <title>{work.title || work.id}</title>
-              {label}
-            </text>
-          )
-        })}
       </g>
     </svg>
   )

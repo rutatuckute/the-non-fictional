@@ -343,22 +343,8 @@
   stroke: var(--lab-brand);
 }
 
-.archiveField [data-element="work-title"] {
-  fill: var(--lab-ink-muted);
-  font-family: var(--lab-font-metadata);
-  /* 10px, not the 11px the standalone labels take: these sit in a dense grid
-     and FIELD_TITLE_PX in scrollFieldLayouts.js must match this number, since
-     it decides how many characters fit a cell. */
-  font-size: calc(10px / var(--field-scale, 1));
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  pointer-events: none;
-  text-transform: uppercase;
-}
-
 .archiveField [data-layer="format-rules"],
 .archiveField [data-layer="format-index"],
-.archiveField [data-layer="work-titles"],
 .archiveField [data-layer="timeline"] {
   opacity: 0;
   pointer-events: none;
@@ -367,7 +353,6 @@
 
 .archiveField [data-layer="format-rules"][data-visible="true"],
 .archiveField [data-layer="format-index"][data-visible="true"],
-.archiveField [data-layer="work-titles"][data-visible="true"],
 .archiveField [data-layer="timeline"][data-visible="true"] {
   opacity: 1;
 }
@@ -736,7 +721,6 @@
   .archiveField [data-layer="inquiry-labels"],
   .archiveField [data-layer="format-rules"],
   .archiveField [data-layer="format-index"],
-  .archiveField [data-layer="work-titles"],
   .archiveField [data-layer="timeline"],
   .archiveField [data-element="selection-ring"] {
     transition: none;
