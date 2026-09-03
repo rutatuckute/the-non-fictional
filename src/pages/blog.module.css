@@ -281,22 +281,35 @@
 
 /* ── the grid ── */
 
-/* The contact sheet's 2px gutter, at a track wide enough for a title and a
-   summary. Three per row at seven pieces, so the last row holds one rather
-   than leaving three empty slots. */
+/* A field of frames is right for photographs and wrong for essays: a piece
+   needs a title, a summary and room around it. Three across on a wide screen,
+   at roughly 440px each. */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  gap: 2px;
-  margin: 26px 0 44px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr));
+  gap: 24px;
+  margin: 30px 0 56px;
 }
 
 .card {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  background: var(--raised);
+  border: 1px solid var(--rule);
   text-decoration: none;
   color: inherit;
+  transition: transform 200ms ease, border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+/* The lift is the one thing the old index did that nothing else here does,
+   and it is worth keeping. */
+.card:hover,
+.card:focus-visible {
+  transform: translateY(-4px);
+  border-color: var(--ink-3);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
 }
 
 .card[data-form="essays"] {
@@ -337,23 +350,21 @@
   opacity: 0.82;
 }
 
-/* Flush with the cover's edges, so the text sits under the image the way a
-   frame's caption sits inside it rather than in a padded panel. */
 .cardBody {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 10px;
   flex: 1;
-  padding: 12px 0 4px;
+  padding: 18px 20px 20px;
 }
 
 .cardTitle {
   margin: 0;
   color: var(--ink);
   font-family: var(--font-title);
-  font-size: 18px;
+  font-size: 21px;
   font-weight: 600;
-  line-height: 1.16;
+  line-height: 1.14;
   letter-spacing: -0.02em;
   text-transform: none;
   text-wrap: balance;
@@ -369,13 +380,13 @@
 .cardExcerpt {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   overflow: hidden;
   margin: 0;
   color: var(--ink-2);
-  font-size: 14.5px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.55;
 }
 
 .cardFoot {
@@ -413,8 +424,14 @@
   .coverImage,
   .chip,
   .search,
-  .cardTitle {
+  .cardTitle,
+  .card {
     transition: none;
+  }
+
+  .card:hover,
+  .card:focus-visible {
+    transform: none;
   }
 }
 
