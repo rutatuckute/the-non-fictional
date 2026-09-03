@@ -30,6 +30,47 @@ const searchable = post => {
     .toLowerCase()
 }
 
+const kitIcon = children => (
+  <svg
+    className={styles.kitIcon}
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    focusable="false"
+  >
+    {children}
+  </svg>
+)
+
+const ICONS = {
+  forms: kitIcon(
+    <>
+      <path d="M4 5h16" />
+      <path d="M4 12h16" />
+      <path d="M4 19h10" />
+    </>
+  ),
+  span: kitIcon(
+    <>
+      <path d="M4 7h16v13H4z" />
+      <path d="M4 11h16" />
+      <path d="M9 4v4" />
+      <path d="M15 4v4" />
+    </>
+  ),
+  inquiries: kitIcon(
+    <>
+      <circle cx="12" cy="12" r="8" />
+      <circle cx="12" cy="12" r="3" />
+    </>
+  ),
+  longest: kitIcon(
+    <>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 7v5l3 2" />
+    </>
+  ),
+}
+
 const SearchIcon = () => (
   <svg className={styles.searchIcon} viewBox="0 0 24 24" aria-hidden="true">
     <circle cx="10.5" cy="10.5" r="6.5" />
@@ -106,6 +147,21 @@ const WritingsIndex = ({ data, location }) => {
     ? `${Math.min(...years)}–${Math.max(...years)}`
     : null
 
+  const kit = React.useMemo(() => {
+    const forms = Object.keys(FORMS).filter(id => counts[id])
+    const inquiries = new Set(
+      posts.map(p => p.frontmatter?.inquiry).filter(Boolean)
+    )
+    const longest = posts.reduce((n, p) => Math.max(n, p.timeToRead || 0), 0)
+
+    return [
+      { key: "forms", label: "Forms", value: forms.map(id => FORMS[id]).join(" · ") },
+      { key: "span", label: "Written", value: span || "—" },
+      { key: "inquiries", label: "Inquiries", value: `${inquiries.size} of 6` },
+      { key: "longest", label: "Longest", value: `${longest} min` },
+    ].filter(item => item.value)
+  }, [counts, posts, span])
+
   return (
     <div className={styles.page}>
       <Masthead location={location} activeSection="writings" />
@@ -118,6 +174,17 @@ const WritingsIndex = ({ data, location }) => {
               {span ? ` · ${span}` : ""}
             </p>
             <h1 className={styles.title}>Writings</h1>
+            <ul className={styles.kit}>
+              {kit.map(item => (
+                <li className={styles.kitItem} key={item.key}>
+                  {ICONS[item.key]}
+                  <span className={styles.kitText}>
+                    <span className={styles.kitLabel}>{item.label}</span>
+                    <span className={styles.kitValue}>{item.value}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div className={styles.controls}>
