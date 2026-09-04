@@ -2,45 +2,44 @@
 //
 // Catches a deploy that would ship stale styles.
 //
-// Three times now this site has published a build whose HTML pointed at an
-// earlier build's stylesheet: the correct CSS was in the deploy, nothing
-// failed, and the pages rendered the previous design. It has happened on
-// production twice and on a pull request preview, where it survived two
-// consecutive builds including one from an empty commit. `gatsby clean` runs
-// before every build and does remove public/, so whatever restores the old
-// file does it somewhere this repository cannot see.
+// Three times this site has published a build whose HTML pointed at an earlier
+// build's stylesheet: the correct CSS in the deploy, nothing failing, and the
+// pages rendering the previous design. Twice on production, once on the
+// preview for pull request #42, where it outlasted two consecutive builds
+// including one from an empty commit, so a week of work could not be reviewed
+// until it was already live.
 //
-// What can be checked is the outcome. A clean build emits exactly one
-// stylesheet and every page links it. More than one means something was
-// restored; a page linking anything else means the HTML is stale. Either way
-// the build fails here rather than deploying green and serving the wrong CSS.
+// The publish directory is not the place to look. A Netlify build ends with
+// three stylesheets in public/ — this one and two from earlier deploys — and
+// deleting the directory first changes nothing: all three come back, written
+// within a hundred milliseconds of each other, after `rm -rf public .cache`
+// has already run. Whatever puts them there is beyond anything this file can
+// reach, and the newest of the three by modification time is not even the
+// right one, so counting files and comparing timestamps both mislead.
 //
-//   npm run verify:build                 after gatsby build, before the deploy
+// webpack.stats.json is written by this build and names the stylesheet this
+// build emitted. That is the only trustworthy answer to "which one is
+// current", and every page must link it. Strays alongside it are harmless for
+// as long as nothing points at them.
+//
+//   npm run verify:build                   fail the build if a page is stale
 //   npm run verify:build -- --report-only  write the report, never fail
 //
 // The report is always written to public/_build-verify.txt, which the deploy
-// publishes. Netlify's build logs need credentials this repository does not
-// have, so that file is the only way to see what a real deploy produced.
+// publishes, stamped with the commit that produced it. Netlify's build logs
+// need credentials this repository does not have, so that file is the only way
+// to see what a real deploy did.
 //
 const fs = require("fs")
 const path = require("path")
 
 const PUBLIC = path.join(__dirname, "..", "public")
-const STYLESHEET = /^styles\.[a-f0-9]+\.css$/
-const REFERENCE = /\/styles\.[a-f0-9]+\.css/g
+const STATS = path.join(PUBLIC, "webpack.stats.json")
 const REPORT = path.join(PUBLIC, "_build-verify.txt")
+const STYLESHEET = /styles\.[a-f0-9]+\.css/
+const REFERENCE = /\/styles\.[a-f0-9]+\.css/g
 const reportOnly = process.argv.includes("--report-only")
 
-const htmlFiles = (dir) =>
-  fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    const full = path.join(dir, entry.name)
-    if (entry.isDirectory()) return htmlFiles(full)
-    return entry.isFile() && entry.name.endsWith(".html") ? [full] : []
-  })
-
-// The report has to say which build wrote it. Reading one that turned out to
-// be the previous deploy's is exactly the confusion this whole check exists to
-// end, and it happened once while writing it.
 const stamp = [
   `commit:  ${process.env.COMMIT_REF || "unknown"}`,
   `context: ${process.env.CONTEXT || "local"}`,
@@ -62,9 +61,8 @@ const fail = (lines) => {
     "",
     ...lines,
     "",
-    "This is the stale-bundle failure. Do not deploy it: the pages would",
-    "render an earlier build's styles while reporting success. Clear the",
-    "build cache and deploy again.",
+    "Do not deploy this: the pages would render an earlier build's styles",
+    "while the deploy reported success. Clear the build cache and retry.",
   ]
   write(detail)
   console.error("\nBuild verification failed.\n")
@@ -72,54 +70,50 @@ const fail = (lines) => {
   process.exit(reportOnly ? 0 : 1)
 }
 
+const htmlFiles = (dir) =>
+  fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const full = path.join(dir, entry.name)
+    if (entry.isDirectory()) return htmlFiles(full)
+    return entry.isFile() && entry.name.endsWith(".html") ? [full] : []
+  })
+
 if (!fs.existsSync(PUBLIC)) {
   fail(["public/ does not exist — nothing was built."])
 }
 
-const emitted = fs.readdirSync(PUBLIC).filter((name) => STYLESHEET.test(name))
-const pages = htmlFiles(PUBLIC)
-
-console.log(
-  `verify-build: ${emitted.length} stylesheet(s), ${pages.length} page(s) in public/`
-)
-
-if (emitted.length === 0) {
-  fail(["No stylesheet in public/ — the build emitted none."])
-}
-
-if (emitted.length > 1) {
-  // Modification times separate the two explanations. Written seconds apart,
-  // this build emitted all of them. Minutes or days apart, the old ones were
-  // put back after the directory was removed, and by something the build
-  // command cannot reach.
-  const detail = emitted
-    .map((name) => {
-      const s = fs.statSync(path.join(PUBLIC, name))
-      return { name, mtime: s.mtime, kb: Math.round(s.size / 1024) }
-    })
-    .sort((a, b) => a.mtime - b.mtime)
-  const newest = detail[detail.length - 1].mtime
-
+if (!fs.existsSync(STATS)) {
   fail([
-    `${emitted.length} stylesheets in public/, expected 1:`,
-    ...detail.map(
-      (f) =>
-        `  ${f.name}  ${f.kb} KB  ${f.mtime.toISOString()}  ` +
-        `(${Math.round((newest - f.mtime) / 1000)}s older than newest)`
-    ),
-    "",
-    "A clean build emits one. More than one means a previous build's CSS",
-    "was in the publish directory when this build finished.",
+    "public/webpack.stats.json is missing, so there is no way to tell which",
+    "stylesheet this build emitted. The build did not finish as expected.",
   ])
 }
 
-const [current] = emitted
+// Every chunk names the same stylesheet, but read them all rather than trust
+// one: more than one distinct name would mean this no longer identifies a
+// single current stylesheet, and the check should say so rather than quietly
+// pick whichever came first.
+const stats = JSON.parse(fs.readFileSync(STATS, "utf8"))
+const named = new Set(
+  Object.values(stats.assetsByChunkName || {})
+    .flatMap((assets) => (Array.isArray(assets) ? assets : [assets]))
+    .map(String)
+    .filter((asset) => STYLESHEET.test(asset))
+)
+
+if (named.size !== 1) {
+  fail([
+    `webpack.stats.json names ${named.size} stylesheets, expected 1:`,
+    ...[...named].map((name) => `  ${name}`),
+  ])
+}
+
+const [current] = [...named]
+const pages = htmlFiles(PUBLIC)
 const stale = new Map()
 
 pages.forEach((file) => {
   const html = fs.readFileSync(file, "utf8")
-  const refs = new Set(html.match(REFERENCE) || [])
-  refs.forEach((ref) => {
+  new Set(html.match(REFERENCE) || []).forEach((ref) => {
     if (ref !== `/${current}`) {
       const page = path.relative(PUBLIC, file)
       stale.set(ref, [...(stale.get(ref) || []), page])
@@ -129,17 +123,35 @@ pages.forEach((file) => {
 
 if (stale.size) {
   fail([
-    `The build emitted ${current},`,
-    "but these pages link a different stylesheet:",
+    `This build emitted ${current},`,
+    "but these pages link something else:",
     "",
     ...[...stale.entries()].flatMap(([ref, where]) => [
-      `${ref}`,
+      ref,
       ...where.slice(0, 5).map((page) => `  ${page}`),
       ...(where.length > 5 ? [`  …and ${where.length - 5} more`] : []),
     ]),
   ])
 }
 
-const summary = `Build verified: ${pages.length} pages, all linking ${current}.`
-write(["OK", "", summary])
-console.log(summary)
+// Strays are normal on Netlify and harmless while unreferenced, so they are
+// recorded rather than treated as a failure.
+const strays = fs
+  .readdirSync(PUBLIC)
+  .filter((name) => STYLESHEET.test(name) && name !== current)
+
+const summary = [
+  "OK",
+  "",
+  `${pages.length} pages, all linking ${current}.`,
+  ...(strays.length
+    ? [
+        "",
+        `${strays.length} unreferenced stylesheet(s) also in public/:`,
+        ...strays.map((name) => `  ${name}`),
+        "Expected on Netlify; harmless while nothing links them.",
+      ]
+    : []),
+]
+write(summary)
+console.log(summary.join("\n"))

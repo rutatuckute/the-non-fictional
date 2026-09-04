@@ -1,26 +1,23 @@
 [build]
-# Clean first, then check the result.
+# Clean, build, then check what came out.
 #
-# This site has three times published a build whose HTML pointed at an earlier
-# build's stylesheet — the correct CSS present in the deploy, nothing failing,
-# and the pages rendering the previous design. Twice on production, once on a
-# pull request preview, where it survived two consecutive builds including one
-# from an empty commit. `gatsby clean` does remove public/, verified, so
-# whatever restores the old file does it somewhere outside this repository.
+# This site has three times published a build whose HTML linked an earlier
+# build's stylesheet: the right CSS present in the deploy, nothing failing, the
+# pages rendering the previous design. Twice on production, once on the preview
+# for #42, where it outlasted two builds including one from an empty commit.
 #
-# The clean stays because it is cheap, about 24s, and rules out the obvious
-# cause. verify:build covers the rest: a clean build emits exactly one
-# stylesheet and every page links it, so anything else fails the deploy here
-# rather than going out green and serving the wrong CSS.
-# `gatsby clean` is not enough here. It removes public/ locally — verified by
-# planting a file and watching it go — but a Netlify build with it in front
-# still reached verify:build with three stylesheets in public/: the one it had
-# just emitted, plus two from earlier deploys. So the directory is removed
-# explicitly as well, and the check that follows is what proves it worked.
+# `gatsby clean` was added to fix it and did not. A Netlify build ends with
+# three stylesheets in public/ regardless, and `rm -rf public .cache` in front
+# of the build changed nothing — all three came back, written within a hundred
+# milliseconds of each other, after the delete had run. Whatever puts them
+# there is outside this repository, so the rm has been dropped again rather
+# than left in place looking like it does something.
 #
-# TEMPORARY: still --report-only for one more build, to confirm the rm fixes
-# the count. Back to failing the build after that.
-command = "npm run clean && rm -rf public .cache && npm run build && npm run verify:build -- --report-only"
+# What is in reach is the outcome. verify:build reads the stylesheet name out
+# of webpack.stats.json, which this build writes, and fails the deploy if any
+# page links anything else. Strays in the directory are left alone; they are
+# harmless until something points at one, and that is the case this catches.
+command = "npm run clean && npm run build && npm run verify:build"
 publish = "public"
 
 [build.environment]
