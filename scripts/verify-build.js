@@ -88,12 +88,28 @@ if (emitted.length === 0) {
 }
 
 if (emitted.length > 1) {
+  // Modification times separate the two explanations. Written seconds apart,
+  // this build emitted all of them. Minutes or days apart, the old ones were
+  // put back after the directory was removed, and by something the build
+  // command cannot reach.
+  const detail = emitted
+    .map((name) => {
+      const s = fs.statSync(path.join(PUBLIC, name))
+      return { name, mtime: s.mtime, kb: Math.round(s.size / 1024) }
+    })
+    .sort((a, b) => a.mtime - b.mtime)
+  const newest = detail[detail.length - 1].mtime
+
   fail([
     `${emitted.length} stylesheets in public/, expected 1:`,
-    ...emitted.map((name) => `  ${name}`),
+    ...detail.map(
+      (f) =>
+        `  ${f.name}  ${f.kb} KB  ${f.mtime.toISOString()}  ` +
+        `(${Math.round((newest - f.mtime) / 1000)}s older than newest)`
+    ),
     "",
     "A clean build emits one. More than one means a previous build's CSS",
-    "was restored into the publish directory.",
+    "was in the publish directory when this build finished.",
   ])
 }
 
