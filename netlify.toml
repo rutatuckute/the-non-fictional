@@ -1,11 +1,23 @@
 [build]
-# Clean first. Netlify's build cache has twice now published a stylesheet
-# missing changes that were present in the commit being built — the CSS module
-# came back from cache and the deploy looked successful while serving stale
-# styles. A clean build costs about 24s here, since no images are processed at
-# build time any more, which is cheap against a deploy that silently ships the
-# wrong CSS.
-command = "npm run clean && npm run build"
+# Clean, build, then check what came out.
+#
+# This site has three times published a build whose HTML linked an earlier
+# build's stylesheet: the right CSS present in the deploy, nothing failing, the
+# pages rendering the previous design. Twice on production, once on the preview
+# for #42, where it outlasted two builds including one from an empty commit.
+#
+# `gatsby clean` was added to fix it and did not. A Netlify build ends with
+# three stylesheets in public/ regardless, and `rm -rf public .cache` in front
+# of the build changed nothing — all three came back, written within a hundred
+# milliseconds of each other, after the delete had run. Whatever puts them
+# there is outside this repository, so the rm has been dropped again rather
+# than left in place looking like it does something.
+#
+# What is in reach is the outcome. verify:build reads the stylesheet name out
+# of webpack.stats.json, which this build writes, and fails the deploy if any
+# page links anything else. Strays in the directory are left alone; they are
+# harmless until something points at one, and that is the case this catches.
+command = "npm run clean && npm run build && npm run verify:build"
 publish = "public"
 
 [build.environment]
