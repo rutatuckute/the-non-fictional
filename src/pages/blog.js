@@ -15,20 +15,16 @@ const FORMS = {
   data: "Data",
 }
 
-const searchable = post => {
-  const fm = post.frontmatter || {}
-  return [
-    fm.title,
-    fm.excerpt,
-    fm.topic,
-    fm.category,
-    fm.inquiry,
-    ...(fm.tags || []),
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase()
-}
+// The order the archive field declares its inquiries in, so the two surfaces
+// name them the same way round.
+const INQUIRIES = [
+  "systems",
+  "reality",
+  "agency",
+  "power",
+  "connection",
+  "memory",
+]
 
 const kitIcon = children => (
   <svg
@@ -56,13 +52,6 @@ const ICONS = {
     </>
   ),
 }
-
-const SearchIcon = () => (
-  <svg className={styles.searchIcon} viewBox="0 0 24 24" aria-hidden="true">
-    <circle cx="10.5" cy="10.5" r="6.5" />
-    <line x1="15.5" y1="15.5" x2="21" y2="21" />
-  </svg>
-)
 
 const Card = ({ post }) => {
   const fm = post.frontmatter || {}
@@ -101,7 +90,6 @@ const Card = ({ post }) => {
 const WritingsIndex = ({ data, location }) => {
   const posts = data?.allMarkdownRemark?.nodes ?? []
   const [form, setForm] = React.useState("all")
-  const [query, setQuery] = React.useState("")
 
   // Counts come from the posts, so a form appears in the filter row the moment
   // something is published under it and never before.
@@ -114,28 +102,23 @@ const WritingsIndex = ({ data, location }) => {
     return out
   }, [posts])
 
-  const visible = React.useMemo(() => {
-    const q = query.trim().toLowerCase()
-    return posts.filter(p => {
-      if (form !== "all" && p.frontmatter?.category_id !== form) return false
-      return q ? searchable(p).includes(q) : true
-    })
-  }, [form, posts, query])
+  const visible = React.useMemo(
+    () => posts.filter(p => form === "all" || p.frontmatter?.category_id === form),
+    [form, posts]
+  )
 
-  const filtering = form !== "all" || query.trim() !== ""
-  const clear = () => {
-    setForm("all")
-    setQuery("")
-  }
+  const filtering = form !== "all"
+  const clear = () => setForm("all")
 
   const kit = React.useMemo(() => {
     const forms = Object.keys(FORMS).filter(id => counts[id])
-    const inquiries = new Set(
+    const present = new Set(
       posts.map(p => p.frontmatter?.inquiry).filter(Boolean)
     )
+    const inquiries = INQUIRIES.filter(id => present.has(id))
     return [
       { key: "forms", label: "Forms", value: forms.map(id => FORMS[id]).join(" · ") },
-      { key: "inquiries", label: "Inquiries", value: `${inquiries.size} of 6` },
+      { key: "inquiries", label: "Inquiries", value: inquiries.join(" · ") },
     ].filter(item => item.value)
   }, [counts, posts])
 
@@ -147,7 +130,7 @@ const WritingsIndex = ({ data, location }) => {
         <header className={styles.header}>
           <div className={styles.headerMain}>
             <p className={styles.kicker}>Writings</p>
-            <h1 className={styles.title}>Writings</h1>
+            <h1 className={styles.title}>Making sense out of it.</h1>
             <ul className={styles.kit}>
               {kit.map(item => (
                 <li className={styles.kitItem} key={item.key}>
@@ -189,21 +172,6 @@ const WritingsIndex = ({ data, location }) => {
                       <span className={styles.chipCount}>{counts[id]}</span>
                     </button>
                   ))}
-              </div>
-            </div>
-
-            <div className={styles.group}>
-              <span className={styles.groupLabel}>Search</span>
-              <div className={styles.search}>
-                <SearchIcon />
-                <input
-                  className={styles.searchInput}
-                  type="search"
-                  placeholder="Title, topic, tag"
-                  aria-label="Search writings"
-                  value={query}
-                  onChange={event => setQuery(event.target.value)}
-                />
               </div>
             </div>
 
@@ -285,8 +253,6 @@ export const pageQuery = graphql`
           cover_image
           category_id
           inquiry
-          topic
-          tags
           year: date(formatString: "YYYY")
         }
       }
