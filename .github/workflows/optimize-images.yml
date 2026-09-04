@@ -21,6 +21,15 @@ on:
 permissions:
   contents: write
 
+# Two runs on the same branch used to race each other to push. On
+# karin-the-great-iii they started fourteen seconds apart, both optimised
+# cleanly, and the slower one's push was rejected as a non-fast-forward — the
+# only failure this workflow has ever had that reached a job at all. One run
+# per branch at a time, newest wins.
+concurrency:
+  group: optimize-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   optimize:
     # A fork's token is read-only, so the push below could not succeed. The
@@ -28,8 +37,9 @@ jobs:
     # is no pull_request in the payload, and an unscoped guard skips the whole
     # job, which makes the manual trigger useless for verifying the workflow.
     if: >-
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
+      && github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
