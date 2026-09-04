@@ -49,24 +49,10 @@ const ICONS = {
       <path d="M4 19h10" />
     </>
   ),
-  span: kitIcon(
-    <>
-      <path d="M4 7h16v13H4z" />
-      <path d="M4 11h16" />
-      <path d="M9 4v4" />
-      <path d="M15 4v4" />
-    </>
-  ),
   inquiries: kitIcon(
     <>
       <circle cx="12" cy="12" r="8" />
       <circle cx="12" cy="12" r="3" />
-    </>
-  ),
-  longest: kitIcon(
-    <>
-      <circle cx="12" cy="12" r="8" />
-      <path d="M12 7v5l3 2" />
     </>
   ),
 }
@@ -142,25 +128,16 @@ const WritingsIndex = ({ data, location }) => {
     setQuery("")
   }
 
-  const years = posts.map(p => p.frontmatter?.year).filter(Boolean)
-  const span = years.length
-    ? `${Math.min(...years)}–${Math.max(...years)}`
-    : null
-
   const kit = React.useMemo(() => {
     const forms = Object.keys(FORMS).filter(id => counts[id])
     const inquiries = new Set(
       posts.map(p => p.frontmatter?.inquiry).filter(Boolean)
     )
-    const longest = posts.reduce((n, p) => Math.max(n, p.timeToRead || 0), 0)
-
     return [
       { key: "forms", label: "Forms", value: forms.map(id => FORMS[id]).join(" · ") },
-      { key: "span", label: "Written", value: span || "—" },
       { key: "inquiries", label: "Inquiries", value: `${inquiries.size} of 6` },
-      { key: "longest", label: "Longest", value: `${longest} min` },
     ].filter(item => item.value)
-  }, [counts, posts, span])
+  }, [counts, posts])
 
   return (
     <div className={styles.page}>
@@ -169,10 +146,7 @@ const WritingsIndex = ({ data, location }) => {
       <main className={styles.main}>
         <header className={styles.header}>
           <div className={styles.headerMain}>
-            <p className={styles.kicker}>
-              {posts.length} {posts.length === 1 ? "piece" : "pieces"}
-              {span ? ` · ${span}` : ""}
-            </p>
+            <p className={styles.kicker}>Writings</p>
             <h1 className={styles.title}>Writings</h1>
             <ul className={styles.kit}>
               {kit.map(item => (
