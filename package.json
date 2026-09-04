@@ -1,9 +1,9 @@
 {
   "name": "the-non-fictional",
   "private": true,
-  "description": "Personal essays, reflections, and photography by R\u016bta Tu\u010dkut\u0117",
+  "description": "Personal essays, reflections, and photography by Rūta Tučkutė",
   "version": "1.0.0",
-  "author": "R\u016bta Tu\u010dkut\u0117",
+  "author": "Rūta Tučkutė",
   "dependencies": {
     "bootstrap": "^5.1.3",
     "bootstrap-icons": "^1.13.1",

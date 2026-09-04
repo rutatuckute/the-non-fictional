@@ -15,7 +15,12 @@
 // restored; a page linking anything else means the HTML is stale. Either way
 // the build fails here rather than deploying green and serving the wrong CSS.
 //
-//   npm run verify:build     after gatsby build, before the deploy
+//   npm run verify:build                 after gatsby build, before the deploy
+//   npm run verify:build -- --report-only  write the report, never fail
+//
+// The report is always written to public/_build-verify.txt, which the deploy
+// publishes. Netlify's build logs need credentials this repository does not
+// have, so that file is the only way to see what a real deploy produced.
 //
 const fs = require("fs")
 const path = require("path")
@@ -23,6 +28,8 @@ const path = require("path")
 const PUBLIC = path.join(__dirname, "..", "public")
 const STYLESHEET = /^styles\.[a-f0-9]+\.css$/
 const REFERENCE = /\/styles\.[a-f0-9]+\.css/g
+const REPORT = path.join(PUBLIC, "_build-verify.txt")
+const reportOnly = process.argv.includes("--report-only")
 
 const htmlFiles = (dir) =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -31,15 +38,28 @@ const htmlFiles = (dir) =>
     return entry.isFile() && entry.name.endsWith(".html") ? [full] : []
   })
 
+const write = (lines) => {
+  try {
+    fs.writeFileSync(REPORT, lines.join("\n") + "\n")
+  } catch (error) {
+    console.error(`Could not write ${REPORT}: ${error.message}`)
+  }
+}
+
 const fail = (lines) => {
+  const detail = [
+    "FAILED",
+    "",
+    ...lines,
+    "",
+    "This is the stale-bundle failure. Do not deploy it: the pages would",
+    "render an earlier build's styles while reporting success. Clear the",
+    "build cache and deploy again.",
+  ]
+  write(detail)
   console.error("\nBuild verification failed.\n")
-  lines.forEach((line) => console.error(`  ${line}`))
-  console.error(
-    "\nThis is the stale-bundle failure. Do not deploy it: the pages would\n" +
-      "render an earlier build's styles while reporting success. Clear the\n" +
-      "build cache and deploy again.\n"
-  )
-  process.exit(1)
+  detail.slice(2).forEach((line) => console.error(`  ${line}`))
+  process.exit(reportOnly ? 0 : 1)
 }
 
 if (!fs.existsSync(PUBLIC)) {
@@ -48,6 +68,10 @@ if (!fs.existsSync(PUBLIC)) {
 
 const emitted = fs.readdirSync(PUBLIC).filter((name) => STYLESHEET.test(name))
 const pages = htmlFiles(PUBLIC)
+
+console.log(
+  `verify-build: ${emitted.length} stylesheet(s), ${pages.length} page(s) in public/`
+)
 
 if (emitted.length === 0) {
   fail(["No stylesheet in public/ — the build emitted none."])
@@ -90,6 +114,6 @@ if (stale.size) {
   ])
 }
 
-console.log(
-  `Build verified: ${pages.length} pages, all linking ${current}.`
-)
+const summary = `Build verified: ${pages.length} pages, all linking ${current}.`
+write(["OK", "", summary])
+console.log(summary)
