@@ -21,6 +21,15 @@ on:
 permissions:
   contents: write
 
+# Two runs on the same branch used to race each other to push. On
+# karin-the-great-iii they started fourteen seconds apart, both optimised
+# cleanly, and the slower one's push was rejected as a non-fast-forward — the
+# only failure this workflow has ever had that reached a job at all. One run
+# per branch at a time, newest wins.
+concurrency:
+  group: optimize-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   optimize:
     # A fork's token is read-only, so the push below could not succeed. The
@@ -38,23 +47,32 @@ jobs:
           # below lands somewhere that can actually be pushed.
           ref: ${{ github.head_ref }}
 
+      # The run this workflow's own push triggers has nothing left to
+      # optimise. Guarding the steps rather than the job keeps the check
+      # reporting success rather than skipped, which is what a required
+      # check needs to see, and it finishes in seconds either way.
       - uses: actions/setup-node@v7
+        if: github.actor != 'github-actions[bot]'
         with:
           node-version: 20
 
       # The script imports nothing but sharp, so there is no reason to install
       # the whole Gatsby toolchain here.
       - name: Install sharp
+        if: github.actor != 'github-actions[bot]'
         run: npm install --no-save sharp@0.32.6
 
       - name: Optimize
+        if: github.actor != 'github-actions[bot]'
         run: npm run images:optimize
 
       # Only a pull request has a branch to push to. A manual run is a dry check
       # that the install and the script still work; master takes no direct push
       # anyway, so there is nothing to commit to.
       - name: Commit any changes
-        if: github.event_name == 'pull_request'
+        if: >-
+          github.event_name == 'pull_request'
+          && github.actor != 'github-actions[bot]'
         run: |
           if git diff --quiet -- static/images/uploads; then
             echo "Nothing to optimise."
