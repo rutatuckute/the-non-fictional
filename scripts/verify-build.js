@@ -38,9 +38,19 @@ const htmlFiles = (dir) =>
     return entry.isFile() && entry.name.endsWith(".html") ? [full] : []
   })
 
+// The report has to say which build wrote it. Reading one that turned out to
+// be the previous deploy's is exactly the confusion this whole check exists to
+// end, and it happened once while writing it.
+const stamp = [
+  `commit:  ${process.env.COMMIT_REF || "unknown"}`,
+  `context: ${process.env.CONTEXT || "local"}`,
+  `built:   ${new Date().toISOString()}`,
+  "",
+]
+
 const write = (lines) => {
   try {
-    fs.writeFileSync(REPORT, lines.join("\n") + "\n")
+    fs.writeFileSync(REPORT, [...stamp, ...lines].join("\n") + "\n")
   } catch (error) {
     console.error(`Could not write ${REPORT}: ${error.message}`)
   }
