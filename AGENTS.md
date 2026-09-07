@@ -2,21 +2,47 @@
 
 ## Project Context
 
-- This is a personal Gatsby website written in JavaScript.
-- The site is deployed through Netlify from GitHub.
+- This is a personal website: Next.js 16 (App Router), TypeScript, with Payload 3
+  as the CMS on Postgres.
+- It is deployed to Vercel from GitHub. It was on Gatsby and Netlify until the
+  migration; anything still describing that arrangement is out of date.
 - The production branch for this repository is `master`, not `main`.
+- Content lives in Payload, not in `content/`. That directory is kept as the
+  migration source and is not read at build time.
 
 ## Change Guidelines
 
-- Do not push directly to `master`; create a branch and open a pull request against `master`.
-- Preserve existing content, URLs, and the general visual identity unless explicitly asked to change them.
+- Do not push directly to `master`; create a branch and open a pull request
+  against `master`.
+- Preserve existing content, URLs, and the general visual identity unless
+  explicitly asked to change them. Every page URL ends in a slash, and the seven
+  articles live at the site root — `trailingSlash` is on for that reason.
 - Prefer small, focused pull requests with a clear purpose.
 - Avoid unnecessary dependencies.
 
+## Conventions
+
+- The pages under `src/app/(frontend)/` fetch through `src/lib/content.ts`, which
+  maps Payload documents into the node shape the layout components were written
+  against. Change the mapper rather than the components.
+- Interactive page bodies are client components colocated with their route; the
+  route file itself stays a server component that fetches and passes data down.
+- `/`, `/blog/`, `/photography/` and the articles are styled with CSS Modules;
+  `/about/`, `/contacts/` and `404` use Tailwind and shadcn/ui under a `.tw`
+  wrapper. Tailwind's Preflight is deliberately off — see `src/styles/globals.css`.
+- Build image URLs with `imageUrl()` from `src/lib/images.ts`. It snaps widths
+  onto the ladder declared in `next.config.mjs`; the optimizer rejects any width
+  that is not on it.
+- Schema changes need a migration committed with them
+  (`npm run payload -- migrate:create <name>`). The Postgres adapter never
+  pushes a schema, in development either.
+
 ## Validation
 
-- Run `npm run build` before finishing.
-- For responsive design work, check the site at 320px, 375px, 768px, 1024px, and 1440px widths.
+- Run `npm run typecheck` and `npm run build` before finishing. Both need a
+  reachable `DATABASE_URI`.
+- For responsive design work, check the site at 320px, 375px, 768px, 1024px, and
+  1440px widths.
 - Avoid horizontal scrolling on mobile.
 - Avoid fixed-width containers that overflow.
 

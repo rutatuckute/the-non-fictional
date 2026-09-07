@@ -1,16 +1,21 @@
+"use client"
+
 import * as React from "react"
 
-import { photoUrl, preferredFormat } from "./photography/photoData"
+import { imageUrl } from "../lib/images"
 
-// Every photograph on the site goes through here. The <source> asks for
-// whichever format actually wins at this size (see preferredFormat), and the
-// <img> keeps no `fm` of its own, so a browser that cannot take the offered
-// format still gets whatever Netlify decides it can. Nothing is forced on an
-// old browser.
+// Every photograph on the site goes through here.
 //
-// The <picture> is display:contents so it leaves no box of its own — the <img>
-// lays out as a direct child of whatever wraps it, and the existing frame and
-// card CSS keeps working untouched.
+// On Netlify this rendered a <picture> offering AVIF or WebP depending on the
+// size being asked for, because AVIF only won in a middle band. Next negotiates
+// the format itself from the browser's Accept header, and next.config.mjs pins
+// that to WebP for the reasons recorded there, so the <source> has nothing left
+// to decide and a plain <img> is all that is needed.
+//
+// The error fallback is kept. If the optimizer does not answer, the original
+// file in the repository is used instead, so a frame is never simply missing —
+// this is also what keeps the site legible under `next dev` for anyone running
+// without the optimizer warmed up.
 const PhotoImage = ({
   source,
   px,
@@ -30,46 +35,20 @@ const PhotoImage = ({
     return null
   }
 
-  // Two cases render a bare <img>: vectors, which have nothing to resize, and
-  // anything the CDN failed to serve, which falls back to the file in the repo.
-  //
-  // The fallback has to drop the <picture> rather than reassign the <img> src.
-  // Once the browser has chosen a <source> it goes on choosing it, so pointing
-  // the inner <img> at the original is ignored for as long as that <source> is
-  // still on offer — the only way back to the plain file is to stop offering
-  // it. This is also what makes the site legible under `gatsby develop`, which
-  // serves no /.netlify/images at all.
-  if (failed || source.endsWith(".svg")) {
-    return (
-      <img
-        className={className}
-        src={source}
-        alt={alt}
-        loading={loading}
-        decoding="async"
-        {...rest}
-      />
-    )
-  }
-
-  const format = preferredFormat(px)
+  // Vectors have nothing to resize, and a frame the optimizer failed on falls
+  // back to the file as committed.
+  const src = failed || source.endsWith(".svg") ? source : imageUrl(source, px, quality)
 
   return (
-    <picture style={{ display: "contents" }}>
-      <source
-        type={`image/${format}`}
-        srcSet={photoUrl(source, px, quality, format)}
-      />
-      <img
-        className={className}
-        src={photoUrl(source, px, quality)}
-        alt={alt}
-        loading={loading}
-        decoding="async"
-        onError={() => setFailed(true)}
-        {...rest}
-      />
-    </picture>
+    <img
+      className={className}
+      src={src}
+      alt={alt}
+      loading={loading}
+      decoding="async"
+      onError={() => setFailed(true)}
+      {...rest}
+    />
   )
 }
 

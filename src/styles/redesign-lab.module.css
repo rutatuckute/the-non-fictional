@@ -1,0 +1,861 @@
+.page {
+  --lab-void: #0b0a09;
+  --lab-raised: #131211;
+  --lab-rule: #2b2926;
+  /* --lab-rule is 1.36:1 — fine for a decorative hairline, invisible as the
+     edge of a control. This clears the 3:1 that non-text UI needs. */
+  --lab-rule-strong: #665e54;
+  --lab-rule-subtle: #1b1a18;
+  --lab-ink: #eee8df;
+  --lab-ink-secondary: #9b958b;
+  /* 5.28:1 on --lab-void. The former #6a645c was 3.38:1, which is under the
+     4.5:1 that text this size needs, and it carried every label on the page. */
+  --lab-ink-muted: #8a837a;
+  --lab-content-max: 1680px;
+  /* Masthead is 76px plus its 1px rule, and sits in normal flow. */
+  --lab-masthead-h: 77px;
+  --lab-brand: #ffa500;
+  --lab-essay: #f2762b;
+  --lab-reflection: #c08ae8;
+  --lab-data: #6ecb78;
+  --lab-photography: #4fbbd4;
+  --lab-inquiry: #e8e2d8;
+  /* 3.02:1 on --lab-void. At #4a443c the connections were 1.63:1 once their
+     0.75 opacity composited — the relationships the field exists to show were
+     the least visible thing in it. Also the timeline axis and ticks. */
+  --lab-connector-rest: #6b6459;
+  --lab-connector-hover: #6e675e;
+  --lab-connector-selected: #ffa500;
+  --lab-background: var(--lab-void);
+  --lab-background-elevated: var(--lab-raised);
+  --lab-text-primary: var(--lab-ink);
+  --lab-text-muted: var(--lab-ink-secondary);
+  --lab-text-quiet: var(--lab-ink-muted);
+  --lab-border-faint: var(--lab-rule);
+  --lab-accent: var(--lab-brand);
+  --lab-accent-hover: #c25e06;
+  --lab-font-body: var(--font-source-serif), serif;
+  --lab-font-title: var(--font-bricolage), sans-serif;
+  --lab-font-metadata: var(--font-plex-mono), monospace;
+  --lab-space-1: 0.25rem;
+  --lab-space-2: 0.5rem;
+  --lab-space-3: 0.75rem;
+  --lab-space-4: 1rem;
+  --lab-space-6: 1.5rem;
+  --lab-space-8: 2rem;
+  --lab-space-10: 2.5rem;
+  --lab-space-12: 3rem;
+  --lab-space-16: 4rem;
+
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow-x: clip;
+  background: var(--lab-background);
+  color: var(--lab-text-primary);
+  font-family: var(--lab-font-body);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page,
+.page * {
+  box-sizing: border-box;
+}
+
+/* The global stylesheet loads on every page and paints h2-h6 #1a202c, which is
+   1.21:1 here. Components have been opting out one at a time; this opts the
+   whole surface out once. :where() keeps the specificity at .page alone, so any
+   heading rule below still wins. */
+.page :where(h1, h2, h3, h4, h5, h6) {
+  color: inherit;
+}
+
+/* Focus was signalled by colour alone, or removed outright on the field marks.
+   On the root so controls added later inherit it. */
+.page :focus-visible {
+  outline: 2px solid var(--lab-accent);
+  outline-offset: 2px;
+}
+
+.page,
+.frame,
+.main,
+.hero {
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  box-shadow: none;
+}
+
+.page::before,
+.page::after,
+.frame::before,
+.frame::after,
+.main::before,
+.main::after,
+.hero::before,
+.hero::after {
+  display: none;
+  content: none;
+}
+
+.frame {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--lab-background);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.hero {
+  display: grid;
+  /* Fractions, not fixed maxima. The columns used to cap at 34rem and 35rem
+     and sit hard against the left edge, so past about 1100px the hero stopped
+     growing and the rest of a wide screen was empty — while the scrolly
+     section below it stayed centred, leaving the two visibly out of line. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.03fr);
+  /* Centred rather than top-aligned, because the hero is now as tall as the
+     screen and starting at the top would just move the empty space. */
+  align-content: center;
+  align-items: start;
+  flex: 1;
+  column-gap: var(--lab-space-4);
+  row-gap: var(--lab-space-12);
+  width: 100%;
+  max-width: var(--lab-content-max);
+  /* The first screen is the copy and its field, nothing else. At 42rem the
+     hero ended well above the fold on a large monitor and the section below
+     showed through under it. */
+  min-height: 42rem;
+  min-height: calc(100svh - var(--lab-masthead-h));
+  margin: 0 auto;
+  padding: clamp(52px, 4vw, 64px) clamp(72px, 6.5vw, 140px) 64px;
+}
+
+.heroCopy {
+  align-self: start;
+  min-width: 0;
+}
+
+.heroKicker {
+  display: flex;
+  gap: var(--lab-space-4);
+  margin: 0 0 var(--lab-space-10);
+  color: var(--lab-accent);
+  font-family: var(--lab-font-metadata);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  max-width: 7em;
+  margin: 0;
+  color: var(--lab-text-primary);
+  font-family: var(--lab-font-title);
+  font-size: 6rem;
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: 0;
+}
+
+.heroTitle span {
+  display: block;
+}
+
+.heroIntro {
+  max-width: 34rem;
+  margin: var(--lab-space-10) 0 0;
+  color: var(--lab-text-muted);
+  font-family: var(--lab-font-body);
+  font-size: 1.125rem;
+  font-weight: 300;
+  line-height: 1.65;
+  letter-spacing: 0;
+}
+
+.heroLink {
+  color: var(--lab-accent);
+  text-decoration: none;
+}
+
+.heroLink:hover {
+  color: var(--lab-accent-hover);
+}
+
+.introHighlight {
+  color: var(--lab-ink);
+}
+
+.fieldFigure {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  /* The column is the constraint now, so the field grows with the screen
+     instead of stopping at 35rem inside a wider column. */
+  min-width: 0;
+  margin: 0;
+}
+
+.archiveField {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 31 / 26;
+  overflow: visible;
+}
+
+.archiveField [data-motion="true"] [data-element="work"] {
+  transition: transform 900ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.archiveField
+  [data-motion="true"][data-layout="timeline"][data-timeline-phase="circular"]
+  [data-element="work"] {
+  transition: none;
+}
+
+.archiveField [data-element="work"] {
+  transition: opacity 450ms ease;
+}
+
+.archiveField [data-element="work"][role="button"] {
+  cursor: pointer;
+}
+
+.archiveField [data-layer="connections"] {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms ease;
+}
+
+.archiveField [data-layer="inquiry-territories"] {
+  opacity: 0;
+  transition: opacity 450ms ease;
+}
+
+.archiveField [data-layer="inquiry-territories"][data-visible="true"] {
+  opacity: 1;
+}
+
+.archiveField [data-layer="inquiry-labels"] {
+  opacity: 0;
+  transition: opacity 450ms ease;
+}
+
+.archiveField [data-layer="inquiry-labels"][data-visible="true"] {
+  opacity: 1;
+}
+
+.archiveField [data-element="inquiry-territory"] {
+  fill: var(--lab-inquiry);
+  /* At 0.05/0.16 the territories were ~1.15:1 and ~1.4:1 — a scene about
+     grouping that drew no visible groups. */
+  fill-opacity: 0.09;
+  stroke: var(--lab-inquiry);
+  stroke-opacity: 0.3;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Label sizes are in SVG user units, so they shrink with the field — about
+   5px once it is in a narrow column, while non-scaling-stroke holds every line
+   steady. Dividing out the drawn scale (set on the <svg> by useFieldScale)
+   pins each label to the CSS pixel size named here at any width. */
+.archiveField [data-element="inquiry-label"] {
+  fill: var(--lab-ink-muted);
+  font-family: var(--lab-font-metadata);
+  font-size: calc(11px / var(--field-scale, 1));
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+.archiveField [data-layer="connections"][data-visible="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.archiveField [data-element="connection"] {
+  stroke: var(--lab-connector-rest);
+  stroke-width: 1.2;
+  opacity: 0.75;
+  pointer-events: stroke;
+  transition: stroke 180ms ease, opacity 180ms ease, stroke-width 180ms ease;
+  vector-effect: non-scaling-stroke;
+}
+
+.archiveField [data-element="connection"]:hover {
+  stroke: var(--lab-connector-hover);
+  opacity: 1;
+}
+
+.archiveField [data-element="connection"][data-selected="true"] {
+  stroke: var(--lab-connector-selected);
+  stroke-width: 1.6;
+  opacity: 0.95;
+}
+
+.archiveField [data-element="connection"][data-emphasized="true"] {
+  stroke: var(--lab-connector-selected);
+  stroke-width: 1.6;
+  opacity: 0.95;
+}
+
+.archiveField [data-element="connection"][data-dimmed="true"] {
+  /* 0.1 put these under 1.1:1 — dimmed read as gone. Enough to recede from
+     the emphasised pair without leaving the reader guessing what was there. */
+  opacity: 0.25;
+}
+
+.archiveField [data-format="essay"] {
+  --mark-color: var(--lab-essay);
+}
+
+.archiveField [data-format="reflection"] {
+  --mark-color: var(--lab-reflection);
+}
+
+.archiveField [data-format="data"] {
+  --mark-color: var(--lab-data);
+}
+
+.archiveField [data-format="photography"] {
+  --mark-color: var(--lab-photography);
+}
+
+.archiveField [data-element="mark-stroke"] {
+  fill: none;
+  stroke: var(--mark-color);
+  stroke-linecap: square;
+  vector-effect: non-scaling-stroke;
+}
+
+.archiveField [data-element="data-dot"] {
+  fill: var(--mark-color);
+}
+
+.archiveField [data-element="mark-photo"] {
+  opacity: 0.94;
+}
+
+/* The ring above carries this now; the stroke also thickens, because a mark is
+   a few pixels of hairline and a recolour alone is easy to miss. */
+.archiveField [data-element="work"]:focus-visible [data-element="mark-stroke"] {
+  stroke: var(--lab-brand);
+  stroke-width: 3;
+}
+
+.archiveField [data-layer="format-rules"],
+.archiveField [data-layer="format-index"],
+.archiveField [data-layer="timeline"] {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 450ms ease;
+}
+
+.archiveField [data-layer="format-rules"][data-visible="true"],
+.archiveField [data-layer="format-index"][data-visible="true"],
+.archiveField [data-layer="timeline"][data-visible="true"] {
+  opacity: 1;
+}
+
+.archiveField [data-element="format-rule"] {
+  stroke: var(--lab-rule);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.archiveField [data-element="format-heading"],
+.archiveField [data-element="format-count"],
+.archiveField [data-element="timeline-year-label"],
+.archiveField [data-element="timeline-branch-label"],
+.archiveField [data-element="timeline-undated-label"] {
+  font-family: var(--lab-font-metadata);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.archiveField [data-element="format-heading"] {
+  fill: var(--mark-color);
+  font-size: calc(12px / var(--field-scale, 1));
+}
+
+.archiveField [data-element="format-count"] {
+  fill: var(--lab-ink-muted);
+  font-size: calc(11px / var(--field-scale, 1));
+}
+
+.archiveField [data-element="timeline-axis"],
+.archiveField [data-element="timeline-tick"] {
+  fill: none;
+  stroke: var(--lab-connector-rest);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.archiveField [data-element="timeline-axis"] {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.archiveField [data-element="timeline-year-label"],
+.archiveField [data-element="timeline-branch-label"],
+.archiveField [data-element="timeline-undated-label"] {
+  fill: var(--lab-ink-muted);
+  font-size: calc(11px / var(--field-scale, 1));
+}
+
+.archiveField [data-element="timeline-year-label"][data-visible="false"] {
+  opacity: 0;
+}
+
+.archiveField [data-element="timeline-branch-label"] {
+  letter-spacing: 0.16em;
+}
+
+.archiveField [data-element="selection-ring"] {
+  fill: none;
+  stroke: var(--lab-brand);
+  stroke-width: 1.3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+  vector-effect: non-scaling-stroke;
+}
+
+.archiveField [data-element="selection-ring"][data-visible="true"] {
+  opacity: 1;
+}
+
+.scrollySection {
+  width: 100%;
+  min-width: 0;
+  background: var(--lab-void);
+}
+
+.scrolly {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.15fr);
+  width: 100%;
+  max-width: var(--lab-content-max);
+  min-width: 0;
+  margin: 0 auto;
+  padding-inline: clamp(26px, 6.5vw, 140px);
+}
+
+.steps {
+  padding-block: 30vh 34vh;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  min-height: 70vh;
+}
+
+.stepContent {
+  max-width: 25rem;
+  padding: 2px 0 2px 22px;
+  border-left: 2px solid var(--lab-rule);
+  /* 0.3 left the inactive copy at ~2.4:1. Still clearly the background state,
+     but readable if the eye lands on it mid-scroll. */
+  opacity: 0.5;
+  transition: opacity 300ms ease, border-color 300ms ease;
+}
+
+.step[data-active="true"] .stepContent {
+  border-left-color: var(--lab-brand);
+  opacity: 1;
+}
+
+.stepKicker {
+  color: var(--lab-brand);
+  font-family: var(--lab-font-metadata);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+
+.stepContent h3 {
+  margin: var(--lab-space-3) 0 0;
+  color: var(--lab-ink);
+  font-family: var(--lab-font-title);
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.16;
+  letter-spacing: 0;
+}
+
+.stepContent p {
+  max-width: 24rem;
+  margin: var(--lab-space-3) 0 0;
+  color: var(--lab-ink-secondary);
+  font-family: var(--lab-font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.stickyVisualization {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  height: 100vh;
+}
+
+.timelineReplay {
+  position: absolute;
+  left: 0;
+  bottom: 8%;
+  z-index: 1;
+  padding: 4px 10px;
+  border: 1px solid var(--lab-rule-strong);
+  background: var(--lab-raised);
+  color: var(--lab-ink-secondary);
+  font-family: var(--lab-font-metadata);
+  font-size: 0.6875rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.timelineReplay[data-visible="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.timelineReplay:hover,
+.timelineReplay:focus-visible {
+  border-color: var(--lab-brand);
+  color: var(--lab-brand);
+}
+
+.rail {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  width: 340px;
+  height: 100vh;
+  padding: 26px 24px;
+  overflow-y: auto;
+  background: var(--lab-void);
+  border-left: 1px solid var(--lab-rule);
+  transform: translateX(100%);
+  transition: transform 340ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.rail[data-open="true"] {
+  transform: none;
+}
+
+.railClose {
+  align-self: flex-end;
+  padding: 4px;
+  border: 0;
+  background: none;
+  color: var(--lab-ink-muted);
+  font-family: var(--lab-font-metadata);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.railClose:hover,
+.railClose:focus-visible {
+  color: var(--lab-accent);
+}
+
+.railEyebrow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 10px 0 0;
+  color: var(--lab-ink-muted);
+  font-family: var(--lab-font-metadata);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.railEyebrow i {
+  flex: 0 0 9px;
+  display: block;
+  width: 9px;
+  height: 9px;
+  background: var(--lab-ink-muted);
+}
+
+.railEyebrow i[data-format="essay"] {
+  background: var(--lab-essay);
+}
+
+.railEyebrow i[data-format="reflection"] {
+  background: var(--lab-reflection);
+}
+
+.railEyebrow i[data-format="data"] {
+  background: var(--lab-data);
+}
+
+.railEyebrow i[data-format="photography"] {
+  background: var(--lab-photography);
+}
+
+.railImage {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  margin-top: 16px;
+  object-fit: cover;
+  border: 1px solid var(--lab-rule-subtle);
+}
+
+.railFrames {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.railFrames img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 1px solid var(--lab-rule-subtle);
+}
+
+.railTitle {
+  margin: 14px 0 16px;
+  color: var(--lab-ink);
+  font-family: var(--lab-font-title);
+  font-size: 29px;
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+}
+
+.railMeta {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: 7px 14px;
+  margin: 0 0 20px;
+  padding: 14px 0;
+  border-top: 1px solid var(--lab-rule);
+  border-bottom: 1px solid var(--lab-rule);
+  color: var(--lab-ink-secondary);
+  font-family: var(--lab-font-metadata);
+  font-size: 11px;
+}
+
+.railMeta dt {
+  padding-top: 1px;
+  color: var(--lab-ink-muted);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.railMeta dd {
+  margin: 0;
+}
+
+.railBlurb {
+  margin: 0 0 20px;
+  color: var(--lab-ink-secondary);
+  font-family: var(--lab-font-body);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.railTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.railTags li {
+  padding: 2px 8px;
+  border: 1px solid var(--lab-rule);
+  color: var(--lab-ink-muted);
+  font-family: var(--lab-font-metadata);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.railGo {
+  align-self: flex-start;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--lab-accent);
+  color: var(--lab-accent);
+  font-family: var(--lab-font-metadata);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.scrollyArchiveField {
+  width: 100%;
+  height: 88vh;
+  max-height: 800px;
+  aspect-ratio: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .archiveField [data-element="work"],
+  .archiveField [data-layer="connections"],
+  .archiveField [data-layer="inquiry-territories"],
+  .archiveField [data-layer="inquiry-labels"],
+  .archiveField [data-layer="format-rules"],
+  .archiveField [data-layer="format-index"],
+  .archiveField [data-layer="timeline"],
+  .archiveField [data-element="selection-ring"] {
+    transition: none;
+  }
+}
+
+@media (max-width: 61.25rem) {
+  .scrolly {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stickyVisualization {
+    top: 0;
+    order: -1;
+    z-index: 10;
+    height: 56vh;
+    background: var(--lab-void);
+    border-bottom: 1px solid var(--lab-rule);
+  }
+
+  .scrollyArchiveField {
+    height: 52vh;
+  }
+
+  /* No room for a side rail — slide it up from the bottom instead. */
+  .rail {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    max-height: 64vh;
+    border-left: 0;
+    border-top: 1px solid var(--lab-rule);
+    transform: translateY(100%);
+  }
+
+  .rail[data-open="true"] {
+    transform: none;
+  }
+
+  .railImage {
+    aspect-ratio: 16 / 9;
+  }
+
+  .steps {
+    padding-block: 6vh 18vh;
+  }
+
+  .step {
+    min-height: 80vh;
+  }
+}
+
+@media (max-width: 68rem) {
+  .hero {
+    min-height: 38rem;
+    column-gap: var(--lab-space-4);
+    row-gap: var(--lab-space-8);
+  }
+
+  .heroTitle {
+    font-size: 4.75rem;
+  }
+}
+
+@media (max-width: 48rem) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--lab-space-8);
+    min-height: 0;
+    padding: 48px 24px 32px 40px;
+  }
+
+  .heroTitle {
+    font-size: 4.75rem;
+  }
+
+  .heroIntro {
+    max-width: 38rem;
+  }
+
+  .fieldFigure {
+    max-width: 32.5rem;
+    margin: 0 auto;
+  }
+
+  .scrolly {
+    padding-inline: 24px;
+  }
+
+}
+
+@media (max-width: 30rem) {
+  .hero {
+    gap: var(--lab-space-6);
+    padding: 40px 24px 32px;
+  }
+
+  .heroTitle {
+    font-size: 3rem;
+  }
+
+  .heroKicker {
+    margin-bottom: var(--lab-space-6);
+    font-size: 0.6875rem;
+  }
+
+  .heroIntro {
+    margin-top: var(--lab-space-6);
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+}

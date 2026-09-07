@@ -1,0 +1,16 @@
+{
+  "name": "The Non Fictional",
+  "short_name": "The Non Fictional",
+  "description": "Personal space dedicated to photography and writings.",
+  "start_url": "/",
+  "display": "minimal-ui",
+  "background_color": "#0b0a09",
+  "theme_color": "#ffa500",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ]
+}

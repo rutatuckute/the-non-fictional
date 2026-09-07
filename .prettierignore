@@ -1,4 +1,7 @@
-.cache
-package.json
+.next
+node_modules
 package-lock.json
 public
+src/payload-types.ts
+src/migrations
+src/app/(payload)/admin/importMap.js
