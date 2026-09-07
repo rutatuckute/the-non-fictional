@@ -1,23 +1,24 @@
 [build]
-# Clean, build, then check what came out.
+# Do not clean. The clean was the cause.
 #
-# This site has three times published a build whose HTML linked an earlier
-# build's stylesheet: the right CSS present in the deploy, nothing failing, the
-# pages rendering the previous design. Twice on production, once on the preview
-# for #42, where it outlasted two builds including one from an empty commit.
+# The build log for 2b8d681 shows the sequence: `gatsby clean` deletes .cache
+# and public, and three seconds later, inside `gatsby build`, the Netlify
+# adapter restores a Gatsby cache — "Found a Gatsby cache. We're about to go
+# FAST." Gatsby then builds incrementally against it and rebuilds 2 of 15
+# pages. The two that changed get the new stylesheet; the thirteen it skipped
+# keep cached HTML naming the previous one, while the CSS itself is rebuilt
+# under a new hash because the source changed. Thirteen pages then link a
+# stylesheet this build never emitted.
 #
-# `gatsby clean` was added to fix it and did not. A Netlify build ends with
-# three stylesheets in public/ regardless, and `rm -rf public .cache` in front
-# of the build changed nothing — all three came back, written within a hundred
-# milliseconds of each other, after the delete had run. Whatever puts them
-# there is outside this repository, so the rm has been dropped again rather
-# than left in place looking like it does something.
+# That is the failure this site has had since August, and `gatsby clean` was
+# added in a68b6d4 to fix it. It made it: deleting the cache and then having
+# one restored mid-build is what leaves Gatsby's incremental state
+# inconsistent. Left alone, the adapter's cache is coherent and Gatsby
+# rebuilds the HTML when the stylesheet hash moves.
 #
-# What is in reach is the outcome. verify:build reads the stylesheet name out
-# of webpack.stats.json, which this build writes, and fails the deploy if any
-# page links anything else. Strays in the directory are left alone; they are
-# harmless until something points at one, and that is the case this catches.
-command = "npm run clean && npm run build && npm run verify:build"
+# verify:build stays in front of the deploy either way. It is what caught
+# this, by refusing to publish rather than serving thirteen stale pages.
+command = "npm run build && npm run verify:build"
 publish = "public"
 
 [build.environment]
