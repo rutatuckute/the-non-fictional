@@ -1,7 +1,9 @@
-import * as React from "react"
-import { Link } from "gatsby"
+"use client"
 
-import * as styles from "../../pages/redesign-lab.module.css"
+import * as React from "react"
+import Link from "next/link"
+
+import styles from "../../styles/redesign-lab.module.css"
 import PhotoImage from "../photo-image"
 
 const FORMAT_LABELS = {
@@ -140,7 +142,7 @@ const WorkRail = ({ onClose, work }) => {
               photography page's lightbox at the right frame. */}
           <Link
             className={styles.railGo}
-            to={
+            href={
               work.kind === "writing"
                 ? work.slug
                 : `/photography/?frame=${work.slug.replace(/^\/|\/$/g, "")}`

@@ -1,6 +1,8 @@
+"use client"
+
 import * as React from "react"
 
-import * as styles from "../../pages/photography.module.css"
+import styles from "../../styles/photography.module.css"
 
 // A native <select> cannot be styled once it is open — the option list is drawn
 // by the OS and ignores the page's palette. This is a custom listbox so the

@@ -1,30 +1,5 @@
-// Photographs are ordinary files in the repo under /images/uploads/. Netlify's
-// Image CDN resizes them on demand at the edge, so nothing is processed at
-// build time and no third-party image service sits in the critical path.
-const QUALITY = { lightest: 50, lighter: 58, normal: 70 }
-
-// Measured against Netlify's own encoders rather than assumed. AVIF only wins
-// in a middle band: its container overhead makes it larger than WebP for tiny
-// marks, and past ~700px it loses badly on both counts — at 2200px it came out
-// a third larger and took 28x longer to generate. Outside 300..700, WebP.
-export const preferredFormat = (px) =>
-  px >= 300 && px <= 700 ? "avif" : "webp"
-
-// `px` is the pixel budget, not the CSS size — pass roughly twice the displayed
-// width so the frame stays sharp on a 2x screen. Quality is aggressive for small
-// thumbnails but eased off for anything shown large, where compression
-// artefacts are visible. `format` is left unset for the <img> fallback so the
-// CDN can negotiate; PhotoImage asks for avif explicitly in a <source>.
-export const photoUrl = (source, px, quality = "lightest", format) => {
-  if (!source || source.endsWith(".svg")) {
-    return source
-  }
-
-  const q = QUALITY[quality] ?? 70
-  const fm = format ? `&fm=${format}` : ""
-
-  return `/.netlify/images?url=${encodeURIComponent(source)}&w=${px}${fm}&q=${q}`
-}
+// Shapes the photography archive: how a frame is ordered, grouped into a
+// series, and filtered. Image URLs are built in src/lib/images.ts.
 
 // "Holbox, Quintana Roo, Mexico" -> city "Holbox", country "Mexico".
 // Every location in the archive is comma-separated with the city first and the
