@@ -74,13 +74,13 @@ jobs:
           github.event_name == 'pull_request'
           && github.actor != 'github-actions[bot]'
         run: |
-          if git diff --quiet -- static/images/uploads; then
+          if git diff --quiet -- public/images/uploads; then
             echo "Nothing to optimise."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add static/images/uploads
+          git add public/images/uploads
           git commit -m "Optimise uploaded images"
           git push origin HEAD:${{ github.head_ref }}
