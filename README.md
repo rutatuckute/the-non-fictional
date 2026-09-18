@@ -64,7 +64,7 @@ Vercel, from `master`. Three environment variables:
 | --- | --- |
 | `DATABASE_URI` | Postgres connection string (Neon) |
 | `PAYLOAD_SECRET` | Signs admin sessions — a long random string |
-| `NEXT_PUBLIC_SITE_URL` | `https://thenonfictional.com` |
+| `NEXT_PUBLIC_SITE_URL` | `https://www.thenonfictional.com` |
 
 `NEXT_PUBLIC_CONTACT_EMAIL` overrides the address the contacts page links to.
 
