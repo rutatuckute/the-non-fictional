@@ -2,7 +2,7 @@
 // absolute URL — canonicals, OG tags, the sitemap, the feed — comes from here.
 const fromEnv = process.env.NEXT_PUBLIC_SITE_URL
 
-export const siteUrl = (fromEnv || 'https://thenonfictional.com').replace(/\/$/, '')
+export const siteUrl = (fromEnv || 'https://www.thenonfictional.com').replace(/\/$/, '')
 
 export const site = {
   title: 'The Non Fictional',
