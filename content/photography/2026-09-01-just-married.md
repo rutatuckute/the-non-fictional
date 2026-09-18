@@ -1,7 +1,7 @@
 ---
 layout: photography
 template: photo-post
-title: JUST MARRIED
+title: Just married - A&L
 location: Radiškis, Lithuania
 year: "2026"
 tags:
