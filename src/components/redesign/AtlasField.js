@@ -1,7 +1,9 @@
+"use client"
+
 import * as React from "react"
 
 import { WORK_MARK_SCALE, markStyles } from "./archiveFieldData"
-import { photoUrl, preferredFormat } from "../photography/photoData"
+import { imageUrl } from "../../lib/images"
 import {
   TIMELINE_BEND_MS,
   TIMELINE_PHASES,
@@ -57,16 +59,15 @@ const PhotographyMark = ({ style, photo }) => {
 
   React.useEffect(() => setFailed(false), [photo])
 
-  // These marks are a few dozen pixels across at most. An <image> in SVG has no
-  // <picture> to negotiate through, so the format is named outright: left to
-  // negotiate, the CDN answers with JPEG, which is bigger than the WebP that
-  // wins at this size. Naming it also means nothing falls back on its own, so
-  // a failed transform drops to the file in the repo the same way PhotoImage
-  // does — without which these marks are the one thing on the page that stays
-  // blank under `gatsby develop`.
+  // These marks are a few dozen pixels across at most. An <image> in SVG cannot
+  // carry a <picture>, but it does not need to: the optimizer negotiates the
+  // format from the request's own Accept header, and next.config.mjs restricts
+  // that to WebP, which is what wins at this size. Nothing falls back on its
+  // own inside an SVG, so a failed transform drops to the file in the repo the
+  // same way PhotoImage does.
   const markPhoto = failed
     ? photo
-    : photoUrl(photo, 200, "lightest", preferredFormat(200))
+    : imageUrl(photo, 200, "lightest")
   const armLength = style.armLength * WORK_MARK_SCALE
   const corners = [
     [-extent, -extent, 1, 1],

@@ -1,7 +1,9 @@
+"use client"
+
 import * as React from "react"
 
 import PhotoImage from "../photo-image"
-import * as styles from "../../pages/photography.module.css"
+import styles from "../../styles/photography.module.css"
 
 const Lightbox = ({ frames, index, onClose, onStep }) => {
   const frame = index == null ? null : frames[index]

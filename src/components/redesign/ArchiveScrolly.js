@@ -1,6 +1,8 @@
+"use client"
+
 import * as React from "react"
 
-import * as styles from "../../pages/redesign-lab.module.css"
+import styles from "../../styles/redesign-lab.module.css"
 import AtlasField from "./AtlasField"
 import { getPhotographyColumns } from "./archiveFieldData"
 import {

@@ -1,7 +1,10 @@
-import * as React from "react"
-import { Link } from "gatsby"
+"use client"
 
-import * as styles from "./masthead.module.css"
+import * as React from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+
+import styles from "./masthead.module.css"
 import PhotoImage from "./photo-image"
 
 const navigation = [
@@ -19,8 +22,12 @@ const getActiveSection = (pathname = "/") => {
   return null
 }
 
-const Masthead = ({ location, activeSection }) => {
-  const active = activeSection || getActiveSection(location?.pathname)
+/**
+ * @param {{ activeSection?: string | null }} props
+ */
+const Masthead = ({ activeSection = null }) => {
+  const pathname = usePathname()
+  const active = activeSection || getActiveSection(pathname)
   const [menuOpen, setMenuOpen] = React.useState(false)
   const menuButton = React.useRef(null)
 
@@ -52,7 +59,7 @@ const Masthead = ({ location, activeSection }) => {
 
   return (
     <header className={styles.header}>
-      <Link className={styles.brand} to="/" aria-label="The Non Fictional home">
+      <Link className={styles.brand} href="/" aria-label="The Non Fictional home">
         <PhotoImage
           className={styles.brandLogo}
           source="/images/logo.png"
@@ -69,7 +76,7 @@ const Masthead = ({ location, activeSection }) => {
           <Link
             className={active === item.section ? styles.currentNavItem : undefined}
             key={item.section}
-            to={item.to}
+            href={item.to}
           >
             {item.label}
           </Link>
@@ -127,7 +134,7 @@ const Masthead = ({ location, activeSection }) => {
                 active === item.section ? styles.currentMenuItem : undefined
               }
               key={item.section}
-              to={item.to}
+              href={item.to}
               onClick={closeMenu}
             >
               {item.label}
