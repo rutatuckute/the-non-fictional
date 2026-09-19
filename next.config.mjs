@@ -27,6 +27,19 @@ const nextConfig = {
     // quality not on this list.
     qualities: [50, 58, 70, 75],
 
+    // Frames are served from the bucket's custom domain rather than from this
+    // deployment, and the optimizer refuses to fetch from a host it has not
+    // been told about. Everything else about the pipeline is unchanged: it
+    // still resizes onto the ladder above and still negotiates WebP.
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: new URL(
+          process.env.NEXT_PUBLIC_MEDIA_URL || 'https://images.thenonfictional.com',
+        ).hostname,
+      },
+    ],
+
     minimumCacheTTL: 31536000,
   },
 

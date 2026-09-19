@@ -2,10 +2,12 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
 
+import { Media, MEDIA_BASE } from './collections/Media'
 import { Photographs } from './collections/Photographs'
 import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
@@ -37,11 +39,32 @@ export default buildConfig({
     },
   },
 
-  collections: [Posts, Photographs, Users],
+  collections: [Posts, Photographs, Media, Users],
 
   // Bodies are stored as markdown, so the rich text editor is only here because
   // Payload requires a default one. Nothing on this site renders Lexical.
   editor: lexicalEditor(),
+
+  plugins: [
+    // Uploads go to Cloudflare R2, which speaks the S3 API. Reads do not come
+    // back this way: the bucket is fronted by images.thenonfictional.com, and
+    // generateFileURL is what puts that host on a stored file rather than the
+    // signed endpoint the adapter would otherwise hand out.
+    s3Storage({
+      collections: {
+        media: { generateFileURL: ({ filename }) => `${MEDIA_BASE}/${filename}` },
+      },
+      bucket: process.env.R2_BUCKET || '',
+      config: {
+        region: 'auto',
+        endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+        credentials: {
+          accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+        },
+      },
+    }),
+  ],
 
   db: postgresAdapter({
     pool: {

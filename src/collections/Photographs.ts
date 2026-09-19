@@ -69,11 +69,16 @@ export const Photographs: CollectionConfig = {
       },
     },
     {
+      // Was a path typed by hand, pointing at a file committed to the
+      // repository. Adding a frame therefore meant a commit and a deploy before
+      // anything could be published, which is the last thing on this site that
+      // still needed git.
       name: 'photo',
-      type: 'text',
+      type: 'upload',
+      relationTo: 'media',
       required: true,
       admin: {
-        description: 'Path to a file in the repository, e.g. /images/uploads/name.jpg',
+        description: 'Drag the frame in, or pick one already uploaded.',
       },
     },
     {

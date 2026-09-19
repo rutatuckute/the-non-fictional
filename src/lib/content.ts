@@ -74,6 +74,21 @@ const longDate = (value: string | null | undefined): string | null => {
 // Gatsby derived an excerpt from the body when frontmatter carried none. The
 // bodies here are largely raw HTML, so tags are stripped before pruning,
 // otherwise the excerpt would open with a <p>.
+// A frame's photo is an upload now, so the query populates it and this reads
+// the served URL off the document. The string branch is what the column held
+// before the files moved into R2 — a path under /images/uploads — and is kept
+// so the mapper works either side of that migration rather than only after it.
+const mediaUrl = (value: unknown): string | null => {
+  if (typeof value === 'string') return value || null
+
+  if (value && typeof value === 'object') {
+    const url = (value as { url?: unknown }).url
+    return typeof url === 'string' && url ? url : null
+  }
+
+  return null
+}
+
 const deriveExcerpt = (body: string, length = 200): string => {
   const text = body
     .replace(/<[^>]+>/g, ' ')
@@ -108,7 +123,8 @@ type PhotographDoc = {
   id: string | number
   title: string
   slug: string
-  photo: string
+  // Populated at depth 1; a bare id or a legacy path is still accepted.
+  photo: string | number | { url?: string | null } | null
   location?: string | null
   year?: string | null
   roll?: number | null
@@ -172,7 +188,7 @@ const photographToNode = (doc: PhotographDoc): ContentNode => ({
     inquiry: null,
     link: null,
     selected: null,
-    photo: doc.photo ?? null,
+    photo: mediaUrl(doc.photo),
     location: doc.location ?? null,
     series: doc.series ?? null,
     year: doc.year ?? null,
@@ -202,7 +218,9 @@ export const getPhotographs = cache(async (): Promise<ContentNode[]> => {
     collection: 'photographs',
     limit: 2000,
     sort: '-date',
-    depth: 0,
+    // The photo is an upload; at depth 0 it comes back as an id and the frame
+    // has no URL to render.
+    depth: 1,
     pagination: false,
   })
 

@@ -2,8 +2,8 @@
   "name": "the-non-fictional",
   "private": true,
   "version": "2.0.0",
-  "description": "Personal essays, reflections, and photography by Rūta Tučkutė",
-  "author": "Rūta Tučkutė",
+  "description": "Personal essays, reflections, and photography by R\u016bta Tu\u010dkut\u0117",
+  "author": "R\u016bta Tu\u010dkut\u0117",
   "license": "0BSD",
   "type": "module",
   "engines": {
@@ -23,12 +23,14 @@
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "images:check": "node scripts/optimize-images.cjs --check",
-    "images:optimize": "node scripts/optimize-images.cjs"
+    "images:optimize": "node scripts/optimize-images.cjs",
+    "migrate:media": "tsx --env-file=.env scripts/migrate-media.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",
     "@payloadcms/next": "3.88.0",
     "@payloadcms/richtext-lexical": "3.88.0",
+    "@payloadcms/storage-s3": "^3.88.0",
     "@payloadcms/ui": "3.88.0",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-slot": "^1.2.3",
