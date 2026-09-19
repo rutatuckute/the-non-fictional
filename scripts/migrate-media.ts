@@ -12,6 +12,11 @@
 //
 //   npm run migrate:media -- --dry-run   report what it would do
 //   npm run migrate:media                do it
+//
+// This has been run. The column it reads was dropped afterwards, so against the
+// current schema it fails at the query rather than doing anything — it is kept
+// for a database that predates that migration, and as the record of how the
+// files moved.
 
 import fs from 'fs'
 import path from 'path'
