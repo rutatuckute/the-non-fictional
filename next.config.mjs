@@ -56,6 +56,21 @@ const nextConfig = {
       // A leftover page from the Gatsby starter. It is in the old sitemap, so
       // it is sent somewhere real rather than left to 404.
       { source: '/using-typescript', destination: '/blog/', permanent: true },
+      // Payload builds the route it is rendering from the admin path and the
+      // URL segments, then matches it against its own `/admin`. trailingSlash
+      // is on for this site, so the panel's root arrives as `/admin/`, matches
+      // no view, and renders an empty document — signed in or not. Every deeper
+      // route is unaffected, because those paths match either way.
+      //
+      // The dashboard is a page of links to the collections, so the front door
+      // is pointed at the collection behind most of them rather than left
+      // blank. Payload sends you to the admin root after signing in, which now
+      // lands here too.
+      {
+        source: '/admin/',
+        destination: '/admin/collections/photographs/',
+        permanent: false,
+      },
     ]
   },
 }
