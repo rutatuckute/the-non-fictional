@@ -2,6 +2,7 @@ import { cache } from 'react'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
+import { MEDIA_BASE } from '../collections/Media'
 import { readingMinutes } from './reading-time'
 
 // The page components and the two data builders they lean on (archiveFieldData
@@ -82,8 +83,22 @@ const mediaUrl = (value: unknown): string | null => {
   if (typeof value === 'string') return value || null
 
   if (value && typeof value === 'object') {
-    const url = (value as { url?: unknown }).url
-    return typeof url === 'string' && url ? url : null
+    const doc = value as { filename?: unknown; url?: unknown }
+
+    // Built from the filename rather than read from the document. Payload
+    // records an upload's URL as its own /api/media/file/ route, which serves
+    // the file by fetching it from the bucket — so every frame on the page
+    // would be proxied through the deployment instead of coming from the
+    // bucket's own domain, which is the egress this arrangement exists to
+    // avoid. The adapter takes a generateFileURL option to change what gets
+    // recorded, and it cannot be used: it is a function, Payload serialises
+    // the plugin's collection options into the config it sends the browser,
+    // and the panel then fails to hydrate and renders blank.
+    if (typeof doc.filename === 'string' && doc.filename) {
+      return `${MEDIA_BASE}/${encodeURIComponent(doc.filename)}`
+    }
+
+    return typeof doc.url === 'string' && doc.url ? doc.url : null
   }
 
   return null

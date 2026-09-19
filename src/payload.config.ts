@@ -52,7 +52,7 @@ export default buildConfig({
     // signed endpoint the adapter would otherwise hand out.
     s3Storage({
       collections: {
-        media: { generateFileURL: ({ filename }) => `${MEDIA_BASE}/${filename}` },
+        media: true,
       },
       bucket: process.env.R2_BUCKET || '',
       config: {
