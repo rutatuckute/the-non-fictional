@@ -16,8 +16,14 @@ const FORMS: Record<string, string> = {
 }
 
 // Both the articles, which live at the site root, and the photographs, whose
-// old per-frame URLs still have to resolve. Anything else 404s.
-export const dynamicParams = false
+// old per-frame URLs still have to resolve.
+//
+// Params are not closed, because content is authored in the panel rather than
+// committed: a piece published after the last build has a slug this list
+// cannot know about, and closing the set would 404 it until the next deploy.
+// Anything genuinely unknown still 404s — the component falls through to
+// notFound() when the slug matches neither an article nor a frame.
+export const dynamicParams = true
 
 export async function generateStaticParams() {
   const [posts, frames] = await Promise.all([getPosts(), getPhotographSlugs()])

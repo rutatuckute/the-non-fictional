@@ -1,5 +1,8 @@
 import type { CollectionConfig } from 'payload'
 
+import { revalidatePhotograph } from '../lib/revalidate'
+import { slugify } from '../lib/slug'
+
 // Frames are grouped into these on the photography page's Type chips.
 export const PHOTO_TYPES = ['portraits', 'strangers', 'scenes', 'lights'] as const
 
@@ -16,6 +19,37 @@ export const Photographs: CollectionConfig = {
     create: ({ req }) => Boolean(req.user),
     update: ({ req }) => Boolean(req.user),
     delete: ({ req }) => Boolean(req.user),
+  },
+  hooks: {
+    beforeChange: [
+      ({ data }) => {
+        // A frame has no page of its own, but its slug is still a URL: it is
+        // the ?frame= reference the lightbox opens on, and the old per-photo
+        // address that redirects there. Left empty by the panel, a frame
+        // cannot be linked to at all, so it is derived the way every existing
+        // one was — the date it was added, then the title.
+        if (!data.slug && data.title) {
+          const day = new Date(data.date || Date.now()).toISOString().slice(0, 10)
+          data.slug = `${day}-${slugify(data.title)}`
+        }
+
+        return data
+      },
+    ],
+
+    // Every page this content appears on is prerendered, so a save is invisible
+    // until those pages are regenerated.
+    afterChange: [
+      ({ doc, previousDoc }) => {
+        void revalidatePhotograph(doc?.slug, previousDoc?.slug)
+      },
+    ],
+
+    afterDelete: [
+      ({ doc }) => {
+        void revalidatePhotograph(doc?.slug)
+      },
+    ],
   },
   fields: [
     {
