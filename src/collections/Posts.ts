@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { readingMinutes } from '../lib/reading-time'
+import { revalidatePost } from '../lib/revalidate'
 import { slugify } from '../lib/slug'
 
 // The three forms the writings index knows about. A free-text category is kept
@@ -50,6 +51,20 @@ export const Posts: CollectionConfig = {
         }
 
         return data
+      },
+    ],
+
+    // Every page this content appears on is prerendered, so a save is invisible
+    // until those pages are regenerated.
+    afterChange: [
+      ({ doc, previousDoc }) => {
+        void revalidatePost(doc?.slug, previousDoc?.slug)
+      },
+    ],
+
+    afterDelete: [
+      ({ doc }) => {
+        void revalidatePost(doc?.slug)
       },
     ],
   },
