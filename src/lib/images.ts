@@ -1,7 +1,11 @@
-// Photographs are ordinary files in the repository under /images/uploads/.
-// Nothing is processed at build time: Next's image optimizer resizes them on
-// demand and caches the result at the edge, which is the same arrangement the
-// site had on Netlify's Image CDN, with a different optimizer behind it.
+// Photographs are uploads, stored in R2 and served from the host declared in
+// next.config.mjs. The article covers and the about page's icon are still
+// ordinary files in the repository under /images/uploads/, and both kinds go
+// through here.
+//
+// Nothing is processed at build time: Next's image optimizer resizes on demand
+// and caches the result at the edge, which is the same arrangement the site had
+// on Netlify's Image CDN, with a different optimizer behind it.
 const QUALITY = { lightest: 50, lighter: 58, normal: 70 } as const
 
 export type Quality = keyof typeof QUALITY
