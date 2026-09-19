@@ -21,6 +21,19 @@ export default buildConfig({
     },
     meta: {
       titleSuffix: ' · The Non Fictional',
+      icons: [{ rel: 'icon', url: '/favicon.ico' }],
+    },
+
+    // The site has no light mode. Payload still offers the user a toggle; this
+    // only decides where the panel starts.
+    theme: 'dark',
+
+    // Paths resolve against importMap.baseDir above, which is the repo root.
+    components: {
+      graphics: {
+        Logo: '/src/components/admin/logo#Logo',
+        Icon: '/src/components/admin/icon#Icon',
+      },
     },
   },
 
