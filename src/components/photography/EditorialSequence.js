@@ -21,8 +21,34 @@ const BUDGET = {
   pair: 1080,
 }
 
-const Plate = ({ frame, px, onOpen }) => (
-  <figure className={styles.plate}>
+const ratioOf = (frame) =>
+  frame.width && frame.height ? frame.width / frame.height : 1.5
+
+// Two things size a frame, and the smaller wins.
+//
+// The slot gives it a share of the column. The height cap gives it a share of
+// the screen — because a standing frame given 46% of a wide column comes out
+// taller than the window, and you meet it a third at a time. A photograph that
+// cannot be seen whole is not being shown at full size, it is being shown
+// badly, so the cap is what decides for anything tall and the slot only ever
+// narrows it further.
+const HEIGHT_CAP = "74vh"
+
+const SLOT_WIDTH = {
+  wide: "92%",
+  large: "68%",
+  "medium-left": "46%",
+  "medium-right": "46%",
+  "portrait-left": "30%",
+  "portrait-right": "30%",
+  "portrait-center": "34%",
+}
+
+const plateWidth = (frame, slot) =>
+  `min(${SLOT_WIDTH[slot] || "68%"}, calc(${HEIGHT_CAP} * ${ratioOf(frame).toFixed(4)}))`
+
+const Plate = ({ frame, px, onOpen, style }) => (
+  <figure className={styles.plate} style={style}>
     <button
       type="button"
       className={styles.plateButton}
@@ -71,6 +97,7 @@ const EditorialSequence = ({ frames, layoutKey, groupKey = null, onOpen }) => {
           data-kind={row.kind}
           data-slot={row.kind === "single" ? row.slot : undefined}
           data-intentional={row.kind === "pair" ? String(row.intentional) : undefined}
+          data-variant={row.variant}
         >
           {row.frames.map((frame) => (
             <Plate
@@ -78,6 +105,15 @@ const EditorialSequence = ({ frames, layoutKey, groupKey = null, onOpen }) => {
               frame={frame}
               px={row.kind === "pair" ? BUDGET.pair : BUDGET[row.slot] || 1920}
               onOpen={onOpen}
+              style={
+                row.kind === "pair"
+                  ? // Widths in proportion to the two aspect ratios, which is
+                    // what gives a pair one height and one baseline. Equal
+                    // widths leave the shorter frame hanging, and the row reads
+                    // as two photographs that happened to land on the same line.
+                    { flexGrow: ratioOf(frame), flexBasis: 0 }
+                  : { width: plateWidth(frame, row.slot) }
+              }
             />
           ))}
         </div>
