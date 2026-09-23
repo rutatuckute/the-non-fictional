@@ -1,202 +1,138 @@
-// Works out how a sequence of photographs is set on the page.
+// Groups a sequence of photographs into composed rows.
 //
-// The sequence itself is never touched: the order comes from selectedOrder or
-// seriesOrder and this only decides how much room each frame is given and where
-// it sits. What it is trying to avoid is the two failure modes of doing this
-// automatically — every frame the same width down the middle, which is a feed,
-// and strict alternation, which is a zigzag. Both read as the absence of a
-// decision.
+// Measured against the reference, the thing that makes a page read as composed
+// rather than as a column is not that every row is the same height — it is that
+// a row holds two or three frames at deliberately unequal widths, and that runs
+// of those are broken by a single small frame sitting alone with the width
+// around it. Equal widths give a contact sheet; equal heights give a justified
+// gallery; neither looks edited.
 //
-// It is a pure function of the frames. The same photographs in the same order
-// produce the same page every time: nothing is random, nothing depends on when
-// it ran, and a layout that looks right today looks the same tomorrow.
+// Two rules hold throughout. The sequence is never reordered — a row takes the
+// next frames in order, and the reader meets them in the order they were given.
+// And nothing is random: the same photographs in the same order produce the same
+// page every time.
 
 const ratioOf = (frame) =>
   frame.width && frame.height ? frame.width / frame.height : 1.5
 
-const shapeOf = (frame) => {
-  const ratio = ratioOf(frame)
+const isUpright = (frame) => ratioOf(frame) < 1.15
+const isWide = (frame) => ratioOf(frame) >= 1.9
 
-  if (ratio >= 1.9) return "panorama"
-  if (ratio >= 1.15) return "landscape"
-  if (ratio <= 0.85) return "portrait"
-
-  return "square"
+// Shares of the row, before the gutter is taken out. They are deliberately
+// uneven: a row of three at 33/33/33 is a grid, and a row of two at 50/50 reads
+// as a comparison rather than a composition.
+const TEMPLATES = {
+  soloWide: { widths: [100], align: "start" },
+  // Alone and small, with the rest of the row left empty. This is the one that
+  // stops a page of full-width rows becoming relentless.
+  soloSmall: { widths: [26], align: "start" },
+  duoLead: { widths: [62, 36] },
+  duoTrail: { widths: [36, 62] },
+  duoEven: { widths: [49, 49] },
+  trioCentre: { widths: [26, 46, 26], align: "centre" },
+  trioEdges: { widths: [37, 25, 36], align: "end" },
 }
 
-// Two rhythms rather than one, because a standing frame and a lying one want
-// different treatments. Neither alternates: each runs long enough, and repeats
-// its own values in a different order, that the eye does not find the loop.
-// Their lengths are coprime, so the combined sequence does not fall into step
-// either.
-const LANDSCAPE_RHYTHM = [
-  "large",
-  "medium-left",
-  "wide",
-  "medium-right",
-  "large",
-  "medium-right",
-  "wide",
-  "medium-left",
-]
+// Where a small solo sits. Cycled rather than fixed, and never twice the same
+// way running, so the eye does not start expecting it.
+const SOLO_PLACES = ["left", "right", "centre", "left", "centre", "right"]
 
-const PORTRAIT_RHYTHM = [
-  "portrait-right",
-  "portrait-center",
-  "portrait-left",
-  "portrait-right",
-  "portrait-left",
-  "portrait-center",
-]
-
-// Pairs need a rhythm of their own. A series of mostly upright frames pairs at
-// every opportunity, and if every pair is the same width the page is as
-// monotonous as the single column it replaced — the repetition has just moved.
-//
-// Scale and side are decided separately, and in that order. Choosing them
-// together meant the side rule could veto a scale: with singles leaning left,
-// every pair was pushed to the only centred option and the small ones never
-// appeared, which cost more variety than the side rule bought.
-const PAIR_SCALE = ["wide", "tight", "tight", "wide"]
-
-// Which way a row leans. Tracked across singles and pairs together, because a
-// pair held to the left followed by a frame set to the left is the page leaning
-// twice running — and it is the lean the eye follows, not whether the row
-// happened to hold one photograph or two.
-const SIDE = {
-  wide: "center",
-  large: "center",
-  "medium-left": "left",
-  "medium-right": "right",
-  "portrait-left": "left",
-  "portrait-right": "right",
-  "portrait-center": "center",
-  "wide-center": "center",
-  "tight-left": "left",
-  "tight-right": "right",
-}
-
-// Walks the rhythm from where it left off and takes the first entry that is
-// neither the treatment just used nor a lean in the same direction. Falls back
-// to the rhythm's own next entry if everything in it leans that way, so this can
-// slow the rhythm down but never stall it.
-const pick = (rhythm, tick, previousSlot, previousSide) => {
-  for (let step = 0; step < rhythm.length; step += 1) {
-    const slot = rhythm[(tick + step) % rhythm.length]
-
-    if (slot !== previousSlot && SIDE[slot] !== previousSide) return slot
-  }
-
-  return rhythm[tick % rhythm.length]
-}
-
-// A pair has to look deliberate. Two standing frames of roughly the same
-// proportions sit beside each other as a pair; a standing frame beside a lying
-// one just looks like a row that ran out.
-const pairable = (a, b) => {
-  const upright = (frame) => ["portrait", "square"].includes(shapeOf(frame))
-
-  if (!upright(a) || !upright(b)) return false
-
-  const ratios = [ratioOf(a), ratioOf(b)]
-
-  return Math.min(...ratios) / Math.max(...ratios) >= 0.75
-}
-
-// Scale comes from the rhythm and is never overruled — it is what keeps a run
-// of pairs from being one shape repeated. Only a tight pair has a side to
-// choose, and it takes whichever does not lean the way the row above did.
-const pairVariant = (tick, previousSide) => {
-  const scale = PAIR_SCALE[tick % PAIR_SCALE.length]
-
-  if (scale === "wide") return "wide-center"
-
-  return previousSide === "left" ? "tight-right" : "tight-left"
-}
-
-/**
- * @param frames   in sequence
- * @param layoutKey  which override field applies here — selectedLayout inside
- *                   the edit, seriesLayout inside a series, so one frame can be
- *                   set differently in each
- * @param groupKey   the field that marks an intentional pairing, if any
- */
 export const composeLayout = (frames, { layoutKey, groupKey = null } = {}) => {
   const rows = []
 
   let index = 0
-  let landscapeTick = 0
-  let portraitTick = 0
-  let previousSlot = null
-  let previousSide = null
-  let previousWasPair = false
-  let pairTick = 0
+  let soloTick = 0
+  let sinceSolo = 0
+  let lastTemplate = null
+
+  const push = (name, members, place) => {
+    rows.push({
+      template: name,
+      widths: TEMPLATES[name].widths,
+      align: TEMPLATES[name].align || "start",
+      place: place || null,
+      frames: members,
+      // A pairing that was asked for rather than proposed, kept so the markup
+      // can say so.
+      intentional: Boolean(
+        groupKey && members.length > 1 && members[0][groupKey] &&
+          members.every((m) => m[groupKey] === members[0][groupKey])
+      ),
+    })
+    lastTemplate = name
+    sinceSolo = name.startsWith("solo") ? 0 : sinceSolo + 1
+  }
 
   while (index < frames.length) {
     const frame = frames[index]
     const next = frames[index + 1]
+    const third = frames[index + 2]
+
+    // An override puts a frame on its own row at the width it names, and is
+    // expected to stay empty.
     const override = layoutKey ? frame[layoutKey] : null
 
-    // A pairing the photographer asked for. It wins over everything, including
-    // whether the two frames would have looked well together.
+    if (override) {
+      push(override === "wide" ? "soloWide" : "soloSmall", [frame], "centre")
+      index += 1
+      continue
+    }
+
+    // Frames the photographer grouped travel together, ahead of anything the
+    // proportions would have suggested.
     const group = groupKey ? frame[groupKey] : null
 
-    if (group && next && groupKey && next[groupKey] === group) {
-      const variant = pairVariant(pairTick, previousSide)
-
-      rows.push({ kind: "pair", intentional: true, variant, frames: [frame, next] })
-      pairTick += 1
+    if (group && next && next[groupKey] === group) {
+      push(ratioOf(frame) >= ratioOf(next) ? "duoLead" : "duoTrail", [frame, next])
       index += 2
-      previousWasPair = true
-      previousSlot = null
-      previousSide = SIDE[variant]
       continue
     }
 
-    // One the layout proposes. Never twice running — a column of pairs is its
-    // own kind of monotony — and never over a frame that was given a treatment.
-    if (
-      !override &&
-      next &&
-      !(layoutKey && next[layoutKey]) &&
-      !previousWasPair &&
-      pairable(frame, next)
-    ) {
-      const variant = pairVariant(pairTick, previousSide)
-
-      rows.push({ kind: "pair", intentional: false, variant, frames: [frame, next] })
-      pairTick += 1
-      index += 2
-      previousWasPair = true
-      previousSlot = null
-      previousSide = SIDE[variant]
+    // A frame wide enough to carry the row carries it.
+    if (isWide(frame)) {
+      push("soloWide", [frame])
+      index += 1
       continue
     }
 
-    let slot = override
-
-    if (!slot) {
-      const shape = shapeOf(frame)
-
-      if (index === 0) {
-        // The first frame opens the sequence, so it is given the room to.
-        slot = shape === "portrait" || shape === "square" ? "portrait-center" : "wide"
-      } else if (shape === "panorama") {
-        // Nothing is gained by insetting a frame this wide.
-        slot = "wide"
-      } else if (shape === "landscape") {
-        slot = pick(LANDSCAPE_RHYTHM, landscapeTick, previousSlot, previousSide)
-        landscapeTick += 1
-      } else {
-        slot = pick(PORTRAIT_RHYTHM, portraitTick, previousSlot, previousSide)
-        portraitTick += 1
-      }
+    // Periodically, an upright frame is given a row to itself and most of the
+    // width is left empty. Ratio decides whether a frame is suitable; the
+    // interval decides when the page is ready for one.
+    if (isUpright(frame) && sinceSolo >= 3 && !String(lastTemplate).startsWith("solo")) {
+      push("soloSmall", [frame], SOLO_PLACES[soloTick % SOLO_PLACES.length])
+      soloTick += 1
+      index += 1
+      continue
     }
 
-    rows.push({ kind: "single", slot, frames: [frame] })
-    previousSlot = slot
-    previousSide = SIDE[slot]
-    previousWasPair = false
+    // Three upright frames make a row of three. Which template depends on where
+    // the tallest of them falls, because the dominant slot has to land on a
+    // frame that can hold it — and the sequence cannot be rearranged to suit.
+    if (next && third && isUpright(frame) && isUpright(next) && isUpright(third)) {
+      const tallest = [frame, next, third]
+        .map((f, i) => [ratioOf(f), i])
+        .sort((a, b) => a[0] - b[0])[0][1]
+
+      push(tallest === 1 ? "trioCentre" : "trioEdges", [frame, next, third])
+      index += 3
+      continue
+    }
+
+    if (next) {
+      // Two frames share the row, and the wider one takes the larger share —
+      // which keeps both at a sensible height rather than forcing one to match
+      // the other's proportions.
+      const a = ratioOf(frame)
+      const b = ratioOf(next)
+      const similar = Math.min(a, b) / Math.max(a, b) >= 0.82
+
+      push(similar ? "duoEven" : a > b ? "duoLead" : "duoTrail", [frame, next])
+      index += 2
+      continue
+    }
+
+    // Last frame over. Alone, and not stretched across the page to fill it.
+    push(isWide(frame) ? "soloWide" : "soloSmall", [frame], "centre")
     index += 1
   }
 

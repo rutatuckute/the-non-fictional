@@ -826,65 +826,50 @@
 .sequence {
   display: flex;
   flex-direction: column;
-  /* Tighter than it was. The gap was doing the work the scale should do: every
-     frame separated by the same large distance reads as a list however much the
-     widths vary, and nothing else is ever in view to compare against. */
-  gap: clamp(40px, 5vw, 86px);
-  padding: clamp(28px, 4vw, 56px) 0 clamp(80px, 10vw, 140px);
+  /* Close. The rows are meant to read as one body of photography rather than as
+     a series of separate appearances, and a large gap between every row is what
+     made the page a column no matter how the widths varied. */
+  gap: clamp(14px, 1.4vw, 22px);
+  padding: clamp(24px, 3vw, 44px) 0 clamp(72px, 9vw, 120px);
 }
 
 .row {
   display: flex;
+  gap: clamp(12px, 1.2vw, 18px);
   width: 100%;
-}
-
-/* Alignment only. The width of a frame is worked out from its own proportions
-   and set on the element, because it depends on the photograph and not on the
-   slot alone. */
-.row[data-slot="wide"],
-.row[data-slot="large"],
-.row[data-slot="portrait-center"] {
-  justify-content: center;
-}
-
-.row[data-slot="medium-left"],
-.row[data-slot="portrait-left"] {
-  justify-content: flex-start;
-}
-
-.row[data-slot="medium-right"],
-.row[data-slot="portrait-right"] {
-  justify-content: flex-end;
-}
-
-/* A pair shares one height: the two frames are given widths in proportion to
-   their aspect ratios, so the row has a single baseline. */
-.row[data-kind="pair"] {
-  gap: clamp(12px, 1.4vw, 22px);
-}
-
-/* Three ways a pair can sit, cycled so that a run of upright frames does not
-   produce the same row over and over. */
-.row[data-variant="wide-center"] {
-  justify-content: center;
-  max-width: 74%;
+  /* A row that had to narrow to fit the window stays centred rather than
+     hugging one edge, so the narrowing reads as scale and not as alignment. */
   margin: 0 auto;
 }
 
-.row[data-variant="tight-left"] {
+/* Frames in a row are different heights, because they keep their own
+   proportions and take unequal shares of the width. Where they line up is
+   therefore a decision, and it varies: it is the stagger that keeps a row from
+   reading as a shelf. */
+.row[data-align="start"] {
+  align-items: flex-start;
+}
+
+.row[data-align="centre"] {
+  align-items: center;
+}
+
+.row[data-align="end"] {
+  align-items: flex-end;
+}
+
+/* A frame alone on its row takes a quarter of the width, and which side it sits
+   on moves. The empty part of the row is the point. */
+.row[data-place="left"] {
   justify-content: flex-start;
-  max-width: 54%;
-  margin: 0;
 }
 
-.row[data-variant="tight-right"] {
+.row[data-place="centre"] {
+  justify-content: center;
+}
+
+.row[data-place="right"] {
   justify-content: flex-end;
-  max-width: 54%;
-  margin: 0 0 0 auto;
-}
-
-.row[data-kind="pair"] .plate {
-  min-width: 0;
 }
 
 .plate {
@@ -1011,24 +996,25 @@
 }
 
 @media (max-width: 720px) {
-  /* The composition is a desktop idea. Reproducing 44%-wide frames and left
-     and right offsets on a phone gives small photographs and a page that
-     wanders; the sequence is what matters and it survives being set straight.
-     A pair stacks like everything else. */
-  .sequence {
-    gap: clamp(44px, 11vw, 72px);
-  }
-
-  .row,
-  .row[data-kind="pair"] {
+  /* The composition is a wide-screen idea. At 390px a row of three is three
+     thumbnails, so rows are broken and the sequence is set straight — in order,
+     at full width, at their own proportions. A frame that was alone and small
+     stays smaller than the rest, which keeps some of the rhythm. */
+  .row {
     flex-direction: column;
-    gap: clamp(44px, 11vw, 72px);
+    gap: clamp(14px, 3.5vw, 22px);
   }
 
-  .row .plate,
-  .row[data-kind="pair"] .plate {
-    width: 100%;
-    max-width: 100%;
+  .row .plate {
+    width: 100% !important;
+  }
+
+  .row[data-template="soloSmall"] .plate {
+    width: 62% !important;
+  }
+
+  .sequence {
+    gap: clamp(14px, 3.5vw, 22px);
   }
 
   .views {

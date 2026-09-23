@@ -6,49 +6,35 @@ import PhotoImage from "../photo-image"
 import { composeLayout } from "./composeLayout"
 import styles from "../../styles/photography.module.css"
 
-// What each treatment is actually asked to fetch. A frame set at 44% of the
-// column does not need the pixels of one set at 100%, and asking for them is
-// the difference between a page that loads and one that crawls — these are
-// roughly twice the width the frame occupies at the widest the column goes.
-const BUDGET = {
-  wide: 2048,
-  large: 1920,
-  "medium-left": 1200,
-  "medium-right": 1200,
-  "portrait-left": 1080,
-  "portrait-right": 1080,
-  "portrait-center": 1080,
-  pair: 1080,
+// What a frame is asked to fetch, from the share of the row it was given —
+// roughly twice the width it occupies at the widest the column goes, so a frame
+// set at a quarter of the row is a quarter of the download rather than a full
+// one scaled down.
+const budgetFor = (share) => {
+  if (share >= 90) return 2048
+  if (share >= 55) return 1440
+  if (share >= 40) return 1080
+  return 760
 }
 
 const ratioOf = (frame) =>
   frame.width && frame.height ? frame.width / frame.height : 1.5
 
-// Two things size a frame, and the smaller wins.
-//
-// The slot gives it a share of the column. The height cap gives it a share of
-// the screen — because a standing frame given 46% of a wide column comes out
-// taller than the window, and you meet it a third at a time. A photograph that
-// cannot be seen whole is not being shown at full size, it is being shown
-// badly, so the cap is what decides for anything tall and the slot only ever
-// narrows it further.
-const HEIGHT_CAP = "74vh"
+// A row's height follows from the width of the page and the share each frame
+// takes of it, so a row of upright frames can come out taller than the window.
+// Rather than crop anything or break the composition, the whole row is allowed
+// to narrow until it fits — every frame in it keeps its proportions and its
+// share, and the row simply sits smaller on the page.
+const rowMaxWidth = (row) => {
+  const tallest = Math.max(
+    ...row.frames.map((frame, i) => row.widths[i] / 100 / ratioOf(frame))
+  )
 
-const SLOT_WIDTH = {
-  wide: "92%",
-  large: "68%",
-  "medium-left": "46%",
-  "medium-right": "46%",
-  "portrait-left": "30%",
-  "portrait-right": "30%",
-  "portrait-center": "34%",
+  return `min(100%, calc(88vh / ${tallest.toFixed(4)}))`
 }
 
-const plateWidth = (frame, slot) =>
-  `min(${SLOT_WIDTH[slot] || "68%"}, calc(${HEIGHT_CAP} * ${ratioOf(frame).toFixed(4)}))`
-
-const Plate = ({ frame, px, onOpen, style }) => (
-  <figure className={styles.plate} style={style}>
+const Plate = ({ frame, share, onOpen }) => (
+  <figure className={styles.plate} style={{ width: `${share}%` }}>
     <button
       type="button"
       className={styles.plateButton}
@@ -58,7 +44,7 @@ const Plate = ({ frame, px, onOpen, style }) => (
       <PhotoImage
         className={styles.plateImage}
         source={frame.photo}
-        px={px}
+        px={budgetFor(share)}
         quality="normal"
         alt={frame.title}
         style={
@@ -67,9 +53,8 @@ const Plate = ({ frame, px, onOpen, style }) => (
             : undefined
         }
       />
-      {/* Sits inside the frame, at rest invisible. It is here for the pointer
-          and the keyboard; a touch screen gets it from the lightbox instead,
-          where there is room for it and nothing to hover. */}
+      {/* In the frame, invisible at rest, for pointer and keyboard. A touch
+          screen has nothing to hover with and gets this from the lightbox. */}
       <figcaption className={styles.plateMeta}>
         <span className={styles.plateTitle}>{frame.title}</span>
         <span className={styles.plateWhere}>
@@ -91,29 +76,19 @@ const EditorialSequence = ({ frames, layoutKey, groupKey = null, onOpen }) => {
       {rows.map((row, index) => (
         <div
           className={styles.row}
-          // The sequence is fixed and the rows are derived from it, so the
-          // position is a stable identity.
           key={`${row.frames[0].slug}-${index}`}
-          data-kind={row.kind}
-          data-slot={row.kind === "single" ? row.slot : undefined}
-          data-intentional={row.kind === "pair" ? String(row.intentional) : undefined}
-          data-variant={row.variant}
+          data-template={row.template}
+          data-align={row.align}
+          data-place={row.place || undefined}
+          data-intentional={row.intentional ? "true" : undefined}
+          style={{ maxWidth: rowMaxWidth(row) }}
         >
-          {row.frames.map((frame) => (
+          {row.frames.map((frame, position) => (
             <Plate
               key={frame.slug}
               frame={frame}
-              px={row.kind === "pair" ? BUDGET.pair : BUDGET[row.slot] || 1920}
+              share={row.widths[position]}
               onOpen={onOpen}
-              style={
-                row.kind === "pair"
-                  ? // Widths in proportion to the two aspect ratios, which is
-                    // what gives a pair one height and one baseline. Equal
-                    // widths leave the shorter frame hanging, and the row reads
-                    // as two photographs that happened to land on the same line.
-                    { flexGrow: ratioOf(frame), flexBasis: 0 }
-                  : { width: plateWidth(frame, row.slot) }
-              }
             />
           ))}
         </div>
