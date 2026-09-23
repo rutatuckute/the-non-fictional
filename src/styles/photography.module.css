@@ -50,12 +50,15 @@
   padding: 0 26px;
 }
 
+/* One column. The controls used to take a column beside the information block,
+   which left that block too narrow to hold its four items on one line — so the
+   archive wore a two-line header while the other two views wore a one-line one.
+   The block now gets the full width everywhere, and the controls sit under the
+   view navigation as a row of their own. */
 .header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, auto);
-  align-items: start;
-  gap: 32px 48px;
-  padding: 40px 0 26px;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 0 22px;
   border-bottom: 1px solid var(--rule);
 }
 
@@ -66,11 +69,13 @@
 /* Controls sit beside the title rather than in a bar above the frames. */
 .controls {
   display: flex;
-  flex-direction: column;
-  gap: 7px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
   min-width: 0;
-  max-width: 30rem;
-  padding-top: 4px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule-subtle);
 }
 
 .kicker {
@@ -162,23 +167,23 @@
 
 /* Label in a fixed first column, chips wrapping in the second, so the labels
    stay aligned down the left edge of the control stack. */
+/* Label and chips on one line, the label sized to its own text rather than to a
+   column — there are two groups now, not four, and a fixed column left one of
+   them short and the other padded. */
 .group {
-  display: grid;
-  /* 5rem leaves "SPACE/TIME" under a pixel of slack at 11px uppercase, so it
-     wraps on any metric variance. The chips take the rest. */
-  grid-template-columns: 5.75rem minmax(0, 1fr);
-  align-items: start;
+  display: flex;
+  align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 
 .groupLabel {
-  padding-top: 8px;
   color: var(--ink-3);
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.12em;
-  text-align: right;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .groupChips {
