@@ -6,35 +6,31 @@ import PhotoImage from "../photo-image"
 import { composeLayout } from "./composeLayout"
 import styles from "../../styles/photography.module.css"
 
-// What a frame is asked to fetch, from the share of the row it was given —
-// roughly twice the width it occupies at the widest the column goes, so a frame
-// set at a quarter of the row is a quarter of the download rather than a full
-// one scaled down.
+// How tall a row is allowed to get. A row's natural height is the width it has
+// divided by the sum of its aspect ratios, so a row of upright frames comes out
+// far taller than one of wide ones. Rather than crop anything or leave a frame
+// towering over the page, a row that would exceed this is given less width and
+// centred: every frame keeps its proportions and its share, and the row simply
+// sits smaller.
+const MAX_ROW_HEIGHT = 500
+const MAX_HERO_HEIGHT = 620
+
+// What a frame is asked to fetch, from the share of the row it takes, at
+// roughly twice the width it occupies.
 const budgetFor = (share) => {
-  if (share >= 90) return 2048
-  if (share >= 55) return 1440
-  if (share >= 40) return 1080
+  if (share >= 0.8) return 2048
+  if (share >= 0.5) return 1440
+  if (share >= 0.3) return 1080
   return 760
 }
 
-const ratioOf = (frame) =>
-  frame.width && frame.height ? frame.width / frame.height : 1.5
-
-// A row's height follows from the width of the page and the share each frame
-// takes of it, so a row of upright frames can come out taller than the window.
-// Rather than crop anything or break the composition, the whole row is allowed
-// to narrow until it fits — every frame in it keeps its proportions and its
-// share, and the row simply sits smaller on the page.
-const rowMaxWidth = (row) => {
-  const tallest = Math.max(
-    ...row.frames.map((frame, i) => row.widths[i] / 100 / ratioOf(frame))
-  )
-
-  return `min(100%, calc(88vh / ${tallest.toFixed(4)}))`
-}
-
-const Plate = ({ frame, share, onOpen }) => (
-  <figure className={styles.plate} style={{ width: `${share}%` }}>
+const Plate = ({ frame, ratio, share, onOpen }) => (
+  <figure
+    className={styles.plate}
+    // Widths in proportion to the aspect ratios is what justifies the row: the
+    // height each frame resolves to is the same for all of them.
+    style={{ flexGrow: ratio, flexBasis: 0 }}
+  >
     <button
       type="button"
       className={styles.plateButton}
@@ -54,7 +50,7 @@ const Plate = ({ frame, share, onOpen }) => (
         }
       />
       {/* In the frame, invisible at rest, for pointer and keyboard. A touch
-          screen has nothing to hover with and gets this from the lightbox. */}
+          screen gets this from the lightbox instead. */}
       <figcaption className={styles.plateMeta}>
         <span className={styles.plateTitle}>{frame.title}</span>
         <span className={styles.plateWhere}>
@@ -73,26 +69,30 @@ const EditorialSequence = ({ frames, layoutKey, groupKey = null, onOpen }) => {
 
   return (
     <div className={styles.sequence}>
-      {rows.map((row, index) => (
-        <div
-          className={styles.row}
-          key={`${row.frames[0].slug}-${index}`}
-          data-template={row.template}
-          data-align={row.align}
-          data-place={row.place || undefined}
-          data-intentional={row.intentional ? "true" : undefined}
-          style={{ maxWidth: rowMaxWidth(row) }}
-        >
-          {row.frames.map((frame, position) => (
-            <Plate
-              key={frame.slug}
-              frame={frame}
-              share={row.widths[position]}
-              onOpen={onOpen}
-            />
-          ))}
-        </div>
-      ))}
+      {rows.map((row, index) => {
+        const cap = row.kind === "hero" ? MAX_HERO_HEIGHT : MAX_ROW_HEIGHT
+
+        return (
+          <div
+            className={styles.row}
+            key={`${row.frames[0].slug}-${index}`}
+            data-kind={row.kind}
+            data-count={row.frames.length}
+            data-intentional={row.intentional ? "true" : undefined}
+            style={{ maxWidth: `min(100%, ${Math.round(cap * row.sum)}px)` }}
+          >
+            {row.frames.map((frame, position) => (
+              <Plate
+                key={frame.slug}
+                frame={frame}
+                ratio={row.ratios[position]}
+                share={row.ratios[position] / row.sum}
+                onOpen={onOpen}
+              />
+            ))}
+          </div>
+        )
+      })}
     </div>
   )
 }

@@ -826,50 +826,23 @@
 .sequence {
   display: flex;
   flex-direction: column;
-  /* Close. The rows are meant to read as one body of photography rather than as
-     a series of separate appearances, and a large gap between every row is what
-     made the page a column no matter how the widths varied. */
-  gap: clamp(14px, 1.4vw, 22px);
-  padding: clamp(24px, 3vw, 44px) 0 clamp(72px, 9vw, 120px);
+  /* Related to the gutter inside a row, not several times it. The vertical
+     rhythm is what decides whether the page reads as one body of work or as a
+     series of separate appearances. */
+  gap: clamp(8px, 1vw, 16px);
+  padding: clamp(20px, 2.5vw, 38px) 0 clamp(64px, 8vw, 104px);
 }
 
+/* A justified row. The frames take widths in proportion to their aspect ratios,
+   which resolves every one of them to the same height — so nothing is left
+   short and there is no space under anything. A row narrower than the page is
+   one that would otherwise have been too tall; it is centred, not aligned. */
 .row {
   display: flex;
-  gap: clamp(12px, 1.2vw, 18px);
+  gap: clamp(8px, 1vw, 16px);
   width: 100%;
-  /* A row that had to narrow to fit the window stays centred rather than
-     hugging one edge, so the narrowing reads as scale and not as alignment. */
   margin: 0 auto;
-}
-
-/* Frames in a row are different heights, because they keep their own
-   proportions and take unequal shares of the width. Where they line up is
-   therefore a decision, and it varies: it is the stagger that keeps a row from
-   reading as a shelf. */
-.row[data-align="start"] {
   align-items: flex-start;
-}
-
-.row[data-align="centre"] {
-  align-items: center;
-}
-
-.row[data-align="end"] {
-  align-items: flex-end;
-}
-
-/* A frame alone on its row takes a quarter of the width, and which side it sits
-   on moves. The empty part of the row is the point. */
-.row[data-place="left"] {
-  justify-content: flex-start;
-}
-
-.row[data-place="centre"] {
-  justify-content: center;
-}
-
-.row[data-place="right"] {
-  justify-content: flex-end;
 }
 
 .plate {
@@ -890,6 +863,9 @@
   display: block;
   width: 100%;
   height: auto;
+  /* The layout adapts to the photograph. Nothing here is ever cropped to make
+     a row resolve — the widths do that. */
+  object-fit: contain;
 }
 
 /* Metadata sits in the frame and stays out of the way until asked for. A
@@ -995,26 +971,24 @@
   text-transform: uppercase;
 }
 
-@media (max-width: 720px) {
-  /* The composition is a wide-screen idea. At 390px a row of three is three
-     thumbnails, so rows are broken and the sequence is set straight — in order,
-     at full width, at their own proportions. A frame that was alone and small
-     stays smaller than the rest, which keeps some of the rhythm. */
+@media (max-width: 900px) {
+  .sequence,
+  .row {
+    gap: clamp(8px, 1.4vw, 14px);
+  }
+}
+
+@media (max-width: 620px) {
+  /* Rows of three become three thumbnails on a phone, so the rows break and the
+     sequence is set straight — in order, full width, own proportions. */
   .row {
     flex-direction: column;
-    gap: clamp(14px, 3.5vw, 22px);
-  }
-
-  .row .plate {
-    width: 100% !important;
-  }
-
-  .row[data-template="soloSmall"] .plate {
-    width: 62% !important;
+    max-width: 100% !important;
+    gap: clamp(8px, 2.4vw, 12px);
   }
 
   .sequence {
-    gap: clamp(14px, 3.5vw, 22px);
+    gap: clamp(8px, 2.4vw, 12px);
   }
 
   .views {

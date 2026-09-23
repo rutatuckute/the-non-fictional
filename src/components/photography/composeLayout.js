@@ -1,139 +1,123 @@
-// Groups a sequence of photographs into composed rows.
+// Groups a sequence of photographs into justified rows.
 //
-// Measured against the reference, the thing that makes a page read as composed
-// rather than as a column is not that every row is the same height — it is that
-// a row holds two or three frames at deliberately unequal widths, and that runs
-// of those are broken by a single small frame sitting alone with the width
-// around it. Equal widths give a contact sheet; equal heights give a justified
-// gallery; neither looks edited.
+// A row is the unit. Its members are chosen from the sequence in order, and
+// their widths are then derived from their aspect ratios so that every frame in
+// the row comes out at the same height and the row resolves cleanly across the
+// width. That derivation is what makes a row look decided: a tall frame beside
+// a wide one is simply narrower than it, not shorter than it, so there is no
+// space left under anything.
 //
-// Two rules hold throughout. The sequence is never reordered — a row takes the
-// next frames in order, and the reader meets them in the order they were given.
-// And nothing is random: the same photographs in the same order produce the same
-// page every time.
+// This is the difference between a justified gallery and a masonry grid, and it
+// is the whole point. Giving each frame a fixed share of the width instead —
+// which is what was here — leaves frames of different proportions at different
+// heights, and the gaps under the short ones are the voids.
+//
+// The sequence is never reordered. Where a row breaks is the only decision;
+// which frame comes next is not one.
+//
+// Deterministic: the same frames in the same order produce the same rows.
 
 const ratioOf = (frame) =>
   frame.width && frame.height ? frame.width / frame.height : 1.5
 
-const isUpright = (frame) => ratioOf(frame) < 1.15
-const isWide = (frame) => ratioOf(frame) >= 1.9
+// A row is closed once its frames are wide enough, together, to fill the width
+// at a sensible height. The figure is a sum of aspect ratios rather than a
+// pixel width, so it holds at any screen size: row height is always the
+// available width divided by this sum.
+//
+// 1.9 lands two landscapes, or three upright frames, or one of each, in a row —
+// which is the rhythm the reference keeps. Lower would mean taller rows of
+// fewer frames; higher, denser rows of more.
+const CLOSE_AT = 1.9
 
-// Shares of the row, before the gutter is taken out. They are deliberately
-// uneven: a row of three at 33/33/33 is a grid, and a row of two at 50/50 reads
-// as a comparison rather than a composition.
-const TEMPLATES = {
-  soloWide: { widths: [100], align: "start" },
-  // Alone and small, with the rest of the row left empty. This is the one that
-  // stops a page of full-width rows becoming relentless.
-  soloSmall: { widths: [26], align: "start" },
-  duoLead: { widths: [62, 36] },
-  duoTrail: { widths: [36, 62] },
-  duoEven: { widths: [49, 49] },
-  trioCentre: { widths: [26, 46, 26], align: "centre" },
-  trioEdges: { widths: [37, 25, 36], align: "end" },
-}
+const MAX_PER_ROW = 3
 
-// Where a small solo sits. Cycled rather than fixed, and never twice the same
-// way running, so the eye does not start expecting it.
-const SOLO_PLACES = ["left", "right", "centre", "left", "centre", "right"]
+// A frame this wide already fills a row on its own.
+const STANDS_ALONE = 2.2
+
+// Every so often a landscape is given the row to itself. Not by counting
+// frames — by counting rows since the last one, so it stays an interval in the
+// reading rather than a position in the data.
+const HERO_EVERY = 5
 
 export const composeLayout = (frames, { layoutKey, groupKey = null } = {}) => {
   const rows = []
-
   let index = 0
-  let soloTick = 0
-  let sinceSolo = 0
-  let lastTemplate = null
+  let sinceHero = HERO_EVERY - 2
 
-  const push = (name, members, place) => {
+  const push = (members, kind) => {
+    const sum = members.reduce((total, frame) => total + ratioOf(frame), 0)
+
     rows.push({
-      template: name,
-      widths: TEMPLATES[name].widths,
-      align: TEMPLATES[name].align || "start",
-      place: place || null,
+      kind,
       frames: members,
-      // A pairing that was asked for rather than proposed, kept so the markup
-      // can say so.
+      // Handed on so the row can be held to a sensible height: the height is
+      // the width divided by this, so the width it may occupy is this times the
+      // height it is allowed.
+      sum,
+      ratios: members.map(ratioOf),
       intentional: Boolean(
-        groupKey && members.length > 1 && members[0][groupKey] &&
+        groupKey &&
+          members.length > 1 &&
+          members[0][groupKey] &&
           members.every((m) => m[groupKey] === members[0][groupKey])
       ),
     })
-    lastTemplate = name
-    sinceSolo = name.startsWith("solo") ? 0 : sinceSolo + 1
+
+    sinceHero = kind === "hero" ? 0 : sinceHero + 1
   }
 
   while (index < frames.length) {
     const frame = frames[index]
-    const next = frames[index + 1]
-    const third = frames[index + 2]
-
-    // An override puts a frame on its own row at the width it names, and is
-    // expected to stay empty.
     const override = layoutKey ? frame[layoutKey] : null
 
     if (override) {
-      push(override === "wide" ? "soloWide" : "soloSmall", [frame], "centre")
+      push([frame], override === "wide" ? "hero" : "solo")
       index += 1
       continue
     }
 
-    // Frames the photographer grouped travel together, ahead of anything the
-    // proportions would have suggested.
+    // A pairing that was asked for stays a row of its own, whatever the
+    // proportions would have made of it.
     const group = groupKey ? frame[groupKey] : null
 
-    if (group && next && next[groupKey] === group) {
-      push(ratioOf(frame) >= ratioOf(next) ? "duoLead" : "duoTrail", [frame, next])
+    if (group && frames[index + 1] && frames[index + 1][groupKey] === group) {
+      push([frame, frames[index + 1]], "row")
       index += 2
       continue
     }
 
-    // A frame wide enough to carry the row carries it.
-    if (isWide(frame)) {
-      push("soloWide", [frame])
+    if (ratioOf(frame) >= STANDS_ALONE) {
+      push([frame], "hero")
       index += 1
       continue
     }
 
-    // Periodically, an upright frame is given a row to itself and most of the
-    // width is left empty. Ratio decides whether a frame is suitable; the
-    // interval decides when the page is ready for one.
-    if (isUpright(frame) && sinceSolo >= 3 && !String(lastTemplate).startsWith("solo")) {
-      push("soloSmall", [frame], SOLO_PLACES[soloTick % SOLO_PLACES.length])
-      soloTick += 1
+    if (sinceHero >= HERO_EVERY && ratioOf(frame) >= 1.3) {
+      push([frame], "hero")
       index += 1
       continue
     }
 
-    // Three upright frames make a row of three. Which template depends on where
-    // the tallest of them falls, because the dominant slot has to land on a
-    // frame that can hold it — and the sequence cannot be rearranged to suit.
-    if (next && third && isUpright(frame) && isUpright(next) && isUpright(third)) {
-      const tallest = [frame, next, third]
-        .map((f, i) => [ratioOf(f), i])
-        .sort((a, b) => a[0] - b[0])[0][1]
+    // Take frames in order until the row is full enough to justify.
+    const members = []
+    let sum = 0
 
-      push(tallest === 1 ? "trioCentre" : "trioEdges", [frame, next, third])
-      index += 3
-      continue
+    while (index < frames.length && members.length < MAX_PER_ROW) {
+      const candidate = frames[index]
+
+      // A frame that would stand alone starts the next row rather than
+      // overfilling this one.
+      if (members.length && ratioOf(candidate) >= STANDS_ALONE) break
+
+      members.push(candidate)
+      sum += ratioOf(candidate)
+      index += 1
+
+      if (sum >= CLOSE_AT) break
     }
 
-    if (next) {
-      // Two frames share the row, and the wider one takes the larger share —
-      // which keeps both at a sensible height rather than forcing one to match
-      // the other's proportions.
-      const a = ratioOf(frame)
-      const b = ratioOf(next)
-      const similar = Math.min(a, b) / Math.max(a, b) >= 0.82
-
-      push(similar ? "duoEven" : a > b ? "duoLead" : "duoTrail", [frame, next])
-      index += 2
-      continue
-    }
-
-    // Last frame over. Alone, and not stretched across the page to fill it.
-    push(isWide(frame) ? "soloWide" : "soloSmall", [frame], "centre")
-    index += 1
+    push(members, members.length === 1 ? "solo" : "row")
   }
 
   return rows
