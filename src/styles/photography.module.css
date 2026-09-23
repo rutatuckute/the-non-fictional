@@ -960,15 +960,17 @@
   color: var(--brand);
 }
 
-/* The name of the body of work being read, above its frames. */
+/* The name of the body of work being read, above its frames. Set like the
+   page title rather than like a label — same typeface, same weight, same tight
+   tracking — at a size that keeps it under the title rather than beside it. */
 .seriesTitle {
-  margin: clamp(24px, 3vw, 40px) 0 0;
+  margin: clamp(20px, 2.4vw, 32px) 0 0;
   color: var(--ink);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 400;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-family: var(--font-title);
+  font-size: clamp(19px, 2vw, 27px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
 }
 
 @media (max-width: 900px) {
