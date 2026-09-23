@@ -20,9 +20,9 @@ const SIZES = {
   lg: { label: "Large", grid: 260, px: 640 },
 }
 
-const EMPTY = { type: [], lived: [], year: [], place: [], series: [] }
+const EMPTY = { type: [], lived: [], year: [], place: [] }
 
-const LABELS = { lived: "Lived", year: "Year", place: "Place", series: "Series" }
+const LABELS = { lived: "Lived", year: "Year", place: "Place" }
 
 const countBy = (frames, pick) => {
   const counts = new Map()
@@ -34,8 +34,10 @@ const countBy = (frames, pick) => {
   return counts
 }
 
-// Lived, year, place and series. Lived reads from the same constant the LIVED
-// IN line in the header is built from, so the cities named above the archive
+// Lived, year and place — where and when, which is what Space/Time names. A
+// series is neither, and has a view of its own where it can be read whole
+// rather than sliced out of the archive. Lived reads from the same constant the
+// LIVED IN line in the header is built from, so the cities named above the archive
 // and the cities you can filter it by cannot drift apart — a city only reaches
 // the filter once it actually has frames, which is why London can sit in that
 // line unseen here.
@@ -57,9 +59,6 @@ const buildGroups = (frames) => {
       )
     ),
     place: asOptions([...countBy(frames, (f) => f.country).entries()].sort(byCount)),
-    series: asOptions(
-      [...countBy(frames, (f) => f.seriesName).entries()].sort(byCount)
-    ),
   }
 }
 
@@ -81,8 +80,7 @@ const ArchiveView = ({ nodes }) => {
               matches(filters.type, frame.type) &&
             matches(filters.lived, frame.city) &&
             matches(filters.year, frame.year) &&
-              matches(filters.place, frame.country) &&
-              matches(filters.series, frame.seriesName)
+              matches(filters.place, frame.country)
           )
         : frames,
     [frames, filters, filtering]
@@ -153,7 +151,7 @@ const ArchiveView = ({ nodes }) => {
           <div className={styles.group}>
             <span className={styles.groupLabel}>Space/Time</span>
             <div className={styles.groupChips}>
-              {["lived", "year", "place", "series"].map((group) => (
+              {["lived", "year", "place"].map((group) => (
                 <FilterSelect
                   key={group}
                   label={LABELS[group]}
