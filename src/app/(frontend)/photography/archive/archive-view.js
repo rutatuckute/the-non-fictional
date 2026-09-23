@@ -9,7 +9,7 @@ import Lightbox from "../../../../components/photography/Lightbox"
 import FilterSelect from "../../../../components/photography/FilterSelect"
 import PhotographyHeader from "../../../../components/photography/PhotographyHeader"
 import { useLightbox } from "../../../../components/photography/useLightbox"
-import { buildFrames } from "../../../../components/photography/photoData"
+import { buildFrames, LIVED_IN } from "../../../../components/photography/photoData"
 import styles from "../../../../styles/photography.module.css"
 
 // Frame size drives both the grid track and the pixels actually fetched, so a
@@ -20,9 +20,9 @@ const SIZES = {
   lg: { label: "Large", grid: 260, px: 640 },
 }
 
-const EMPTY = { year: [], place: [], series: [] }
+const EMPTY = { lived: [], year: [], place: [], series: [] }
 
-const LABELS = { year: "Year", place: "Place", series: "Series" }
+const LABELS = { lived: "Lived", year: "Year", place: "Place", series: "Series" }
 
 const countBy = (frames, pick) => {
   const counts = new Map()
@@ -34,15 +34,22 @@ const countBy = (frames, pick) => {
   return counts
 }
 
-// Year, place and series — the three the archive is actually browsed by. Type
-// and the lived-in cities were the other two facets here; they are gone from
-// the surface rather than from the data, and come back by adding a group.
+// Lived, year, place and series. Lived reads from the same constant the LIVED
+// IN line in the header is built from, so the cities named above the archive
+// and the cities you can filter it by cannot drift apart — a city only reaches
+// the filter once it actually has frames, which is why London can sit in that
+// line unseen here.
 const buildGroups = (frames) => {
   const byCount = (a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0]))
   const asOptions = (entries) =>
     entries.map(([value, count]) => ({ value, label: value, count }))
 
   return {
+    lived: asOptions(
+      [
+        ...countBy(frames, (f) => (LIVED_IN.includes(f.city) ? f.city : null)).entries(),
+      ].sort(byCount)
+    ),
     year: asOptions(
       [...countBy(frames, (f) => f.year).entries()].sort(
         (a, b) => Number(b[0]) - Number(a[0])
@@ -70,7 +77,8 @@ const ArchiveView = ({ nodes }) => {
       filtering
         ? frames.filter(
             (frame) =>
-              matches(filters.year, frame.year) &&
+              matches(filters.lived, frame.city) &&
+            matches(filters.year, frame.year) &&
               matches(filters.place, frame.country) &&
               matches(filters.series, frame.seriesName)
           )
@@ -134,7 +142,7 @@ const ArchiveView = ({ nodes }) => {
               >
                 All
               </button>
-              {["year", "place", "series"].map((group) => (
+              {["lived", "year", "place", "series"].map((group) => (
                 <FilterSelect
                   key={group}
                   label={LABELS[group]}
