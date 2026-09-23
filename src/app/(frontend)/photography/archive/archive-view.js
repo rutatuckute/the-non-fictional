@@ -20,7 +20,7 @@ const SIZES = {
   lg: { label: "Large", grid: 260, px: 640 },
 }
 
-const EMPTY = { lived: [], year: [], place: [], series: [] }
+const EMPTY = { type: [], lived: [], year: [], place: [], series: [] }
 
 const LABELS = { lived: "Lived", year: "Year", place: "Place", series: "Series" }
 
@@ -45,6 +45,7 @@ const buildGroups = (frames) => {
     entries.map(([value, count]) => ({ value, label: value, count }))
 
   return {
+    type: asOptions([...countBy(frames, (f) => f.type).entries()].sort(byCount)),
     lived: asOptions(
       [
         ...countBy(frames, (f) => (LIVED_IN.includes(f.city) ? f.city : null)).entries(),
@@ -77,7 +78,8 @@ const ArchiveView = ({ nodes }) => {
       filtering
         ? frames.filter(
             (frame) =>
-              matches(filters.lived, frame.city) &&
+              matches(filters.type, frame.type) &&
+            matches(filters.lived, frame.city) &&
             matches(filters.year, frame.year) &&
               matches(filters.place, frame.country) &&
               matches(filters.series, frame.seriesName)
@@ -131,17 +133,26 @@ const ArchiveView = ({ nodes }) => {
           </div>
 
           <div className={styles.group}>
-            <span className={styles.groupLabel}>Filter</span>
+            <span className={styles.groupLabel}>Type</span>
             <div className={styles.groupChips}>
-              <button
-                className={styles.chip}
-                type="button"
-                data-on={filtering ? "false" : "true"}
-                aria-pressed={!filtering}
-                onClick={() => setFilters(EMPTY)}
-              >
-                All
-              </button>
+              {groups.type.map((option) => (
+                <button
+                  className={styles.chip}
+                  key={option.value}
+                  type="button"
+                  data-on={filters.type.includes(option.value) ? "true" : "false"}
+                  aria-pressed={filters.type.includes(option.value)}
+                  onClick={() => toggle("type", option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.group}>
+            <span className={styles.groupLabel}>Space/Time</span>
+            <div className={styles.groupChips}>
               {["lived", "year", "place", "series"].map((group) => (
                 <FilterSelect
                   key={group}
@@ -159,6 +170,11 @@ const ArchiveView = ({ nodes }) => {
             {filtering
               ? `${visible.length} of ${frames.length} frames`
               : `${frames.length} frames`}
+            {filtering ? (
+              <button className={styles.clear} type="button" onClick={() => setFilters(EMPTY)}>
+                Clear
+              </button>
+            ) : null}
           </p>
         </PhotographyHeader>
 
