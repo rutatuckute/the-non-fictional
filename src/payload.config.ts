@@ -9,6 +9,7 @@ import sharp from 'sharp'
 
 import { Media, MEDIA_BASE } from './collections/Media'
 import { Photographs } from './collections/Photographs'
+import { Series } from './collections/Series'
 import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
 
@@ -39,7 +40,7 @@ export default buildConfig({
     },
   },
 
-  collections: [Posts, Photographs, Media, Users],
+  collections: [Posts, Photographs, Series, Media, Users],
 
   // Bodies are stored as markdown, so the rich text editor is only here because
   // Payload requires a default one. Nothing on this site renders Lexical.

@@ -50,12 +50,15 @@
   padding: 0 26px;
 }
 
+/* One column. The controls used to take a column beside the information block,
+   which left that block too narrow to hold its four items on one line — so the
+   archive wore a two-line header while the other two views wore a one-line one.
+   The block now gets the full width everywhere, and the controls sit under the
+   view navigation as a row of their own. */
 .header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, auto);
-  align-items: start;
-  gap: 32px 48px;
-  padding: 40px 0 26px;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 0 22px;
   border-bottom: 1px solid var(--rule);
 }
 
@@ -66,11 +69,13 @@
 /* Controls sit beside the title rather than in a bar above the frames. */
 .controls {
   display: flex;
-  flex-direction: column;
-  gap: 7px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
   min-width: 0;
-  max-width: 30rem;
-  padding-top: 4px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule-subtle);
 }
 
 .kicker {
@@ -162,23 +167,23 @@
 
 /* Label in a fixed first column, chips wrapping in the second, so the labels
    stay aligned down the left edge of the control stack. */
+/* Label and chips on one line, the label sized to its own text rather than to a
+   column — there are two groups now, not four, and a fixed column left one of
+   them short and the other padded. */
 .group {
-  display: grid;
-  /* 5rem leaves "SPACE/TIME" under a pixel of slack at 11px uppercase, so it
-     wraps on any metric variance. The chips take the rest. */
-  grid-template-columns: 5.75rem minmax(0, 1fr);
-  align-items: start;
+  display: flex;
+  align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 
 .groupLabel {
-  padding-top: 8px;
   color: var(--ink-3);
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.12em;
-  text-align: right;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .groupChips {
@@ -763,5 +768,237 @@
 
   .lightboxNext {
     right: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Selected · Archive · Series
+
+   Three routes over one collection. The navigation between them is set in the
+   same mono the kit block and the controls use, because it belongs to the
+   header rather than to the page under it — a tab, pill or card would make it
+   a control, and it is a place.
+   --------------------------------------------------------------------------- */
+
+.views {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  margin-top: 26px;
+}
+
+.view {
+  position: relative;
+  padding-bottom: 7px;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.view::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.view:hover,
+.view:focus-visible {
+  color: var(--ink);
+}
+
+.view[data-on="true"] {
+  color: var(--brand);
+}
+
+.view[data-on="true"]::after {
+  opacity: 1;
+}
+
+/* The edit, and the inside of a series.
+   Both are sequences rather than grids. composeLayout decides which treatment
+   each frame gets; this is only what those treatments mean in width and
+   alignment. Percentages are of the content column, so the whole composition
+   scales with the page rather than snapping between breakpoints. */
+
+.sequence {
+  display: flex;
+  flex-direction: column;
+  /* Related to the gutter inside a row, not several times it. The vertical
+     rhythm is what decides whether the page reads as one body of work or as a
+     series of separate appearances. */
+  gap: clamp(8px, 1vw, 16px);
+  padding: clamp(20px, 2.5vw, 38px) 0 clamp(64px, 8vw, 104px);
+}
+
+/* A justified row. The frames take widths in proportion to their aspect ratios,
+   which resolves every one of them to the same height — so nothing is left
+   short and there is no space under anything. A row narrower than the page is
+   one that would otherwise have been too tall; it is centred, not aligned. */
+.row {
+  display: flex;
+  gap: clamp(8px, 1vw, 16px);
+  width: 100%;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+.plate {
+  margin: 0;
+}
+
+.plateButton {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.plateImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* The layout adapts to the photograph. Nothing here is ever cropped to make
+     a row resolve — the widths do that. */
+  object-fit: contain;
+}
+
+/* Metadata sits in the frame and stays out of the way until asked for. A
+   permanent caption under every photograph turns a sequence into a catalogue,
+   and the gradient is only as much as the text needs to stay legible over a
+   bright corner. */
+.plateMeta {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 44px 18px 16px;
+  background: linear-gradient(to top, rgba(11, 10, 9, 0.62), rgba(11, 10, 9, 0));
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+  text-align: left;
+}
+
+.plateTitle {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.plateWhere {
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Pointer devices only. On a touch screen there is no hover to reveal it with,
+   and a permanent overlay is exactly what this is avoiding — the lightbox
+   carries the metadata there. */
+@media (hover: hover) {
+  .plateButton:hover .plateMeta,
+  .plateButton:focus-visible .plateMeta {
+    opacity: 1;
+  }
+}
+
+/* Keyboard focus has to reveal it whatever the input device. */
+.plateButton:focus-visible .plateMeta {
+  opacity: 1;
+}
+
+/* The series index: a cover and a name. Deliberately not a card — no border,
+   no panel, no badge; the photograph is the entry and the name is under it. */
+
+.seriesIndex {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(420px, 100%), 1fr));
+  gap: clamp(44px, 5vw, 76px) clamp(28px, 3vw, 48px);
+  padding: clamp(28px, 4vw, 56px) 0 clamp(80px, 10vw, 140px);
+}
+
+.seriesCard {
+  display: block;
+  text-decoration: none;
+}
+
+.seriesCover {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: opacity 200ms ease;
+}
+
+.seriesCard:hover .seriesCover,
+.seriesCard:focus-visible .seriesCover {
+  opacity: 0.82;
+}
+
+.seriesName {
+  display: block;
+  padding-top: 14px;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: color 150ms ease;
+}
+
+.seriesCard:hover .seriesName,
+.seriesCard:focus-visible .seriesName {
+  color: var(--brand);
+}
+
+/* The name of the body of work being read, above its frames. Set like the
+   page title rather than like a label — same typeface, same weight, same tight
+   tracking — at a size that keeps it under the title rather than beside it. */
+.seriesTitle {
+  margin: clamp(20px, 2.4vw, 32px) 0 0;
+  color: var(--ink);
+  font-family: var(--font-title);
+  font-size: clamp(19px, 2vw, 27px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+@media (max-width: 900px) {
+  .sequence,
+  .row {
+    gap: clamp(8px, 1.4vw, 14px);
+  }
+}
+
+@media (max-width: 620px) {
+  /* Rows of three become three thumbnails on a phone, so the rows break and the
+     sequence is set straight — in order, full width, own proportions. */
+  .row {
+    flex-direction: column;
+    max-width: 100% !important;
+    gap: clamp(8px, 2.4vw, 12px);
+  }
+
+  .sequence {
+    gap: clamp(8px, 2.4vw, 12px);
+  }
+
+  .views {
+    gap: 20px;
   }
 }

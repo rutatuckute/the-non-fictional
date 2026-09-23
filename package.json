@@ -24,7 +24,8 @@
     "db:down": "docker compose down",
     "images:check": "node scripts/optimize-images.cjs --check",
     "images:optimize": "node scripts/optimize-images.cjs",
-    "migrate:media": "tsx --env-file=.env scripts/migrate-media.ts"
+    "migrate:media": "tsx --env-file=.env scripts/migrate-media.ts",
+    "migrate:series": "tsx --env-file=.env scripts/migrate-series.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",

@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     posts: Post;
     photographs: Photograph;
+    series: Series;
     media: Media;
     users: User;
     'payload-kv': PayloadKv;
@@ -80,6 +81,7 @@ export interface Config {
   collectionsSelect: {
     posts: PostsSelect<false> | PostsSelect<true>;
     photographs: PhotographsSelect<false> | PhotographsSelect<true>;
+    series: SeriesSelect<false> | SeriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -196,10 +198,40 @@ export interface Photograph {
   roll?: number | null;
   type?: ('portraits' | 'strangers' | 'scenes' | 'lights') | null;
   /**
-   * A slug shared by every frame in the series, e.g. ciao-amore. Its display name is derived from this, so adding or renaming a frame cannot shift it.
+   * A slug shared by every frame in the series, e.g. ciao-amore. Superseded by the Series relationship.
    */
   series?: string | null;
   date: string;
+  /**
+   * Show this frame in Selected.
+   */
+  selected?: boolean | null;
+  /**
+   * Position in Selected. Lower comes first. Unset sorts last.
+   */
+  selectedOrder?: number | null;
+  /**
+   * The body of work this frame belongs to, if any.
+   */
+  seriesRef?: (number | null) | Series;
+  /**
+   * Overrules the composition for this frame in Selected. Normally left empty.
+   */
+  selectedLayout?:
+    ('wide' | 'large' | 'medium-left' | 'medium-right' | 'portrait-left' | 'portrait-right' | 'portrait-center') | null;
+  /**
+   * Two frames sharing a value are set beside each other in Selected, in sequence order. A deliberate pairing, as against the ones the layout makes on its own.
+   */
+  selectedGroup?: string | null;
+  /**
+   * Overrules the composition for this frame inside its series. Separate from the Selected one, because a frame can want a different treatment in each.
+   */
+  seriesLayout?:
+    ('wide' | 'large' | 'medium-left' | 'medium-right' | 'portrait-left' | 'portrait-right' | 'portrait-center') | null;
+  /**
+   * Position within the series. Lower comes first. Unset sorts last.
+   */
+  seriesOrder?: number | null;
   tags?:
     | {
         tag: string;
@@ -242,6 +274,31 @@ export interface Media {
       filename?: string | null;
     };
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "series".
+ */
+export interface Series {
+  id: number;
+  /**
+   * Shown on the series index and at the top of the series page.
+   */
+  title: string;
+  /**
+   * The frame that stands for this series on the index. Left empty, the first frame by order is used.
+   */
+  cover?: (number | null) | Photograph;
+  /**
+   * The URL this series is published at, under /photography/series/. Taken from the title when left empty.
+   */
+  slug?: string | null;
+  /**
+   * Position on the series index. Lower comes first. Unset sorts last.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -300,6 +357,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'photographs';
         value: number | Photograph;
+      } | null)
+    | ({
+        relationTo: 'series';
+        value: number | Series;
       } | null)
     | ({
         relationTo: 'media';
@@ -392,12 +453,31 @@ export interface PhotographsSelect<T extends boolean = true> {
   type?: T;
   series?: T;
   date?: T;
+  selected?: T;
+  selectedOrder?: T;
+  seriesRef?: T;
+  selectedLayout?: T;
+  selectedGroup?: T;
+  seriesLayout?: T;
+  seriesOrder?: T;
   tags?:
     | T
     | {
         tag?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "series_select".
+ */
+export interface SeriesSelect<T extends boolean = true> {
+  title?: T;
+  cover?: T;
+  slug?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }

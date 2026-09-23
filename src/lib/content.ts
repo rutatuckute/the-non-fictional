@@ -32,9 +32,21 @@ export type ContentNode = {
     inquiry: string | null
     link: string | null
     selected: boolean | null
+    selectedOrder: number | null
+    // Optional overrides. Empty is the normal case: the composition is worked
+    // out from the frames themselves.
+    selectedLayout: string | null
+    selectedGroup: string | null
+    seriesLayout: string | null
     photo: string | null
+    // The frame's own proportions, so a layout can hold them rather than crop
+    // to a shape of its own choosing.
+    photoWidth: number | null
+    photoHeight: number | null
     location: string | null
     series: string | null
+    seriesTitle: string | null
+    seriesOrder: number | null
     year: string | null
     roll: number | null
     tags: string[]
@@ -104,6 +116,20 @@ const mediaUrl = (value: unknown): string | null => {
   return null
 }
 
+// The stored dimensions of an upload. A frame is laid out at its own ratio, so
+// the page has to know it before the image loads or every row would reflow.
+const mediaDims = (value: unknown): { width: number | null; height: number | null } => {
+  if (value && typeof value === 'object') {
+    const doc = value as { width?: unknown; height?: unknown }
+    return {
+      width: typeof doc.width === 'number' ? doc.width : null,
+      height: typeof doc.height === 'number' ? doc.height : null,
+    }
+  }
+
+  return { width: null, height: null }
+}
+
 const deriveExcerpt = (body: string, length = 200): string => {
   const text = body
     .replace(/<[^>]+>/g, ' ')
@@ -145,8 +171,30 @@ type PhotographDoc = {
   roll?: number | null
   type?: string | null
   series?: string | null
+  selected?: boolean | null
+  selectedOrder?: number | null
+  seriesRef?: number | { slug?: string | null; title?: string | null } | null
+  seriesOrder?: number | null
+  selectedLayout?: string | null
+  selectedGroup?: string | null
+  seriesLayout?: string | null
   date: string
   tags?: unknown
+}
+
+// Membership is the relationship; the slug it resolves to is what the rest of
+// the photography code has always keyed a series by, so that is what is handed
+// on. The legacy text column is the fallback for anything not yet linked.
+const seriesSlug = (doc: PhotographDoc): string | null => {
+  const ref = doc.seriesRef
+  if (ref && typeof ref === 'object' && typeof ref.slug === 'string' && ref.slug) return ref.slug
+  return doc.series || null
+}
+
+const seriesTitle = (doc: PhotographDoc): string | null => {
+  const ref = doc.seriesRef
+  if (ref && typeof ref === 'object' && typeof ref.title === 'string' && ref.title) return ref.title
+  return null
 }
 
 const postToNode = (doc: PostDoc): ContentNode => {
@@ -172,9 +220,17 @@ const postToNode = (doc: PostDoc): ContentNode => {
       inquiry: doc.inquiry ?? null,
       link: doc.link ?? null,
       selected: doc.selected ?? null,
+    selectedOrder: null,
+    selectedLayout: null,
+    selectedGroup: null,
+    seriesLayout: null,
       photo: null,
+    photoWidth: null,
+    photoHeight: null,
       location: null,
       series: null,
+    seriesTitle: null,
+    seriesOrder: null,
       year: doc.publishedAt ? String(new Date(doc.publishedAt).getUTCFullYear()) : null,
       roll: null,
       tags: tagList(doc.tags),
@@ -202,10 +258,18 @@ const photographToNode = (doc: PhotographDoc): ContentNode => ({
     category_id: null,
     inquiry: null,
     link: null,
-    selected: null,
+    selected: doc.selected ?? null,
+    selectedOrder: typeof doc.selectedOrder === 'number' ? doc.selectedOrder : null,
+    selectedLayout: doc.selectedLayout || null,
+    selectedGroup: doc.selectedGroup || null,
+    seriesLayout: doc.seriesLayout || null,
     photo: mediaUrl(doc.photo),
+    photoWidth: mediaDims(doc.photo).width,
+    photoHeight: mediaDims(doc.photo).height,
     location: doc.location ?? null,
-    series: doc.series ?? null,
+    series: seriesSlug(doc),
+    seriesTitle: seriesTitle(doc),
+    seriesOrder: typeof doc.seriesOrder === 'number' ? doc.seriesOrder : null,
     year: doc.year ?? null,
     roll: Number.isFinite(doc.roll) ? (doc.roll as number) : null,
     tags: tagList(doc.tags),
@@ -281,4 +345,59 @@ export const getArticle = cache(async (slug: string): Promise<Article | null> =>
 export const getPhotographSlugs = cache(async (): Promise<string[]> => {
   const photographs = await getPhotographs()
   return photographs.map((frame) => frame.fields.slug.replace(/^\/|\/$/g, ''))
+})
+
+export type SeriesEntry = {
+  id: string | number
+  title: string
+  slug: string
+  order: number | null
+  // The frame chosen to stand for the series, by slug. Unset, the series page
+  // and index fall back to the first frame by seriesOrder.
+  coverSlug: string | null
+}
+
+type SeriesDoc = {
+  id: string | number
+  title?: string | null
+  slug?: string | null
+  order?: number | null
+  cover?: number | { slug?: string | null } | null
+}
+
+// Manual order first, unset last, then title so the tail is at least stable.
+const bySeriesOrder = (a: SeriesEntry, b: SeriesEntry): number => {
+  if (a.order !== b.order) {
+    if (a.order === null) return 1
+    if (b.order === null) return -1
+    return a.order - b.order
+  }
+
+  return a.title.localeCompare(b.title)
+}
+
+export const getSeries = cache(async (): Promise<SeriesEntry[]> => {
+  const payload = await getClient()
+  const { docs } = await payload.find({
+    collection: 'series',
+    limit: 500,
+    // The cover is a relationship to a photograph; depth 1 resolves it far
+    // enough to read the slug the frame is keyed by.
+    depth: 1,
+    pagination: false,
+  })
+
+  return (docs as unknown as SeriesDoc[])
+    .filter((doc) => doc.slug)
+    .map((doc) => ({
+      id: doc.id,
+      title: doc.title || String(doc.slug),
+      slug: String(doc.slug),
+      order: typeof doc.order === 'number' ? doc.order : null,
+      coverSlug:
+        doc.cover && typeof doc.cover === 'object' && typeof doc.cover.slug === 'string'
+          ? doc.cover.slug
+          : null,
+    }))
+    .sort(bySeriesOrder)
 })

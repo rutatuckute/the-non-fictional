@@ -6,6 +6,22 @@ import { slugify } from '../lib/slug'
 // Frames are grouped into these on the photography page's Type chips.
 export const PHOTO_TYPES = ['portraits', 'strangers', 'scenes', 'lights'] as const
 
+// The whole vocabulary the editorial layout draws on. Deliberately short: these
+// are the treatments a frame can be given, not a grid to position it on. Left
+// unset — which is the normal case — the layout chooses, and these exist only
+// to overrule it for a frame that needs it.
+export const LAYOUT_SLOTS = [
+  'wide',
+  'large',
+  'medium-left',
+  'medium-right',
+  'portrait-left',
+  'portrait-right',
+  'portrait-center',
+] as const
+
+const layoutOptions = LAYOUT_SLOTS.map((value) => ({ label: value, value }))
+
 export const Photographs: CollectionConfig = {
   slug: 'photographs',
   labels: { singular: 'Photograph', plural: 'Photography' },
@@ -113,11 +129,15 @@ export const Photographs: CollectionConfig = {
       admin: { position: 'sidebar' },
     },
     {
+      // Superseded by seriesRef below, which points at a series document rather
+      // than naming one by slug. Kept, and kept filled, because it is what the
+      // frames were migrated in with; nothing reads it any more.
       name: 'series',
       type: 'text',
       admin: {
+        hidden: true,
         description:
-          'A slug shared by every frame in the series, e.g. ciao-amore. Its display name is derived from this, so adding or renaming a frame cannot shift it.',
+          'A slug shared by every frame in the series, e.g. ciao-amore. Superseded by the Series relationship.',
       },
     },
     {
@@ -127,6 +147,77 @@ export const Photographs: CollectionConfig = {
       admin: {
         position: 'sidebar',
         date: { pickerAppearance: 'dayAndTime' },
+      },
+    },
+    {
+      // Curation is explicit. Nothing infers a portfolio from recency, rolls,
+      // titles or anything else — a frame is in the edit because it was put
+      // there.
+      name: 'selected',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Show this frame in Selected.',
+      },
+    },
+    {
+      // The sequence is the edit. Selected is never sorted by date.
+      name: 'selectedOrder',
+      type: 'number',
+      admin: {
+        position: 'sidebar',
+        description: 'Position in Selected. Lower comes first. Unset sorts last.',
+        condition: (data) => Boolean(data?.selected),
+      },
+    },
+    {
+      name: 'seriesRef',
+      label: 'Series',
+      type: 'relationship',
+      relationTo: 'series',
+      admin: {
+        description: 'The body of work this frame belongs to, if any.',
+      },
+    },
+    {
+      name: 'selectedLayout',
+      type: 'select',
+      options: layoutOptions,
+      admin: {
+        position: 'sidebar',
+        description: 'Overrules the composition for this frame in Selected. Normally left empty.',
+        condition: (data) => Boolean(data?.selected),
+      },
+    },
+    {
+      name: 'selectedGroup',
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+        description:
+          'Two frames sharing a value are set beside each other in Selected, in sequence order. A deliberate pairing, as against the ones the layout makes on its own.',
+        condition: (data) => Boolean(data?.selected),
+      },
+    },
+    {
+      name: 'seriesLayout',
+      type: 'select',
+      options: layoutOptions,
+      admin: {
+        position: 'sidebar',
+        description:
+          'Overrules the composition for this frame inside its series. Separate from the Selected one, because a frame can want a different treatment in each.',
+        condition: (data) => Boolean(data?.seriesRef),
+      },
+    },
+    {
+      name: 'seriesOrder',
+      type: 'number',
+      admin: {
+        position: 'sidebar',
+        description: 'Position within the series. Lower comes first. Unset sorts last.',
+        condition: (data) => Boolean(data?.seriesRef),
       },
     },
     {
