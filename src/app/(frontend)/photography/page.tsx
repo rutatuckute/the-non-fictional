@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 import { getPhotographs } from '../../../lib/content'
-import PhotographyArchive from './photography-archive'
+import SelectedView from './selected-view'
 
 const description =
   'Photography on The Non Fictional — shot on film, in Vilnius, Paris and elsewhere.'
@@ -21,5 +21,5 @@ export const metadata: Metadata = {
 export default async function PhotographyPage() {
   const nodes = await getPhotographs()
 
-  return <PhotographyArchive nodes={nodes} />
+  return <SelectedView nodes={nodes} />
 }

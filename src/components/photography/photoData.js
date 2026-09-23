@@ -109,6 +109,8 @@ export const buildFrames = (nodes) => {
         titleBase: base,
         titleIndex: index,
         photo: fm.photo || null,
+        width: fm.photoWidth || null,
+        height: fm.photoHeight || null,
         location: fm.location || null,
         city,
         country,
@@ -117,7 +119,12 @@ export const buildFrames = (nodes) => {
         type: fm.type || null,
         tags: fm.tags || [],
         series: fm.series || null,
-        seriesName: fm.series ? seriesLabel(fm.series) : null,
+        // The series document's own title where there is one; the slug is only
+        // a fallback for a frame not yet linked to a series.
+        seriesName: fm.seriesTitle || (fm.series ? seriesLabel(fm.series) : null),
+        seriesOrder: Number.isFinite(fm.seriesOrder) ? fm.seriesOrder : null,
+        selected: Boolean(fm.selected),
+        selectedOrder: Number.isFinite(fm.selectedOrder) ? fm.selectedOrder : null,
       }
     })
     .sort(byYearRollTitle)
@@ -217,3 +224,51 @@ export const EMPTY_FILTERS = { type: [], lived: [], place: [], year: [] }
 
 export const isFiltering = (filters) =>
   Object.values(filters).some((chosen) => chosen.length > 0)
+
+// Manual order first, unset last, then the archive's own order so an
+// unsequenced frame still lands somewhere stable rather than moving between
+// renders. Used for both Selected and the inside of a series, which are
+// sequenced the same way and for the same reason: the order is the work.
+const byManualOrder = (key) => (a, b) => {
+  const left = a[key]
+  const right = b[key]
+
+  if (left !== right) {
+    if (left === null) return 1
+    if (right === null) return -1
+    return left - right
+  }
+
+  return 0
+}
+
+// The edit. Explicitly marked frames only, in the order they were given —
+// never by date, rating, recency or anything else inferred.
+export const selectedFrames = (frames) =>
+  frames.filter((frame) => frame.selected).sort(byManualOrder("selectedOrder"))
+
+// Everything. Selected frames and series frames are in here too; the archive is
+// the whole record, not the remainder.
+//
+// buildFrames already returns newest first — by year, then roll, then title —
+// so the archive is that order untouched. Sorting on the stored date instead
+// would order the collection by when each frame was added to the site rather
+// than when it was taken.
+export const archiveFrames = (frames) => frames
+
+// One body of work, in its own sequence.
+export const framesInSeries = (frames, slug) =>
+  frames.filter((frame) => frame.series === slug).sort(byManualOrder("seriesOrder"))
+
+// Pairs each series with its frames and its cover, dropping any series that has
+// no frames yet so the index cannot show an empty one.
+export const buildSeriesIndex = (frames, series) =>
+  series
+    .map((entry) => {
+      const members = framesInSeries(frames, entry.slug)
+      const cover =
+        members.find((frame) => frame.ref === entry.coverSlug) || members[0] || null
+
+      return { ...entry, frames: members, cover }
+    })
+    .filter((entry) => entry.frames.length > 0)

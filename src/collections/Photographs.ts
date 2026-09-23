@@ -113,11 +113,15 @@ export const Photographs: CollectionConfig = {
       admin: { position: 'sidebar' },
     },
     {
+      // Superseded by seriesRef below, which points at a series document rather
+      // than naming one by slug. Kept, and kept filled, because it is what the
+      // frames were migrated in with; nothing reads it any more.
       name: 'series',
       type: 'text',
       admin: {
+        hidden: true,
         description:
-          'A slug shared by every frame in the series, e.g. ciao-amore. Its display name is derived from this, so adding or renaming a frame cannot shift it.',
+          'A slug shared by every frame in the series, e.g. ciao-amore. Superseded by the Series relationship.',
       },
     },
     {
@@ -127,6 +131,46 @@ export const Photographs: CollectionConfig = {
       admin: {
         position: 'sidebar',
         date: { pickerAppearance: 'dayAndTime' },
+      },
+    },
+    {
+      // Curation is explicit. Nothing infers a portfolio from recency, rolls,
+      // titles or anything else — a frame is in the edit because it was put
+      // there.
+      name: 'selected',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Show this frame in Selected.',
+      },
+    },
+    {
+      // The sequence is the edit. Selected is never sorted by date.
+      name: 'selectedOrder',
+      type: 'number',
+      admin: {
+        position: 'sidebar',
+        description: 'Position in Selected. Lower comes first. Unset sorts last.',
+        condition: (data) => Boolean(data?.selected),
+      },
+    },
+    {
+      name: 'seriesRef',
+      label: 'Series',
+      type: 'relationship',
+      relationTo: 'series',
+      admin: {
+        description: 'The body of work this frame belongs to, if any.',
+      },
+    },
+    {
+      name: 'seriesOrder',
+      type: 'number',
+      admin: {
+        position: 'sidebar',
+        description: 'Position within the series. Lower comes first. Unset sorts last.',
+        condition: (data) => Boolean(data?.seriesRef),
       },
     },
     {

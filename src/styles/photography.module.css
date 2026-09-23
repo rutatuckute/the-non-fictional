@@ -765,3 +765,189 @@
     right: 0;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Selected · Archive · Series
+
+   Three routes over one collection. The navigation between them is set in the
+   same mono the kit block and the controls use, because it belongs to the
+   header rather than to the page under it — a tab, pill or card would make it
+   a control, and it is a place.
+   --------------------------------------------------------------------------- */
+
+.views {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  margin-top: 26px;
+}
+
+.view {
+  position: relative;
+  padding-bottom: 7px;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.view::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.view:hover,
+.view:focus-visible {
+  color: var(--ink);
+}
+
+.view[data-on="true"] {
+  color: var(--brand);
+}
+
+.view[data-on="true"]::after {
+  opacity: 1;
+}
+
+/* The edit, and the inside of a series — both are sequences rather than grids,
+   so they are set the same way: one frame at a time, at its own proportions,
+   with enough room around it that the sequence reads as a sequence. */
+
+.selected {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(72px, 9vw, 132px);
+  padding: clamp(28px, 4vw, 56px) 0 clamp(80px, 10vw, 140px);
+}
+
+.plate {
+  width: 100%;
+  margin: 0;
+}
+
+/* A standing frame is held narrower than a lying one. Given the same width they
+   do not read as the same size — the tall one takes half the screen again — and
+   the sequence starts to lurch. */
+.plate[data-orient="landscape"] {
+  max-width: 980px;
+}
+
+.plate[data-orient="portrait"] {
+  max-width: 660px;
+}
+
+.plateButton {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.plateImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.plateCaption {
+  /* Title, then place and year under it. Stacked rather than run together,
+     because on a narrow screen an inline pair wraps into one another and the
+     title stops being a title. */
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 14px;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.plateCaption b {
+  color: var(--ink-2);
+  font-weight: 400;
+}
+
+/* The series index: a cover and a name. Deliberately not a card — no border,
+   no panel, no badge; the photograph is the entry and the name is under it. */
+
+.seriesIndex {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(420px, 100%), 1fr));
+  gap: clamp(44px, 5vw, 76px) clamp(28px, 3vw, 48px);
+  padding: clamp(28px, 4vw, 56px) 0 clamp(80px, 10vw, 140px);
+}
+
+.seriesCard {
+  display: block;
+  text-decoration: none;
+}
+
+.seriesCover {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: opacity 200ms ease;
+}
+
+.seriesCard:hover .seriesCover,
+.seriesCard:focus-visible .seriesCover {
+  opacity: 0.82;
+}
+
+.seriesName {
+  display: block;
+  padding-top: 14px;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: color 150ms ease;
+}
+
+.seriesCard:hover .seriesName,
+.seriesCard:focus-visible .seriesName {
+  color: var(--brand);
+}
+
+/* The name of the body of work being read, above its frames. */
+.seriesTitle {
+  margin: clamp(24px, 3vw, 40px) 0 0;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 720px) {
+  /* Mobile keeps one frame at a time and keeps them large — the sequence is
+     the point, and a column of thumbnails is not a sequence. Only the rhythm
+     tightens. */
+  .selected {
+    gap: clamp(48px, 12vw, 76px);
+  }
+
+  .plate[data-orient="landscape"],
+  .plate[data-orient="portrait"] {
+    max-width: 100%;
+  }
+
+  .views {
+    gap: 20px;
+  }
+}
