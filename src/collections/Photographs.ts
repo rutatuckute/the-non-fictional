@@ -6,6 +6,22 @@ import { slugify } from '../lib/slug'
 // Frames are grouped into these on the photography page's Type chips.
 export const PHOTO_TYPES = ['portraits', 'strangers', 'scenes', 'lights'] as const
 
+// The whole vocabulary the editorial layout draws on. Deliberately short: these
+// are the treatments a frame can be given, not a grid to position it on. Left
+// unset — which is the normal case — the layout chooses, and these exist only
+// to overrule it for a frame that needs it.
+export const LAYOUT_SLOTS = [
+  'wide',
+  'large',
+  'medium-left',
+  'medium-right',
+  'portrait-left',
+  'portrait-right',
+  'portrait-center',
+] as const
+
+const layoutOptions = LAYOUT_SLOTS.map((value) => ({ label: value, value }))
+
 export const Photographs: CollectionConfig = {
   slug: 'photographs',
   labels: { singular: 'Photograph', plural: 'Photography' },
@@ -162,6 +178,37 @@ export const Photographs: CollectionConfig = {
       relationTo: 'series',
       admin: {
         description: 'The body of work this frame belongs to, if any.',
+      },
+    },
+    {
+      name: 'selectedLayout',
+      type: 'select',
+      options: layoutOptions,
+      admin: {
+        position: 'sidebar',
+        description: 'Overrules the composition for this frame in Selected. Normally left empty.',
+        condition: (data) => Boolean(data?.selected),
+      },
+    },
+    {
+      name: 'selectedGroup',
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+        description:
+          'Two frames sharing a value are set beside each other in Selected, in sequence order. A deliberate pairing, as against the ones the layout makes on its own.',
+        condition: (data) => Boolean(data?.selected),
+      },
+    },
+    {
+      name: 'seriesLayout',
+      type: 'select',
+      options: layoutOptions,
+      admin: {
+        position: 'sidebar',
+        description:
+          'Overrules the composition for this frame inside its series. Separate from the Selected one, because a frame can want a different treatment in each.',
+        condition: (data) => Boolean(data?.seriesRef),
       },
     },
     {

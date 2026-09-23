@@ -125,6 +125,9 @@ export const buildFrames = (nodes) => {
         seriesOrder: Number.isFinite(fm.seriesOrder) ? fm.seriesOrder : null,
         selected: Boolean(fm.selected),
         selectedOrder: Number.isFinite(fm.selectedOrder) ? fm.selectedOrder : null,
+        selectedLayout: fm.selectedLayout || null,
+        selectedGroup: fm.selectedGroup || null,
+        seriesLayout: fm.seriesLayout || null,
       }
     })
     .sort(byYearRollTitle)

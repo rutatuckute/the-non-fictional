@@ -198,7 +198,7 @@ export interface Photograph {
   roll?: number | null;
   type?: ('portraits' | 'strangers' | 'scenes' | 'lights') | null;
   /**
-   * A slug shared by every frame in the series, e.g. ciao-amore. Its display name is derived from this, so adding or renaming a frame cannot shift it.
+   * A slug shared by every frame in the series, e.g. ciao-amore. Superseded by the Series relationship.
    */
   series?: string | null;
   date: string;
@@ -214,6 +214,20 @@ export interface Photograph {
    * The body of work this frame belongs to, if any.
    */
   seriesRef?: (number | null) | Series;
+  /**
+   * Overrules the composition for this frame in Selected. Normally left empty.
+   */
+  selectedLayout?:
+    ('wide' | 'large' | 'medium-left' | 'medium-right' | 'portrait-left' | 'portrait-right' | 'portrait-center') | null;
+  /**
+   * Two frames sharing a value are set beside each other in Selected, in sequence order. A deliberate pairing, as against the ones the layout makes on its own.
+   */
+  selectedGroup?: string | null;
+  /**
+   * Overrules the composition for this frame inside its series. Separate from the Selected one, because a frame can want a different treatment in each.
+   */
+  seriesLayout?:
+    ('wide' | 'large' | 'medium-left' | 'medium-right' | 'portrait-left' | 'portrait-right' | 'portrait-center') | null;
   /**
    * Position within the series. Lower comes first. Unset sorts last.
    */
@@ -442,6 +456,9 @@ export interface PhotographsSelect<T extends boolean = true> {
   selected?: T;
   selectedOrder?: T;
   seriesRef?: T;
+  selectedLayout?: T;
+  selectedGroup?: T;
+  seriesLayout?: T;
   seriesOrder?: T;
   tags?:
     | T

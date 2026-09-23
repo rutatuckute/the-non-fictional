@@ -33,6 +33,11 @@ export type ContentNode = {
     link: string | null
     selected: boolean | null
     selectedOrder: number | null
+    // Optional overrides. Empty is the normal case: the composition is worked
+    // out from the frames themselves.
+    selectedLayout: string | null
+    selectedGroup: string | null
+    seriesLayout: string | null
     photo: string | null
     // The frame's own proportions, so a layout can hold them rather than crop
     // to a shape of its own choosing.
@@ -170,6 +175,9 @@ type PhotographDoc = {
   selectedOrder?: number | null
   seriesRef?: number | { slug?: string | null; title?: string | null } | null
   seriesOrder?: number | null
+  selectedLayout?: string | null
+  selectedGroup?: string | null
+  seriesLayout?: string | null
   date: string
   tags?: unknown
 }
@@ -213,6 +221,9 @@ const postToNode = (doc: PostDoc): ContentNode => {
       link: doc.link ?? null,
       selected: doc.selected ?? null,
     selectedOrder: null,
+    selectedLayout: null,
+    selectedGroup: null,
+    seriesLayout: null,
       photo: null,
     photoWidth: null,
     photoHeight: null,
@@ -249,6 +260,9 @@ const photographToNode = (doc: PhotographDoc): ContentNode => ({
     link: null,
     selected: doc.selected ?? null,
     selectedOrder: typeof doc.selectedOrder === 'number' ? doc.selectedOrder : null,
+    selectedLayout: doc.selectedLayout || null,
+    selectedGroup: doc.selectedGroup || null,
+    seriesLayout: doc.seriesLayout || null,
     photo: mediaUrl(doc.photo),
     photoWidth: mediaDims(doc.photo).width,
     photoHeight: mediaDims(doc.photo).height,

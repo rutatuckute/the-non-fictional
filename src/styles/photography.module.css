@@ -817,35 +817,86 @@
   opacity: 1;
 }
 
-/* The edit, and the inside of a series — both are sequences rather than grids,
-   so they are set the same way: one frame at a time, at its own proportions,
-   with enough room around it that the sequence reads as a sequence. */
+/* The edit, and the inside of a series.
+   Both are sequences rather than grids. composeLayout decides which treatment
+   each frame gets; this is only what those treatments mean in width and
+   alignment. Percentages are of the content column, so the whole composition
+   scales with the page rather than snapping between breakpoints. */
 
-.selected {
+.sequence {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: clamp(72px, 9vw, 132px);
+  gap: clamp(64px, 8vw, 124px);
   padding: clamp(28px, 4vw, 56px) 0 clamp(80px, 10vw, 140px);
 }
 
-.plate {
+.row {
+  display: flex;
   width: 100%;
+}
+
+.row[data-slot="wide"] .plate {
+  width: 100%;
+}
+
+.row[data-slot="large"] {
+  justify-content: center;
+}
+
+.row[data-slot="large"] .plate {
+  width: 84%;
+}
+
+.row[data-slot="medium-left"] {
+  justify-content: flex-start;
+}
+
+.row[data-slot="medium-right"] {
+  justify-content: flex-end;
+}
+
+.row[data-slot="medium-left"] .plate,
+.row[data-slot="medium-right"] .plate {
+  width: 62%;
+}
+
+.row[data-slot="portrait-left"] {
+  justify-content: flex-start;
+}
+
+.row[data-slot="portrait-right"] {
+  justify-content: flex-end;
+}
+
+.row[data-slot="portrait-center"] {
+  justify-content: center;
+}
+
+.row[data-slot="portrait-left"] .plate,
+.row[data-slot="portrait-right"] .plate,
+.row[data-slot="portrait-center"] .plate {
+  width: 44%;
+}
+
+/* Two frames on one line. Held to the middle three quarters so a pair reads as
+   one object on the page rather than as the page briefly becoming a grid. */
+.row[data-kind="pair"] {
+  justify-content: center;
+  gap: clamp(14px, 2vw, 30px);
+}
+
+.row[data-kind="pair"] .plate {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 39%;
+}
+
+.plate {
   margin: 0;
 }
 
-/* A standing frame is held narrower than a lying one. Given the same width they
-   do not read as the same size — the tall one takes half the screen again — and
-   the sequence starts to lurch. */
-.plate[data-orient="landscape"] {
-  max-width: 980px;
-}
-
-.plate[data-orient="portrait"] {
-  max-width: 660px;
-}
-
 .plateButton {
+  position: relative;
   display: block;
   width: 100%;
   padding: 0;
@@ -860,24 +911,53 @@
   height: auto;
 }
 
-.plateCaption {
-  /* Title, then place and year under it. Stacked rather than run together,
-     because on a narrow screen an inline pair wraps into one another and the
-     title stops being a title. */
+/* Metadata sits in the frame and stays out of the way until asked for. A
+   permanent caption under every photograph turns a sequence into a catalogue,
+   and the gradient is only as much as the text needs to stay legible over a
+   bright corner. */
+.plateMeta {
+  position: absolute;
+  inset: auto 0 0 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding-top: 14px;
-  color: var(--ink-3);
+  gap: 3px;
+  padding: 44px 18px 16px;
+  background: linear-gradient(to top, rgba(11, 10, 9, 0.62), rgba(11, 10, 9, 0));
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+  text-align: left;
+}
+
+.plateTitle {
+  color: var(--ink);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.plateWhere {
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
-.plateCaption b {
-  color: var(--ink-2);
-  font-weight: 400;
+/* Pointer devices only. On a touch screen there is no hover to reveal it with,
+   and a permanent overlay is exactly what this is avoiding — the lightbox
+   carries the metadata there. */
+@media (hover: hover) {
+  .plateButton:hover .plateMeta,
+  .plateButton:focus-visible .plateMeta {
+    opacity: 1;
+  }
+}
+
+/* Keyboard focus has to reveal it whatever the input device. */
+.plateButton:focus-visible .plateMeta {
+  opacity: 1;
 }
 
 /* The series index: a cover and a name. Deliberately not a card — no border,
@@ -935,15 +1015,23 @@
 }
 
 @media (max-width: 720px) {
-  /* Mobile keeps one frame at a time and keeps them large — the sequence is
-     the point, and a column of thumbnails is not a sequence. Only the rhythm
-     tightens. */
-  .selected {
-    gap: clamp(48px, 12vw, 76px);
+  /* The composition is a desktop idea. Reproducing 44%-wide frames and left
+     and right offsets on a phone gives small photographs and a page that
+     wanders; the sequence is what matters and it survives being set straight.
+     A pair stacks like everything else. */
+  .sequence {
+    gap: clamp(44px, 11vw, 72px);
   }
 
-  .plate[data-orient="landscape"],
-  .plate[data-orient="portrait"] {
+  .row,
+  .row[data-kind="pair"] {
+    flex-direction: column;
+    gap: clamp(44px, 11vw, 72px);
+  }
+
+  .row .plate,
+  .row[data-kind="pair"] .plate {
+    width: 100%;
     max-width: 100%;
   }
 
