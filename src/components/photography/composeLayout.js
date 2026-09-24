@@ -1,92 +1,93 @@
-// Art-directs an ordered sequence of photographs across a twelve column field.
+// Composes an ordered sequence of photographs into editorial modules.
 //
-// Nothing here is justified. Neighbouring frames are not brought to a common
-// height, rows are not filled to the margins, and a small photograph is small
-// because it was placed small — it is never grown to take up the space beside
-// it. Scale is the hierarchy: some frames take three quarters of the field,
-// others a quarter, and what is left empty is as composed as what is not.
+// Two kinds, and a page is a sequence of them. A row holds one, two or three
+// frames side by side at a single height, their widths taken from their aspect
+// ratios. A span module holds one tall frame beside two stacked ones, the tall
+// frame running the full height of both.
 //
-// This is the opposite of packing, and the difference between an unequal height
-// that was placed and one that was left over is the whole thing. A justified row
-// that fails leaves a hole under its shortest frame. Here the heights differ
-// because each frame keeps its own proportions at the width it was given, and
-// the frames are staggered down the field so those differences read as
-// deliberate rather than as the row having run out.
+// Every module resolves. A row's widths are derived so its frames end level; a
+// span module's column split is solved so the two stacked frames, with the
+// gutter between them, come to exactly the height of the frame beside them.
+// Nothing is cropped to make that happen and nothing is left over — the next
+// module begins only once the current one has closed, which is what keeps this
+// a sequence of blocks rather than a drift of independent placements.
 //
-// selectedOrder is never touched. Which pattern a group of frames is given, and
-// where in the field each one sits, are the only decisions.
+// selectedOrder is never touched. Where a module breaks, and which kind it is,
+// are the only decisions.
 
 const ratioOf = (frame) =>
   frame.width && frame.height ? frame.width / frame.height : 1.5
 
 const isUpright = (frame) => ratioOf(frame) < 1.15
+// Tall enough to be worth running down two rows. A frame at 4:5 is upright but
+// not tall; this wants 2:3 and narrower.
+const isTall = (frame) => ratioOf(frame) <= 0.75
+
+// Two frames stack beside a tall one only if they are wider than it — stacking
+// two upright frames beside a third makes a module taller than the window,
+// which the height ceiling then shrinks into something small and timid.
+const stacksWell = (frame) => ratioOf(frame) >= 0.95
+
+// Could a span module start here? Asked before a row is allowed to swallow the
+// frame, so the composition seeks the shape out rather than meeting it by
+// chance.
+const spanStartsAt = (frames, at) => {
+  const [tall, a, b] = [frames[at], frames[at + 1], frames[at + 2]]
+
+  return Boolean(
+    tall && a && b && isTall(tall) && stacksWell(a) && stacksWell(b) && solveSpan(tall, a, b)
+  )
+}
 const isWide = (frame) => ratioOf(frame) >= 1.9
 
-// Six compositions. Each places its frames on the twelve column field by start
-// and span, and may drop one down the page — the stagger that keeps two frames
-// beside each other from reading as a row.
+// The gutter as a fraction of the module's width, near enough at the widths
+// this gallery runs at. It only has to be close: it shifts the solved split by
+// well under a per cent.
+const GUTTER = 0.011
+
+// Solves the column split for a span module.
 //
-// Spans are chosen so that a frame is either clearly dominant or clearly
-// supporting. Nothing sits at half, because half reads as undecided.
-const PATTERNS = {
-  // One photograph carrying the page.
-  anchor: [{ start: 1, span: 9 }],
-  anchorInset: [{ start: 4, span: 9 }],
+// The two stacked frames share a column of width x. Their heights are x/rA and
+// x/rB, and with the gutter between them that has to equal the height of the
+// tall frame, which is its own width over its ratio. One unknown, one equation:
+//
+//   (1 - x - g) / rT = x/rA + g + x/rB
+//
+// Returned as fractions of the module width, or null when the answer is not a
+// composition — a split that leaves either column under a fifth or over half
+// the field is a module that would look like an accident.
+const solveSpan = (tall, a, b) => {
+  const rT = ratioOf(tall)
+  const rA = ratioOf(a)
+  const rB = ratioOf(b)
 
-  // One photograph held small, with the field left open around it. The quiet
-  // beat in the sequence.
-  quiet: [{ start: 9, span: 4 }],
-  quietLeft: [{ start: 1, span: 4 }],
+  const x = (1 - GUTTER * (1 + rT)) / (1 + rT * (1 / rA + 1 / rB))
 
-  // A dominant frame and a supporting one, dropped so they do not align.
-  leadTrail: [
-    { start: 1, span: 7 },
-    { start: 9, span: 4, drop: 1.6 },
-  ],
-  trailLead: [
-    { start: 1, span: 4, drop: 1.2 },
-    { start: 6, span: 7 },
-  ],
+  // A split is a composition as long as neither column is squeezed to nothing
+  // or left carrying the whole module. Two stacked landscapes legitimately come
+  // out a little wider than the tall frame beside them — half is not the
+  // boundary, and treating it as one rejected every module this sequence could
+  // have made.
+  if (!Number.isFinite(x) || x < 0.22 || x > 0.62) return null
 
-  // Two upright frames. Neither is given a dominant span, because neither can
-  // take one — an upright frame wide enough to dominate is taller than the
-  // window, and the height ceiling pulls it back to roughly the width of the
-  // frame beside it, so the pattern claims a hierarchy it cannot show. They are
-  // set at two near widths instead and staggered, which is an asymmetry an
-  // upright frame can actually hold.
-  pairUneven: [
-    { start: 1, span: 5 },
-    { start: 7, span: 4, drop: 1.8 },
-  ],
-
-  // Three across, each at a different width and each on its own line of the
-  // field.
-  triStagger: [
-    { start: 1, span: 4 },
-    { start: 6, span: 3, drop: 2.2 },
-    { start: 10, span: 3, drop: 0.8 },
-  ],
+  return { side: x, tall: 1 - x - GUTTER }
 }
 
-const SIZE_OF = Object.fromEntries(
-  Object.entries(PATTERNS).map(([name, slots]) => [name, slots.length])
-)
-
 export const composeLayout = (frames, { layoutKey, groupKey = null } = {}) => {
-  const rows = []
+  const modules = []
 
   let index = 0
   let previous = null
-  let sinceQuiet = 0
-  let sinceAnchor = 2
-  let tick = 0
+  let spanTick = 0
+  let sinceSpan = 2
 
-  const push = (members, pattern) => {
-    rows.push({
-      pattern,
-      slots: PATTERNS[pattern],
+  const pushRow = (members, variant = "row") => {
+    modules.push({
+      kind: "row",
+      variant,
       frames: members,
       ratios: members.map(ratioOf),
+      sum: members.reduce((total, frame) => total + ratioOf(frame), 0),
       intentional: Boolean(
         groupKey &&
           members.length > 1 &&
@@ -94,16 +95,25 @@ export const composeLayout = (frames, { layoutKey, groupKey = null } = {}) => {
           members.every((m) => m[groupKey] === members[0][groupKey])
       ),
     })
-
-    previous = pattern
-    sinceQuiet = pattern.startsWith("quiet") ? 0 : sinceQuiet + 1
-    sinceAnchor = pattern.startsWith("anchor") ? 0 : sinceAnchor + 1
-    tick += 1
+    previous = variant
+    sinceSpan += 1
   }
 
-  // Alternates the side a single frame sits on, so the empty half of the field
-  // moves down the page rather than banking up on one side.
-  const swing = (a, b) => (tick % 2 === 0 ? a : b)
+  const pushSpan = (tall, a, b, split, side) => {
+    modules.push({
+      kind: "span",
+      variant: side === "left" ? "spanLeft" : "spanRight",
+      // Sequence order, always. The side only says which column the tall frame
+      // occupies, never which frame comes first.
+      frames: [tall, a, b],
+      split,
+      side,
+      ratios: [ratioOf(tall), ratioOf(a), ratioOf(b)],
+    })
+    previous = side === "left" ? "spanLeft" : "spanRight"
+    spanTick += 1
+    sinceSpan = 0
+  }
 
   while (index < frames.length) {
     const frame = frames[index]
@@ -112,7 +122,7 @@ export const composeLayout = (frames, { layoutKey, groupKey = null } = {}) => {
     const override = layoutKey ? frame[layoutKey] : null
 
     if (override) {
-      push([frame], override === "wide" ? swing("anchor", "anchorInset") : swing("quiet", "quietLeft"))
+      pushRow([frame], override === "wide" ? "solo" : "soloQuiet")
       index += 1
       continue
     }
@@ -120,75 +130,65 @@ export const composeLayout = (frames, { layoutKey, groupKey = null } = {}) => {
     const group = groupKey ? frame[groupKey] : null
 
     if (group && next && next[groupKey] === group) {
-      push([frame, next], ratioOf(frame) >= ratioOf(next) ? "leadTrail" : "trailLead")
+      pushRow([frame, next])
       index += 2
       continue
     }
 
-    // A frame wide enough to carry the field gets it. Upright frames are
-    // excluded on purpose: at nine columns one is over sixteen hundred pixels
-    // tall, so it would be pulled back by the height ceiling and the anchor
-    // would not read as one. Dominance here is a landscape's to take.
-    if (
-      (isWide(frame) || (ratioOf(frame) >= 1.35 && sinceAnchor >= 2)) &&
-      !previous?.startsWith("anchor")
-    ) {
-      push([frame], swing("anchor", "anchorInset"))
+    // A frame wide enough to hold the field alone.
+    if (isWide(frame)) {
+      pushRow([frame], "solo")
       index += 1
       continue
     }
 
-    // The quiet beat. An upright frame, set small, with the field open beside
-    // it — this is the negative space, and it is placed on purpose.
-    if (sinceQuiet >= 4 && isUpright(frame) && !previous?.startsWith("quiet")) {
-      push([frame], swing("quiet", "quietLeft"))
-      index += 1
-      continue
-    }
-
-    // Three upright frames stagger across the field at three widths.
+    // A span module: a tall frame running down two rows, with the two frames
+    // after it stacked beside it. Taken only when the arithmetic gives a split
+    // that is actually a composition, and never twice running — the shape is
+    // the accent, and an accent repeated is a pattern.
     if (
       next &&
       third &&
-      isUpright(frame) &&
-      isUpright(next) &&
-      isUpright(third) &&
-      previous !== "triStagger"
+      isTall(frame) &&
+      stacksWell(next) &&
+      stacksWell(third) &&
+      sinceSpan >= 2 &&
+      !String(previous).startsWith("span")
     ) {
-      push([frame, next, third], "triStagger")
-      index += 3
-      continue
-    }
+      const split = solveSpan(frame, next, third)
 
-    if (next) {
-      // Two frames, one dominant. Which one leads follows from their
-      // proportions: a wide frame carries the larger span better than an
-      // upright one, which at that width would tower.
-      if (isUpright(frame) && isUpright(next)) {
-        push([frame, next], "pairUneven")
-        index += 2
+      if (split) {
+        pushSpan(frame, next, third, split, spanTick % 2 === 0 ? "left" : "right")
+        index += 3
         continue
       }
-
-      const lead = ratioOf(frame) >= ratioOf(next)
-      const pattern = lead ? "leadTrail" : "trailLead"
-
-      push([frame, next], pattern === previous ? (lead ? "trailLead" : "leadTrail") : pattern)
-      index += 2
-      continue
     }
 
-    // Last frame. An anchor if it can carry one, otherwise a quiet close.
-    if (sinceAnchor >= 2 && !isUpright(frame)) {
-      push([frame], swing("anchor", "anchorInset"))
-    } else {
-      push([frame], swing("quiet", "quietLeft"))
+    // Otherwise a plain row. Frames are taken in order until their proportions
+    // together fill the width at a height worth looking at.
+    const members = []
+    let sum = 0
+
+    while (index < frames.length && members.length < 3) {
+      const candidate = frames[index]
+
+      if (members.length && isWide(candidate)) break
+
+      // Stop short rather than swallow a frame that could open a span module.
+      // A row of two here buys the shape that follows; taking the third would
+      // spend it, and the opportunity does not come round again because the
+      // order is fixed.
+      if (members.length && spanStartsAt(frames, index)) break
+
+      members.push(candidate)
+      sum += ratioOf(candidate)
+      index += 1
+
+      if (sum >= 1.9) break
     }
 
-    index += 1
+    pushRow(members, members.length === 1 ? "soloQuiet" : "row")
   }
 
-  return rows
+  return modules
 }
-
-export const patternSize = SIZE_OF

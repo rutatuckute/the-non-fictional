@@ -836,9 +836,7 @@
 
   display: flex;
   flex-direction: column;
-  /* Compositions sit closer than rows would, because what separates them is the
-     empty part of the field rather than the space between them. */
-  gap: clamp(18px, 1.8vw, 34px);
+  gap: var(--gutter);
   width: 94vw;
   max-width: 1700px;
   margin-left: calc(50% - 47vw);
@@ -846,15 +844,33 @@
   padding: clamp(24px, 3vw, 44px) 0 clamp(72px, 9vw, 116px);
 }
 
-/* Twelve columns. A composition places its frames by start and span, so what is
-   left empty is placed too — nothing expands to fill it, and no frame is
-   brought to its neighbour's height. */
+/* A row. Widths in proportion to the aspect ratios, so the frames end level
+   with each other and the row closes. */
 .row {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  display: flex;
   gap: var(--gutter);
   width: 100%;
-  align-items: start;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+/* A module with a tall frame running both rows. The column split is solved so
+   the stacked pair, gutter included, comes to the tall frame's height — the
+   module closes on both columns. */
+.module {
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: var(--gutter);
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Nothing is stretched or cropped to make the module meet. The split was solved
+   from the three aspect ratios so the stacked pair, gutter included, already
+   comes to the tall frame's height — the frames are left at their own
+   proportions and the arithmetic closes the module. */
+.module .plate {
+  align-self: start;
 }
 
 .plate {

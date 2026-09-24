@@ -6,86 +6,128 @@ import PhotoImage from "../photo-image"
 import { composeLayout } from "./composeLayout"
 import styles from "../../styles/photography.module.css"
 
-// A frame is asked for roughly twice the width it occupies: the field is at
-// most 1700px, so a span is about 140px of it.
-const budgetFor = (span) => {
-  if (span >= 9) return 2048
-  if (span >= 7) return 1600
-  if (span >= 5) return 1200
+// Roughly twice the width a frame occupies, at a field of at most 1700px.
+const budgetFor = (share) => {
+  if (share >= 0.7) return 2048
+  if (share >= 0.45) return 1600
+  if (share >= 0.28) return 1200
   return 900
 }
 
-// Nothing is normalised to a common height, but a frame still has to fit a
-// screen. An upright frame given nine columns would be over two thousand pixels
-// tall, so the height is capped and the frame narrows rather than crops — its
-// span becomes a ceiling rather than a measurement.
-const MAX_FRAME_HEIGHT = 780
+// A module is held to this, whatever its arithmetic says. A row of upright
+// frames, or a tall frame running two rows, would otherwise resolve taller than
+// the window; the module narrows and centres rather than cropping anything.
+const MAX_MODULE_HEIGHT = 760
 
-const Plate = ({ frame, slot, onOpen }) => {
-  const ratio = frame.width && frame.height ? frame.width / frame.height : 1.5
+const Plate = ({ frame, share, style, onOpen }) => (
+  <figure className={styles.plate} style={style}>
+    <button
+      type="button"
+      className={styles.plateButton}
+      onClick={() => onOpen(frame)}
+      aria-label={`Open ${frame.title}`}
+    >
+      <PhotoImage
+        className={styles.plateImage}
+        source={frame.photo}
+        px={budgetFor(share)}
+        quality="normal"
+        alt={frame.title}
+        style={{ aspectRatio: `${frame.width || 3} / ${frame.height || 2}` }}
+      />
+      <figcaption className={styles.plateMeta}>
+        <span className={styles.plateTitle}>{frame.title}</span>
+        <span className={styles.plateWhere}>
+          {[frame.city, frame.year].filter(Boolean).join(", ")}
+        </span>
+      </figcaption>
+    </button>
+  </figure>
+)
+
+// One tall frame beside two stacked ones. The split was solved so the stack,
+// gutter included, comes to exactly the tall frame's height — so the module
+// closes on both columns and neither is left short.
+const SpanModule = ({ module: mod, onOpen }) => {
+  const [tall, a, b] = mod.frames
+  const { split, side } = mod
+  const tallFirst = side === "left"
 
   return (
-    <figure
-      className={styles.plate}
+    <div
+      className={styles.module}
+      data-variant={mod.variant}
       style={{
-        gridColumn: `${slot.start} / span ${slot.span}`,
-        // The stagger. Measured in the gutter so it scales with the rest of the
-        // composition rather than sitting at a fixed distance.
-        marginTop: slot.drop ? `calc(var(--gutter) * ${slot.drop})` : undefined,
-        maxWidth: `${Math.round(MAX_FRAME_HEIGHT * ratio)}px`,
+        gridTemplateColumns: tallFirst
+          ? `${split.tall}fr ${split.side}fr`
+          : `${split.side}fr ${split.tall}fr`,
+        // The tall frame's own height decides the module's, and that is what
+        // the ceiling applies to.
+        maxWidth: `${Math.round((MAX_MODULE_HEIGHT * mod.ratios[0]) / split.tall)}px`,
       }}
     >
-      <button
-        type="button"
-        className={styles.plateButton}
-        onClick={() => onOpen(frame)}
-        aria-label={`Open ${frame.title}`}
-      >
-        <PhotoImage
-          className={styles.plateImage}
-          source={frame.photo}
-          px={budgetFor(slot.span)}
-          quality="normal"
-          alt={frame.title}
-          style={{ aspectRatio: `${frame.width || 3} / ${frame.height || 2}` }}
-        />
-        <figcaption className={styles.plateMeta}>
-          <span className={styles.plateTitle}>{frame.title}</span>
-          <span className={styles.plateWhere}>
-            {[frame.city, frame.year].filter(Boolean).join(", ")}
-          </span>
-        </figcaption>
-      </button>
-    </figure>
+      <Plate
+        frame={tall}
+        share={split.tall}
+        onOpen={onOpen}
+        style={{
+          gridColumn: tallFirst ? 1 : 2,
+          gridRow: "1 / span 2",
+        }}
+      />
+      <Plate
+        frame={a}
+        share={split.side}
+        onOpen={onOpen}
+        style={{ gridColumn: tallFirst ? 2 : 1, gridRow: 1 }}
+      />
+      <Plate
+        frame={b}
+        share={split.side}
+        onOpen={onOpen}
+        style={{ gridColumn: tallFirst ? 2 : 1, gridRow: 2 }}
+      />
+    </div>
   )
 }
 
+// One, two or three frames level with each other. Widths come from the aspect
+// ratios, so they end on the same line.
+const RowModule = ({ module: mod, onOpen }) => (
+  <div
+    className={styles.row}
+    data-variant={mod.variant}
+    data-count={mod.frames.length}
+    data-intentional={mod.intentional ? "true" : undefined}
+    style={{ maxWidth: `${Math.round(MAX_MODULE_HEIGHT * mod.sum)}px` }}
+  >
+    {mod.frames.map((frame, position) => (
+      <Plate
+        key={frame.slug}
+        frame={frame}
+        share={mod.ratios[position] / mod.sum}
+        onOpen={onOpen}
+        style={{ flexGrow: mod.ratios[position], flexBasis: 0 }}
+      />
+    ))}
+  </div>
+)
+
 const EditorialSequence = ({ frames, layoutKey, groupKey = null, onOpen }) => {
-  const rows = React.useMemo(
+  const modules = React.useMemo(
     () => composeLayout(frames, { layoutKey, groupKey }),
     [frames, layoutKey, groupKey]
   )
 
   return (
     <div className={styles.sequence}>
-      {rows.map((row, index) => (
-        <div
-          className={styles.row}
-          key={`${row.frames[0].slug}-${index}`}
-          data-pattern={row.pattern}
-          data-count={row.frames.length}
-          data-intentional={row.intentional ? "true" : undefined}
-        >
-          {row.frames.map((frame, position) => (
-            <Plate
-              key={frame.slug}
-              frame={frame}
-              slot={row.slots[position]}
-              onOpen={onOpen}
-            />
-          ))}
-        </div>
-      ))}
+      {modules.map((mod, index) =>
+        mod.kind === "span" ? (
+          <SpanModule key={`${mod.frames[0].slug}-${index}`} module={mod} onOpen={onOpen} />
+        ) : (
+          <RowModule key={`${mod.frames[0].slug}-${index}`} module={mod} onOpen={onOpen} />
+        )
+      )}
     </div>
   )
 }
