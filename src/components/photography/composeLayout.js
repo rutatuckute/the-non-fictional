@@ -1,74 +1,92 @@
-// Composes an ordered sequence of photographs into editorial rows.
+// Art-directs an ordered sequence of photographs across a twelve column field.
 //
-// Two things are kept apart, because conflating them is what makes an automatic
-// layout look automatic.
+// Nothing here is justified. Neighbouring frames are not brought to a common
+// height, rows are not filled to the margins, and a small photograph is small
+// because it was placed small — it is never grown to take up the space beside
+// it. Scale is the hierarchy: some frames take three quarters of the field,
+// others a quarter, and what is left empty is as composed as what is not.
 //
-// Inside a row, widths are derived from the aspect ratios, so every frame in a
-// row resolves to the same height. That is not a stylistic choice — it is the
-// only way a row of different proportions closes without leaving space under
-// the shorter frame.
+// This is the opposite of packing, and the difference between an unequal height
+// that was placed and one that was left over is the whole thing. A justified row
+// that fails leaves a hole under its shortest frame. Here the heights differ
+// because each frame keeps its own proportions at the width it was given, and
+// the frames are staggered down the field so those differences read as
+// deliberate rather than as the row having run out.
 //
-// The row itself is then given a width and a place on the page, and those do
-// vary: a row need not fill the page, and the width it is allowed is what makes
-// one photograph an anchor and another a supporting frame beside it. Asymmetry
-// and empty space are decided here, deliberately, rather than falling out of
-// the packing.
-//
-// The sequence is never reordered. Where a row breaks and how wide it sits are
-// the only decisions.
+// selectedOrder is never touched. Which pattern a group of frames is given, and
+// where in the field each one sits, are the only decisions.
 
 const ratioOf = (frame) =>
   frame.width && frame.height ? frame.width / frame.height : 1.5
 
 const isUpright = (frame) => ratioOf(frame) < 1.15
-const isPanorama = (frame) => ratioOf(frame) >= 2.0
+const isWide = (frame) => ratioOf(frame) >= 1.9
 
-// The vocabulary. Each says how much of the gallery a row may take and where it
-// sits; the frames inside it are always justified against each other.
+// Six compositions. Each places its frames on the twelve column field by start
+// and span, and may drop one down the page — the stagger that keeps two frames
+// beside each other from reading as a row.
+//
+// Spans are chosen so that a frame is either clearly dominant or clearly
+// supporting. Nothing sits at half, because half reads as undecided.
 const PATTERNS = {
-  full: { width: 100, place: "centre" },
-  anchor: { width: 82, place: "centre" },
-  anchorLeft: { width: 78, place: "left" },
-  anchorRight: { width: 78, place: "right" },
-  insetLeft: { width: 58, place: "left" },
-  insetRight: { width: 58, place: "right" },
-  duo: { width: 100, place: "centre" },
-  duoInset: { width: 84, place: "centre" },
-  trio: { width: 100, place: "centre" },
+  // One photograph carrying the page.
+  anchor: [{ start: 1, span: 9 }],
+  anchorInset: [{ start: 4, span: 9 }],
+
+  // One photograph held small, with the field left open around it. The quiet
+  // beat in the sequence.
+  quiet: [{ start: 9, span: 4 }],
+  quietLeft: [{ start: 1, span: 4 }],
+
+  // A dominant frame and a supporting one, dropped so they do not align.
+  leadTrail: [
+    { start: 1, span: 7 },
+    { start: 9, span: 4, drop: 1.6 },
+  ],
+  trailLead: [
+    { start: 1, span: 4, drop: 1.2 },
+    { start: 6, span: 7 },
+  ],
+
+  // Two upright frames. Neither is given a dominant span, because neither can
+  // take one — an upright frame wide enough to dominate is taller than the
+  // window, and the height ceiling pulls it back to roughly the width of the
+  // frame beside it, so the pattern claims a hierarchy it cannot show. They are
+  // set at two near widths instead and staggered, which is an asymmetry an
+  // upright frame can actually hold.
+  pairUneven: [
+    { start: 1, span: 5 },
+    { start: 7, span: 4, drop: 1.8 },
+  ],
+
+  // Three across, each at a different width and each on its own line of the
+  // field.
+  triStagger: [
+    { start: 1, span: 4 },
+    { start: 6, span: 3, drop: 2.2 },
+    { start: 10, span: 3, drop: 0.8 },
+  ],
 }
 
-// How many rows of ordinary width before the page is given a larger break. The
-// sequence reads in chapters rather than as one continuous grid.
-const CHAPTER_EVERY = 4
+const SIZE_OF = Object.fromEntries(
+  Object.entries(PATTERNS).map(([name, slots]) => [name, slots.length])
+)
 
 export const composeLayout = (frames, { layoutKey, groupKey = null } = {}) => {
   const rows = []
 
   let index = 0
   let previous = null
+  let sinceQuiet = 0
   let sinceAnchor = 2
-  let sinceInset = 0
-  let sideTick = 0
+  let tick = 0
 
   const push = (members, pattern) => {
-    const spec = PATTERNS[pattern]
-    const sum = members.reduce((total, frame) => total + ratioOf(frame), 0)
-
     rows.push({
       pattern,
-      width: spec.width,
-      place: spec.place,
+      slots: PATTERNS[pattern],
       frames: members,
-      sum,
       ratios: members.map(ratioOf),
-      // Every few rows the vertical rhythm opens up, so the sequence has
-      // resting points instead of running on at one pitch. Not before a lone
-      // narrow frame, though: extra space above something already surrounded by
-      // space stops reading as a rest and starts reading as a hole.
-      chapter:
-        rows.length > 0 &&
-        rows.length % CHAPTER_EVERY === 0 &&
-        !(members.length === 1 && isUpright(members[0])),
       intentional: Boolean(
         groupKey &&
           members.length > 1 &&
@@ -78,99 +96,99 @@ export const composeLayout = (frames, { layoutKey, groupKey = null } = {}) => {
     })
 
     previous = pattern
-    sinceAnchor = pattern.startsWith("anchor") || pattern === "full" ? 0 : sinceAnchor + 1
-    sinceInset = pattern.startsWith("inset") ? 0 : sinceInset + 1
+    sinceQuiet = pattern.startsWith("quiet") ? 0 : sinceQuiet + 1
+    sinceAnchor = pattern.startsWith("anchor") ? 0 : sinceAnchor + 1
+    tick += 1
   }
 
-  // Alternates the side an offset row sits on, without ever repeating the last
-  // one used.
-  const nextSide = () => {
-    sideTick += 1
-    return sideTick % 2 === 1 ? "Left" : "Right"
-  }
+  // Alternates the side a single frame sits on, so the empty half of the field
+  // moves down the page rather than banking up on one side.
+  const swing = (a, b) => (tick % 2 === 0 ? a : b)
 
   while (index < frames.length) {
     const frame = frames[index]
+    const next = frames[index + 1]
+    const third = frames[index + 2]
     const override = layoutKey ? frame[layoutKey] : null
 
     if (override) {
-      // "wide" cannot mean full width for an upright frame — at the width of
-      // the page it would be over two thousand pixels tall, and the height
-      // ceiling then shrinks it into the narrowest thing on the page, which is
-      // the opposite of what was asked for. It is given prominence the way an
-      // upright frame can take it: as much height as a frame is allowed, and
-      // set to one side so the space beside it reads as composition.
-      const wide = override === "wide"
-
-      push([frame], wide && !isUpright(frame) ? "full" : `anchor${nextSide()}`)
+      push([frame], override === "wide" ? swing("anchor", "anchorInset") : swing("quiet", "quietLeft"))
       index += 1
       continue
     }
 
     const group = groupKey ? frame[groupKey] : null
 
-    if (group && frames[index + 1] && frames[index + 1][groupKey] === group) {
-      push([frame, frames[index + 1]], "duo")
+    if (group && next && next[groupKey] === group) {
+      push([frame, next], ratioOf(frame) >= ratioOf(next) ? "leadTrail" : "trailLead")
       index += 2
       continue
     }
 
-    // A frame wide enough to carry the page carries it.
-    if (isPanorama(frame)) {
-      push([frame], "full")
+    // A frame wide enough to carry the field gets it. Upright frames are
+    // excluded on purpose: at nine columns one is over sixteen hundred pixels
+    // tall, so it would be pulled back by the height ceiling and the anchor
+    // would not read as one. Dominance here is a landscape's to take.
+    if (
+      (isWide(frame) || (ratioOf(frame) >= 1.35 && sinceAnchor >= 2)) &&
+      !previous?.startsWith("anchor")
+    ) {
+      push([frame], swing("anchor", "anchorInset"))
       index += 1
       continue
     }
 
-    // An anchor: one photograph given most of the width and the weight of the
-    // page. Landscapes make better anchors — an upright frame at this width is
-    // taller than the window.
-    if (sinceAnchor >= 3 && !isUpright(frame) && previous !== "full") {
-      push([frame], "anchor")
+    // The quiet beat. An upright frame, set small, with the field open beside
+    // it — this is the negative space, and it is placed on purpose.
+    if (sinceQuiet >= 4 && isUpright(frame) && !previous?.startsWith("quiet")) {
+      push([frame], swing("quiet", "quietLeft"))
       index += 1
       continue
     }
 
-    // A supporting frame, set narrow and to one side, with the rest of the row
-    // left empty. This is the page's breathing space, and it is the one place a
-    // row deliberately does not close.
-    if (sinceInset >= 5 && isUpright(frame)) {
-      push([frame], `inset${nextSide()}`)
-      index += 1
+    // Three upright frames stagger across the field at three widths.
+    if (
+      next &&
+      third &&
+      isUpright(frame) &&
+      isUpright(next) &&
+      isUpright(third) &&
+      previous !== "triStagger"
+    ) {
+      push([frame, next, third], "triStagger")
+      index += 3
       continue
     }
 
-    // Otherwise take the next frames in order until their proportions together
-    // fill a row at a sensible height.
-    const members = []
-    let sum = 0
+    if (next) {
+      // Two frames, one dominant. Which one leads follows from their
+      // proportions: a wide frame carries the larger span better than an
+      // upright one, which at that width would tower.
+      if (isUpright(frame) && isUpright(next)) {
+        push([frame, next], "pairUneven")
+        index += 2
+        continue
+      }
 
-    while (index < frames.length && members.length < 3) {
-      const candidate = frames[index]
+      const lead = ratioOf(frame) >= ratioOf(next)
+      const pattern = lead ? "leadTrail" : "trailLead"
 
-      if (members.length && isPanorama(candidate)) break
-
-      members.push(candidate)
-      sum += ratioOf(candidate)
-      index += 1
-
-      if (sum >= 1.9) break
-    }
-
-    if (members.length === 1) {
-      // Nothing to sit beside it. Given room rather than stretched across the
-      // page, and offset so the gap reads as composition.
-      push(members, isUpright(members[0]) ? `anchor${nextSide()}` : "anchor")
+      push([frame, next], pattern === previous ? (lead ? "trailLead" : "leadTrail") : pattern)
+      index += 2
       continue
     }
 
-    // Two frames that already fill a row generously are held in a little from
-    // the edges now and then, so not every row meets the same margins.
-    const pattern =
-      members.length === 3 ? "trio" : previous === "duo" ? "duoInset" : "duo"
+    // Last frame. An anchor if it can carry one, otherwise a quiet close.
+    if (sinceAnchor >= 2 && !isUpright(frame)) {
+      push([frame], swing("anchor", "anchorInset"))
+    } else {
+      push([frame], swing("quiet", "quietLeft"))
+    }
 
-    push(members, pattern)
+    index += 1
   }
 
   return rows
 }
+
+export const patternSize = SIZE_OF

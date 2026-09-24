@@ -6,60 +6,59 @@ import PhotoImage from "../photo-image"
 import { composeLayout } from "./composeLayout"
 import styles from "../../styles/photography.module.css"
 
-// How tall a row is allowed to get. A row's natural height is the width it has
-// divided by the sum of its aspect ratios, so a row of upright frames comes out
-// far taller than one of wide ones. Rather than crop anything or leave a frame
-// towering over the page, a row that would exceed this is given less width and
-// centred: every frame keeps its proportions and its share, and the row simply
-// sits smaller.
-const MAX_ROW_HEIGHT = 620
-const MAX_ANCHOR_HEIGHT = 760
-
-// What a frame is asked to fetch, from the share of the row it takes, at
-// roughly twice the width it occupies.
-const budgetFor = (share) => {
-  if (share >= 0.8) return 2048
-  if (share >= 0.5) return 1440
-  if (share >= 0.3) return 1080
-  return 760
+// A frame is asked for roughly twice the width it occupies: the field is at
+// most 1700px, so a span is about 140px of it.
+const budgetFor = (span) => {
+  if (span >= 9) return 2048
+  if (span >= 7) return 1600
+  if (span >= 5) return 1200
+  return 900
 }
 
-const Plate = ({ frame, ratio, share, onOpen }) => (
-  <figure
-    className={styles.plate}
-    // Widths in proportion to the aspect ratios is what justifies the row: the
-    // height each frame resolves to is the same for all of them.
-    style={{ flexGrow: ratio, flexBasis: 0 }}
-  >
-    <button
-      type="button"
-      className={styles.plateButton}
-      onClick={() => onOpen(frame)}
-      aria-label={`Open ${frame.title}`}
+// Nothing is normalised to a common height, but a frame still has to fit a
+// screen. An upright frame given nine columns would be over two thousand pixels
+// tall, so the height is capped and the frame narrows rather than crops — its
+// span becomes a ceiling rather than a measurement.
+const MAX_FRAME_HEIGHT = 780
+
+const Plate = ({ frame, slot, onOpen }) => {
+  const ratio = frame.width && frame.height ? frame.width / frame.height : 1.5
+
+  return (
+    <figure
+      className={styles.plate}
+      style={{
+        gridColumn: `${slot.start} / span ${slot.span}`,
+        // The stagger. Measured in the gutter so it scales with the rest of the
+        // composition rather than sitting at a fixed distance.
+        marginTop: slot.drop ? `calc(var(--gutter) * ${slot.drop})` : undefined,
+        maxWidth: `${Math.round(MAX_FRAME_HEIGHT * ratio)}px`,
+      }}
     >
-      <PhotoImage
-        className={styles.plateImage}
-        source={frame.photo}
-        px={budgetFor(share)}
-        quality="normal"
-        alt={frame.title}
-        style={
-          frame.width && frame.height
-            ? { aspectRatio: `${frame.width} / ${frame.height}` }
-            : undefined
-        }
-      />
-      {/* In the frame, invisible at rest, for pointer and keyboard. A touch
-          screen gets this from the lightbox instead. */}
-      <figcaption className={styles.plateMeta}>
-        <span className={styles.plateTitle}>{frame.title}</span>
-        <span className={styles.plateWhere}>
-          {[frame.city, frame.year].filter(Boolean).join(", ")}
-        </span>
-      </figcaption>
-    </button>
-  </figure>
-)
+      <button
+        type="button"
+        className={styles.plateButton}
+        onClick={() => onOpen(frame)}
+        aria-label={`Open ${frame.title}`}
+      >
+        <PhotoImage
+          className={styles.plateImage}
+          source={frame.photo}
+          px={budgetFor(slot.span)}
+          quality="normal"
+          alt={frame.title}
+          style={{ aspectRatio: `${frame.width || 3} / ${frame.height || 2}` }}
+        />
+        <figcaption className={styles.plateMeta}>
+          <span className={styles.plateTitle}>{frame.title}</span>
+          <span className={styles.plateWhere}>
+            {[frame.city, frame.year].filter(Boolean).join(", ")}
+          </span>
+        </figcaption>
+      </button>
+    </figure>
+  )
+}
 
 const EditorialSequence = ({ frames, layoutKey, groupKey = null, onOpen }) => {
   const rows = React.useMemo(
@@ -69,41 +68,24 @@ const EditorialSequence = ({ frames, layoutKey, groupKey = null, onOpen }) => {
 
   return (
     <div className={styles.sequence}>
-      {rows.map((row, index) => {
-        const cap =
-          row.pattern === "full" || row.pattern.startsWith("anchor")
-            ? MAX_ANCHOR_HEIGHT
-            : MAX_ROW_HEIGHT
-
-        return (
-          <div
-            className={styles.row}
-            key={`${row.frames[0].slug}-${index}`}
-            data-pattern={row.pattern}
-            data-place={row.place}
-            data-count={row.frames.length}
-            data-chapter={row.chapter ? "true" : undefined}
-            data-intentional={row.intentional ? "true" : undefined}
-            style={{
-              // The share of the gallery this row is allowed, and then a
-              // ceiling on how tall it may become — a row of upright frames
-              // would otherwise resolve taller than the window. It narrows
-              // rather than crops.
-              maxWidth: `min(${row.width}%, ${Math.round(cap * row.sum)}px)`,
-            }}
-          >
-            {row.frames.map((frame, position) => (
-              <Plate
-                key={frame.slug}
-                frame={frame}
-                ratio={row.ratios[position]}
-                share={row.ratios[position] / row.sum}
-                onOpen={onOpen}
-              />
-            ))}
-          </div>
-        )
-      })}
+      {rows.map((row, index) => (
+        <div
+          className={styles.row}
+          key={`${row.frames[0].slug}-${index}`}
+          data-pattern={row.pattern}
+          data-count={row.frames.length}
+          data-intentional={row.intentional ? "true" : undefined}
+        >
+          {row.frames.map((frame, position) => (
+            <Plate
+              key={frame.slug}
+              frame={frame}
+              slot={row.slots[position]}
+              onOpen={onOpen}
+            />
+          ))}
+        </div>
+      ))}
     </div>
   )
 }
