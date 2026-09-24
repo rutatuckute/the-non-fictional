@@ -828,26 +828,48 @@
    alignment. Percentages are of the content column, so the whole composition
    scales with the page rather than snapping between breakpoints. */
 
+/* Selected and the series pages break out of the site's text column: the
+   photographs are the page here, not content inside it. Archive keeps the
+   column, because it is an interface. */
 .sequence {
   display: flex;
   flex-direction: column;
-  /* Related to the gutter inside a row, not several times it. The vertical
-     rhythm is what decides whether the page reads as one body of work or as a
-     series of separate appearances. */
-  gap: clamp(8px, 1vw, 16px);
-  padding: clamp(20px, 2.5vw, 38px) 0 clamp(64px, 8vw, 104px);
+  gap: clamp(10px, 0.9vw, 16px);
+  width: 94vw;
+  max-width: 1700px;
+  /* The main column is 1420 wide with 26px of padding; this steps outside it
+     and re-centres on the viewport. */
+  margin-left: calc(50% - 47vw);
+  margin-right: calc(50% - 47vw);
+  padding: clamp(24px, 3vw, 44px) 0 clamp(72px, 9vw, 116px);
 }
 
-/* A justified row. The frames take widths in proportion to their aspect ratios,
-   which resolves every one of them to the same height — so nothing is left
-   short and there is no space under anything. A row narrower than the page is
-   one that would otherwise have been too tall; it is centred, not aligned. */
+/* Every few rows the page takes a breath, so the sequence reads in chapters
+   rather than at one unbroken pitch. */
+.row[data-chapter="true"] {
+  margin-top: clamp(26px, 3.4vw, 62px);
+}
+
+/* Inside a row the frames are justified against each other — widths in
+   proportion to their aspect ratios, so they resolve to one height and nothing
+   is left short. Where the row itself sits is the composition. */
 .row {
   display: flex;
-  gap: clamp(8px, 1vw, 16px);
+  gap: clamp(12px, 0.95vw, 18px);
   width: 100%;
-  margin: 0 auto;
-  align-items: flex-start;
+}
+
+.row[data-place="centre"] {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.row[data-place="left"] {
+  margin-right: auto;
+}
+
+.row[data-place="right"] {
+  margin-left: auto;
 }
 
 .plate {
@@ -862,6 +884,9 @@
   border: 0;
   background: none;
   cursor: zoom-in;
+  /* The frame is fixed and the photograph moves inside it, so nothing on the
+     page shifts when the pointer arrives. */
+  overflow: hidden;
 }
 
 .plateImage {
@@ -871,6 +896,29 @@
   /* The layout adapts to the photograph. Nothing here is ever cropped to make
      a row resolve — the widths do that. */
   object-fit: contain;
+  /* Two per cent, on an ease-out curve that arrives quickly and settles. Enough
+     that the photograph acknowledges the pointer; not so much that it becomes
+     an effect. */
+  transition: transform 380ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+@media (hover: hover) {
+  .plateButton:hover .plateImage,
+  .plateButton:focus-visible .plateImage {
+    transform: scale(1.02);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plateImage {
+    transition: none;
+  }
+
+  .plateButton:hover .plateImage,
+  .plateButton:focus-visible .plateImage {
+    transform: none;
+  }
 }
 
 /* Metadata sits in the frame and stays out of the way until asked for. A
@@ -886,7 +934,7 @@
   padding: 44px 18px 16px;
   background: linear-gradient(to top, rgba(11, 10, 9, 0.62), rgba(11, 10, 9, 0));
   opacity: 0;
-  transition: opacity 220ms ease;
+  transition: opacity 380ms cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
   text-align: left;
 }
@@ -986,16 +1034,24 @@
 }
 
 @media (max-width: 620px) {
-  /* Rows of three become three thumbnails on a phone, so the rows break and the
-     sequence is set straight — in order, full width, own proportions. */
+  /* The composition is a wide-screen idea. Rows break, the sequence is set
+     straight, and the gallery returns to the page's own margins. */
+  .sequence {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    gap: clamp(8px, 2.4vw, 12px);
+  }
+
   .row {
     flex-direction: column;
     max-width: 100% !important;
     gap: clamp(8px, 2.4vw, 12px);
   }
 
-  .sequence {
-    gap: clamp(8px, 2.4vw, 12px);
+  .row[data-chapter="true"] {
+    margin-top: clamp(20px, 6vw, 36px);
   }
 
   .views {
