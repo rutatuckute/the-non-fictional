@@ -12,8 +12,8 @@ import styles from "../../styles/photography.module.css"
 // towering over the page, a row that would exceed this is given less width and
 // centred: every frame keeps its proportions and its share, and the row simply
 // sits smaller.
-const MAX_ROW_HEIGHT = 500
-const MAX_HERO_HEIGHT = 620
+const MAX_ROW_HEIGHT = 620
+const MAX_ANCHOR_HEIGHT = 760
 
 // What a frame is asked to fetch, from the share of the row it takes, at
 // roughly twice the width it occupies.
@@ -70,16 +70,27 @@ const EditorialSequence = ({ frames, layoutKey, groupKey = null, onOpen }) => {
   return (
     <div className={styles.sequence}>
       {rows.map((row, index) => {
-        const cap = row.kind === "hero" ? MAX_HERO_HEIGHT : MAX_ROW_HEIGHT
+        const cap =
+          row.pattern === "full" || row.pattern.startsWith("anchor")
+            ? MAX_ANCHOR_HEIGHT
+            : MAX_ROW_HEIGHT
 
         return (
           <div
             className={styles.row}
             key={`${row.frames[0].slug}-${index}`}
-            data-kind={row.kind}
+            data-pattern={row.pattern}
+            data-place={row.place}
             data-count={row.frames.length}
+            data-chapter={row.chapter ? "true" : undefined}
             data-intentional={row.intentional ? "true" : undefined}
-            style={{ maxWidth: `min(100%, ${Math.round(cap * row.sum)}px)` }}
+            style={{
+              // The share of the gallery this row is allowed, and then a
+              // ceiling on how tall it may become — a row of upright frames
+              // would otherwise resolve taller than the window. It narrows
+              // rather than crops.
+              maxWidth: `min(${row.width}%, ${Math.round(cap * row.sum)}px)`,
+            }}
           >
             {row.frames.map((frame, position) => (
               <Plate
