@@ -832,7 +832,7 @@
    photographs are the page here, not content inside it. Archive keeps the
    column, because it is an interface. */
 .sequence {
-  --gutter: clamp(12px, 0.95vw, 18px);
+  --gutter: clamp(10px, 0.85vw, 16px);
 
   display: flex;
   flex-direction: column;
@@ -841,36 +841,38 @@
   max-width: 1700px;
   margin-left: calc(50% - 47vw);
   margin-right: calc(50% - 47vw);
-  padding: clamp(24px, 3vw, 44px) 0 clamp(72px, 9vw, 116px);
+  padding: clamp(20px, 2.4vw, 36px) 0 clamp(64px, 8vw, 104px);
 }
 
-/* A row. Widths in proportion to the aspect ratios, so the frames end level
-   with each other and the row closes. */
+/* A justified row. Every frame takes a width in proportion to its aspect ratio,
+   so they share a height and the row closes on the gallery's own edges. No row
+   is ever narrower than another; what differs between rows is their height. */
 .row {
   display: flex;
   gap: var(--gutter);
   width: 100%;
-  margin: 0 auto;
-  align-items: flex-start;
+  min-width: 0;
 }
 
-/* A module with a tall frame running both rows. The column split is solved so
-   the stacked pair, gutter included, comes to the tall frame's height — the
-   module closes on both columns. */
-.module {
+/* A two-row block: a tall frame down one column, two justified rows down the
+   other. It occupies the same width as every row, and the split was solved so
+   the two rows meet the bottom of the tall frame exactly. */
+.block {
   display: grid;
   grid-template-rows: auto auto;
   gap: var(--gutter);
   width: 100%;
-  margin: 0 auto;
 }
 
-/* Nothing is stretched or cropped to make the module meet. The split was solved
-   from the three aspect ratios so the stacked pair, gutter included, already
-   comes to the tall frame's height — the frames are left at their own
-   proportions and the arithmetic closes the module. */
-.module .plate {
-  align-self: start;
+/* The tall frame fills the column it was given; its height is what the split
+   was solved against. */
+.blockTall {
+  display: flex;
+  min-width: 0;
+}
+
+.blockTall .plate {
+  width: 100%;
 }
 
 .plate {

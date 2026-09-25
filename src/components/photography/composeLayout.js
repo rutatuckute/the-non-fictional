@@ -1,90 +1,88 @@
-// Composes an ordered sequence of photographs into editorial modules.
+// Composes an ordered sequence of photographs into justified modules.
 //
-// Two kinds, and a page is a sequence of them. A row holds one, two or three
-// frames side by side at a single height, their widths taken from their aspect
-// ratios. A span module holds one tall frame beside two stacked ones, the tall
-// frame running the full height of both.
+// Every module — a plain row or a two-row block with a tall frame running down
+// it — occupies the full gallery width. Same left edge, same right edge, no
+// ragged ends and no black left over. What varies is the height, which falls
+// out of the proportions of whatever is in the row, and the number of frames,
+// which is chosen to keep that height near a target.
 //
-// Every module resolves. A row's widths are derived so its frames end level; a
-// span module's column split is solved so the two stacked frames, with the
-// gutter between them, come to exactly the height of the frame beside them.
-// Nothing is cropped to make that happen and nothing is left over — the next
-// module begins only once the current one has closed, which is what keeps this
-// a sequence of blocks rather than a drift of independent placements.
+// The arithmetic is the ordinary justified one. Frames in a row share a height
+// h; a frame of ratio r is then h·r wide; the widths plus the gutters have to
+// come to the gallery width W, so h = (W - gutters) / Σr. Choosing how many
+// frames go in a row is therefore choosing Σr, and a target height is a target
+// Σr — which is what this packs against.
 //
-// selectedOrder is never touched. Where a module breaks, and which kind it is,
-// are the only decisions.
+// selectedOrder is never touched. Only where a module breaks, and whether it is
+// a row or a block, are decided here.
 
 const ratioOf = (frame) =>
   frame.width && frame.height ? frame.width / frame.height : 1.5
 
-const isUpright = (frame) => ratioOf(frame) < 1.15
-// Tall enough to be worth running down two rows. A frame at 4:5 is upright but
-// not tall; this wants 2:3 and narrower.
 const isTall = (frame) => ratioOf(frame) <= 0.75
 
-// Two frames stack beside a tall one only if they are wider than it — stacking
-// two upright frames beside a third makes a module taller than the window,
-// which the height ceiling then shrinks into something small and timid.
-const stacksWell = (frame) => ratioOf(frame) >= 0.95
+// Σr for an ordinary row. The gallery runs to about 1500px, so a row of frames
+// whose ratios sum to near four lands around 370px tall — dense enough that
+// several photographs are in view at once, which is the thing that was missing.
+// Upright frames sum slowly, so a row of them runs to five or six; a row of
+// landscapes closes at three.
+const TARGET_SUM = 3.9
+const MIN_SUM = 2.9
+const MAX_PER_ROW = 6
 
-// Could a span module start here? Asked before a row is allowed to swallow the
-// frame, so the composition seeks the shape out rather than meeting it by
-// chance.
-const spanStartsAt = (frames, at) => {
-  const [tall, a, b] = [frames[at], frames[at + 1], frames[at + 2]]
+// The gutter as a fraction of the gallery width. Close enough at these widths:
+// it moves a solved split by well under a per cent.
+const GUTTER = 0.009
 
-  return Boolean(
-    tall && a && b && isTall(tall) && stacksWell(a) && stacksWell(b) && solveSpan(tall, a, b)
-  )
-}
-const isWide = (frame) => ratioOf(frame) >= 1.9
-
-// The gutter as a fraction of the module's width, near enough at the widths
-// this gallery runs at. It only has to be close: it shifts the solved split by
-// well under a per cent.
-const GUTTER = 0.011
-
-// Solves the column split for a span module.
+// Solves the column split for a two-row block.
 //
-// The two stacked frames share a column of width x. Their heights are x/rA and
-// x/rB, and with the gutter between them that has to equal the height of the
-// tall frame, which is its own width over its ratio. One unknown, one equation:
+// The tall frame takes the left or right column and runs the height of the
+// block. The other column holds two justified sub-rows, and those two, with the
+// gutter between them, have to come to exactly the tall frame's height.
 //
-//   (1 - x - g) / rT = x/rA + g + x/rB
+//   ((1 - x) - g)/rT = x/Σtop + g + x/Σbottom
 //
-// Returned as fractions of the module width, or null when the answer is not a
-// composition — a split that leaves either column under a fifth or over half
-// the field is a module that would look like an accident.
-const solveSpan = (tall, a, b) => {
+// One unknown. Returned as fractions of the gallery width, or null when the
+// answer is not a composition.
+const solveBlock = (tall, top, bottom) => {
   const rT = ratioOf(tall)
-  const rA = ratioOf(a)
-  const rB = ratioOf(b)
+  const sumTop = top.reduce((total, f) => total + ratioOf(f), 0)
+  const sumBottom = bottom.reduce((total, f) => total + ratioOf(f), 0)
 
-  const x = (1 - GUTTER * (1 + rT)) / (1 + rT * (1 / rA + 1 / rB))
+  if (!sumTop || !sumBottom) return null
 
-  // A split is a composition as long as neither column is squeezed to nothing
-  // or left carrying the whole module. Two stacked landscapes legitimately come
-  // out a little wider than the tall frame beside them — half is not the
-  // boundary, and treating it as one rejected every module this sequence could
-  // have made.
-  if (!Number.isFinite(x) || x < 0.22 || x > 0.62) return null
+  // Each sub-row spends its own gutters before its frames get any width, so a
+  // sub-row of three is shorter than one of two at the same column width. Left
+  // out of the solve, that shortfall lands at the bottom of the block as a step
+  // against the tall frame beside it.
+  const S = 1 / sumTop + 1 / sumBottom
+  const inner =
+    ((top.length - 1) * GUTTER) / sumTop + ((bottom.length - 1) * GUTTER) / sumBottom
 
-  return { side: x, tall: 1 - x - GUTTER }
+  const x = (1 - GUTTER + rT * inner - rT * GUTTER) / (1 + rT * S)
+
+  if (!Number.isFinite(x) || x < 0.35 || x > 0.78) return null
+
+  const tallWidth = 1 - x - GUTTER
+
+  // The block's height, as a fraction of the gallery width. Two ordinary rows
+  // and a gutter is what it should come to; much more and it is a wall.
+  const height = tallWidth / rT
+
+  if (height > 0.62) return null
+
+  return { side: x, tall: tallWidth, sumTop, sumBottom, height }
 }
 
 export const composeLayout = (frames, { layoutKey, groupKey = null } = {}) => {
   const modules = []
 
   let index = 0
-  let previous = null
-  let spanTick = 0
-  let sinceSpan = 2
+  let sinceBlock = 2
+  let blockTick = 0
 
-  const pushRow = (members, variant = "row") => {
+  const pushRow = (members) => {
     modules.push({
       kind: "row",
-      variant,
       frames: members,
       ratios: members.map(ratioOf),
       sum: members.reduce((total, frame) => total + ratioOf(frame), 0),
@@ -95,99 +93,124 @@ export const composeLayout = (frames, { layoutKey, groupKey = null } = {}) => {
           members.every((m) => m[groupKey] === members[0][groupKey])
       ),
     })
-    previous = variant
-    sinceSpan += 1
+    sinceBlock += 1
   }
 
-  const pushSpan = (tall, a, b, split, side) => {
-    modules.push({
-      kind: "span",
-      variant: side === "left" ? "spanLeft" : "spanRight",
-      // Sequence order, always. The side only says which column the tall frame
-      // occupies, never which frame comes first.
-      frames: [tall, a, b],
-      split,
-      side,
-      ratios: [ratioOf(tall), ratioOf(a), ratioOf(b)],
-    })
-    previous = side === "left" ? "spanLeft" : "spanRight"
-    spanTick += 1
-    sinceSpan = 0
+  // Tries to build a block here: a tall frame, then two sub-rows taken in order
+  // from the frames after it. Larger splits are tried first, because a block
+  // carrying five photographs is the point — a block of three is barely denser
+  // than the rows around it.
+  const blockAt = (at) => {
+    const tall = frames[at]
+
+    if (!tall || !isTall(tall)) return null
+
+    for (const [topCount, bottomCount] of [
+      [2, 2],
+      [2, 1],
+      [1, 2],
+      [3, 2],
+      [2, 3],
+      [1, 1],
+    ]) {
+      const top = frames.slice(at + 1, at + 1 + topCount)
+      const bottom = frames.slice(at + 1 + topCount, at + 1 + topCount + bottomCount)
+
+      if (top.length < topCount || bottom.length < bottomCount) continue
+
+      const split = solveBlock(tall, top, bottom)
+
+      if (split) return { tall, top, bottom, split, size: 1 + topCount + bottomCount }
+    }
+
+    return null
   }
 
   while (index < frames.length) {
     const frame = frames[index]
-    const next = frames[index + 1]
-    const third = frames[index + 2]
     const override = layoutKey ? frame[layoutKey] : null
 
-    if (override) {
-      pushRow([frame], override === "wide" ? "solo" : "soloQuiet")
+    if (override === "wide") {
+      pushRow([frame])
       index += 1
       continue
     }
 
     const group = groupKey ? frame[groupKey] : null
 
-    if (group && next && next[groupKey] === group) {
-      pushRow([frame, next])
+    if (group && frames[index + 1] && frames[index + 1][groupKey] === group) {
+      pushRow([frame, frames[index + 1]])
       index += 2
       continue
     }
 
-    // A frame wide enough to hold the field alone.
-    if (isWide(frame)) {
-      pushRow([frame], "solo")
-      index += 1
-      continue
-    }
+    if (sinceBlock >= 2) {
+      const block = blockAt(index)
 
-    // A span module: a tall frame running down two rows, with the two frames
-    // after it stacked beside it. Taken only when the arithmetic gives a split
-    // that is actually a composition, and never twice running — the shape is
-    // the accent, and an accent repeated is a pattern.
-    if (
-      next &&
-      third &&
-      isTall(frame) &&
-      stacksWell(next) &&
-      stacksWell(third) &&
-      sinceSpan >= 2 &&
-      !String(previous).startsWith("span")
-    ) {
-      const split = solveSpan(frame, next, third)
-
-      if (split) {
-        pushSpan(frame, next, third, split, spanTick % 2 === 0 ? "left" : "right")
-        index += 3
+      if (block) {
+        modules.push({
+          kind: "block",
+          side: blockTick % 2 === 0 ? "left" : "right",
+          tall: block.tall,
+          top: block.top,
+          bottom: block.bottom,
+          split: block.split,
+          frames: [block.tall, ...block.top, ...block.bottom],
+        })
+        blockTick += 1
+        sinceBlock = 0
+        index += block.size
         continue
       }
     }
 
-    // Otherwise a plain row. Frames are taken in order until their proportions
-    // together fill the width at a height worth looking at.
+    // An ordinary justified row. Frames are taken in order until their ratios
+    // sum to about the target, and the row is then stretched to the gallery
+    // width — which is what puts every row on the same two edges.
     const members = []
     let sum = 0
 
-    while (index < frames.length && members.length < 3) {
-      const candidate = frames[index]
+    while (index < frames.length && members.length < MAX_PER_ROW) {
+      // Do not swallow a frame that could open a block; the order is fixed and
+      // the chance does not come round again.
+      if (members.length >= 2 && sum >= MIN_SUM && blockAt(index)) break
 
-      if (members.length && isWide(candidate)) break
-
-      // Stop short rather than swallow a frame that could open a span module.
-      // A row of two here buys the shape that follows; taking the third would
-      // spend it, and the opportunity does not come round again because the
-      // order is fixed.
-      if (members.length && spanStartsAt(frames, index)) break
-
-      members.push(candidate)
-      sum += ratioOf(candidate)
+      members.push(frames[index])
+      sum += ratioOf(frames[index])
       index += 1
 
-      if (sum >= 1.9) break
+      if (sum >= TARGET_SUM) break
     }
 
-    pushRow(members, members.length === 1 ? "soloQuiet" : "row")
+    pushRow(members)
+  }
+
+  // The last row is the one place a justified gallery goes wrong: whatever is
+  // left over is stretched to the full width however few frames it is, and two
+  // upright frames across a gallery this wide come out over a thousand pixels
+  // tall. The usual answer is to leave that row short, which would break the
+  // one rule that matters here — every row on the same two edges. So the
+  // remainder is folded back into the row before it instead, which keeps the
+  // edges and brings the height back down.
+  const last = modules[modules.length - 1]
+  const before = modules[modules.length - 2]
+
+  if (
+    modules.length > 1 &&
+    last.kind === "row" &&
+    before.kind === "row" &&
+    last.sum < MIN_SUM &&
+    last.frames.length + before.frames.length <= MAX_PER_ROW + 2
+  ) {
+    const merged = [...before.frames, ...last.frames]
+
+    modules.splice(modules.length - 2, 2, {
+      kind: "row",
+      frames: merged,
+      ratios: merged.map(ratioOf),
+      sum: merged.reduce((total, frame) => total + ratioOf(frame), 0),
+      intentional: false,
+    })
   }
 
   return modules
