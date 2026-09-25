@@ -832,48 +832,52 @@
    photographs are the page here, not content inside it. Archive keeps the
    column, because it is an interface. */
 .sequence {
+  --gutter: clamp(10px, 0.85vw, 16px);
+
   display: flex;
   flex-direction: column;
-  gap: clamp(10px, 0.9vw, 16px);
+  gap: var(--gutter);
   width: 94vw;
   max-width: 1700px;
-  /* The main column is 1420 wide with 26px of padding; this steps outside it
-     and re-centres on the viewport. */
   margin-left: calc(50% - 47vw);
   margin-right: calc(50% - 47vw);
-  padding: clamp(24px, 3vw, 44px) 0 clamp(72px, 9vw, 116px);
+  padding: clamp(20px, 2.4vw, 36px) 0 clamp(64px, 8vw, 104px);
 }
 
-/* Every few rows the page takes a breath, so the sequence reads in chapters
-   rather than at one unbroken pitch. */
-.row[data-chapter="true"] {
-  margin-top: clamp(26px, 3.4vw, 62px);
-}
-
-/* Inside a row the frames are justified against each other — widths in
-   proportion to their aspect ratios, so they resolve to one height and nothing
-   is left short. Where the row itself sits is the composition. */
+/* A justified row. Every frame takes a width in proportion to its aspect ratio,
+   so they share a height and the row closes on the gallery's own edges. No row
+   is ever narrower than another; what differs between rows is their height. */
 .row {
   display: flex;
-  gap: clamp(12px, 0.95vw, 18px);
+  gap: var(--gutter);
+  width: 100%;
+  min-width: 0;
+}
+
+/* A two-row block: a tall frame down one column, two justified rows down the
+   other. It occupies the same width as every row, and the split was solved so
+   the two rows meet the bottom of the tall frame exactly. */
+.block {
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: var(--gutter);
   width: 100%;
 }
 
-.row[data-place="centre"] {
-  margin-left: auto;
-  margin-right: auto;
+/* The tall frame fills the column it was given; its height is what the split
+   was solved against. */
+.blockTall {
+  display: flex;
+  min-width: 0;
 }
 
-.row[data-place="left"] {
-  margin-right: auto;
-}
-
-.row[data-place="right"] {
-  margin-left: auto;
+.blockTall .plate {
+  width: 100%;
 }
 
 .plate {
   margin: 0;
+  min-width: 0;
 }
 
 .plateButton {
@@ -1027,31 +1031,39 @@
 }
 
 @media (max-width: 900px) {
-  .sequence,
-  .row {
-    gap: clamp(8px, 1.4vw, 14px);
+  .sequence {
+    --gutter: clamp(8px, 1.4vw, 14px);
   }
 }
 
 @media (max-width: 620px) {
-  /* The composition is a wide-screen idea. Rows break, the sequence is set
-     straight, and the gallery returns to the page's own margins. */
+  /* The field is a wide-screen idea. On a phone the compositions collapse to
+     one frame per line, in order, and the stagger goes with them — an offset
+     that small only makes the page look misaligned. A frame placed quiet stays
+     smaller than the rest, which keeps some of the hierarchy. */
   .sequence {
     width: 100%;
     max-width: 100%;
     margin-left: 0;
     margin-right: 0;
-    gap: clamp(8px, 2.4vw, 12px);
+    gap: clamp(10px, 2.6vw, 16px);
   }
 
   .row {
+    display: flex;
     flex-direction: column;
-    max-width: 100% !important;
-    gap: clamp(8px, 2.4vw, 12px);
+    gap: clamp(10px, 2.6vw, 16px);
   }
 
-  .row[data-chapter="true"] {
-    margin-top: clamp(20px, 6vw, 36px);
+  .row .plate {
+    grid-column: auto !important;
+    margin-top: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .row[data-pattern="quiet"] .plate,
+  .row[data-pattern="quietLeft"] .plate {
+    max-width: 66% !important;
   }
 
   .views {

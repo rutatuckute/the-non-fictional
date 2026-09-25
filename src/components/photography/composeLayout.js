@@ -1,74 +1,91 @@
-// Composes an ordered sequence of photographs into editorial rows.
+// Composes an ordered sequence of photographs into justified modules.
 //
-// Two things are kept apart, because conflating them is what makes an automatic
-// layout look automatic.
+// Every module — a plain row or a two-row block with a tall frame running down
+// it — occupies the full gallery width. Same left edge, same right edge, no
+// ragged ends and no black left over. What varies is the height, which falls
+// out of the proportions of whatever is in the row, and the number of frames,
+// which is chosen to keep that height near a target.
 //
-// Inside a row, widths are derived from the aspect ratios, so every frame in a
-// row resolves to the same height. That is not a stylistic choice — it is the
-// only way a row of different proportions closes without leaving space under
-// the shorter frame.
+// The arithmetic is the ordinary justified one. Frames in a row share a height
+// h; a frame of ratio r is then h·r wide; the widths plus the gutters have to
+// come to the gallery width W, so h = (W - gutters) / Σr. Choosing how many
+// frames go in a row is therefore choosing Σr, and a target height is a target
+// Σr — which is what this packs against.
 //
-// The row itself is then given a width and a place on the page, and those do
-// vary: a row need not fill the page, and the width it is allowed is what makes
-// one photograph an anchor and another a supporting frame beside it. Asymmetry
-// and empty space are decided here, deliberately, rather than falling out of
-// the packing.
-//
-// The sequence is never reordered. Where a row breaks and how wide it sits are
-// the only decisions.
+// selectedOrder is never touched. Only where a module breaks, and whether it is
+// a row or a block, are decided here.
 
 const ratioOf = (frame) =>
   frame.width && frame.height ? frame.width / frame.height : 1.5
 
-const isUpright = (frame) => ratioOf(frame) < 1.15
-const isPanorama = (frame) => ratioOf(frame) >= 2.0
+const isTall = (frame) => ratioOf(frame) <= 0.75
 
-// The vocabulary. Each says how much of the gallery a row may take and where it
-// sits; the frames inside it are always justified against each other.
-const PATTERNS = {
-  full: { width: 100, place: "centre" },
-  anchor: { width: 82, place: "centre" },
-  anchorLeft: { width: 78, place: "left" },
-  anchorRight: { width: 78, place: "right" },
-  insetLeft: { width: 58, place: "left" },
-  insetRight: { width: 58, place: "right" },
-  duo: { width: 100, place: "centre" },
-  duoInset: { width: 84, place: "centre" },
-  trio: { width: 100, place: "centre" },
+// Σr for an ordinary row. The gallery runs to about 1500px, so a row of frames
+// whose ratios sum to near four lands around 370px tall — dense enough that
+// several photographs are in view at once, which is the thing that was missing.
+// Upright frames sum slowly, so a row of them runs to five or six; a row of
+// landscapes closes at three.
+const TARGET_SUM = 3.9
+const MIN_SUM = 2.9
+const MAX_PER_ROW = 6
+
+// The gutter as a fraction of the gallery width. Close enough at these widths:
+// it moves a solved split by well under a per cent.
+const GUTTER = 0.009
+
+// Solves the column split for a two-row block.
+//
+// The tall frame takes the left or right column and runs the height of the
+// block. The other column holds two justified sub-rows, and those two, with the
+// gutter between them, have to come to exactly the tall frame's height.
+//
+//   ((1 - x) - g)/rT = x/Σtop + g + x/Σbottom
+//
+// One unknown. Returned as fractions of the gallery width, or null when the
+// answer is not a composition.
+const solveBlock = (tall, top, bottom) => {
+  const rT = ratioOf(tall)
+  const sumTop = top.reduce((total, f) => total + ratioOf(f), 0)
+  const sumBottom = bottom.reduce((total, f) => total + ratioOf(f), 0)
+
+  if (!sumTop || !sumBottom) return null
+
+  // Each sub-row spends its own gutters before its frames get any width, so a
+  // sub-row of three is shorter than one of two at the same column width. Left
+  // out of the solve, that shortfall lands at the bottom of the block as a step
+  // against the tall frame beside it.
+  const S = 1 / sumTop + 1 / sumBottom
+  const inner =
+    ((top.length - 1) * GUTTER) / sumTop + ((bottom.length - 1) * GUTTER) / sumBottom
+
+  const x = (1 - GUTTER + rT * inner - rT * GUTTER) / (1 + rT * S)
+
+  if (!Number.isFinite(x) || x < 0.35 || x > 0.78) return null
+
+  const tallWidth = 1 - x - GUTTER
+
+  // The block's height, as a fraction of the gallery width. Two ordinary rows
+  // and a gutter is what it should come to; much more and it is a wall.
+  const height = tallWidth / rT
+
+  if (height > 0.62) return null
+
+  return { side: x, tall: tallWidth, sumTop, sumBottom, height }
 }
 
-// How many rows of ordinary width before the page is given a larger break. The
-// sequence reads in chapters rather than as one continuous grid.
-const CHAPTER_EVERY = 4
-
 export const composeLayout = (frames, { layoutKey, groupKey = null } = {}) => {
-  const rows = []
+  const modules = []
 
   let index = 0
-  let previous = null
-  let sinceAnchor = 2
-  let sinceInset = 0
-  let sideTick = 0
+  let sinceBlock = 2
+  let blockTick = 0
 
-  const push = (members, pattern) => {
-    const spec = PATTERNS[pattern]
-    const sum = members.reduce((total, frame) => total + ratioOf(frame), 0)
-
-    rows.push({
-      pattern,
-      width: spec.width,
-      place: spec.place,
+  const pushRow = (members) => {
+    modules.push({
+      kind: "row",
       frames: members,
-      sum,
       ratios: members.map(ratioOf),
-      // Every few rows the vertical rhythm opens up, so the sequence has
-      // resting points instead of running on at one pitch. Not before a lone
-      // narrow frame, though: extra space above something already surrounded by
-      // space stops reading as a rest and starts reading as a hole.
-      chapter:
-        rows.length > 0 &&
-        rows.length % CHAPTER_EVERY === 0 &&
-        !(members.length === 1 && isUpright(members[0])),
+      sum: members.reduce((total, frame) => total + ratioOf(frame), 0),
       intentional: Boolean(
         groupKey &&
           members.length > 1 &&
@@ -76,33 +93,45 @@ export const composeLayout = (frames, { layoutKey, groupKey = null } = {}) => {
           members.every((m) => m[groupKey] === members[0][groupKey])
       ),
     })
-
-    previous = pattern
-    sinceAnchor = pattern.startsWith("anchor") || pattern === "full" ? 0 : sinceAnchor + 1
-    sinceInset = pattern.startsWith("inset") ? 0 : sinceInset + 1
+    sinceBlock += 1
   }
 
-  // Alternates the side an offset row sits on, without ever repeating the last
-  // one used.
-  const nextSide = () => {
-    sideTick += 1
-    return sideTick % 2 === 1 ? "Left" : "Right"
+  // Tries to build a block here: a tall frame, then two sub-rows taken in order
+  // from the frames after it. Larger splits are tried first, because a block
+  // carrying five photographs is the point — a block of three is barely denser
+  // than the rows around it.
+  const blockAt = (at) => {
+    const tall = frames[at]
+
+    if (!tall || !isTall(tall)) return null
+
+    for (const [topCount, bottomCount] of [
+      [2, 2],
+      [2, 1],
+      [1, 2],
+      [3, 2],
+      [2, 3],
+      [1, 1],
+    ]) {
+      const top = frames.slice(at + 1, at + 1 + topCount)
+      const bottom = frames.slice(at + 1 + topCount, at + 1 + topCount + bottomCount)
+
+      if (top.length < topCount || bottom.length < bottomCount) continue
+
+      const split = solveBlock(tall, top, bottom)
+
+      if (split) return { tall, top, bottom, split, size: 1 + topCount + bottomCount }
+    }
+
+    return null
   }
 
   while (index < frames.length) {
     const frame = frames[index]
     const override = layoutKey ? frame[layoutKey] : null
 
-    if (override) {
-      // "wide" cannot mean full width for an upright frame — at the width of
-      // the page it would be over two thousand pixels tall, and the height
-      // ceiling then shrinks it into the narrowest thing on the page, which is
-      // the opposite of what was asked for. It is given prominence the way an
-      // upright frame can take it: as much height as a frame is allowed, and
-      // set to one side so the space beside it reads as composition.
-      const wide = override === "wide"
-
-      push([frame], wide && !isUpright(frame) ? "full" : `anchor${nextSide()}`)
+    if (override === "wide") {
+      pushRow([frame])
       index += 1
       continue
     }
@@ -110,67 +139,79 @@ export const composeLayout = (frames, { layoutKey, groupKey = null } = {}) => {
     const group = groupKey ? frame[groupKey] : null
 
     if (group && frames[index + 1] && frames[index + 1][groupKey] === group) {
-      push([frame, frames[index + 1]], "duo")
+      pushRow([frame, frames[index + 1]])
       index += 2
       continue
     }
 
-    // A frame wide enough to carry the page carries it.
-    if (isPanorama(frame)) {
-      push([frame], "full")
-      index += 1
-      continue
+    if (sinceBlock >= 2) {
+      const block = blockAt(index)
+
+      if (block) {
+        modules.push({
+          kind: "block",
+          side: blockTick % 2 === 0 ? "left" : "right",
+          tall: block.tall,
+          top: block.top,
+          bottom: block.bottom,
+          split: block.split,
+          frames: [block.tall, ...block.top, ...block.bottom],
+        })
+        blockTick += 1
+        sinceBlock = 0
+        index += block.size
+        continue
+      }
     }
 
-    // An anchor: one photograph given most of the width and the weight of the
-    // page. Landscapes make better anchors — an upright frame at this width is
-    // taller than the window.
-    if (sinceAnchor >= 3 && !isUpright(frame) && previous !== "full") {
-      push([frame], "anchor")
-      index += 1
-      continue
-    }
-
-    // A supporting frame, set narrow and to one side, with the rest of the row
-    // left empty. This is the page's breathing space, and it is the one place a
-    // row deliberately does not close.
-    if (sinceInset >= 5 && isUpright(frame)) {
-      push([frame], `inset${nextSide()}`)
-      index += 1
-      continue
-    }
-
-    // Otherwise take the next frames in order until their proportions together
-    // fill a row at a sensible height.
+    // An ordinary justified row. Frames are taken in order until their ratios
+    // sum to about the target, and the row is then stretched to the gallery
+    // width — which is what puts every row on the same two edges.
     const members = []
     let sum = 0
 
-    while (index < frames.length && members.length < 3) {
-      const candidate = frames[index]
+    while (index < frames.length && members.length < MAX_PER_ROW) {
+      // Do not swallow a frame that could open a block; the order is fixed and
+      // the chance does not come round again.
+      if (members.length >= 2 && sum >= MIN_SUM && blockAt(index)) break
 
-      if (members.length && isPanorama(candidate)) break
-
-      members.push(candidate)
-      sum += ratioOf(candidate)
+      members.push(frames[index])
+      sum += ratioOf(frames[index])
       index += 1
 
-      if (sum >= 1.9) break
+      if (sum >= TARGET_SUM) break
     }
 
-    if (members.length === 1) {
-      // Nothing to sit beside it. Given room rather than stretched across the
-      // page, and offset so the gap reads as composition.
-      push(members, isUpright(members[0]) ? `anchor${nextSide()}` : "anchor")
-      continue
-    }
-
-    // Two frames that already fill a row generously are held in a little from
-    // the edges now and then, so not every row meets the same margins.
-    const pattern =
-      members.length === 3 ? "trio" : previous === "duo" ? "duoInset" : "duo"
-
-    push(members, pattern)
+    pushRow(members)
   }
 
-  return rows
+  // The last row is the one place a justified gallery goes wrong: whatever is
+  // left over is stretched to the full width however few frames it is, and two
+  // upright frames across a gallery this wide come out over a thousand pixels
+  // tall. The usual answer is to leave that row short, which would break the
+  // one rule that matters here — every row on the same two edges. So the
+  // remainder is folded back into the row before it instead, which keeps the
+  // edges and brings the height back down.
+  const last = modules[modules.length - 1]
+  const before = modules[modules.length - 2]
+
+  if (
+    modules.length > 1 &&
+    last.kind === "row" &&
+    before.kind === "row" &&
+    last.sum < MIN_SUM &&
+    last.frames.length + before.frames.length <= MAX_PER_ROW + 2
+  ) {
+    const merged = [...before.frames, ...last.frames]
+
+    modules.splice(modules.length - 2, 2, {
+      kind: "row",
+      frames: merged,
+      ratios: merged.map(ratioOf),
+      sum: merged.reduce((total, frame) => total + ratioOf(frame), 0),
+      intentional: false,
+    })
+  }
+
+  return modules
 }

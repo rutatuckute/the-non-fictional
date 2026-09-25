@@ -6,29 +6,23 @@ import PhotoImage from "../photo-image"
 import { composeLayout } from "./composeLayout"
 import styles from "../../styles/photography.module.css"
 
-// How tall a row is allowed to get. A row's natural height is the width it has
-// divided by the sum of its aspect ratios, so a row of upright frames comes out
-// far taller than one of wide ones. Rather than crop anything or leave a frame
-// towering over the page, a row that would exceed this is given less width and
-// centred: every frame keeps its proportions and its share, and the row simply
-// sits smaller.
-const MAX_ROW_HEIGHT = 620
-const MAX_ANCHOR_HEIGHT = 760
-
-// What a frame is asked to fetch, from the share of the row it takes, at
-// roughly twice the width it occupies.
+// Roughly twice the width a frame occupies, at a gallery of at most 1700px.
 const budgetFor = (share) => {
-  if (share >= 0.8) return 2048
-  if (share >= 0.5) return 1440
-  if (share >= 0.3) return 1080
-  return 760
+  if (share >= 0.55) return 1800
+  if (share >= 0.34) return 1280
+  if (share >= 0.2) return 900
+  return 640
 }
+
+const ratioOf = (frame) =>
+  frame.width && frame.height ? frame.width / frame.height : 1.5
 
 const Plate = ({ frame, ratio, share, onOpen }) => (
   <figure
     className={styles.plate}
-    // Widths in proportion to the aspect ratios is what justifies the row: the
-    // height each frame resolves to is the same for all of them.
+    // Width in proportion to the aspect ratio. Every frame in a row is then the
+    // same height, and the row stretches to the gallery width — which is what
+    // puts every row on the same two edges.
     style={{ flexGrow: ratio, flexBasis: 0 }}
   >
     <button
@@ -43,14 +37,8 @@ const Plate = ({ frame, ratio, share, onOpen }) => (
         px={budgetFor(share)}
         quality="normal"
         alt={frame.title}
-        style={
-          frame.width && frame.height
-            ? { aspectRatio: `${frame.width} / ${frame.height}` }
-            : undefined
-        }
+        style={{ aspectRatio: `${frame.width || 3} / ${frame.height || 2}` }}
       />
-      {/* In the frame, invisible at rest, for pointer and keyboard. A touch
-          screen gets this from the lightbox instead. */}
       <figcaption className={styles.plateMeta}>
         <span className={styles.plateTitle}>{frame.title}</span>
         <span className={styles.plateWhere}>
@@ -61,49 +49,77 @@ const Plate = ({ frame, ratio, share, onOpen }) => (
   </figure>
 )
 
+const Justified = ({ frames, sum, onOpen, className }) => (
+  <div className={className}>
+    {frames.map((frame) => (
+      <Plate
+        key={frame.slug}
+        frame={frame}
+        ratio={ratioOf(frame)}
+        share={ratioOf(frame) / sum}
+        onOpen={onOpen}
+      />
+    ))}
+  </div>
+)
+
+// A tall frame down one column, two justified sub-rows down the other. The
+// split was solved so the two sub-rows and the gutter between them come to
+// exactly the tall frame's height, so the block closes as one rectangle on the
+// same edges as every row.
+const Block = ({ module: mod, onOpen }) => {
+  const { split, side } = mod
+  const tallFirst = side === "left"
+  const columns = tallFirst
+    ? `${split.tall}fr ${split.side}fr`
+    : `${split.side}fr ${split.tall}fr`
+
+  return (
+    <div className={styles.block} style={{ gridTemplateColumns: columns }}>
+      <div
+        className={styles.blockTall}
+        style={{ gridColumn: tallFirst ? 1 : 2, gridRow: "1 / span 2" }}
+      >
+        <Plate frame={mod.tall} ratio={1} share={split.tall} onOpen={onOpen} />
+      </div>
+
+      <Justified
+        className={styles.row}
+        frames={mod.top}
+        sum={split.sumTop}
+        onOpen={onOpen}
+      />
+      <Justified
+        className={styles.row}
+        frames={mod.bottom}
+        sum={split.sumBottom}
+        onOpen={onOpen}
+      />
+    </div>
+  )
+}
+
 const EditorialSequence = ({ frames, layoutKey, groupKey = null, onOpen }) => {
-  const rows = React.useMemo(
+  const modules = React.useMemo(
     () => composeLayout(frames, { layoutKey, groupKey }),
     [frames, layoutKey, groupKey]
   )
 
   return (
     <div className={styles.sequence}>
-      {rows.map((row, index) => {
-        const cap =
-          row.pattern === "full" || row.pattern.startsWith("anchor")
-            ? MAX_ANCHOR_HEIGHT
-            : MAX_ROW_HEIGHT
-
-        return (
-          <div
+      {modules.map((mod, index) =>
+        mod.kind === "block" ? (
+          <Block key={`${mod.frames[0].slug}-${index}`} module={mod} onOpen={onOpen} />
+        ) : (
+          <Justified
+            key={`${mod.frames[0].slug}-${index}`}
             className={styles.row}
-            key={`${row.frames[0].slug}-${index}`}
-            data-pattern={row.pattern}
-            data-place={row.place}
-            data-count={row.frames.length}
-            data-chapter={row.chapter ? "true" : undefined}
-            data-intentional={row.intentional ? "true" : undefined}
-            style={{
-              // The share of the gallery this row is allowed, and then a
-              // ceiling on how tall it may become — a row of upright frames
-              // would otherwise resolve taller than the window. It narrows
-              // rather than crops.
-              maxWidth: `min(${row.width}%, ${Math.round(cap * row.sum)}px)`,
-            }}
-          >
-            {row.frames.map((frame, position) => (
-              <Plate
-                key={frame.slug}
-                frame={frame}
-                ratio={row.ratios[position]}
-                share={row.ratios[position] / row.sum}
-                onOpen={onOpen}
-              />
-            ))}
-          </div>
+            frames={mod.frames}
+            sum={mod.sum}
+            onOpen={onOpen}
+          />
         )
-      })}
+      )}
     </div>
   )
 }
