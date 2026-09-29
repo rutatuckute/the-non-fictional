@@ -28,7 +28,7 @@ export default function AboutPage() {
       <main className="mx-auto w-full max-w-5xl px-6 py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-[1fr_auto] md:items-start md:gap-16">
           <div className="max-w-xl">
-            <h1 className="editorial-title">In Brief</h1>
+            <h1 className="editorial-title">In brief</h1>
 
             <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
               I never felt like writing anything fictional. Contemplating the
@@ -71,7 +71,7 @@ export default function AboutPage() {
             <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
               At least for now, I've found my anchors in this chaos - a kind of
               stability in motion, built on the eternal pursuit of control, even
-              if illusory.
+              if illusory.{" "}
               <Link className="editorial-link" href="/blog/">
                 Writing
               </Link>{" "}
@@ -86,7 +86,7 @@ export default function AboutPage() {
               I don't need to choose. I'm fine with both.
             </p>
 
-            <p className="mt-5 font-serif text-lg leading-relaxed text-muted-foreground">
+            <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
               If anything, I wish to hurry through life a little less blindly,
               to experience it all a little bit more. To notice more. To share
               some of it with others, knowing that what we produce is just
@@ -95,7 +95,7 @@ export default function AboutPage() {
               struggle rather than succumb to comfortable cognitive numbness.
             </p>
 
-            <p className="mt-5 font-serif text-lg leading-relaxed text-muted-foreground">
+            <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
               I claim them all.
             </p>
           </div>
