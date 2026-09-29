@@ -30,10 +30,10 @@ export default function AboutPage() {
             <h1 className="editorial-title">In Brief</h1>
 
             <p className="mt-6 font-serif text-lg leading-relaxed text-muted-foreground">
-              I never felt like writing anything fictional. A personal space for
-              photography and writings — essays about how things work,
-              (un)structured reflections, the stories data can tell, and
-              photographs on film. Only questioning, starting with myself.
+              I never felt like writing anything fictional. Contemplating the
+              whats and whys of what's happening around me has always been a far
+              more amusing playground. Must be a byproduct of spending so much
+              time in my own head.
             </p>
           </div>
 
