@@ -163,3 +163,11 @@
   color: #e8922c;
   text-decoration-thickness: 2px;
 }
+
+.tw .editorial-title + .editorial-copy {
+  margin-top: 1.5rem;
+}
+
+.tw .editorial-copy + .editorial-copy {
+  margin-top: 1.25rem;
+}

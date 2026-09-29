@@ -30,45 +30,45 @@ export default function AboutPage() {
           <div className="max-w-xl">
             <h1 className="editorial-title">In Brief</h1>
 
-            <p className="mt-6 font-serif text-lg leading-relaxed text-muted-foreground">
+            <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
               I never felt like writing anything fictional. Contemplating the
               whats and whys of what's happening around me has always been a far
               more amusing playground. Must be a byproduct of spending so much
               time in my own head.
             </p>
 
-            <p className="mt-5 font-serif text-lg leading-relaxed text-muted-foreground">
+            <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
               Now, more often than not, I get drained by the abundance. The
               abundance of information, content, and all the inputs that
               evolution hasn't had enough time to prepare our brains for. Worse
               yet, it's all becoming increasingly too much of the same.
             </p>
 
-            <p className="mt-5 font-serif text-lg leading-relaxed text-muted-foreground">
+            <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
               I'm not fooled, though. Originality is indeed a myth. Everything
               is, and has always been, a copy of a copy. Or, more precisely, a
               recombination of the preexisting. That's just the natural
               evolutive state of things.
             </p>
 
-            <p className="mt-5 font-serif text-lg leading-relaxed text-muted-foreground">
+            <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
               But what happens when that copy itself becomes homogeneous? When
               we outsource and thus transfer our thinking and curiosity - the
               very core fo what got us here?
             </p>
 
-            <p className="mt-5 font-serif text-lg leading-relaxed text-muted-foreground">
+            <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
               Why? It's tempting. Why would you refuse soma, after all?
             </p>
 
-            <p className="mt-5 font-serif text-lg leading-relaxed text-muted-foreground">
+            <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
               But I don't want uniformity. I want differences. I want nuances. I
               want complexities. I want edges. I want rawness. I want the output
               of our imperfect neural networks and decoders. I want more of what
               makes us human. And all the discomfort that comes with it.
             </p>
 
-            <p className="mt-5 font-serif text-lg leading-relaxed text-muted-foreground">
+            <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
               At least for now, I've found my anchors in this chaos - a kind of
               stability in motion, built on the eternal pursuit of control, even
               if illusory.
@@ -82,7 +82,7 @@ export default function AboutPage() {
               feels more like experiencing perceived reality as is.
             </p>
 
-            <p className="mt-5 font-serif text-lg leading-relaxed text-muted-foreground">
+            <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
               I don't need to choose. I'm fine with both.
             </p>
 
