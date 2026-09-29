@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { Github, Linkedin } from "lucide-react"
 
 import Masthead from "../../../components/masthead"
 import SiteFooter from "../../../components/site-footer"
@@ -110,6 +111,38 @@ export default function AboutPage() {
               loading="eager"
               decoding="async"
             />
+
+            <nav className="profile-socials" aria-label="Social profiles">
+              <a
+                className="profile-social-link"
+                href="https://www.linkedin.com/in/ruta-tuckute/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+              >
+                <Linkedin aria-hidden="true" />
+              </a>
+              <a
+                className="profile-social-link"
+                href="https://x.com/rutatuckute"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="X"
+              >
+                <span className="profile-social-x" aria-hidden="true">
+                  𝕏
+                </span>
+              </a>
+              <a
+                className="profile-social-link"
+                href="https://github.com/rutatuckute"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+              >
+                <Github aria-hidden="true" />
+              </a>
+            </nav>
           </figure>
         </div>
       </main>

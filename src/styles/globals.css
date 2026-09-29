@@ -171,3 +171,54 @@
 .tw .editorial-copy + .editorial-copy {
   margin-top: 1.25rem;
 }
+
+.tw .profile-socials {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.625rem;
+  margin-top: 1rem;
+}
+
+.tw .profile-social-link {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition:
+    border-color 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.tw .profile-social-link:hover,
+.tw .profile-social-link:focus-visible {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.tw .profile-social-link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.tw .profile-social-link svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.tw .profile-social-x {
+  font-family: var(--font-bricolage), system-ui, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+@media (max-width: 48rem) {
+  .tw .profile-socials {
+    justify-content: center;
+  }
+}
