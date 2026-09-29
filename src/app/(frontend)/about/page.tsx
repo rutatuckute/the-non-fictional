@@ -25,8 +25,8 @@ export default function AboutPage() {
     <div className="tw min-h-screen bg-background">
       <Masthead activeSection="in-brief" />
 
-      <main className="mx-auto w-full max-w-5xl px-6 py-16 md:py-24">
-        <div className="grid gap-12 md:grid-cols-[1fr_auto] md:items-start md:gap-16">
+      <main className="mx-auto w-full max-w-6xl px-6 py-16 md:py-24">
+        <div className="grid gap-12 md:grid-cols-[minmax(0,1fr)_20rem] md:items-start md:gap-20">
           <div className="max-w-xl">
             <h1 className="editorial-title">In brief</h1>
 
@@ -104,9 +104,9 @@ export default function AboutPage() {
             <img
               src={imageUrl("/images/uploads/in_brief_logo.png", 640, "normal")}
               alt=""
-              width={288}
-              height={432}
-              className="h-auto w-72 rounded-xl border border-border"
+              width={320}
+              height={480}
+              className="h-auto w-80 rounded-xl border border-border"
               loading="eager"
               decoding="async"
             />
