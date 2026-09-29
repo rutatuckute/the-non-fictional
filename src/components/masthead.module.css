@@ -1,8 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap");
 
 .header {
-  --masthead-background: #000000;
-  --masthead-rule: #2f2f2f;
+  --masthead-background: #161717;
+  --masthead-rule: #353737;
   --masthead-ink: #eee8df;
   --masthead-muted: #b2aba0;
   --masthead-accent: #ffa500;
