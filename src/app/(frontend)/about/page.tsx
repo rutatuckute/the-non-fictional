@@ -102,11 +102,7 @@ export default function AboutPage() {
 
           <figure className="justify-self-center md:justify-self-end">
             <img
-              src={imageUrl(
-                "/images/uploads/site-about-icon.png",
-                640,
-                "normal",
-              )}
+              src={imageUrl("/images/uploads/in_brief_logo.png", 640, "normal")}
               alt=""
               width={240}
               height={240}
