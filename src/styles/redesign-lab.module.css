@@ -1,16 +1,12 @@
 .page {
-  --lab-void: #0b0a09;
-  --lab-raised: #131211;
-  --lab-rule: #2b2926;
-  /* --lab-rule is 1.36:1 — fine for a decorative hairline, invisible as the
-     edge of a control. This clears the 3:1 that non-text UI needs. */
-  --lab-rule-strong: #665e54;
-  --lab-rule-subtle: #1b1a18;
+  --lab-void: #242322;
+  --lab-raised: #33312e;
+  --lab-rule: #4b4741;
+  --lab-rule-strong: #817a70;
+  --lab-rule-subtle: #2c2926;
   --lab-ink: #eee8df;
-  --lab-ink-secondary: #9b958b;
-  /* 5.28:1 on --lab-void. The former #6a645c was 3.38:1, which is under the
-     4.5:1 that text this size needs, and it carried every label on the page. */
-  --lab-ink-muted: #8a837a;
+  --lab-ink-secondary: #b2aba0;
+  --lab-ink-muted: #91897d;
   --lab-content-max: 1680px;
   /* Masthead is 76px plus its 1px rule, and sits in normal flow. */
   --lab-masthead-h: 77px;
@@ -58,7 +54,7 @@
   background: var(--lab-background);
   color: var(--lab-text-primary);
   font-family: var(--lab-font-body);
-  font-weight: 300;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -299,7 +295,10 @@
   stroke-width: 1.2;
   opacity: 0.75;
   pointer-events: stroke;
-  transition: stroke 180ms ease, opacity 180ms ease, stroke-width 180ms ease;
+  transition:
+    stroke 180ms ease,
+    opacity 180ms ease,
+    stroke-width 180ms ease;
   vector-effect: non-scaling-stroke;
 }
 
@@ -480,7 +479,9 @@
   /* 0.3 left the inactive copy at ~2.4:1. Still clearly the background state,
      but readable if the eye lands on it mid-scroll. */
   opacity: 0.5;
-  transition: opacity 300ms ease, border-color 300ms ease;
+  transition:
+    opacity 300ms ease,
+    border-color 300ms ease;
 }
 
 .step[data-active="true"] .stepContent {
@@ -540,7 +541,10 @@
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 250ms ease, color 150ms ease, border-color 150ms ease;
+  transition:
+    opacity 250ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
 }
 
 .timelineReplay[data-visible="true"] {
@@ -835,7 +839,6 @@
   .scrolly {
     padding-inline: 24px;
   }
-
 }
 
 @media (max-width: 30rem) {

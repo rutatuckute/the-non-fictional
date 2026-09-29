@@ -1,16 +1,12 @@
 .page {
-  --void: #0b0a09;
-  --raised: #131211;
-  --rule: #2b2926;
-  /* --rule is 1.36:1 — fine for a decorative hairline, invisible as the edge
-     of a control. This clears the 3:1 that non-text UI needs. */
-  --rule-strong: #665e54;
-  --rule-subtle: #1b1a18;
+  --void: #242322;
+  --raised: #33312e;
+  --rule: #4b4741;
+  --rule-strong: #817a70;
+  --rule-subtle: #2c2926;
   --ink: #eee8df;
-  --ink-2: #9b958b;
-  /* 5.28:1 on --void. The former #6a645c was 3.38:1, under the 4.5:1 text
-     this size needs, and it was the resting colour of every control here. */
-  --ink-3: #8a837a;
+  --ink-2: #b2aba0;
+  --ink-3: #91897d;
   --brand: #ffa500;
   --font-body: var(--font-source-serif), Georgia, serif;
   --font-title: var(--font-bricolage), system-ui, sans-serif;
@@ -26,7 +22,7 @@
   background: var(--void);
   color: var(--ink);
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -206,7 +202,9 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: color 150ms ease, border-color 150ms ease;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease;
 }
 
 .chip:hover,
@@ -241,7 +239,9 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: color 150ms ease, border-color 150ms ease;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease;
 }
 
 .selectButton:hover,
@@ -312,7 +312,9 @@
   text-transform: uppercase;
   white-space: nowrap;
   cursor: pointer;
-  transition: color 120ms ease, background 120ms ease;
+  transition:
+    color 120ms ease,
+    background 120ms ease;
 }
 
 .selectOption:hover,
@@ -936,7 +938,11 @@
   flex-direction: column;
   gap: 3px;
   padding: 44px 18px 16px;
-  background: linear-gradient(to top, rgba(11, 10, 9, 0.62), rgba(11, 10, 9, 0));
+  background: linear-gradient(
+    to top,
+    rgba(11, 10, 9, 0.62),
+    rgba(11, 10, 9, 0)
+  );
   opacity: 0;
   transition: opacity 380ms cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;

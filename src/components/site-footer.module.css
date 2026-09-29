@@ -3,11 +3,11 @@
   max-width: 1240px;
   margin: 0 auto;
   padding: 1.5rem 0 2rem;
-  border-top: 1px solid #2b2926;
-  background: #0b0a09;
+  border-top: 1px solid #4b4741;
+  background: #242322;
   /* 5.28:1, up from the 3.38:1 of #6a645c — this is 10px uppercase mono, the
      smallest text on either page, so it needs the contrast most. */
-  color: #8a837a;
+  color: #91897d;
   font-family: var(--font-plex-mono), monospace;
   font-size: 0.625rem;
   font-weight: 400;
