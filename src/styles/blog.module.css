@@ -2,14 +2,14 @@
    so the two archives read as one place; only the card body differs, because a
    piece needs a title and a summary where a frame needs neither. */
 .page {
-  --void: #0b0a09;
-  --raised: #131211;
-  --rule: #2b2926;
-  --rule-strong: #665e54;
-  --rule-subtle: #1b1a18;
+  --void: #161717;
+  --raised: #202121;
+  --rule: #353737;
+  --rule-strong: #5b5d5d;
+  --rule-subtle: #202121;
   --ink: #eee8df;
-  --ink-2: #9b958b;
-  --ink-3: #8a837a;
+  --ink-2: #b2aba0;
+  --ink-3: #91897d;
   --brand: #ffa500;
   --essays: #f2762b;
   --reflections: #c08ae8;
@@ -28,7 +28,7 @@
   background: var(--void);
   color: var(--ink);
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
 }
 
 .page * {
@@ -199,7 +199,9 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: color 150ms ease, border-color 150ms ease;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease;
 }
 
 .chip:hover,
@@ -260,7 +262,9 @@
   border: 1px solid var(--rule);
   text-decoration: none;
   color: inherit;
-  transition: transform 200ms ease, border-color 200ms ease,
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease,
     box-shadow 200ms ease;
 }
 

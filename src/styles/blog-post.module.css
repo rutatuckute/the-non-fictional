@@ -1,14 +1,14 @@
 /* The article page, treatment 03 from the layout study: metadata and a section
    index in a rail that stays put, prose in a 68-character column beside it. */
 .page {
-  --void: #0b0a09;
-  --raised: #131211;
-  --rule: #2b2926;
-  --rule-strong: #665e54;
-  --rule-subtle: #1b1a18;
+  --void: #161717;
+  --raised: #202121;
+  --rule: #353737;
+  --rule-strong: #5b5d5d;
+  --rule-subtle: #202121;
   --ink: #eee8df;
-  --ink-2: #9b958b;
-  --ink-3: #8a837a;
+  --ink-2: #b2aba0;
+  --ink-3: #91897d;
   --brand: #ffa500;
   --essays: #f2762b;
   --reflections: #c08ae8;
@@ -28,7 +28,7 @@
   background: var(--void);
   color: var(--ink);
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
 }
 
 .page * {
@@ -160,7 +160,9 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
-  transition: color 150ms ease, border-color 150ms ease;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease;
 }
 
 .action:hover,
@@ -244,8 +246,6 @@
   border-bottom-color: var(--brand);
 }
 
-/* The old rule painted these #4f5969 on near-black — 2.79:1, and five of the
-   seven posts use them. */
 .prose blockquote {
   margin: 1.8em 0;
   padding: 0 0 0 20px;

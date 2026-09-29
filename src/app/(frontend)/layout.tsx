@@ -1,14 +1,14 @@
-import type { Metadata, Viewport } from 'next'
+import type { Metadata, Viewport } from "next"
 import {
   Bricolage_Grotesque,
   IBM_Plex_Mono,
   Merriweather,
   Montserrat,
   Source_Serif_4,
-} from 'next/font/google'
+} from "next/font/google"
 
-import { site, siteUrl } from '../../lib/site'
-import '../../styles/globals.css'
+import { site, siteUrl } from "../../lib/site"
+import "../../styles/globals.css"
 
 // These were loaded from fonts.googleapis.com by a stylesheet link in every
 // page's head, which put a third-party round trip in front of first paint on
@@ -21,36 +21,36 @@ import '../../styles/globals.css'
 // constant for the subset list.
 
 const bricolage = Bricolage_Grotesque({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-bricolage',
-  display: 'swap',
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-bricolage",
+  display: "swap",
 })
 
 const sourceSerif = Source_Serif_4({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-source-serif',
-  display: 'swap',
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-source-serif",
+  display: "swap",
 })
 
 const plexMono = IBM_Plex_Mono({
-  subsets: ['latin', 'latin-ext'],
-  weight: ['400', '500'],
-  variable: '--font-plex-mono',
-  display: 'swap',
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500"],
+  variable: "--font-plex-mono",
+  display: "swap",
 })
 
 // Referenced by the legacy base styles in style.css.
 const montserrat = Montserrat({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-montserrat',
-  display: 'swap',
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-montserrat",
+  display: "swap",
 })
 
 const merriweather = Merriweather({
-  subsets: ['latin', 'latin-ext'],
-  weight: ['400', '700'],
-  variable: '--font-merriweather',
-  display: 'swap',
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "700"],
+  variable: "--font-merriweather",
+  display: "swap",
 })
 
 export const metadata: Metadata = {
@@ -65,21 +65,23 @@ export const metadata: Metadata = {
   creator: site.author.name,
   publisher: site.author.name,
   alternates: {
-    canonical: '/',
+    canonical: "/",
     types: {
-      'application/rss+xml': [{ url: '/rss.xml', title: `${site.title} — RSS` }],
+      "application/rss+xml": [
+        { url: "/rss.xml", title: `${site.title} — RSS` },
+      ],
     },
   },
   openGraph: {
-    type: 'website',
+    type: "website",
     siteName: site.title,
     title: site.title,
     description: site.description,
-    url: '/',
+    url: "/",
     locale: site.locale,
   },
   twitter: {
-    card: 'summary_large_image',
+    card: "summary_large_image",
     site: site.social.twitter,
     creator: site.social.twitter,
   },
@@ -89,34 +91,44 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-      'max-video-preview': -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
     },
   },
   icons: {
-    icon: '/favicon.ico',
-    apple: '/images/logo.png',
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-32.png", type: "image/png", sizes: "32x32" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" },
+    ],
   },
   // Served as a static file rather than through app/manifest.ts. With
   // trailingSlash on, the generated .webmanifest route answers 404 on the bare
   // path and redirects the slashed one straight back to it, so neither form
   // resolves. The manifest holds nothing dynamic, so a file in public/ is both
   // simpler and actually reachable.
-  manifest: '/site.webmanifest',
+  manifest: "/site.webmanifest",
 }
 
 export const viewport: Viewport = {
-  width: 'device-width',
+  width: "device-width",
   initialScale: 1,
-  themeColor: '#0b0a09',
-  colorScheme: 'dark',
+  themeColor: "#161717",
+  colorScheme: "dark",
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const fonts = [bricolage, sourceSerif, plexMono, montserrat, merriweather]
-    .map((font) => font.variable)
-    .join(' ')
+    .map(font => font.variable)
+    .join(" ")
 
   return (
     <html lang="en" className={fonts}>

@@ -9,12 +9,12 @@
  * shadcn components work while the existing pages are left exactly as they are.
  */
 @layer theme, base, components, utilities;
-@import 'tailwindcss/theme.css' layer(theme);
-@import 'tailwindcss/utilities.css' layer(utilities);
-@import 'tw-animate-css';
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "tw-animate-css";
 
-@import './normalize.css';
-@import './style.css';
+@import "./normalize.css";
+@import "./style.css";
 
 @source '../app';
 @source '../components';
@@ -27,24 +27,24 @@
 :root {
   --radius: 0.5rem;
 
-  --background: #0b0a09;
+  --background: #161717;
   --foreground: #eee8df;
-  --card: #131211;
+  --card: #202121;
   --card-foreground: #eee8df;
-  --popover: #131211;
+  --popover: #202121;
   --popover-foreground: #eee8df;
   --primary: #ffa500;
-  --primary-foreground: #0b0a09;
-  --secondary: #1b1a18;
+  --primary-foreground: #161717;
+  --secondary: #202121;
   --secondary-foreground: #eee8df;
-  --muted: #1b1a18;
-  --muted-foreground: #9b958b;
-  --accent: #1b1a18;
+  --muted: #202121;
+  --muted-foreground: #b2aba0;
+  --accent: #202121;
   --accent-foreground: #ffa500;
   --destructive: #ff5c5c;
-  --destructive-foreground: #0b0a09;
-  --border: #2b2926;
-  --input: #2b2926;
+  --destructive-foreground: #161717;
+  --border: #353737;
+  --input: #353737;
   --ring: #ffa500;
 }
 
@@ -136,4 +136,89 @@
 .tw svg {
   display: block;
   max-width: 100%;
+}
+
+/* Tailwind utilities are layered, while the legacy h1 rule is not. This
+ * explicit selector keeps editorial page titles from inheriting that old
+ * orange heading treatment. */
+.tw .editorial-title {
+  margin: 12px 0 14px;
+  color: var(--foreground);
+  font-family: var(--font-bricolage), system-ui, sans-serif;
+  font-size: clamp(30px, 5vw, 54px);
+  font-weight: 800;
+  line-height: 0.97;
+  letter-spacing: -0.04em;
+}
+
+.tw .editorial-link {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.tw .editorial-link:hover,
+.tw .editorial-link:focus-visible {
+  color: #e8922c;
+  text-decoration-thickness: 2px;
+}
+
+.tw .editorial-title + .editorial-copy {
+  margin-top: 1.5rem;
+}
+
+.tw .editorial-copy + .editorial-copy {
+  margin-top: 1.25rem;
+}
+
+.tw .profile-socials {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.625rem;
+  margin-top: 1rem;
+}
+
+.tw .profile-social-link {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition:
+    border-color 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.tw .profile-social-link:hover,
+.tw .profile-social-link:focus-visible {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.tw .profile-social-link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.tw .profile-social-link svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.tw .profile-social-x {
+  font-family: var(--font-bricolage), system-ui, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+@media (max-width: 48rem) {
+  .tw .profile-socials {
+    justify-content: center;
+  }
 }
