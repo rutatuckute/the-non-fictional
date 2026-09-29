@@ -137,3 +137,16 @@
   display: block;
   max-width: 100%;
 }
+
+/* Tailwind utilities are layered, while the legacy h1 rule is not. This
+ * explicit selector keeps editorial page titles from inheriting that old
+ * orange heading treatment. */
+.tw .editorial-title {
+  margin: 12px 0 14px;
+  color: var(--foreground);
+  font-family: var(--font-bricolage), system-ui, sans-serif;
+  font-size: clamp(30px, 5vw, 54px);
+  font-weight: 800;
+  line-height: 0.97;
+  letter-spacing: -0.04em;
+}
