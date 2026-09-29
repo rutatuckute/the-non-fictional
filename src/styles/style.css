@@ -130,7 +130,7 @@ body {
   font-family: var(--font-body);
   font-size: var(--fontSize-1);
   color: var(--color-text);
-  background-color: #242322;
+    background-color: #000000;
   margin: 0;
   padding: 0;
   overflow-x: hidden;

@@ -1,9 +1,9 @@
 .page {
-  --lab-void: #242322;
-  --lab-raised: #33312e;
-  --lab-rule: #4b4741;
-  --lab-rule-strong: #817a70;
-  --lab-rule-subtle: #2c2926;
+  --lab-void: #000000;
+  --lab-raised: #111111;
+  --lab-rule: #2f2f2f;
+  --lab-rule-strong: #555555;
+  --lab-rule-subtle: #111111;
   --lab-ink: #eee8df;
   --lab-ink-secondary: #b2aba0;
   --lab-ink-muted: #91897d;

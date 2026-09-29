@@ -1,11 +1,11 @@
 /* The article page, treatment 03 from the layout study: metadata and a section
    index in a rail that stays put, prose in a 68-character column beside it. */
 .page {
-  --void: #242322;
-  --raised: #33312e;
-  --rule: #4b4741;
-  --rule-strong: #817a70;
-  --rule-subtle: #2c2926;
+  --void: #000000;
+  --raised: #111111;
+  --rule: #2f2f2f;
+  --rule-strong: #555555;
+  --rule-subtle: #111111;
   --ink: #eee8df;
   --ink-2: #b2aba0;
   --ink-3: #91897d;

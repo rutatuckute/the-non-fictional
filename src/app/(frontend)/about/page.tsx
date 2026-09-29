@@ -104,9 +104,9 @@ export default function AboutPage() {
             <img
               src={imageUrl("/images/uploads/in_brief_logo.png", 640, "normal")}
               alt=""
-              width={240}
-              height={240}
-              className="h-60 w-60 rounded-xl border border-border object-cover"
+              width={288}
+              height={432}
+              className="h-auto w-72 rounded-xl border border-border"
               loading="eager"
               decoding="async"
             />
