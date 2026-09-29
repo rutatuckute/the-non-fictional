@@ -150,3 +150,16 @@
   line-height: 0.97;
   letter-spacing: -0.04em;
 }
+
+.tw .editorial-link {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.tw .editorial-link:hover,
+.tw .editorial-link:focus-visible {
+  color: #e8922c;
+  text-decoration-thickness: 2px;
+}
