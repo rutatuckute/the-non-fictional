@@ -27,19 +27,15 @@ export default function AboutPage() {
       <main className="mx-auto w-full max-w-5xl px-6 py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-[1fr_auto] md:items-start md:gap-16">
           <div className="max-w-xl">
-            <p className="font-mono text-xs tracking-[0.18em] text-muted-foreground uppercase">
-              In Brief
-            </p>
-
             <h1 className="mt-3 mb-[14px] font-sans text-[clamp(30px,5vw,54px)] leading-[0.97] font-extrabold tracking-[-0.04em] text-foreground">
-              I never felt like writing anything fictional.
+              In Brief
             </h1>
 
             <p className="mt-6 font-serif text-lg leading-relaxed text-muted-foreground">
-              A personal space for photography and writings — essays about how
-              things work, (un)structured reflections, the stories data can
-              tell, and photographs on film. Only questioning, starting with
-              myself.
+              I never felt like writing anything fictional. A personal space for
+              photography and writings — essays about how things work,
+              (un)structured reflections, the stories data can tell, and
+              photographs on film. Only questioning, starting with myself.
             </p>
           </div>
 
