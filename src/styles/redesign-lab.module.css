@@ -21,7 +21,7 @@
      the least visible thing in it. Also the timeline axis and ticks. */
   --lab-connector-rest: #6b6459;
   --lab-connector-hover: #6e675e;
-  --lab-connector-selected: #ffa500;
+  --lab-connector-selected: var(--accent);
   --lab-background: var(--lab-void);
   --lab-background-elevated: var(--lab-raised);
   --lab-text-primary: var(--lab-ink);
@@ -29,7 +29,7 @@
   --lab-text-quiet: var(--lab-ink-muted);
   --lab-border-faint: var(--lab-rule);
   --lab-accent: var(--lab-brand);
-  --lab-accent-hover: #c25e06;
+  --lab-accent-hover: var(--accent-hover);
   --lab-font-body: var(--font-editorial);
   --lab-font-title: var(--font-editorial);
   --lab-font-metadata: var(--font-functional);
@@ -131,15 +131,15 @@
   flex: 1;
   column-gap: var(--lab-space-4);
   row-gap: var(--lab-space-12);
-  width: 100%;
-  max-width: var(--lab-content-max);
+  /* The page container, so the hero shares its left edge with the masthead. */
+  width: var(--page-width);
   /* The first screen is the copy and its field, nothing else. At 42rem the
      hero ended well above the fold on a large monitor and the section below
      showed through under it. */
   min-height: 42rem;
   min-height: calc(100svh - var(--lab-masthead-h));
   margin: 0 auto;
-  padding: clamp(52px, 4vw, 64px) clamp(72px, 6.5vw, 140px) 64px;
+  padding: clamp(52px, 4vw, 64px) 0 64px;
 }
 
 .heroCopy {
@@ -166,9 +166,9 @@
   color: var(--lab-text-primary);
   font-family: var(--lab-font-title);
   font-size: 6rem;
-  font-weight: 400;
+  font-weight: 340;
   line-height: 0.95;
-  letter-spacing: -0.055em;
+  letter-spacing: var(--tracking-display);
 }
 
 .heroTitle span {
@@ -186,13 +186,18 @@
   letter-spacing: 0;
 }
 
+/* Links in running text stay in the text colour; the accent is the underline. */
 .heroLink {
-  color: var(--lab-accent);
-  text-decoration: none;
+  color: var(--lab-ink);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--lab-accent) 70%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
 }
 
 .heroLink:hover {
-  color: var(--lab-accent-hover);
+  color: var(--lab-ink);
+  text-decoration-color: var(--lab-accent);
 }
 
 .introHighlight {
@@ -455,11 +460,9 @@
 .scrolly {
   display: grid;
   grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.15fr);
-  width: 100%;
-  max-width: var(--lab-content-max);
+  width: var(--page-width);
   min-width: 0;
   margin: 0 auto;
-  padding-inline: clamp(26px, 6.5vw, 140px);
 }
 
 .steps {
@@ -504,7 +507,7 @@
   font-size: 1.5rem;
   font-weight: 400;
   line-height: 1.05;
-  letter-spacing: -0.025em;
+  letter-spacing: var(--tracking-title);
 }
 
 .stepContent p {
@@ -535,9 +538,7 @@
   background: var(--lab-raised);
   color: var(--lab-ink-secondary);
   font-family: var(--lab-font-metadata);
-  font-size: 0.6875rem;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
+  font-size: 13px;
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
@@ -586,9 +587,7 @@
   background: none;
   color: var(--lab-ink-muted);
   font-family: var(--lab-font-metadata);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 13px;
   cursor: pointer;
   transition: color 150ms ease;
 }
@@ -667,7 +666,7 @@
   font-size: 29px;
   font-weight: 400;
   line-height: 1.06;
-  letter-spacing: -0.035em;
+  letter-spacing: var(--tracking-title);
 }
 
 .railMeta {
@@ -717,9 +716,7 @@
   border: 1px solid var(--lab-rule);
   color: var(--lab-ink-muted);
   font-family: var(--lab-font-metadata);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 13px;
 }
 
 .railGo {
@@ -728,9 +725,7 @@
   border-bottom: 1px solid var(--lab-accent);
   color: var(--lab-accent);
   font-family: var(--lab-font-metadata);
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 13px;
   text-decoration: none;
 }
 
@@ -820,7 +815,7 @@
     grid-template-columns: minmax(0, 1fr);
     gap: var(--lab-space-8);
     min-height: 0;
-    padding: 48px 24px 32px 40px;
+    padding: 48px 0 32px;
   }
 
   .heroTitle {
@@ -835,16 +830,12 @@
     max-width: 32.5rem;
     margin: 0 auto;
   }
-
-  .scrolly {
-    padding-inline: 24px;
-  }
 }
 
 @media (max-width: 30rem) {
   .hero {
     gap: var(--lab-space-6);
-    padding: 40px 24px 32px;
+    padding: 40px 0 32px;
   }
 
   .heroTitle {

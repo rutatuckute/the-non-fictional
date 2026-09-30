@@ -60,10 +60,8 @@
 
 .main {
   flex: 1;
-  width: 100%;
-  max-width: 1320px;
+  width: var(--page-width);
   margin: 0 auto;
-  padding: 0 26px;
 }
 
 .article {
@@ -105,13 +103,12 @@
   margin: 3px 0 0;
   color: var(--ink-2);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.06em;
+  font-size: 13px;
   overflow-wrap: anywhere;
 }
 
 .metaForm {
-  color: var(--form);
+  color: var(--ink);
 }
 
 /* The section index is built from the piece's own headings, so it exists only
@@ -154,11 +151,9 @@
   gap: 7px;
   padding: 5px 9px;
   border: 1px solid var(--rule-strong);
-  color: var(--ink-3);
+  color: var(--ink-2);
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 13px;
   text-decoration: none;
   transition:
     color 150ms ease,
@@ -190,8 +185,8 @@
   font-family: var(--font-title);
   font-size: clamp(30px, 4.2vw, 44px);
   font-weight: 400;
-  line-height: 0.98;
-  letter-spacing: -0.04em;
+  line-height: 1.02;
+  letter-spacing: var(--tracking-display);
   text-transform: none;
   text-wrap: balance;
 }
@@ -222,33 +217,39 @@
   margin: 0 0 1.25em;
 }
 
+/* Section headings are small capitals in the text colour. The headings are
+   written in capitals in the source, and all-small-caps sets them at the
+   height of the lowercase so they sit in the prose instead of shouting. */
 .prose h4 {
   margin: 2.2em 0 0.7em;
-  color: var(--form);
+  color: var(--ink);
   font-family: var(--font-title);
-  font-size: 22px;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
+  font-size: 23px;
+  font-weight: 500;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.05em;
   text-wrap: balance;
   scroll-margin-top: 24px;
 }
 
+/* Links stay in the text colour; the accent is the underline. */
 .prose a {
-  color: var(--brand);
-  text-decoration: none;
-  border-bottom: 1px solid color-mix(in srgb, var(--brand) 45%, transparent);
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--brand) 60%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
 }
 
 .prose a:hover,
 .prose a:focus-visible {
-  border-bottom-color: var(--brand);
+  text-decoration-color: var(--brand);
 }
 
 .prose blockquote {
   margin: 1.8em 0;
   padding: 0 0 0 20px;
-  border-left: 2px solid var(--form);
+  border-left: 2px solid var(--brand);
 }
 
 .prose blockquote p {
@@ -263,19 +264,19 @@
 .prose blockquote a {
   color: var(--ink-3);
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  border-bottom: 0;
+  font-size: 13px;
+  text-decoration: none;
 }
 
 .prose blockquote a:hover {
   color: var(--brand);
 }
 
+/* Emphasis was painted in the form colour, which made bold words read as
+   links. It is weight now, not colour. */
 .prose strong {
-  color: var(--form);
-  font-weight: 400;
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .prose img {
@@ -371,10 +372,10 @@
 .navTitle {
   color: var(--ink-2);
   font-family: var(--font-title);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 400;
   line-height: 1.2;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-title);
   transition: color 150ms ease;
 }
 
@@ -412,10 +413,6 @@
 }
 
 @media (max-width: 48rem) {
-  .main {
-    padding: 0 16px;
-  }
-
   .prose {
     font-size: 18px;
   }

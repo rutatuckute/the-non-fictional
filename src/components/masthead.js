@@ -5,13 +5,12 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 import styles from "./masthead.module.css"
-import PhotoImage from "./photo-image"
 
 const navigation = [
-  { label: "STRUCTURE", to: "/", section: "structure" },
-  { label: "WRITINGS", to: "/blog/", section: "writings" },
-  { label: "PHOTOGRAPHY", to: "/photography/", section: "photography" },
-  { label: "IN BRIEF", to: "/about/", section: "in-brief" },
+  { label: "Structure", to: "/", section: "structure" },
+  { label: "Writings", to: "/blog/", section: "writings" },
+  { label: "Photography", to: "/photography/", section: "photography" },
+  { label: "In brief", to: "/about/", section: "in-brief" },
 ]
 
 const getActiveSection = (pathname = "/") => {
@@ -59,16 +58,10 @@ const Masthead = ({ activeSection = null }) => {
 
   return (
     <header className={styles.header}>
+      {/* A wordmark set in the editorial face. The illustration that stood
+          beside it lives on as the favicon. */}
       <Link className={styles.brand} href="/" aria-label="The Non Fictional home">
-        <PhotoImage
-          className={styles.brandLogo}
-          source="/images/logo.png"
-          px={160}
-          quality="normal"
-          loading="eager"
-          alt=""
-        />
-        <span>The Non Fictional</span>
+        The <em>Non</em> Fictional
       </Link>
 
       <nav className={styles.navigation} aria-label="Primary navigation">

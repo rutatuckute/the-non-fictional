@@ -26,7 +26,7 @@ export default function AboutPage() {
     <div className="tw min-h-screen bg-background">
       <Masthead activeSection="in-brief" />
 
-      <main className="mx-auto w-full max-w-6xl px-6 py-16 md:py-24">
+      <main className="mx-auto w-[var(--page-width)] py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-[minmax(0,1fr)_20rem] md:items-start md:gap-20">
           <article className="brief-essay">
             <h1 className="editorial-title">In brief</h1>
@@ -55,7 +55,7 @@ export default function AboutPage() {
             <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
               But what happens when that copy itself becomes homogeneous? When
               we outsource and thus transfer our thinking and curiosity - the
-              very core fo what got us here?
+              very core of what got us here?
             </p>
 
             <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">

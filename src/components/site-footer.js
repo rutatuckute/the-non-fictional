@@ -15,7 +15,7 @@ export default function SiteFooter() {
       <nav className={styles.navigation} aria-label="Footer navigation">
         <Link href="/blog/">Writings</Link>
         <Link href="/photography/">Photography</Link>
-        <Link href="/about/">In Brief</Link>
+        <Link href="/about/">In brief</Link>
         <a href="/rss.xml">RSS</a>
       </nav>
     </footer>

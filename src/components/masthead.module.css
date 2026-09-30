@@ -7,13 +7,14 @@
   --masthead-accent-hover: var(--accent-hover);
 
   display: grid;
-  grid-template-columns: minmax(18rem, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
+  column-gap: 2rem;
   width: 100%;
   min-width: 0;
-  height: 76px;
-  min-height: 76px;
-  padding: 0 2rem;
+  min-height: 72px;
+  /* The bar runs full width; its contents sit on the page container's edges. */
+  padding: 0 var(--page-inset);
   border: 0;
   border-bottom: 1px solid var(--masthead-rule);
   border-radius: 0;
@@ -22,46 +23,37 @@
 }
 
 .header .brand {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
   width: fit-content;
   min-width: 0;
-  color: var(--masthead-accent);
+  color: var(--masthead-ink);
   font-family: var(--font-editorial);
-  font-size: clamp(20px, 2vw, 31px);
-  font-weight: 400;
+  font-size: 1.625rem;
+  font-weight: 450;
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   text-decoration: none;
   white-space: nowrap;
 }
 
-.header .brand:hover {
-  color: var(--masthead-accent-hover);
+.header .brand em {
+  font-weight: 360;
 }
 
-.brandLogo {
-  display: block;
-  flex: 0 0 auto;
-  width: 3.75rem;
-  height: 3.75rem;
-  object-fit: contain;
+.header .brand:hover {
+  color: var(--masthead-ink);
 }
 
 .navigation {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 2rem;
+  gap: 1.75rem;
   min-width: 0;
   color: var(--masthead-muted);
   font-family: var(--font-functional);
-  font-size: 0.625rem;
-  font-weight: 500;
+  font-size: 0.875rem;
+  font-weight: 400;
   line-height: 1;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .navigation a {
@@ -69,6 +61,12 @@
   color: inherit;
   text-decoration: none;
   white-space: nowrap;
+  transition: color 150ms ease;
+}
+
+.navigation a:hover,
+.navigation a:focus-visible {
+  color: var(--masthead-ink);
 }
 
 .navigation .currentNavItem {
@@ -186,12 +184,10 @@
   padding: 1rem 0;
   border-bottom: 1px solid var(--masthead-rule);
   color: var(--masthead-ink);
-  font-family: var(--font-functional);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
+  font-family: var(--font-editorial);
+  font-size: 1.375rem;
+  font-weight: 400;
   text-decoration: none;
-  text-transform: uppercase;
 }
 
 .menuNav a:hover,
@@ -204,42 +200,19 @@
 }
 
 @media (max-width: 68rem) {
-  .header {
-    grid-template-columns: minmax(15rem, 1fr) auto;
-    padding: 0 1.5rem;
-  }
-
   .navigation {
-    gap: 1rem;
+    gap: 1.25rem;
   }
 }
 
 @media (max-width: 48rem) {
   .header {
-    grid-template-columns: minmax(0, 1fr) auto;
-    /* Grows with the wrapped wordmark instead of clipping it. */
-    height: auto;
-    min-height: 4.5rem;
-    padding: 0.75rem 1rem;
+    min-height: 60px;
     column-gap: 0.75rem;
   }
 
-  .brand {
-    gap: 0.5rem;
-    font-size: clamp(1.85rem, 10vw, 2.35rem);
-    line-height: 1.08;
-    /* The base rule pins this to nowrap, which overflows the column and runs
-       the wordmark under the menu button. On mobile it must wrap instead. */
-    white-space: normal;
-  }
-
-  .brand span {
-    min-width: 0;
-  }
-
-  .brandLogo {
-    width: 3rem;
-    height: 3rem;
+  .header .brand {
+    font-size: 1.375rem;
   }
 
   .navigation {
@@ -248,17 +221,7 @@
 
   .menuToggle {
     display: flex;
-  }
-}
-
-@media (max-width: 24rem) {
-  .brand {
-    font-size: 1.75rem;
-  }
-
-  .brandLogo {
-    width: 2.5rem;
-    height: 2.5rem;
+    margin-right: -10px;
   }
 }
 
