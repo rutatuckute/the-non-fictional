@@ -172,6 +172,29 @@
   margin-top: 1.25rem;
 }
 
+.tw .brief-essay {
+  max-width: 68ch;
+}
+
+.tw .brief-intro {
+  color: var(--foreground);
+  font-size: clamp(1.2rem, 1.5vw, 1.4rem);
+  line-height: 1.48;
+}
+
+.tw .brief-signoff {
+  margin-top: 2.5rem;
+  color: var(--foreground);
+  font-family: var(--font-bricolage), system-ui, sans-serif;
+  font-size: clamp(1.4rem, 2vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.tw .editorial-copy + .brief-signoff {
+  margin-top: 2.5rem;
+}
+
 .tw .profile-socials {
   display: flex;
   justify-content: flex-end;

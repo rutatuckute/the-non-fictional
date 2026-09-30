@@ -45,13 +45,13 @@ const ICONS = {
       <path d="M4 5h16" />
       <path d="M4 12h16" />
       <path d="M4 19h10" />
-    </>
+    </>,
   ),
   inquiries: kitIcon(
     <>
       <circle cx="12" cy="12" r="8" />
       <circle cx="12" cy="12" r="3" />
-    </>
+    </>,
   ),
 }
 
@@ -89,6 +89,43 @@ const Card = ({ post }) => {
   )
 }
 
+const FeaturedCard = ({ post }) => {
+  const fm = post.frontmatter || {}
+  const form = FORMS[fm.category_id] ? fm.category_id : "essays"
+
+  return (
+    <Link className={styles.featured} data-form={form} href={post.fields.slug}>
+      <div className={styles.featuredCover}>
+        {fm.cover_image ? (
+          <PhotoImage
+            className={styles.featuredImage}
+            source={fm.cover_image}
+            px={1080}
+            alt=""
+          />
+        ) : null}
+      </div>
+
+      <div className={styles.featuredBody}>
+        <p className={styles.featuredLabel}>Latest writing</p>
+        <p className={styles.featuredMeta}>
+          <span className={styles.featuredForm}>{FORMS[form]}</span>
+          {fm.inquiry ? <span>{fm.inquiry}</span> : null}
+          <span>{fm.year}</span>
+          <span>{post.timeToRead} min read</span>
+        </p>
+        <h2 className={styles.featuredTitle}>{fm.title}</h2>
+        {fm.excerpt || post.excerpt ? (
+          <p className={styles.featuredExcerpt}>{fm.excerpt || post.excerpt}</p>
+        ) : null}
+        <span className={styles.featuredRead}>
+          Read the piece <span aria-hidden="true">→</span>
+        </span>
+      </div>
+    </Link>
+  )
+}
+
 const WritingsIndex = ({ posts }) => {
   const [form, setForm] = React.useState("all")
 
@@ -106,16 +143,18 @@ const WritingsIndex = ({ posts }) => {
   const visible = React.useMemo(
     () =>
       posts.filter(p => form === "all" || p.frontmatter?.category_id === form),
-    [form, posts]
+    [form, posts],
   )
 
   const filtering = form !== "all"
   const clear = () => setForm("all")
+  const featured = visible[0]
+  const remaining = visible.slice(1)
 
   const kit = React.useMemo(() => {
     const forms = Object.keys(FORMS).filter(id => counts[id])
     const present = new Set(
-      posts.map(p => p.frontmatter?.inquiry).filter(Boolean)
+      posts.map(p => p.frontmatter?.inquiry).filter(Boolean),
     )
     const inquiries = INQUIRIES.filter(id => present.has(id))
     return [
@@ -195,11 +234,31 @@ const WritingsIndex = ({ posts }) => {
         </header>
 
         {visible.length ? (
-          <section className={styles.grid} aria-label="Writings">
-            {visible.map(post => (
-              <Card key={post.id} post={post} />
-            ))}
-          </section>
+          <>
+            <section
+              className={styles.featuredSection}
+              aria-label="Latest writing"
+            >
+              <FeaturedCard post={featured} />
+            </section>
+
+            {remaining.length ? (
+              <section
+                className={styles.archive}
+                aria-labelledby="archive-heading"
+              >
+                <div className={styles.archiveHead}>
+                  <h2 id="archive-heading">More writing</h2>
+                  <span>{remaining.length} pieces</span>
+                </div>
+                <div className={styles.grid}>
+                  {remaining.map(post => (
+                    <Card key={post.id} post={post} />
+                  ))}
+                </div>
+              </section>
+            ) : null}
+          </>
         ) : (
           <p className={styles.empty}>Nothing matches that.</p>
         )}

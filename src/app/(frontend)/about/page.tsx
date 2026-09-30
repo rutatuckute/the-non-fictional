@@ -28,10 +28,10 @@ export default function AboutPage() {
 
       <main className="mx-auto w-full max-w-6xl px-6 py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-[minmax(0,1fr)_20rem] md:items-start md:gap-20">
-          <div className="max-w-xl">
+          <article className="brief-essay">
             <h1 className="editorial-title">In brief</h1>
 
-            <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
+            <p className="editorial-copy brief-intro font-serif text-lg leading-relaxed text-muted-foreground">
               I never felt like writing anything fictional. Contemplating the
               whats and whys of what's happening around me has always been a far
               more amusing playground. Must be a byproduct of spending so much
@@ -96,10 +96,10 @@ export default function AboutPage() {
               struggle rather than succumb to comfortable cognitive numbness.
             </p>
 
-            <p className="editorial-copy font-serif text-lg leading-relaxed text-muted-foreground">
+            <p className="editorial-copy brief-signoff font-serif text-lg leading-relaxed text-muted-foreground">
               I claim them all.
             </p>
-          </div>
+          </article>
 
           <figure className="justify-self-center md:justify-self-end">
             <img
