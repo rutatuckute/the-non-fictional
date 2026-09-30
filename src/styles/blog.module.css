@@ -14,9 +14,9 @@
   --essays: var(--form-essay);
   --reflections: var(--form-reflection);
   --data: var(--form-data);
-  --font-body: var(--font-source-serif), Georgia, serif;
-  --font-title: var(--font-bricolage), system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-body: var(--font-editorial);
+  --font-title: var(--font-editorial);
+  --font-mono: var(--font-functional);
 
   box-sizing: border-box;
   display: flex;
@@ -87,7 +87,7 @@
   color: var(--ink);
   font-family: var(--font-title);
   font-size: clamp(30px, 5vw, 54px);
-  font-weight: 800;
+  font-weight: 400;
   line-height: 0.97;
   letter-spacing: -0.04em;
   text-wrap: balance;
@@ -340,7 +340,7 @@
   color: var(--ink);
   font-family: var(--font-title);
   font-size: clamp(30px, 3.3vw, 48px);
-  font-weight: 800;
+  font-weight: 400;
   line-height: 0.99;
   letter-spacing: -0.04em;
   text-wrap: balance;
@@ -390,7 +390,7 @@
   color: var(--ink);
   font-family: var(--font-title);
   font-size: clamp(22px, 2vw, 30px);
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1;
   letter-spacing: -0.03em;
 }
@@ -485,7 +485,7 @@
   color: var(--ink);
   font-family: var(--font-title);
   font-size: 21px;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.14;
   letter-spacing: -0.02em;
   text-transform: none;

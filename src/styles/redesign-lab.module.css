@@ -30,9 +30,9 @@
   --lab-border-faint: var(--lab-rule);
   --lab-accent: var(--lab-brand);
   --lab-accent-hover: #c25e06;
-  --lab-font-body: var(--font-source-serif), serif;
-  --lab-font-title: var(--font-bricolage), sans-serif;
-  --lab-font-metadata: var(--font-plex-mono), monospace;
+  --lab-font-body: var(--font-editorial);
+  --lab-font-title: var(--font-editorial);
+  --lab-font-metadata: var(--font-functional);
   --lab-space-1: 0.25rem;
   --lab-space-2: 0.5rem;
   --lab-space-3: 0.75rem;
@@ -166,9 +166,9 @@
   color: var(--lab-text-primary);
   font-family: var(--lab-font-title);
   font-size: 6rem;
-  font-weight: 800;
-  line-height: 0.92;
-  letter-spacing: 0;
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.055em;
 }
 
 .heroTitle span {
@@ -181,7 +181,7 @@
   color: var(--lab-text-muted);
   font-family: var(--lab-font-body);
   font-size: 1.125rem;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.65;
   letter-spacing: 0;
 }
@@ -502,9 +502,9 @@
   color: var(--lab-ink);
   font-family: var(--lab-font-title);
   font-size: 1.5rem;
-  font-weight: 500;
-  line-height: 1.16;
-  letter-spacing: 0;
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
 }
 
 .stepContent p {
@@ -665,7 +665,7 @@
   color: var(--lab-ink);
   font-family: var(--lab-font-title);
   font-size: 29px;
-  font-weight: 800;
+  font-weight: 400;
   line-height: 1.06;
   letter-spacing: -0.035em;
 }

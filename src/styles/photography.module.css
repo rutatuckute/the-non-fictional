@@ -8,9 +8,9 @@
   --ink-2: var(--text-secondary);
   --ink-3: var(--text-metadata);
   --brand: var(--accent);
-  --font-body: var(--font-source-serif), Georgia, serif;
-  --font-title: var(--font-bricolage), system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-body: var(--font-editorial);
+  --font-title: var(--font-editorial);
+  --font-mono: var(--font-functional);
 
   box-sizing: border-box;
   display: flex;
@@ -90,7 +90,7 @@
   color: var(--ink);
   font-family: var(--font-title);
   font-size: clamp(30px, 5vw, 54px);
-  font-weight: 800;
+  font-weight: 400;
   line-height: 0.97;
   letter-spacing: -0.04em;
 }
@@ -405,7 +405,7 @@
   color: var(--ink);
   font-family: var(--font-title);
   font-size: clamp(20px, 3vw, 32px);
-  font-weight: 800;
+  font-weight: 400;
   line-height: 0.97;
   letter-spacing: -0.04em;
   /* Titles are stored uppercase ("CIAO AMORE"); the page title is sentence
@@ -1031,7 +1031,7 @@
   color: var(--ink);
   font-family: var(--font-title);
   font-size: clamp(19px, 2vw, 27px);
-  font-weight: 800;
+  font-weight: 400;
   line-height: 1;
   letter-spacing: -0.03em;
 }
