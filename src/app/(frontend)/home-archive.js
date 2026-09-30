@@ -51,7 +51,7 @@ const HomeArchive = ({ nodes }) => {
                 <span className={styles.introHighlight}>photographs</span> on
                 film. I never felt like writing anything fictional - only
                 questioning, starting with myself.{" "}
-                <Link className={styles.heroLink} href="/contacts/">
+                <Link className={styles.heroLink} href="/about/">
                   Argue with me.
                 </Link>
               </p>

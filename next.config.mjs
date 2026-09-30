@@ -1,4 +1,4 @@
-import { withPayload } from '@payloadcms/next/withPayload'
+import { withPayload } from "@payloadcms/next/withPayload"
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -14,7 +14,7 @@ const nextConfig = {
     // and encode time — at 2200px it came out a third larger and took 28x
     // longer. Next negotiates one format for the whole site, and the
     // photography page is dominated by large frames, so WebP is that format.
-    formats: ['image/webp'],
+    formats: ["image/webp"],
 
     // The optimizer only honours widths it has been told about, and every
     // width this site asks for is listed here. imageUrl() in src/lib/images.ts
@@ -33,9 +33,10 @@ const nextConfig = {
     // still resizes onto the ladder above and still negotiates WebP.
     remotePatterns: [
       {
-        protocol: 'https',
+        protocol: "https",
         hostname: new URL(
-          process.env.NEXT_PUBLIC_MEDIA_URL || 'https://images.thenonfictional.com',
+          process.env.NEXT_PUBLIC_MEDIA_URL ||
+            "https://images.thenonfictional.com",
         ).hostname,
       },
     ],
@@ -46,16 +47,19 @@ const nextConfig = {
   // The OG card reads its font files by path at render time, so nothing in the
   // bundle references them and tracing cannot infer them.
   outputFileTracingIncludes: {
-    '/**': ['./src/app/_og/*.ttf'],
+    "/**": ["./src/app/_og/*.ttf"],
   },
 
   async redirects() {
     return [
       // The redesign prototype was folded into the homepage.
-      { source: '/redesign-lab', destination: '/', permanent: true },
+      { source: "/redesign-lab", destination: "/", permanent: true },
       // A leftover page from the Gatsby starter. It is in the old sitemap, so
       // it is sent somewhere real rather than left to 404.
-      { source: '/using-typescript', destination: '/blog/', permanent: true },
+      { source: "/using-typescript", destination: "/blog/", permanent: true },
+      // Contact details now live on In Brief. Preserve old shared and indexed
+      // links without keeping a second page for the same purpose.
+      { source: "/contacts", destination: "/about/", permanent: true },
       // Payload builds the route it is rendering from the admin path and the
       // URL segments, then matches it against its own `/admin`. trailingSlash
       // is on for this site, so the panel's root arrives as `/admin/`, matches
@@ -67,8 +71,8 @@ const nextConfig = {
       // blank. Payload sends you to the admin root after signing in, which now
       // lands here too.
       {
-        source: '/admin/',
-        destination: '/admin/collections/photographs/',
+        source: "/admin/",
+        destination: "/admin/collections/photographs/",
         permanent: false,
       },
     ]

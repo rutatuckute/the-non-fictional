@@ -1,7 +1,7 @@
-import type { MetadataRoute } from 'next'
+import type { MetadataRoute } from "next"
 
-import { getPosts } from '../lib/content'
-import { absolute } from '../lib/site'
+import { getPosts } from "../lib/content"
+import { absolute } from "../lib/site"
 
 // Only canonical, indexable URLs. The old per-photograph URLs are permanent
 // redirects into the lightbox and do not belong in a sitemap, and neither does
@@ -16,17 +16,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }, undefined)
 
   const sections: MetadataRoute.Sitemap = [
-    { url: absolute('/'), changeFrequency: 'monthly', priority: 1, lastModified: newest },
-    { url: absolute('/blog/'), changeFrequency: 'monthly', priority: 0.9, lastModified: newest },
-    { url: absolute('/photography/'), changeFrequency: 'monthly', priority: 0.9 },
-    { url: absolute('/about/'), changeFrequency: 'yearly', priority: 0.5 },
-    { url: absolute('/contacts/'), changeFrequency: 'yearly', priority: 0.4 },
+    {
+      url: absolute("/"),
+      changeFrequency: "monthly",
+      priority: 1,
+      lastModified: newest,
+    },
+    {
+      url: absolute("/blog/"),
+      changeFrequency: "monthly",
+      priority: 0.9,
+      lastModified: newest,
+    },
+    {
+      url: absolute("/photography/"),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    { url: absolute("/about/"), changeFrequency: "yearly", priority: 0.5 },
   ]
 
-  const articles: MetadataRoute.Sitemap = posts.map((post) => ({
+  const articles: MetadataRoute.Sitemap = posts.map(post => ({
     url: absolute(post.fields.slug),
-    lastModified: post.frontmatter.date ? new Date(post.frontmatter.date) : undefined,
-    changeFrequency: 'yearly',
+    lastModified: post.frontmatter.date
+      ? new Date(post.frontmatter.date)
+      : undefined,
+    changeFrequency: "yearly",
     priority: 0.8,
   }))
 

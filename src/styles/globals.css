@@ -27,25 +27,40 @@
 :root {
   --radius: 0.5rem;
 
-  --background: #161717;
-  --foreground: #eee8df;
-  --card: #202121;
-  --card-foreground: #eee8df;
-  --popover: #202121;
-  --popover-foreground: #eee8df;
-  --primary: #ffa500;
-  --primary-foreground: #161717;
-  --secondary: #202121;
-  --secondary-foreground: #eee8df;
-  --muted: #202121;
-  --muted-foreground: #b2aba0;
-  --accent: #202121;
-  --accent-foreground: #ffa500;
+  /* Editorial system — all page modules inherit these rather than carrying
+   * subtly diverging copies of the site palette. */
+  --surface: #161717;
+  --surface-raised: #202121;
+  --surface-subtle: #202121;
+  --text-primary: #eee8df;
+  --text-secondary: #b2aba0;
+  --text-metadata: #91897d;
+  --rule: #353737;
+  --site-rule-strong: #5b5d5d;
+  --accent: #ffa500;
+  --accent-hover: #e8922c;
+  --form-essay: #f2762b;
+  --form-reflection: #c08ae8;
+  --form-data: #6ecb78;
+
+  --background: var(--surface);
+  --foreground: var(--text-primary);
+  --card: var(--surface-raised);
+  --card-foreground: var(--text-primary);
+  --popover: var(--surface-raised);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--accent);
+  --primary-foreground: var(--surface);
+  --secondary: var(--surface-raised);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--surface-subtle);
+  --muted-foreground: var(--text-secondary);
+  --accent-foreground: var(--accent);
   --destructive: #ff5c5c;
-  --destructive-foreground: #161717;
-  --border: #353737;
-  --input: #353737;
-  --ring: #ffa500;
+  --destructive-foreground: var(--surface);
+  --border: var(--rule);
+  --input: var(--rule);
+  --ring: var(--accent);
 }
 
 @theme inline {
@@ -138,6 +153,22 @@
   max-width: 100%;
 }
 
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
 /* Tailwind utilities are layered, while the legacy h1 rule is not. This
  * explicit selector keeps editorial page titles from inheriting that old
  * orange heading treatment. */
@@ -170,6 +201,29 @@
 
 .tw .editorial-copy + .editorial-copy {
   margin-top: 1.25rem;
+}
+
+.tw .brief-essay {
+  max-width: 68ch;
+}
+
+.tw .brief-intro {
+  color: var(--foreground);
+  font-size: clamp(1.2rem, 1.5vw, 1.4rem);
+  line-height: 1.48;
+}
+
+.tw .brief-signoff {
+  margin-top: 2.5rem;
+  color: var(--foreground);
+  font-family: var(--font-bricolage), system-ui, sans-serif;
+  font-size: clamp(1.4rem, 2vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.tw .editorial-copy + .brief-signoff {
+  margin-top: 2.5rem;
 }
 
 .tw .profile-socials {
@@ -217,8 +271,36 @@
   line-height: 1;
 }
 
+.tw .profile-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  color: var(--text-secondary);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.tw .profile-email:hover,
+.tw .profile-email:focus-visible {
+  color: var(--accent);
+}
+
+.tw .profile-email svg {
+  width: 1rem;
+  height: 1rem;
+}
+
 @media (max-width: 48rem) {
   .tw .profile-socials {
+    justify-content: center;
+  }
+
+  .tw .profile-email {
+    display: flex;
     justify-content: center;
   }
 }
