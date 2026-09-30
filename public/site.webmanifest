@@ -4,7 +4,7 @@
   "description": "Personal space dedicated to photography and writings.",
   "start_url": "/",
   "display": "minimal-ui",
-  "background_color": "#161717",
+  "background_color": "#11100f",
   "theme_color": "#ffa500",
   "icons": [
     {

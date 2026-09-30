@@ -29,7 +29,7 @@
 
   /* Editorial system — all page modules inherit these rather than carrying
    * subtly diverging copies of the site palette. */
-  --surface: #161717;
+  --surface: #11100f;
   --surface-raised: #202121;
   --surface-subtle: #202121;
   --text-primary: #eee8df;
