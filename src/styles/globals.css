@@ -51,12 +51,11 @@
   --text-metadata: #91897d;
   --rule: #353737;
   --site-rule-strong: #5b5d5d;
-  /* The one accent: links, the current page, focus. #ffa500 was the CSS
-   * named colour and sat beside a second, near-identical orange. The form
+  /* The one accent: the wordmark, links, the current page, focus. The form
    * colours below are for the homepage field only, where they encode what a
    * mark is. */
-  --accent: #e0a458;
-  --accent-hover: #ecbc80;
+  --accent: #ffa500;
+  --accent-hover: #e8922c;
   --form-essay: #f2762b;
   --form-reflection: #c08ae8;
   --form-data: #6ecb78;

@@ -5,6 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 import styles from "./masthead.module.css"
+import PhotoImage from "./photo-image"
 
 const navigation = [
   { label: "Structure", to: "/", section: "structure" },
@@ -58,10 +59,18 @@ const Masthead = ({ activeSection = null }) => {
 
   return (
     <header className={styles.header}>
-      {/* A wordmark set in the editorial face. The illustration that stood
-          beside it lives on as the favicon. */}
       <Link className={styles.brand} href="/" aria-label="The Non Fictional home">
-        The <em>Non</em> Fictional
+        <PhotoImage
+          className={styles.brandLogo}
+          source="/images/logo.png"
+          px={160}
+          quality="normal"
+          loading="eager"
+          alt=""
+        />
+        <span>
+          The <em>Non</em> Fictional
+        </span>
       </Link>
 
       <nav className={styles.navigation} aria-label="Primary navigation">

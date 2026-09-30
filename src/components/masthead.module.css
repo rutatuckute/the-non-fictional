@@ -12,7 +12,7 @@
   column-gap: 2rem;
   width: 100%;
   min-width: 0;
-  min-height: 72px;
+  min-height: 76px;
   /* The bar runs full width; its contents sit on the page container's edges. */
   padding: 0 var(--page-inset);
   border: 0;
@@ -23,9 +23,12 @@
 }
 
 .header .brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   width: fit-content;
   min-width: 0;
-  color: var(--masthead-ink);
+  color: var(--masthead-accent);
   font-family: var(--font-editorial);
   font-size: 1.625rem;
   font-weight: 450;
@@ -40,7 +43,15 @@
 }
 
 .header .brand:hover {
-  color: var(--masthead-ink);
+  color: var(--masthead-accent-hover);
+}
+
+.brandLogo {
+  display: block;
+  flex: 0 0 auto;
+  width: 3.75rem;
+  height: 3.75rem;
+  object-fit: contain;
 }
 
 .navigation {
@@ -212,7 +223,13 @@
   }
 
   .header .brand {
+    gap: 0.5rem;
     font-size: 1.375rem;
+  }
+
+  .brandLogo {
+    width: 3rem;
+    height: 3rem;
   }
 
   .navigation {
@@ -222,6 +239,13 @@
   .menuToggle {
     display: flex;
     margin-right: -10px;
+  }
+}
+
+@media (max-width: 24rem) {
+  .brandLogo {
+    width: 2.5rem;
+    height: 2.5rem;
   }
 }
 
