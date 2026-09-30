@@ -26,6 +26,8 @@
  */
 :root {
   --radius: 0.5rem;
+  --font-editorial: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  --font-functional: var(--font-inter), Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
 
   /* Editorial system — all page modules inherit these rather than carrying
    * subtly diverging copies of the site palette. */
@@ -84,9 +86,9 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --font-sans: var(--font-bricolage), system-ui, sans-serif;
-  --font-serif: var(--font-source-serif), Georgia, serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-sans: var(--font-functional);
+  --font-serif: var(--font-editorial);
+  --font-mono: var(--font-functional);
 
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: var(--radius);
@@ -98,7 +100,7 @@
  */
 .tw {
   color: var(--foreground);
-  font-family: var(--font-source-serif), Georgia, serif;
+  font-family: var(--font-editorial);
 }
 
 .tw *,
@@ -175,10 +177,10 @@
 .tw .editorial-title {
   margin: 12px 0 14px;
   color: var(--foreground);
-  font-family: var(--font-bricolage), system-ui, sans-serif;
+  font-family: var(--font-editorial);
   font-size: clamp(30px, 5vw, 54px);
-  font-weight: 800;
-  line-height: 0.97;
+  font-weight: 400;
+  line-height: 0.95;
   letter-spacing: -0.04em;
 }
 
@@ -216,9 +218,9 @@
 .tw .brief-signoff {
   margin-top: 2.5rem;
   color: var(--foreground);
-  font-family: var(--font-bricolage), system-ui, sans-serif;
+  font-family: var(--font-editorial);
   font-size: clamp(1.4rem, 2vw, 1.85rem);
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: -0.03em;
 }
 
@@ -265,7 +267,7 @@
 }
 
 .tw .profile-social-x {
-  font-family: var(--font-bricolage), system-ui, sans-serif;
+  font-family: var(--font-functional);
   font-size: 1.125rem;
   font-weight: 700;
   line-height: 1;
@@ -277,7 +279,7 @@
   gap: 0.5rem;
   margin-top: 1rem;
   color: var(--text-secondary);
-  font-family: var(--font-mono), ui-monospace, monospace;
+  font-family: var(--font-functional);
   font-size: 0.6875rem;
   letter-spacing: 0.04em;
   text-decoration: none;

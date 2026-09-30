@@ -14,9 +14,9 @@
   --reflections: var(--form-reflection);
   --data: var(--form-data);
   --form: var(--essays);
-  --font-body: var(--font-source-serif), Georgia, serif;
-  --font-title: var(--font-bricolage), system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-body: var(--font-editorial);
+  --font-title: var(--font-editorial);
+  --font-mono: var(--font-functional);
 
   box-sizing: border-box;
   display: flex;
@@ -189,9 +189,9 @@
   color: var(--ink);
   font-family: var(--font-title);
   font-size: clamp(30px, 4.2vw, 44px);
-  font-weight: 800;
-  line-height: 1.02;
-  letter-spacing: -0.035em;
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
   text-transform: none;
   text-wrap: balance;
 }
@@ -210,11 +210,10 @@
   background: var(--rule);
 }
 
-/* Prose. 19px Source Serif at a 68-character measure — the template used to
-   run 16px Montserrat across a column near a hundred characters wide. */
+/* Prose is 19px editorial serif at a 68-character measure. */
 .prose {
   font-size: 19px;
-  line-height: 1.68;
+  line-height: 1.6;
   color: var(--ink);
   overflow-wrap: break-word;
 }
@@ -228,7 +227,7 @@
   color: var(--form);
   font-family: var(--font-title);
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: -0.01em;
   text-transform: uppercase;
   text-wrap: balance;
@@ -373,7 +372,7 @@
   color: var(--ink-2);
   font-family: var(--font-title);
   font-size: 17px;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.2;
   letter-spacing: -0.02em;
   transition: color 150ms ease;

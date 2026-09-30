@@ -27,15 +27,10 @@
   --spacing-20: 5rem;
   --spacing-24: 6rem;
   --spacing-32: 8rem;
-  --fontFamily-sans:
-    var(--font-montserrat), system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --fontFamily-serif:
-    var(--font-montserrat), var(--font-merriweather), "Georgia", Cambria,
-    "Times New Roman", Times, serif;
-  --font-body: var(--fontFamily-serif);
-  --font-heading: var(--fontFamily-sans);
+  --fontFamily-sans: var(--font-functional);
+  --fontFamily-serif: var(--font-editorial);
+  --font-body: var(--font-editorial);
+  --font-heading: var(--font-editorial);
   --fontWeight-normal: 400;
   --fontWeight-medium: 500;
   --fontWeight-semibold: 600;

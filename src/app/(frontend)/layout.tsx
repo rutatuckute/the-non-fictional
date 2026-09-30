@@ -1,55 +1,20 @@
 import type { Metadata, Viewport } from "next"
-import {
-  Bricolage_Grotesque,
-  IBM_Plex_Mono,
-  Merriweather,
-  Montserrat,
-  Source_Serif_4,
-} from "next/font/google"
+import { Inter } from "next/font/google"
 
 import { site, siteUrl } from "../../lib/site"
 import "../../styles/globals.css"
 
-// These were loaded from fonts.googleapis.com by a stylesheet link in every
-// page's head, which put a third-party round trip in front of first paint on
-// every navigation. Self-hosted, they are served from this origin, preloaded,
-// and matched with a metric fallback so nothing shifts as they arrive.
+// Inter is self-hosted by next/font, served from this origin and preloaded so
+// the functional UI typeface does not add a third-party request on navigation.
 //
 // latin-ext is not optional here: the author's name, half the place names in
 // the archive and four of the frame titles are outside latin. next/font reads
 // these calls statically, so every argument has to be a literal — no shared
 // constant for the subset list.
 
-const bricolage = Bricolage_Grotesque({
+const inter = Inter({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-bricolage",
-  display: "swap",
-})
-
-const sourceSerif = Source_Serif_4({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-source-serif",
-  display: "swap",
-})
-
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500"],
-  variable: "--font-plex-mono",
-  display: "swap",
-})
-
-// Referenced by the legacy base styles in style.css.
-const montserrat = Montserrat({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-montserrat",
-  display: "swap",
-})
-
-const merriweather = Merriweather({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "700"],
-  variable: "--font-merriweather",
+  variable: "--font-inter",
   display: "swap",
 })
 
@@ -126,12 +91,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const fonts = [bricolage, sourceSerif, plexMono, montserrat, merriweather]
-    .map(font => font.variable)
-    .join(" ")
-
   return (
-    <html lang="en" className={fonts}>
+    <html lang="en" className={inter.variable}>
       <body>{children}</body>
     </html>
   )
