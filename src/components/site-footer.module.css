@@ -1,10 +1,14 @@
 .footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
   width: calc(100% - 52px);
   max-width: 1240px;
   margin: 0 auto;
   padding: 1.5rem 0 2rem;
-  border-top: 1px solid #353737;
-  background: #161717;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
   /* 5.28:1, up from the 3.38:1 of #6a645c — this is 10px uppercase mono, the
      smallest text on either page, so it needs the contrast most. */
   color: #91897d;
@@ -17,8 +21,41 @@
   text-transform: uppercase;
 }
 
+.identity,
+.navigation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+}
+
+.statement {
+  color: var(--text-secondary);
+}
+
+.navigation {
+  justify-content: flex-end;
+}
+
+.navigation a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.navigation a:hover,
+.navigation a:focus-visible {
+  color: var(--accent);
+}
+
 @media (max-width: 48rem) {
   .footer {
+    align-items: flex-start;
+    flex-direction: column;
     width: calc(100% - 48px);
+  }
+
+  .navigation {
+    justify-content: flex-start;
   }
 }

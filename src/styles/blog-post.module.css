@@ -1,18 +1,18 @@
 /* The article page, treatment 03 from the layout study: metadata and a section
    index in a rail that stays put, prose in a 68-character column beside it. */
 .page {
-  --void: #161717;
-  --raised: #202121;
-  --rule: #353737;
-  --rule-strong: #5b5d5d;
-  --rule-subtle: #202121;
-  --ink: #eee8df;
-  --ink-2: #b2aba0;
-  --ink-3: #91897d;
-  --brand: #ffa500;
-  --essays: #f2762b;
-  --reflections: #c08ae8;
-  --data: #6ecb78;
+  --void: var(--surface);
+  --raised: var(--surface-raised);
+  --rule: var(--border);
+  --rule-strong: var(--site-rule-strong);
+  --rule-subtle: var(--surface-subtle);
+  --ink: var(--text-primary);
+  --ink-2: var(--text-secondary);
+  --ink-3: var(--text-metadata);
+  --brand: var(--accent);
+  --essays: var(--form-essay);
+  --reflections: var(--form-reflection);
+  --data: var(--form-data);
   --form: var(--essays);
   --font-body: var(--font-source-serif), Georgia, serif;
   --font-title: var(--font-bricolage), system-ui, sans-serif;

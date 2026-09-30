@@ -27,25 +27,40 @@
 :root {
   --radius: 0.5rem;
 
-  --background: #161717;
-  --foreground: #eee8df;
-  --card: #202121;
-  --card-foreground: #eee8df;
-  --popover: #202121;
-  --popover-foreground: #eee8df;
-  --primary: #ffa500;
-  --primary-foreground: #161717;
-  --secondary: #202121;
-  --secondary-foreground: #eee8df;
-  --muted: #202121;
-  --muted-foreground: #b2aba0;
-  --accent: #202121;
-  --accent-foreground: #ffa500;
+  /* Editorial system — all page modules inherit these rather than carrying
+   * subtly diverging copies of the site palette. */
+  --surface: #161717;
+  --surface-raised: #202121;
+  --surface-subtle: #202121;
+  --text-primary: #eee8df;
+  --text-secondary: #b2aba0;
+  --text-metadata: #91897d;
+  --rule: #353737;
+  --site-rule-strong: #5b5d5d;
+  --accent: #ffa500;
+  --accent-hover: #e8922c;
+  --form-essay: #f2762b;
+  --form-reflection: #c08ae8;
+  --form-data: #6ecb78;
+
+  --background: var(--surface);
+  --foreground: var(--text-primary);
+  --card: var(--surface-raised);
+  --card-foreground: var(--text-primary);
+  --popover: var(--surface-raised);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--accent);
+  --primary-foreground: var(--surface);
+  --secondary: var(--surface-raised);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--surface-subtle);
+  --muted-foreground: var(--text-secondary);
+  --accent-foreground: var(--accent);
   --destructive: #ff5c5c;
-  --destructive-foreground: #161717;
-  --border: #353737;
-  --input: #353737;
-  --ring: #ffa500;
+  --destructive-foreground: var(--surface);
+  --border: var(--rule);
+  --input: var(--rule);
+  --ring: var(--accent);
 }
 
 @theme inline {
@@ -136,6 +151,22 @@
 .tw svg {
   display: block;
   max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
 
 /* Tailwind utilities are layered, while the legacy h1 rule is not. This

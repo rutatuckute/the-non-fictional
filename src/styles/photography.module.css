@@ -1,13 +1,13 @@
 .page {
-  --void: #161717;
-  --raised: #202121;
-  --rule: #353737;
-  --rule-strong: #5b5d5d;
-  --rule-subtle: #202121;
-  --ink: #eee8df;
-  --ink-2: #b2aba0;
-  --ink-3: #91897d;
-  --brand: #ffa500;
+  --void: var(--surface);
+  --raised: var(--surface-raised);
+  --rule: var(--border);
+  --rule-strong: var(--site-rule-strong);
+  --rule-subtle: var(--surface-subtle);
+  --ink: var(--text-primary);
+  --ink-2: var(--text-secondary);
+  --ink-3: var(--text-metadata);
+  --brand: var(--accent);
   --font-body: var(--font-source-serif), Georgia, serif;
   --font-title: var(--font-bricolage), system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;

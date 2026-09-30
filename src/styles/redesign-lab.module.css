@@ -1,19 +1,19 @@
 .page {
-  --lab-void: #161717;
-  --lab-raised: #202121;
-  --lab-rule: #353737;
-  --lab-rule-strong: #5b5d5d;
-  --lab-rule-subtle: #202121;
-  --lab-ink: #eee8df;
-  --lab-ink-secondary: #b2aba0;
-  --lab-ink-muted: #91897d;
+  --lab-void: var(--surface);
+  --lab-raised: var(--surface-raised);
+  --lab-rule: var(--border);
+  --lab-rule-strong: var(--site-rule-strong);
+  --lab-rule-subtle: var(--surface-subtle);
+  --lab-ink: var(--text-primary);
+  --lab-ink-secondary: var(--text-secondary);
+  --lab-ink-muted: var(--text-metadata);
   --lab-content-max: 1680px;
   /* Masthead is 76px plus its 1px rule, and sits in normal flow. */
   --lab-masthead-h: 77px;
-  --lab-brand: #ffa500;
-  --lab-essay: #f2762b;
-  --lab-reflection: #c08ae8;
-  --lab-data: #6ecb78;
+  --lab-brand: var(--accent);
+  --lab-essay: var(--form-essay);
+  --lab-reflection: var(--form-reflection);
+  --lab-data: var(--form-data);
   --lab-photography: #4fbbd4;
   --lab-inquiry: #e8e2d8;
   /* 3.02:1 on --lab-void. At #4a443c the connections were 1.63:1 once their
