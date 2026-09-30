@@ -271,8 +271,36 @@
   line-height: 1;
 }
 
+.tw .profile-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  color: var(--text-secondary);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.tw .profile-email:hover,
+.tw .profile-email:focus-visible {
+  color: var(--accent);
+}
+
+.tw .profile-email svg {
+  width: 1rem;
+  height: 1rem;
+}
+
 @media (max-width: 48rem) {
   .tw .profile-socials {
+    justify-content: center;
+  }
+
+  .tw .profile-email {
+    display: flex;
     justify-content: center;
   }
 }

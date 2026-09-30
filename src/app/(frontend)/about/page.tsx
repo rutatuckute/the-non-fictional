@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { Github, Linkedin } from "lucide-react"
+import { Github, Linkedin, Mail } from "lucide-react"
 
 import Masthead from "../../../components/masthead"
 import SiteFooter from "../../../components/site-footer"
@@ -143,6 +143,10 @@ export default function AboutPage() {
                 <Github aria-hidden="true" />
               </a>
             </nav>
+            <a className="profile-email" href={`mailto:${site.author.email}`}>
+              <Mail aria-hidden="true" />
+              <span>{site.author.email}</span>
+            </a>
           </figure>
         </div>
       </main>

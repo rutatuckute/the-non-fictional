@@ -16,7 +16,6 @@ export default function SiteFooter() {
         <Link href="/blog/">Writings</Link>
         <Link href="/photography/">Photography</Link>
         <Link href="/about/">In Brief</Link>
-        <Link href="/contacts/">Contact</Link>
         <a href="/rss.xml">RSS</a>
       </nav>
     </footer>
