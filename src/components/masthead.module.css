@@ -28,11 +28,11 @@
   width: fit-content;
   min-width: 0;
   color: var(--masthead-accent);
-  font-family: var(--font-functional);
-  font-size: clamp(1.25rem, 2.1vw, 1.85rem);
-  font-weight: 500;
+  font-family: var(--font-editorial);
+  font-size: clamp(20px, 2vw, 31px);
+  font-weight: 400;
   line-height: 1;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
   text-decoration: none;
   white-space: nowrap;
 }
