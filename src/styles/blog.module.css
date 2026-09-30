@@ -49,10 +49,8 @@
 
 .main {
   flex: 1;
-  width: 100%;
-  max-width: 1420px;
+  width: var(--page-width);
   margin: 0 auto;
-  padding: 0 26px;
 }
 
 /* ── header ── */
@@ -88,8 +86,8 @@
   font-family: var(--font-title);
   font-size: clamp(30px, 5vw, 54px);
   font-weight: 400;
-  line-height: 0.97;
-  letter-spacing: -0.04em;
+  line-height: 0.98;
+  letter-spacing: var(--tracking-display);
   text-wrap: balance;
 }
 
@@ -110,8 +108,10 @@
   gap: 10px;
   /* Photography reserves the brand colour for the kit item that is current.
      Nothing here is more current than anything else, so all of them take it —
-     the label and the icon both draw from currentColor, the value does not. */
-  color: var(--brand);
+     the label and the icon both draw from currentColor, the value does not.
+     They take the quiet metadata colour: the accent is kept for links, the
+     current page and focus. */
+  color: var(--ink-3);
 }
 
 .kitIcon {
@@ -144,9 +144,7 @@
 .kitValue {
   color: var(--ink);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
+  font-size: 13px;
 }
 
 /* ── controls ── */
@@ -193,11 +191,9 @@
   padding: 5px 9px;
   border: 1px solid var(--rule-strong);
   background: none;
-  color: var(--ink-3);
+  color: var(--ink-2);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 13px;
   cursor: pointer;
   transition:
     color 150ms ease,
@@ -211,9 +207,8 @@
 }
 
 .chip[data-on="true"] {
-  background: var(--brand);
   border-color: var(--brand);
-  color: var(--void);
+  color: var(--ink);
 }
 
 .chipCount {
@@ -227,9 +222,7 @@
   margin-left: auto;
   color: var(--ink-3);
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 13px;
 }
 
 .clear {
@@ -313,14 +306,16 @@
 .featuredRead,
 .archiveHead span {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 13px;
 }
 
+/* The one small-capitals label on the page: it names the slot, not the piece. */
 .featuredLabel {
   margin: 0 0 1.25rem;
-  color: var(--brand);
+  color: var(--ink-3);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .featuredMeta {
@@ -332,7 +327,7 @@
 }
 
 .featuredForm {
-  color: var(--form, var(--brand));
+  color: var(--ink-2);
 }
 
 .featuredTitle {
@@ -341,8 +336,8 @@
   font-family: var(--font-title);
   font-size: clamp(30px, 3.3vw, 48px);
   font-weight: 400;
-  line-height: 0.99;
-  letter-spacing: -0.04em;
+  line-height: 1.02;
+  letter-spacing: var(--tracking-display);
   text-wrap: balance;
 }
 
@@ -363,7 +358,7 @@
 .featuredRead span {
   display: inline-block;
   margin-left: 0.25rem;
-  color: var(--form, var(--brand));
+  color: var(--brand);
   transition: transform 150ms ease;
 }
 
@@ -392,7 +387,7 @@
   font-size: clamp(22px, 2vw, 30px);
   font-weight: 400;
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: var(--tracking-title);
 }
 
 .archiveHead span {
@@ -487,14 +482,14 @@
   font-size: 21px;
   font-weight: 400;
   line-height: 1.14;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-title);
   text-transform: none;
   text-wrap: balance;
 }
 
 .card:hover .cardTitle,
 .card:focus-visible .cardTitle {
-  color: var(--form, var(--brand));
+  color: var(--brand);
 }
 
 /* The excerpts run 215 to 381 characters, so they clamp rather than set the
@@ -520,13 +515,11 @@
   padding-top: 4px;
   color: var(--ink-3);
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 12px;
 }
 
 .cardForm {
-  color: var(--form, var(--brand));
+  color: var(--ink-2);
 }
 
 .cardWhen {
@@ -537,9 +530,7 @@
   padding: 60px 0;
   color: var(--ink-3);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 14px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -578,10 +569,6 @@
 }
 
 @media (max-width: 48rem) {
-  .main {
-    padding: 0 16px;
-  }
-
   /* A 4.5rem label column leaves too little for the chips to wrap into, so the
      label sits above its row instead. */
   .group {

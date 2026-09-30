@@ -1,16 +1,30 @@
 import type { Metadata, Viewport } from "next"
-import { Inter } from "next/font/google"
+import { Inter, Newsreader } from "next/font/google"
 
 import { site, siteUrl } from "../../lib/site"
 import "../../styles/globals.css"
 
-// Inter is self-hosted by next/font, served from this origin and preloaded so
-// the functional UI typeface does not add a third-party request on navigation.
+// Both faces are self-hosted by next/font, served from this origin and
+// preloaded, so neither adds a third-party request on navigation.
+//
+// Newsreader is the editorial face. It used to be a stack of whatever serif the
+// device had installed (Iowan, then Palatino, then Georgia), which rendered as
+// a Times look-alike on Android and Linux and made the tight display tracking
+// collide. Its optical-size axis lets one family set both the 90px hero and the
+// 19px body text properly. Inter is the functional face for labels and details.
 //
 // latin-ext is not optional here: the author's name, half the place names in
 // the archive and four of the frame titles are outside latin. next/font reads
 // these calls statically, so every argument has to be a literal — no shared
 // constant for the subset list.
+
+const newsreader = Newsreader({
+  subsets: ["latin", "latin-ext"],
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  variable: "--font-newsreader",
+  display: "swap",
+})
 
 const inter = Inter({
   subsets: ["latin", "latin-ext"],
@@ -92,7 +106,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${newsreader.variable} ${inter.variable}`}>
       <body>{children}</body>
     </html>
   )

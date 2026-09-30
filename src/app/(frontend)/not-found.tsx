@@ -15,13 +15,11 @@ export default function NotFound() {
     <div className="tw flex min-h-screen flex-col bg-background">
       <Masthead />
 
-      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-6 py-24">
+      <main className="mx-auto flex w-[var(--page-width)] flex-1 flex-col justify-center py-24">
         <p className="font-mono text-xs tracking-[0.18em] text-muted-foreground uppercase">
           404
         </p>
-        <h1 className="mt-4 font-sans text-4xl font-extrabold tracking-tight text-foreground md:text-5xl">
-          Not found.
-        </h1>
+        <h1 className="editorial-title mt-4">Not found.</h1>
         <p className="mt-6 font-serif text-lg text-muted-foreground">
           You just hit a route that doesn&#39;t exist — the sadness.
         </p>

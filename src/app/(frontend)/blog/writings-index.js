@@ -28,6 +28,11 @@ const INQUIRIES = [
   "memory",
 ]
 
+// Inquiries are stored lowercase. They used to be shown through an uppercase
+// transform; in sentence case they need their capital back.
+const capitalise = value =>
+  value ? value.charAt(0).toUpperCase() + value.slice(1) : value
+
 const kitIcon = children => (
   <svg
     className={styles.kitIcon}
@@ -79,7 +84,7 @@ const Card = ({ post }) => {
         ) : null}
         <div className={styles.cardFoot}>
           <span className={styles.cardForm}>{FORMS[form]}</span>
-          {fm.inquiry ? <span>{fm.inquiry}</span> : null}
+          {fm.inquiry ? <span>{capitalise(fm.inquiry)}</span> : null}
           <span className={styles.cardWhen}>
             {fm.year} · {post.timeToRead} min
           </span>
@@ -110,7 +115,7 @@ const FeaturedCard = ({ post }) => {
         <p className={styles.featuredLabel}>Latest writing</p>
         <p className={styles.featuredMeta}>
           <span className={styles.featuredForm}>{FORMS[form]}</span>
-          {fm.inquiry ? <span>{fm.inquiry}</span> : null}
+          {fm.inquiry ? <span>{capitalise(fm.inquiry)}</span> : null}
           <span>{fm.year}</span>
           <span>{post.timeToRead} min read</span>
         </p>
@@ -163,7 +168,11 @@ const WritingsIndex = ({ posts }) => {
         label: "Forms",
         value: forms.map(id => FORMS[id]).join(" · "),
       },
-      { key: "inquiries", label: "Inquiries", value: inquiries.join(" · ") },
+      {
+        key: "inquiries",
+        label: "Inquiries",
+        value: inquiries.map(capitalise).join(" · "),
+      },
     ].filter(item => item.value)
   }, [counts, posts])
 

@@ -43,8 +43,14 @@ const countBy = (frames, pick) => {
 // line unseen here.
 const buildGroups = (frames) => {
   const byCount = (a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0]))
+  // Types are stored lowercase ("portraits"); the label gets its capital back
+  // now that the controls are no longer set in uppercase.
   const asOptions = (entries) =>
-    entries.map(([value, count]) => ({ value, label: value, count }))
+    entries.map(([value, count]) => ({
+      value,
+      label: typeof value === "string" ? value.charAt(0).toUpperCase() + value.slice(1) : value,
+      count,
+    }))
 
   return {
     type: asOptions([...countBy(frames, (f) => f.type).entries()].sort(byCount)),

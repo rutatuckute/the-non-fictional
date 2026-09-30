@@ -154,7 +154,7 @@ export default async function ArticlePage({
               {fm.inquiry ? (
                 <div>
                   <dt>Inquiry</dt>
-                  <dd>{fm.inquiry}</dd>
+                  <dd>{fm.inquiry.charAt(0).toUpperCase() + fm.inquiry.slice(1)}</dd>
                 </div>
               ) : null}
               <div>

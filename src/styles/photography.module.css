@@ -40,10 +40,8 @@
 
 .main {
   flex: 1;
-  width: 100%;
-  max-width: 1420px;
+  width: var(--page-width);
   margin: 0 auto;
-  padding: 0 26px;
 }
 
 /* One column. The controls used to take a column beside the information block,
@@ -92,7 +90,7 @@
   font-size: clamp(30px, 5vw, 54px);
   font-weight: 400;
   line-height: 0.97;
-  letter-spacing: -0.04em;
+  letter-spacing: var(--tracking-display);
 }
 
 /* Kit — what the frames were actually made with, in place of a blurb. */
@@ -146,9 +144,7 @@
 .kitValue {
   color: var(--ink);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
+  font-size: 13px;
 }
 
 /* Every control here signalled focus by changing colour alone, which is
@@ -198,9 +194,7 @@
   background: none;
   color: var(--ink-3);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 13px;
   cursor: pointer;
   transition:
     color 150ms ease,
@@ -235,9 +229,7 @@
   background: none;
   color: var(--ink-3);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 13px;
   cursor: pointer;
   transition:
     color 150ms ease,
@@ -306,10 +298,8 @@
   background: none;
   color: var(--ink-2);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.1em;
+  font-size: 13px;
   text-align: left;
-  text-transform: uppercase;
   white-space: nowrap;
   cursor: pointer;
   transition:
@@ -343,10 +333,8 @@
   background: none;
   color: var(--ink-3);
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-size: 13px;
   text-align: left;
-  text-transform: uppercase;
   cursor: pointer;
 }
 
@@ -362,9 +350,7 @@
   margin-left: auto;
   color: var(--ink-3);
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 13px;
 }
 
 .clear {
@@ -407,7 +393,7 @@
   font-size: clamp(20px, 3vw, 32px);
   font-weight: 400;
   line-height: 0.97;
-  letter-spacing: -0.04em;
+  letter-spacing: var(--tracking-display);
   /* Titles are stored uppercase ("CIAO AMORE"); the page title is sentence
      case, so lowercase them and lift the first letter back. Done in CSS so the
      stored title stays intact for the lightbox caption and alt text. */
@@ -421,18 +407,14 @@
 .sectionMeta {
   color: var(--ink-3);
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 13px;
 }
 
 .sectionCount {
   margin-left: auto;
   color: var(--ink-3);
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 13px;
 }
 
 .seriesLayout {
@@ -535,9 +517,7 @@
   padding: 60px 0;
   color: var(--ink-3);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 13px;
 }
 
 /* ── lightbox ── */
@@ -718,10 +698,6 @@
 }
 
 @media (max-width: 48rem) {
-  .main {
-    padding: 0 16px;
-  }
-
   /* A 5rem label column leaves too little for the chips to wrap into, so the
      label sits above its row instead. */
   .group {
@@ -794,9 +770,7 @@
   padding-bottom: 7px;
   color: var(--ink-3);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 13px;
   text-decoration: none;
   transition: color 150ms ease;
 }
@@ -830,19 +804,16 @@
    alignment. Percentages are of the content column, so the whole composition
    scales with the page rather than snapping between breakpoints. */
 
-/* Selected and the series pages break out of the site's text column: the
-   photographs are the page here, not content inside it. Archive keeps the
-   column, because it is an interface. */
+/* Selected and the series pages used to break out of the site's column to
+   94vw. They now keep to the page container like everything else, so the
+   frames share their left edge with the title and the masthead above them. */
 .sequence {
   --gutter: clamp(10px, 0.85vw, 16px);
 
   display: flex;
   flex-direction: column;
   gap: var(--gutter);
-  width: 94vw;
-  max-width: 1700px;
-  margin-left: calc(50% - 47vw);
-  margin-right: calc(50% - 47vw);
+  width: 100%;
   padding: clamp(20px, 2.4vw, 36px) 0 clamp(64px, 8vw, 104px);
 }
 
@@ -960,9 +931,7 @@
 .plateWhere {
   color: var(--ink-2);
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 13px;
 }
 
 /* Pointer devices only. On a touch screen there is no hover to reveal it with,
@@ -1012,9 +981,7 @@
   padding-top: 14px;
   color: var(--ink-2);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 13px;
   transition: color 150ms ease;
 }
 
@@ -1033,7 +1000,7 @@
   font-size: clamp(19px, 2vw, 27px);
   font-weight: 400;
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: var(--tracking-title);
 }
 
 @media (max-width: 900px) {

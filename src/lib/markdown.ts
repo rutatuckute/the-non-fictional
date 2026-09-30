@@ -60,6 +60,36 @@ const withResizedImages = (html: string): string =>
     },
   )
 
+// The labels are taken from rendered HTML, where rehype-stringify has written
+// "&" as "&#x26;". React escapes the label again when it renders it, so it has
+// to be plain text here or the rail shows the entity itself.
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+  nbsp: '\u00a0',
+}
+
+const decodeEntities = (text: string): string =>
+  text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (entity, code: string) => {
+    if (code[0] === '#') {
+      const point =
+        code[1] === 'x' || code[1] === 'X'
+          ? parseInt(code.slice(2), 16)
+          : parseInt(code.slice(1), 10)
+      return point >= 0 && point <= 0x10ffff ? String.fromCodePoint(point) : entity
+    }
+    return NAMED_ENTITIES[code.toLowerCase()] ?? entity
+  })
+
+// Every piece migrated from the Gatsby site opens with "- - -", a thematic break
+// that renders as a rule directly under the one the page template draws after
+// the dek. A break before any content separates nothing, so it is dropped.
+const withoutLeadingRule = (html: string): string =>
+  html.replace(/^\s*<hr\s*\/?>\s*/, '')
+
 // The rail's section index is built from the piece's own headings, so each one
 // needs an id to jump to. Done on the HTML string because the body arrives from
 // markdown already rendered.
@@ -68,7 +98,7 @@ const withSectionIds = (html: string): { html: string; sections: Section[] } => 
   const marked = html.replace(
     /<h([2-4])([^>]*)>([\s\S]*?)<\/h\1>/g,
     (tag, level: string, attrs: string, inner: string) => {
-      const label = inner.replace(/<[^>]+>/g, '').trim()
+      const label = decodeEntities(inner.replace(/<[^>]+>/g, '')).trim()
       if (!label) {
         return tag
       }
@@ -87,5 +117,5 @@ export const renderMarkdown = async (
 ): Promise<{ html: string; sections: Section[] }> => {
   const file = await processor.process(body || '')
 
-  return withSectionIds(withResizedImages(String(file)))
+  return withSectionIds(withResizedImages(withoutLeadingRule(String(file))))
 }

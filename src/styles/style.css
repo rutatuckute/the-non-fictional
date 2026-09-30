@@ -175,7 +175,7 @@ h6 {
 h1 {
   font-weight: var(--fontWeight-black);
   font-size: var(--fontSize-6);
-  color: var(--color-primary);
+  color: var(--color-heading);
 }
 
 h2 {
@@ -292,7 +292,7 @@ a {
 a:hover,
 a:focus {
   text-decoration: none;
-  color: var(--color-secondary);
+  color: var(--accent-hover);
 }
 
 /* Custom classes */

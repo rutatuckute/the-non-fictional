@@ -26,8 +26,20 @@
  */
 :root {
   --radius: 0.5rem;
-  --font-editorial: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  --font-editorial: var(--font-newsreader), Newsreader, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --font-functional: var(--font-inter), Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+
+  /* Display tracking, tuned for Newsreader. The -0.04em to -0.055em the pages
+   * carried were set against system serifs and made letters collide. */
+  --tracking-display: -0.022em;
+  --tracking-title: -0.012em;
+
+  /* One container for every page, header and footer included, so content
+   * starts at the same left edge everywhere: 100px at 1440 wide. */
+  --page-max: 1240px;
+  --page-margin: clamp(16px, 4vw, 56px);
+  --page-width: min(var(--page-max), 100% - 2 * var(--page-margin));
+  --page-inset: max(var(--page-margin), (100% - var(--page-max)) / 2);
 
   /* Editorial system — all page modules inherit these rather than carrying
    * subtly diverging copies of the site palette. */
@@ -39,6 +51,9 @@
   --text-metadata: #91897d;
   --rule: #353737;
   --site-rule-strong: #5b5d5d;
+  /* The one accent: the wordmark, links, the current page, focus. The form
+   * colours below are for the homepage field only, where they encode what a
+   * mark is. */
   --accent: #ffa500;
   --accent-hover: #e8922c;
   --form-essay: #f2762b;
@@ -180,21 +195,22 @@
   font-family: var(--font-editorial);
   font-size: clamp(30px, 5vw, 54px);
   font-weight: 400;
-  line-height: 0.95;
-  letter-spacing: -0.04em;
+  line-height: 0.98;
+  letter-spacing: var(--tracking-display);
 }
 
+/* Links in running text stay in the text colour; the accent is the underline. */
 .tw .editorial-link {
-  color: var(--primary);
+  color: var(--foreground);
   text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 70%, transparent);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
 }
 
 .tw .editorial-link:hover,
 .tw .editorial-link:focus-visible {
-  color: #e8922c;
-  text-decoration-thickness: 2px;
+  text-decoration-color: var(--accent);
 }
 
 .tw .editorial-title + .editorial-copy {
@@ -221,7 +237,7 @@
   font-family: var(--font-editorial);
   font-size: clamp(1.4rem, 2vw, 1.85rem);
   font-weight: 400;
-  letter-spacing: -0.03em;
+  letter-spacing: var(--tracking-title);
 }
 
 .tw .editorial-copy + .brief-signoff {
@@ -280,8 +296,7 @@
   margin-top: 1rem;
   color: var(--text-secondary);
   font-family: var(--font-functional);
-  font-size: 0.6875rem;
-  letter-spacing: 0.04em;
+  font-size: 0.8125rem;
   text-decoration: none;
   transition: color 150ms ease;
 }
