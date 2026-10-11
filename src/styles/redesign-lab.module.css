@@ -117,58 +117,127 @@
   min-width: 0;
 }
 
-.hero {
+/* The page is one grid: the hero and then the steps on the left, and one
+   field pinned on the right through both.
+
+   Type takes the site's roles, and nothing else: serif for words (display,
+   title, lead, numeral), sans for what guides and describes (support, meta,
+   label). The accent marks short things only — the kicker, the numerals, the
+   current step, link underlines — never prose. */
+.layout {
   display: grid;
-  /* Fractions, not fixed maxima. The columns used to cap at 34rem and 35rem
-     and sit hard against the left edge, so past about 1100px the hero stopped
-     growing and the rest of a wide screen was empty — while the scrolly
-     section below it stayed centred, leaving the two visibly out of line. */
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.03fr);
-  /* Centred rather than top-aligned, because the hero is now as tall as the
-     screen and starting at the top would just move the empty space. */
-  align-content: center;
-  align-items: start;
-  flex: 1;
-  column-gap: var(--lab-space-4);
-  row-gap: var(--lab-space-12);
-  /* The page container, so the hero shares its left edge with the masthead. */
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  grid-template-areas:
+    "hero figure"
+    "steps figure";
+  column-gap: 56px;
   width: var(--page-width);
-  /* The first screen is the copy and its field, nothing else. At 42rem the
-     hero ended well above the fold on a large monitor and the section below
-     showed through under it. */
-  min-height: 42rem;
-  min-height: calc(100svh - var(--lab-masthead-h));
   margin: 0 auto;
-  padding: clamp(52px, 4vw, 64px) 0 64px;
 }
 
-.heroCopy {
-  align-self: start;
-  min-width: 0;
+/* Roles */
+.display {
+  font-family: var(--lab-font-title);
+  font-size: clamp(56px, 7.4vw, 112px);
+  font-weight: 300;
+  line-height: 0.9;
+  letter-spacing: -0.028em;
+  font-variation-settings: "opsz" 72;
 }
 
-.heroKicker {
-  display: flex;
-  gap: var(--lab-space-4);
-  margin: 0 0 var(--lab-space-10);
+.display em {
+  font-style: italic;
+  font-weight: 280;
+  letter-spacing: -0.02em;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--lab-font-title);
+  font-size: clamp(32px, 3.2vw, 44px);
+  font-weight: 340;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.lead {
+  color: var(--lab-ink-secondary);
+  font-family: var(--lab-font-body);
+  font-size: 21px;
+  line-height: 1.55;
+  font-variation-settings: "opsz" 18;
+}
+
+.lead b {
+  color: var(--lab-ink);
+  font-weight: 450;
+}
+
+.numeral {
   color: var(--lab-accent);
+  font-family: var(--lab-font-title);
+  font-size: 56px;
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1;
+  font-variation-settings: "opsz" 60;
+}
+
+.support {
+  margin: 0;
+  color: var(--lab-ink-secondary);
   font-family: var(--lab-font-metadata);
-  font-size: 0.6875rem;
+  font-size: 17px;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.meta {
+  color: var(--lab-ink-muted);
+  font-family: var(--lab-font-metadata);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.label {
+  color: var(--lab-ink-muted);
+  font-family: var(--lab-font-metadata);
+  font-size: 11px;
   font-weight: 500;
   line-height: 1.4;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
+/* Hero */
+.hero {
+  grid-area: hero;
+  display: grid;
+  align-content: center;
+  min-height: calc(100svh - var(--lab-masthead-h));
+  padding-block: 56px 72px;
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 36px;
+  color: var(--lab-accent);
+}
+
+.kicker::after {
+  content: "";
+  width: 56px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
 .heroTitle {
-  max-width: 7em;
   margin: 0;
-  color: var(--lab-text-primary);
-  font-family: var(--lab-font-title);
-  font-size: 6rem;
-  font-weight: 340;
-  line-height: 0.95;
-  letter-spacing: var(--tracking-display);
+  color: var(--lab-ink);
 }
 
 .heroTitle span {
@@ -176,18 +245,14 @@
 }
 
 .heroIntro {
-  max-width: 34rem;
-  margin: var(--lab-space-10) 0 0;
-  color: var(--lab-text-muted);
-  font-family: var(--lab-font-body);
-  font-size: 1.125rem;
-  font-weight: 400;
-  line-height: 1.65;
-  letter-spacing: 0;
+  max-width: 31rem;
+  margin: 40px 0 0;
 }
 
-/* Links in running text stay in the text colour; the accent is the underline. */
-.heroLink {
+/* "Argue with me." stands on its own line. */
+.argue {
+  display: table;
+  margin-top: 14px;
   color: var(--lab-ink);
   text-decoration: underline;
   text-decoration-color: color-mix(in srgb, var(--lab-accent) 70%, transparent);
@@ -195,24 +260,39 @@
   text-underline-offset: 0.18em;
 }
 
-.heroLink:hover {
+.argue:hover {
   color: var(--lab-ink);
   text-decoration-color: var(--lab-accent);
 }
 
-.introHighlight {
-  color: var(--lab-ink);
+/* An arrow, nudging, until the steps begin. */
+.cue {
+  margin: 56px 0 0;
+  color: var(--lab-accent);
+  font-family: var(--lab-font-metadata);
+  font-size: 22px;
+  line-height: 1;
+  transition: opacity 400ms ease;
 }
 
-.fieldFigure {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  width: 100%;
-  /* The column is the constraint now, so the field grows with the screen
-     instead of stopping at 35rem inside a wider column. */
-  min-width: 0;
-  margin: 0;
+.cue[data-visible="false"] {
+  opacity: 0;
+}
+
+.cue span {
+  display: inline-block;
+  animation: cue-nudge 1.8s ease-in-out infinite;
+}
+
+@keyframes cue-nudge {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(7px);
+  }
 }
 
 .archiveField {
@@ -451,112 +531,136 @@
   opacity: 1;
 }
 
-.scrollySection {
-  width: 100%;
+/* One field, pinned through the hero and the steps. It is sized to the
+   first screen below the masthead, so the key is in view from the start, and
+   once pinned it sits centred. */
+.figure {
+  grid-area: figure;
   min-width: 0;
-  background: var(--lab-void);
 }
 
-.scrolly {
-  display: grid;
-  grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.15fr);
-  width: var(--page-width);
-  min-width: 0;
-  margin: 0 auto;
-}
-
-.steps {
-  padding-block: 30vh 34vh;
-}
-
-.step {
-  display: flex;
-  align-items: center;
-  min-height: 70vh;
-}
-
-.stepContent {
-  max-width: 25rem;
-  padding: 2px 0 2px 22px;
-  border-left: 2px solid var(--lab-rule);
-  /* 0.3 left the inactive copy at ~2.4:1. Still clearly the background state,
-     but readable if the eye lands on it mid-scroll. */
-  opacity: 0.5;
-  transition:
-    opacity 300ms ease,
-    border-color 300ms ease;
-}
-
-.step[data-active="true"] .stepContent {
-  border-left-color: var(--lab-brand);
-  opacity: 1;
-}
-
-.stepKicker {
-  color: var(--lab-brand);
-  font-family: var(--lab-font-metadata);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-}
-
-.stepContent h3 {
-  margin: var(--lab-space-3) 0 0;
-  color: var(--lab-ink);
-  font-family: var(--lab-font-title);
-  font-size: 1.5rem;
-  font-weight: 400;
-  line-height: 1.05;
-  letter-spacing: var(--tracking-title);
-}
-
-.stepContent p {
-  max-width: 24rem;
-  margin: var(--lab-space-3) 0 0;
-  color: var(--lab-ink-secondary);
-  font-family: var(--lab-font-body);
-  font-size: 1rem;
-  line-height: 1.6;
-}
-
-.stickyVisualization {
+.pinned {
   position: sticky;
-  top: 0;
-  display: flex;
-  align-items: center;
-  min-width: 0;
-  height: 100vh;
+  top: calc(var(--lab-masthead-h) / 2);
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  gap: 14px;
+  height: calc(100svh - var(--lab-masthead-h));
+  padding-block: 24px 28px;
 }
 
-.timelineReplay {
-  position: absolute;
-  left: 0;
-  bottom: 8%;
-  z-index: 1;
-  padding: 4px 10px;
-  border: 1px solid var(--lab-rule-strong);
-  background: var(--lab-raised);
+.field {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  aspect-ratio: auto;
+}
+
+.key {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px 18px;
+  margin: 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--lab-rule);
+  list-style: none;
+}
+
+.key li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.key svg {
+  overflow: visible;
+}
+
+.key line,
+.key path {
+  fill: none;
+  stroke: var(--key-colour);
+  stroke-width: 1.4;
+  stroke-linecap: square;
+}
+
+.key circle {
+  fill: var(--key-colour);
+}
+
+.key [data-format="essay"] {
+  --key-colour: var(--lab-essay);
+}
+
+.key [data-format="reflection"] {
+  --key-colour: var(--lab-reflection);
+}
+
+.key [data-format="data"] {
+  --key-colour: var(--lab-data);
+}
+
+.key [data-format="photography"] {
+  --key-colour: var(--lab-photography);
+}
+
+.replay {
+  justify-self: end;
+  padding: 0;
+  border: 0;
+  background: none;
   color: var(--lab-ink-secondary);
-  font-family: var(--lab-font-metadata);
-  font-size: 13px;
+  text-decoration: underline;
+  text-decoration-color: var(--lab-accent);
+  text-underline-offset: 0.2em;
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
   transition:
     opacity 250ms ease,
-    color 150ms ease,
-    border-color 150ms ease;
+    color 150ms ease;
 }
 
-.timelineReplay[data-visible="true"] {
+.replay:hover {
+  color: var(--lab-ink);
+}
+
+.replay[data-visible="true"] {
   opacity: 1;
   pointer-events: auto;
 }
 
-.timelineReplay:hover,
-.timelineReplay:focus-visible {
-  border-color: var(--lab-brand);
-  color: var(--lab-brand);
+/* Steps: one at a time, the rest held back. */
+.steps {
+  grid-area: steps;
+  padding-block: 12vh 40vh;
+}
+
+.step {
+  display: grid;
+  align-content: center;
+  gap: 16px;
+  max-width: 26rem;
+  min-height: 82vh;
+  opacity: 0.4;
+  transition: opacity 400ms ease;
+}
+
+.step[data-active="true"] {
+  opacity: 1;
+}
+
+.stepNumber {
+  display: block;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--lab-rule);
+  transition: border-color 400ms ease;
+}
+
+.step[data-active="true"] .stepNumber {
+  border-bottom-color: var(--lab-accent);
 }
 
 .rail {
@@ -729,13 +833,6 @@
   text-decoration: none;
 }
 
-.scrollyArchiveField {
-  width: 100%;
-  height: 88vh;
-  max-height: 800px;
-  aspect-ratio: auto;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .archiveField [data-element="work"],
   .archiveField [data-layer="connections"],
@@ -750,23 +847,6 @@
 }
 
 @media (max-width: 61.25rem) {
-  .scrolly {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .stickyVisualization {
-    top: 0;
-    order: -1;
-    z-index: 10;
-    height: 56vh;
-    background: var(--lab-void);
-    border-bottom: 1px solid var(--lab-rule);
-  }
-
-  .scrollyArchiveField {
-    height: 52vh;
-  }
-
   /* No room for a side rail — slide it up from the bottom instead. */
   .rail {
     top: auto;
@@ -788,68 +868,89 @@
   .railImage {
     aspect-ratio: 16 / 9;
   }
+}
+
+/* Phones. The headline comes first, as on a wide screen, and the field pins
+   along the bottom edge, whole and with its key, from the first screen. The
+   hero and then the steps are read at the top and scroll up from behind it.
+   The field comes last in the order so it stays pinned until the steps are
+   done. */
+@media (max-width: 860px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero {
+    order: 0;
+    min-height: 0;
+    padding-block: 28px 24px;
+  }
+
+  .display {
+    font-size: clamp(44px, 13vw, 64px);
+  }
+
+  .kicker {
+    margin-bottom: 20px;
+  }
+
+  .heroIntro,
+  .cue {
+    margin-top: 24px;
+  }
 
   .steps {
-    padding-block: 6vh 18vh;
+    order: 1;
+    padding-block: 0 8svh;
   }
 
   .step {
-    min-height: 80vh;
+    align-content: start;
+    min-height: 52svh;
+    padding-top: 28px;
+  }
+
+  .numeral {
+    font-size: 40px;
+  }
+
+  .support {
+    font-size: 16px;
+  }
+
+  .figure {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    order: 2;
+    padding-bottom: env(safe-area-inset-bottom);
+    border-top: 1px solid var(--lab-rule);
+    background: var(--lab-void);
+  }
+
+  .pinned {
+    position: static;
+    gap: 6px;
+    height: 44svh;
+    padding-block: 12px;
+  }
+
+  .key {
+    gap: 4px 12px;
+    padding-top: 0;
+    border-top: 0;
   }
 }
 
-@media (max-width: 68rem) {
-  .hero {
-    min-height: 38rem;
-    column-gap: var(--lab-space-4);
-    row-gap: var(--lab-space-8);
+@media (prefers-reduced-motion: reduce) {
+  .step,
+  .stepNumber,
+  .cue {
+    transition: none;
   }
 
-  .heroTitle {
-    font-size: 4.75rem;
-  }
-}
-
-@media (max-width: 48rem) {
-  .hero {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--lab-space-8);
-    min-height: 0;
-    padding: 48px 0 32px;
-  }
-
-  .heroTitle {
-    font-size: 4.75rem;
-  }
-
-  .heroIntro {
-    max-width: 38rem;
-  }
-
-  .fieldFigure {
-    max-width: 32.5rem;
-    margin: 0 auto;
-  }
-}
-
-@media (max-width: 30rem) {
-  .hero {
-    gap: var(--lab-space-6);
-    padding: 40px 0 32px;
-  }
-
-  .heroTitle {
-    font-size: 3rem;
-  }
-
-  .heroKicker {
-    margin-bottom: var(--lab-space-6);
-    font-size: 0.6875rem;
-  }
-
-  .heroIntro {
-    margin-top: var(--lab-space-6);
-    font-size: 1rem;
-    line-height: 1.55;
+  .cue span {
+    animation: none;
   }
 }
