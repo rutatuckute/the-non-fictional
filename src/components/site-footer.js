@@ -1,23 +1,16 @@
 import * as React from "react"
-import Link from "next/link"
 
 import styles from "./site-footer.module.css"
 
+// The name and the year. The menu at the top of every page already links to
+// each section, and feed readers find the feed from the page head, so the
+// footer no longer repeats either.
 export default function SiteFooter() {
   const currentYear = new Date().getFullYear()
 
   return (
     <footer className={styles.footer}>
-      <div className={styles.identity}>
-        <span>© {currentYear} Rūta Tučkutė</span>
-        <span className={styles.statement}>Writing and photography</span>
-      </div>
-      <nav className={styles.navigation} aria-label="Footer navigation">
-        <Link href="/blog/">Writings</Link>
-        <Link href="/photography/">Photography</Link>
-        <Link href="/about/">In brief</Link>
-        <a href="/rss.xml">RSS</a>
-      </nav>
+      <span>© {currentYear} Rūta Tučkutė</span>
     </footer>
   )
 }
