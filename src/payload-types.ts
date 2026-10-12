@@ -70,6 +70,7 @@ export interface Config {
     posts: Post;
     photographs: Photograph;
     series: Series;
+    library: Library;
     media: Media;
     users: User;
     'payload-kv': PayloadKv;
@@ -82,6 +83,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     photographs: PhotographsSelect<false> | PhotographsSelect<true>;
     series: SeriesSelect<false> | SeriesSelect<true>;
+    library: LibrarySelect<false> | LibrarySelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -305,6 +307,47 @@ export interface Series {
   createdAt: string;
 }
 /**
+ * The newest entry is shown beside the latest piece on Writings.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "library".
+ */
+export interface Library {
+  id: number;
+  /**
+   * The label above the entry.
+   */
+  kind: 'reading' | 'watching' | 'listening';
+  /**
+   * Where it was published, e.g. Aeon.
+   */
+  source: string;
+  /**
+   * What it is, e.g. Essay. Optional.
+   */
+  format?: string | null;
+  title: string;
+  /**
+   * The piece itself. The entry links here.
+   */
+  url: string;
+  /**
+   * The piece’s own description, as its publisher gives it.
+   */
+  standfirst?: string | null;
+  author?: string | null;
+  /**
+   * Your thoughts on it. Leave a blank line between paragraphs.
+   */
+  notes?: string | null;
+  /**
+   * The newest entry is the one shown.
+   */
+  addedAt: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -365,6 +408,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'series';
         value: number | Series;
+      } | null)
+    | ({
+        relationTo: 'library';
+        value: number | Library;
       } | null)
     | ({
         relationTo: 'media';
@@ -483,6 +530,23 @@ export interface SeriesSelect<T extends boolean = true> {
   cover?: T;
   slug?: T;
   order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "library_select".
+ */
+export interface LibrarySelect<T extends boolean = true> {
+  kind?: T;
+  source?: T;
+  format?: T;
+  title?: T;
+  url?: T;
+  standfirst?: T;
+  author?: T;
+  notes?: T;
+  addedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

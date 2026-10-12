@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { getPosts } from '../../../lib/content'
+import { getLibraryEntry, getPosts } from '../../../lib/content'
 import WritingsIndex from './writings-index'
 
 const description =
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 }
 
 export default async function WritingsPage() {
-  const posts = await getPosts()
+  const [posts, library] = await Promise.all([getPosts(), getLibraryEntry()])
 
-  return <WritingsIndex posts={posts} />
+  return <WritingsIndex posts={posts} library={library} />
 }

@@ -1,6 +1,10 @@
-/* The writings index. Header, controls and grid follow photography.module.css
-   so the two archives read as one place; only the card body differs, because a
-   piece needs a title and a summary where a frame needs neither. */
+/* The writings index, set as a front page. About ten text styles, each with
+   one job: name (serif 300), tagline (serif 20), lead title (serif 40), title
+   (serif 24), standfirst (serif 17), notes (serif italic 16), label (sans 11
+   capitals) and option (sans 13). Two kinds of line: solid hairlines across,
+   dotted between columns. Orange is kept to the active filters, link
+   underlines and the (Anti)library; the forms carry the homepage field's
+   colours and marks. */
 .page {
   --void: var(--surface);
   --raised: var(--surface-raised);
@@ -55,551 +59,568 @@
 
 /* ── header ── */
 
-.header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, auto);
-  align-items: start;
-  gap: 32px 48px;
-  padding: 40px 0 26px;
-  border-bottom: 1px solid var(--rule);
-}
 
-.headerMain {
-  min-width: 0;
-}
+/* ── shared ── */
 
-/* Photography puts the section name here and its statement in the title. Until
-   this page has a line of its own, the two are swapped: the facts take the
-   small line and the title stays the plain word. */
-.kicker {
+.label {
   margin: 0;
-  color: var(--brand);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  color: var(--ink);
+  font: 500 11px / 1.4 var(--font-mono);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
-.title {
-  margin: 12px 0 14px;
-  color: var(--ink);
-  font-family: var(--font-title);
-  font-size: clamp(30px, 5vw, 54px);
-  font-weight: 400;
-  line-height: 0.98;
-  letter-spacing: var(--tracking-display);
-  text-wrap: balance;
-}
-
-/* Facts about the archive under the title, the way the photography page lists
-   what its frames were made with. Everything here is derived from the posts. */
-.kit {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px 34px;
-  margin: 4px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.kitItem {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  /* Photography reserves the brand colour for the kit item that is current.
-     Nothing here is more current than anything else, so all of them take it —
-     the label and the icon both draw from currentColor, the value does not.
-     They take the quiet metadata colour: the accent is kept for links, the
-     current page and focus. */
+.quiet {
   color: var(--ink-3);
 }
 
-.kitIcon {
-  flex: 0 0 18px;
-  width: 18px;
-  height: 18px;
-  margin-top: 1px;
+.in {
+  margin-inline: 1px;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.title {
+  margin: 0;
+  color: var(--ink);
+  font: 400 24px / 1.2 var(--font-title);
+  letter-spacing: -0.006em;
+  text-wrap: balance;
+}
+
+.dek {
+  margin: 0;
+  color: var(--ink-2);
+  font: 400 17px / 1.5 var(--font-body);
+  font-variation-settings: "opsz" 16;
+  text-wrap: pretty;
+}
+
+.piece {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Titles stay in ink; hovering underlines them in the piece's form colour. */
+.piece:hover .title,
+.piece:focus-visible .title {
+  text-decoration: underline;
+  text-decoration-color: var(--fc, var(--brand));
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.14em;
+}
+
+.cover {
+  position: relative;
+  overflow: hidden;
+  background: var(--raised);
+}
+
+.cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.piece:hover .cover img,
+.piece:focus-visible .cover img {
+  transform: scale(1.02);
+}
+
+/* Form colours, as on the homepage field. They mark what a piece is, and
+   nothing else. */
+.page [data-form="essays"] {
+  --fc: var(--essays);
+}
+
+.page [data-form="reflections"] {
+  --fc: var(--reflections);
+}
+
+.page [data-form="data"] {
+  --fc: var(--data);
+}
+
+.mark {
+  flex: none;
+  overflow: visible;
+}
+
+.mark line {
   fill: none;
   stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: square;
+}
+
+.mark circle {
+  fill: currentColor;
+}
+
+.byline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.form {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--fc);
+}
+
+/* ── header: the nameplate, then one filter bar ── */
+
+.header {
+  padding: 48px 0 0;
+}
+
+.nameplate {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.name {
+  margin: 0;
+  color: var(--ink);
+  font: 300 clamp(56px, 8vw, 104px) / 0.95 var(--font-title);
+  letter-spacing: -0.03em;
+  font-variation-settings: "opsz" 72;
+}
+
+/* As the line was set before, upright and in ink. */
+.tagline {
+  margin: 0;
+  color: var(--ink);
+  font: 400 20px / 1.3 var(--font-body);
+  letter-spacing: -0.006em;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px 48px;
+  margin-top: 36px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.groupLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1.4;
+  stroke-linecap: square;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
+  /* When options wrap, the dot before the first one on a new line would hang
+     in the margin. Clipping at the row's left edge hides it; the 4px inset
+     keeps a focus ring on the first option visible. */
+  margin-left: -4px;
+  padding-left: 4px;
+  clip-path: inset(-8px -8px -8px 0);
+}
+
+.option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 0;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  font: 400 13px / 1.4 var(--font-mono);
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.option::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.option:hover,
+.option:focus-visible {
+  color: var(--ink);
+}
+
+.option[data-on="true"] {
+  color: var(--brand);
+}
+
+.option[data-form][data-on="true"] {
+  color: var(--fc);
+}
+
+.option[data-on="true"]::after {
+  opacity: 1;
+}
+
+/* A dot between options, centred in the gap. */
+.option + .option::before {
+  content: "·";
+  position: absolute;
+  top: 50%;
+  left: -13px;
+  transform: translateY(-50%);
+  color: var(--ink-3);
+  pointer-events: none;
+}
+
+.empty {
+  margin: 0;
+  padding-block: 56px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-3);
+  font: italic 400 19px / 1.5 var(--font-body);
+  text-align: center;
+}
+
+/* ── the spread: two beside, the lead, the (Anti)library ── */
+
+.spread {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.9fr) minmax(0, 0.95fr);
+  padding-block: 28px 40px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.spread > * {
+  min-width: 0;
+}
+
+.spread[data-sides="false"] {
+  grid-template-columns: minmax(0, 2.85fr) minmax(0, 0.95fr);
+}
+
+.spread[data-library="false"] {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+}
+
+.spread[data-sides="false"][data-library="false"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.left {
+  display: grid;
+  align-content: start;
+  gap: 28px;
+  padding-right: 24px;
+}
+
+.small {
+  display: grid;
+  gap: 10px;
+}
+
+.small + .small {
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+}
+
+.smallCover {
+  aspect-ratio: 3 / 2;
+  margin-bottom: 4px;
+}
+
+.lead {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 14px;
+  padding-inline: 24px;
+  border-left: 1px dotted var(--rule-strong);
+  border-right: 1px dotted var(--rule-strong);
+  text-align: center;
+}
+
+.spread[data-sides="false"] .lead {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.spread[data-library="false"] .lead {
+  padding-right: 0;
+  border-right: 0;
+}
+
+.leadCover {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  margin-bottom: 8px;
+}
+
+.leadTitle {
+  max-width: 15em;
+  font-size: clamp(30px, 2.8vw, 40px);
+  line-height: 1.12;
+}
+
+.lead .dek {
+  max-width: 32em;
+  font-size: 18px;
+}
+
+.lead .byline {
+  justify-content: center;
+}
+
+.library {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding-left: 24px;
+}
+
+.libraryHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--brand);
+}
+
+.shelf,
+.pen {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--brand);
   stroke-width: 1.4;
   stroke-linecap: square;
   stroke-linejoin: miter;
 }
 
-.kitText {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
+.pen {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
 }
 
-.kitLabel {
-  color: currentColor;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.kitValue {
-  color: var(--ink);
-  font-family: var(--font-mono);
-  font-size: 13px;
-}
-
-/* ── controls ── */
-
-.controls {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  min-width: 0;
-  max-width: 30rem;
-  padding-top: 4px;
-}
-
-.group {
+.reading {
   display: grid;
-  /* Photography reserves 5.75rem because "SPACE/TIME" needs it. Nothing here
-     runs past "SEARCH", so the column comes in — same treatment, less gap. */
-  grid-template-columns: 4.5rem minmax(0, 1fr);
-  align-items: start;
   gap: 10px;
 }
 
-.groupLabel {
-  padding-top: 8px;
-  color: var(--ink-3);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-align: right;
-  text-transform: uppercase;
+.readingTitle {
+  font-size: 21px;
 }
 
-.groupChips {
+.readingDek {
+  margin: 0;
+  color: var(--ink-2);
+  font: 400 15px / 1.5 var(--font-body);
+  text-wrap: pretty;
+}
+
+/* The notes: a different voice. A raised panel with an accent rule and the
+   text in italic ink, so it can't be mistaken for the piece's description. */
+.take {
+  margin: 10px 0 0;
+  padding: 14px 16px 16px;
+  border-left: 2px solid var(--brand);
+  background: var(--raised);
+}
+
+.takeHead {
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  min-width: 0;
-}
-
-.chip {
-  display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 9px;
-  border: 1px solid var(--rule-strong);
-  background: none;
-  color: var(--ink-2);
-  font-family: var(--font-mono);
-  font-size: 13px;
-  cursor: pointer;
-  transition:
-    color 150ms ease,
-    border-color 150ms ease;
+  margin-bottom: 10px;
+  color: var(--brand);
 }
 
-.chip:hover,
-.chip:focus-visible {
-  color: var(--ink);
-  border-color: var(--ink-3);
-}
-
-.chip[data-on="true"] {
-  border-color: var(--brand);
-  color: var(--ink);
-}
-
-.chipCount {
-  opacity: 0.7;
-}
-
-.count {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-left: auto;
-  color: var(--ink-3);
-  font-family: var(--font-mono);
-  font-size: 13px;
-}
-
-.clear {
+.takeText {
+  margin: 0;
   padding: 0;
   border: 0;
-  border-bottom: 1px solid var(--brand);
-  background: none;
-  color: var(--brand);
-  font: inherit;
-  cursor: pointer;
-}
-
-/* ── featured piece and archive ── */
-
-.featuredSection {
-  margin-top: 38px;
-}
-
-.featured {
-  display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(20rem, 0.92fr);
-  min-width: 0;
-  overflow: hidden;
-  border: 1px solid var(--rule);
-  background: var(--raised);
-  color: inherit;
-  text-decoration: none;
-  transition:
-    border-color 200ms ease,
-    box-shadow 200ms ease;
-}
-
-.featured:hover,
-.featured:focus-visible {
-  border-color: var(--ink-3);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
-}
-
-.featured[data-form="essays"] {
-  --form: var(--essays);
-}
-
-.featured[data-form="reflections"] {
-  --form: var(--reflections);
-}
-
-.featured[data-form="data"] {
-  --form: var(--data);
-}
-
-.featuredCover {
-  position: relative;
-  min-height: 25rem;
-  overflow: hidden;
-  background: var(--rule-subtle);
-}
-
-.featuredImage {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: opacity 200ms ease;
-}
-
-.featured:hover .featuredImage,
-.featured:focus-visible .featuredImage {
-  opacity: 0.84;
-}
-
-.featuredBody {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: clamp(1.5rem, 4vw, 3.5rem);
-}
-
-.featuredLabel,
-.featuredMeta,
-.featuredRead,
-.archiveHead span {
-  font-family: var(--font-mono);
-  font-size: 13px;
-}
-
-/* The one small-capitals label on the page: it names the slot, not the piece. */
-.featuredLabel {
-  margin: 0 0 1.25rem;
-  color: var(--ink-3);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.featuredMeta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 10px;
-  margin: 0;
-  color: var(--ink-3);
-}
-
-.featuredForm {
-  color: var(--ink-2);
-}
-
-.featuredTitle {
-  margin: 1.1rem 0 1rem;
   color: var(--ink);
-  font-family: var(--font-title);
-  font-size: clamp(30px, 3.3vw, 48px);
-  font-weight: 400;
-  line-height: 1.02;
-  letter-spacing: var(--tracking-display);
-  text-wrap: balance;
+  font: italic 400 16px / 1.5 var(--font-body);
+  text-align: left;
 }
 
-.featuredExcerpt {
-  max-width: 40ch;
+.takeText p {
   margin: 0;
-  color: var(--ink-2);
-  font-size: 17px;
-  line-height: 1.6;
 }
 
-.featuredRead {
-  margin-top: auto;
-  padding-top: 2rem;
-  color: var(--ink);
+.takeText p + p {
+  margin-top: 10px;
 }
 
-.featuredRead span {
-  display: inline-block;
-  margin-left: 0.25rem;
-  color: var(--brand);
-  transition: transform 150ms ease;
+/* ── earlier: one row, four across ── */
+
+.earlier {
+  padding-top: 24px;
 }
 
-.featured:hover .featuredRead span,
-.featured:focus-visible .featuredRead span {
-  transform: translateX(4px);
+.earlierHead {
+  margin: 0 0 20px;
 }
 
-.archive {
-  margin: 52px 0 56px;
-}
-
-.archiveHead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--rule);
-}
-
-.archiveHead h2 {
-  margin: 0;
-  color: var(--ink);
-  font-family: var(--font-title);
-  font-size: clamp(22px, 2vw, 30px);
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: var(--tracking-title);
-}
-
-.archiveHead span {
-  color: var(--ink-3);
-}
-
-/* ── the grid ── */
-
-/* A field of frames is right for photographs and wrong for essays: a piece
-   needs a title, a summary and room around it. Three across on a wide screen,
-   at roughly 440px each. */
 .grid {
+  --gap: 48px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
-  gap: 16px;
-  margin-top: 20px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 40px var(--gap);
+  margin: 0;
+  padding: 0 0 56px;
+  list-style: none;
+}
+
+.grid li {
+  position: relative;
+  margin: 0;
+}
+
+.grid li:not(:nth-child(4n + 1))::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--gap) / -2);
+  border-left: 1px dotted var(--rule-strong);
 }
 
 .card {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  background: var(--raised);
-  border: 1px solid var(--rule);
-  text-decoration: none;
-  color: inherit;
-  transition:
-    transform 200ms ease,
-    border-color 200ms ease,
-    box-shadow 200ms ease;
-}
-
-/* The lift is the one thing the old index did that nothing else here does,
-   and it is worth keeping. */
-.card:hover,
-.card:focus-visible {
-  transform: translateY(-4px);
-  border-color: var(--ink-3);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
-}
-
-.card[data-form="essays"] {
-  --form: var(--essays);
-}
-
-.card[data-form="reflections"] {
-  --form: var(--reflections);
-}
-
-.card[data-form="data"] {
-  --form: var(--data);
-}
-
-.cover {
-  position: relative;
-  flex: none;
-  aspect-ratio: 3 / 2;
-  overflow: hidden;
-  background: var(--raised);
-}
-
-/* Taken out of flow so its size comes from .cover's aspect-ratio box and not
-   from a percentage that has nothing definite to resolve against. */
-.coverImage {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: opacity 250ms ease;
-}
-
-/* Photography dims a frame on hover rather than moving it. */
-.card:hover .coverImage,
-.card:focus-visible .coverImage {
-  opacity: 0.82;
-}
-
-.cardBody {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  align-content: start;
   gap: 10px;
-  flex: 1;
-  padding: 18px 20px 20px;
 }
 
-.cardTitle {
-  margin: 0;
-  color: var(--ink);
-  font-family: var(--font-title);
-  font-size: 21px;
-  font-weight: 400;
-  line-height: 1.14;
-  letter-spacing: var(--tracking-title);
-  text-transform: none;
-  text-wrap: balance;
+.cardCover {
+  aspect-ratio: 3 / 2;
+  margin-bottom: 4px;
 }
 
-.card:hover .cardTitle,
-.card:focus-visible .cardTitle {
-  color: var(--brand);
-}
-
-/* The excerpts run 215 to 381 characters, so they clamp rather than set the
-   height of every card in the row. */
-.cardExcerpt {
+.cardDek {
   display: -webkit-box;
+  overflow: hidden;
+  font-size: 16px;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
-  line-clamp: 3;
-  overflow: hidden;
-  margin: 0;
-  color: var(--ink-2);
-  font-size: 15px;
-  line-height: 1.55;
-}
-
-.cardFoot {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px 10px;
-  margin-top: auto;
-  padding-top: 4px;
-  color: var(--ink-3);
-  font-family: var(--font-mono);
-  font-size: 12px;
-}
-
-.cardForm {
-  color: var(--ink-2);
-}
-
-.cardWhen {
-  margin-left: auto;
-}
-
-.empty {
-  padding: 60px 0;
-  color: var(--ink-3);
-  font-family: var(--font-mono);
-  font-size: 14px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .coverImage,
-  .chip,
-  .cardTitle,
-  .card {
+  .cover img,
+  .option,
+  .option::after {
     transition: none;
   }
 
-  .card:hover,
-  .card:focus-visible {
+  .piece:hover .cover img,
+  .piece:focus-visible .cover img {
     transform: none;
   }
 }
 
-@media (max-width: 60rem) {
-  .header {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 24px;
-    padding-top: 32px;
+@media (max-width: 68.75rem) {
+  .spread,
+  .spread[data-sides="false"] {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
   }
 
-  .controls {
-    max-width: none;
-    padding-top: 0;
-  }
-
-  .featured {
+  .spread[data-sides="false"] {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .featuredCover {
-    min-height: min(70vw, 28rem);
+  .library {
+    grid-column: 1 / -1;
+    margin-top: 28px;
+    padding: 28px 0 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .lead {
+    padding-right: 0;
+    border-right: 0;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid li:not(:nth-child(4n + 1))::before {
+    display: block;
+  }
+
+  .grid li:nth-child(odd)::before {
+    display: none;
   }
 }
 
-@media (max-width: 48rem) {
-  /* A 4.5rem label column leaves too little for the chips to wrap into, so the
-     label sits above its row instead. */
-  .group {
+@media (max-width: 47.5rem) {
+  .header {
+    padding-top: 36px;
+  }
+
+  .filters {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .spread,
+  .spread[data-sides="false"],
+  .spread[data-library="false"] {
     grid-template-columns: minmax(0, 1fr);
-    gap: 7px;
   }
 
-  .groupLabel {
-    padding-top: 0;
-    text-align: left;
+  .lead {
+    order: -1;
+    padding: 0 0 28px;
+    border: 0;
+    border-bottom: 1px solid var(--rule);
   }
 
-  .count {
-    margin-left: 0;
+  .left {
+    padding: 28px 0 0;
   }
 
-  .featuredSection {
-    margin-top: 28px;
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .featuredBody {
-    padding: 1.5rem;
-  }
-
-  .archive {
-    margin-top: 40px;
+  .grid li::before {
+    display: none !important;
   }
 }
 
 @media (pointer: coarse) {
-  .chip {
+  .option {
     min-height: 44px;
   }
 }

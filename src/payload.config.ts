@@ -7,6 +7,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
 
+import { Library } from './collections/Library'
 import { Media, MEDIA_BASE } from './collections/Media'
 import { Photographs } from './collections/Photographs'
 import { Series } from './collections/Series'
@@ -40,7 +41,7 @@ export default buildConfig({
     },
   },
 
-  collections: [Posts, Photographs, Series, Media, Users],
+  collections: [Posts, Photographs, Series, Library, Media, Users],
 
   // Bodies are stored as markdown, so the rich text editor is only here because
   // Payload requires a default one. Nothing on this site renders Lexical.

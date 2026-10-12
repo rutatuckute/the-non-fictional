@@ -18,7 +18,7 @@ const KEY = [
   ["photography", "Photograph or series"],
 ]
 
-const Glyph = ({ format }) => {
+export const Glyph = ({ format }) => {
   const style = markStyles[format]
 
   if (format === "photography") {

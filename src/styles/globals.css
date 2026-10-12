@@ -52,11 +52,12 @@
   --rule: #353737;
   --site-rule-strong: #5b5d5d;
   /* The one accent: the wordmark, links, the current page, focus. The form
-   * colours below are for the homepage field only, where they encode what a
-   * mark is. */
+   * colours below say what a piece is — on the homepage field and on
+   * Writings — and nothing else. Essays are clay, kept well apart from the
+   * accent. */
   --accent: #ffa500;
   --accent-hover: #e8922c;
-  --form-essay: #f2762b;
+  --form-essay: #c96a4b;
   --form-reflection: #c08ae8;
   --form-data: #6ecb78;
 
