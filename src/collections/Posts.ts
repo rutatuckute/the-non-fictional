@@ -140,10 +140,26 @@ export const Posts: CollectionConfig = {
       },
     },
     {
-      name: 'coverImage',
-      type: 'text',
+      // Was a path typed by hand, pointing at a file committed to the
+      // repository — so a new cover meant a commit and a deploy, the same thing
+      // the photographs moved away from. It is an upload now, stored in R2.
+      name: 'cover',
+      type: 'upload',
+      relationTo: 'media',
       required: true,
       admin: {
+        description: 'Drag the cover in, or pick one already uploaded. Shown at 3:2.',
+      },
+    },
+    {
+      // Superseded by cover above. Kept, and still read as a fallback, until
+      // scripts/migrate-covers.ts has linked every post to an upload and the
+      // covers are confirmed to be serving from the bucket; a later migration
+      // drops it, as 20260919_170858_drop_photo_path did for the frames.
+      name: 'coverImage',
+      type: 'text',
+      admin: {
+        hidden: true,
         description: 'Path to a file in the repository, e.g. /images/uploads/name.jpg',
       },
     },
