@@ -405,3 +405,60 @@ export const getSeries = cache(async (): Promise<SeriesEntry[]> => {
     }))
     .sort(bySeriesOrder)
 })
+
+export type LibraryEntry = {
+  kind: string
+  source: string
+  format: string | null
+  title: string
+  url: string
+  standfirst: string | null
+  author: string | null
+  // Paragraphs, split on blank lines as they are typed in the panel.
+  notes: string[]
+}
+
+type LibraryDoc = {
+  kind?: string | null
+  source?: string | null
+  format?: string | null
+  title?: string | null
+  url?: string | null
+  standfirst?: string | null
+  author?: string | null
+  notes?: string | null
+}
+
+const KIND_LABEL: Record<string, string> = {
+  reading: 'Reading',
+  watching: 'Watching',
+  listening: 'Listening',
+}
+
+// The (Anti)library shows one entry: the newest.
+export const getLibraryEntry = cache(async (): Promise<LibraryEntry | null> => {
+  const payload = await getClient()
+  const { docs } = await payload.find({
+    collection: 'library',
+    limit: 1,
+    sort: '-addedAt',
+    depth: 0,
+  })
+
+  const doc = docs[0] as unknown as LibraryDoc | undefined
+  if (!doc?.title || !doc.url) return null
+
+  return {
+    kind: KIND_LABEL[doc.kind || ''] || 'Reading',
+    source: doc.source || '',
+    format: doc.format || null,
+    title: doc.title,
+    url: doc.url,
+    standfirst: doc.standfirst || null,
+    author: doc.author || null,
+    notes: (doc.notes || '')
+      .split(/\n\s*\n/)
+      .map((paragraph) => paragraph.trim())
+      .filter(Boolean),
+  }
+})

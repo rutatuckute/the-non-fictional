@@ -53,3 +53,6 @@ export const revalidatePhotograph = (slug: unknown, previousSlug?: unknown): Pro
       (path): path is string => Boolean(path),
     ),
   )
+
+// The (Anti)library appears on Writings only.
+export const revalidateLibrary = (): Promise<void> => revalidate(['/blog'])
