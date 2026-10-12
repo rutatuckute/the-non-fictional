@@ -152,7 +152,10 @@ type PostDoc = {
   inquiry?: string | null
   topic?: string | null
   excerpt: string
-  coverImage: string
+  // Populated at depth 1. coverImage is the repository path it replaced, read
+  // only for a post not yet linked to an upload.
+  cover?: number | { filename?: string | null; url?: string | null } | null
+  coverImage?: string | null
   link?: string | null
   selected?: boolean | null
   tags?: unknown
@@ -214,7 +217,7 @@ const postToNode = (doc: PostDoc): ContentNode => {
       title: doc.title ?? null,
       excerpt: doc.excerpt ?? null,
       date: doc.publishedAt ?? null,
-      cover_image: doc.coverImage ?? null,
+      cover_image: mediaUrl(doc.cover) ?? (doc.coverImage || null),
       category: doc.category ?? null,
       category_id: doc.categoryId ?? null,
       inquiry: doc.inquiry ?? null,
@@ -284,7 +287,8 @@ export const getPosts = cache(async (): Promise<ContentNode[]> => {
     collection: 'posts',
     limit: 1000,
     sort: '-publishedAt',
-    depth: 0,
+    // The cover is an upload; at depth 0 it comes back as an id with no URL.
+    depth: 1,
     pagination: false,
   })
 

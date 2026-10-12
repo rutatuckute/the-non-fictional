@@ -148,9 +148,13 @@ export interface Post {
    */
   excerpt: string;
   /**
+   * Drag the cover in, or pick one already uploaded. Shown at 3:2.
+   */
+  cover: number | Media;
+  /**
    * Path to a file in the repository, e.g. /images/uploads/name.jpg
    */
-  coverImage: string;
+  coverImage?: string | null;
   /**
    * Only the data pieces link out to a repository.
    */
@@ -171,6 +175,40 @@ export interface Post {
   readingMinutes?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * Files uploaded from the panel, stored in R2. A photograph points at one of these rather than carrying a path.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  /**
+   * Only for images that carry meaning on their own. A frame in the lightbox is described by its title, so this can be left empty.
+   */
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -240,40 +278,6 @@ export interface Photograph {
     | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * Files uploaded from the panel, stored in R2. A photograph points at one of these rather than carrying a path.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  /**
-   * Only for images that carry meaning on their own. A frame in the lightbox is described by its title, so this can be left empty.
-   */
-  alt?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -426,6 +430,7 @@ export interface PostsSelect<T extends boolean = true> {
   category?: T;
   topic?: T;
   excerpt?: T;
+  cover?: T;
   coverImage?: T;
   link?: T;
   tags?:
