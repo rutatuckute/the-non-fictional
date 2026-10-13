@@ -200,6 +200,17 @@
   letter-spacing: var(--tracking-display);
 }
 
+/* In brief is set at the size of the Writings and Photography nameplates
+ * (blog.module.css .name, photography.module.css .name), so the three
+ * sections open alike. It keeps its place at the left of its column. */
+.tw .editorial-title.brief-title {
+  font-size: clamp(48px, 8vw, 104px);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-variation-settings: "opsz" 72;
+}
+
 /* Links in running text stay in the text colour; the accent is the underline. */
 .tw .editorial-link {
   color: var(--foreground);
