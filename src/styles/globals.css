@@ -256,80 +256,191 @@
   margin-top: 2.5rem;
 }
 
-.tw .profile-socials {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.625rem;
-  margin-top: 1rem;
-}
-
-.tw .profile-social-link {
+/* In brief: the essay on the left, and beside it the portrait with its
+ * contact — "Write" and "Elsewhere" set as Photography sets its kit, the
+ * profiles as icons — both standing on one hairline. */
+.tw .brief-layout {
   display: grid;
-  width: 2.25rem;
-  height: 2.25rem;
-  place-items: center;
-  border: 1px solid var(--border);
-  color: var(--muted-foreground);
-  text-decoration: none;
-  transition:
-    border-color 150ms ease,
-    color 150ms ease,
-    transform 150ms ease;
+  grid-template-columns: minmax(0, 40rem) auto;
+  justify-content: space-between;
+  align-items: start;
+  column-gap: clamp(32px, 4vw, 64px);
 }
 
-.tw .profile-social-link:hover,
-.tw .profile-social-link:focus-visible {
-  border-color: var(--primary);
-  color: var(--primary);
-  transform: translateY(-1px);
+.tw .brief-text {
+  margin-top: 1.5rem;
 }
 
-.tw .profile-social-link:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 3px;
+.tw .brief-side {
+  padding-top: 12px;
 }
 
-.tw .profile-social-link svg {
-  width: 1.125rem;
-  height: 1.125rem;
+.tw .brief-figure {
+  display: grid;
+  grid-template-columns: auto minmax(0, 22rem);
+  align-items: end;
+  column-gap: 32px;
+  margin: 0;
+  border-bottom: 1px solid var(--rule);
 }
 
-.tw .profile-social-x {
-  font-family: var(--font-functional);
-  font-size: 1.125rem;
-  font-weight: 700;
-  line-height: 1;
+.tw .brief-portrait {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-.tw .profile-email {
-  display: inline-flex;
+.tw .brief-kit {
+  display: grid;
+  gap: 22px;
+  margin: 0;
+  padding: 0 0 28px;
+  list-style: none;
+}
+
+.tw .brief-kit li {
+  display: grid;
+  gap: 8px;
+}
+
+.tw .brief-kit-head {
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  color: var(--text-secondary);
+  gap: 8px;
+  color: var(--accent);
+}
+
+.tw .brief-kit-icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+.tw .brief-kit-label {
   font-family: var(--font-functional);
-  font-size: 0.8125rem;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tw .brief-email {
+  color: var(--text-primary);
+  font-family: var(--font-functional);
+  font-size: 13px;
+  line-height: 1.5;
   text-decoration: none;
   transition: color 150ms ease;
 }
 
-.tw .profile-email:hover,
-.tw .profile-email:focus-visible {
+.tw .brief-socials {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+}
+
+.tw .brief-social {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  color: var(--text-secondary);
+  transition: color 150ms ease;
+}
+
+.tw .brief-email:hover,
+.tw .brief-email:focus-visible,
+.tw .brief-social:hover,
+.tw .brief-social:focus-visible {
   color: var(--accent);
 }
 
-.tw .profile-email svg {
-  width: 1rem;
-  height: 1rem;
+.tw .brief-email:focus-visible,
+.tw .brief-social:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
-@media (max-width: 48rem) {
-  .tw .profile-socials {
-    justify-content: center;
+.tw .brief-social svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* A finger needs the full 44px. */
+@media (pointer: coarse) {
+  .tw .brief-socials {
+    gap: 0;
+    margin-left: -10px;
   }
 
-  .tw .profile-email {
-    display: flex;
-    justify-content: center;
+  .tw .brief-social {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* One column from here: the portrait comes straight after the title rather
+ * than after the essay. */
+@media (max-width: 68.75rem) {
+  .tw .brief-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tw .brief-essay {
+    display: contents;
+  }
+
+  .tw .brief-title {
+    order: 1;
+  }
+
+  .tw .brief-side {
+    order: 2;
+    margin-top: 40px;
+    padding-top: 0;
+  }
+
+  .tw .brief-text {
+    order: 3;
+    max-width: 40rem;
+    margin-top: 40px;
+  }
+
+  .tw .brief-figure {
+    justify-content: start;
+  }
+}
+
+/* A phone: the contact stays beside the portrait; the picture takes what the
+ * contact leaves. */
+@media (max-width: 35rem) {
+  .tw .brief-side {
+    margin-top: 28px;
+  }
+
+  .tw .brief-figure {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 16px;
+  }
+
+  .tw .brief-portrait {
+    order: 1;
+  }
+
+  .tw .brief-kit {
+    order: 2;
+    padding-bottom: 20px;
   }
 }
