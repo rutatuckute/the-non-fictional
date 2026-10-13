@@ -87,8 +87,14 @@ const VIEWS = [
 const PhotographyHeader = ({ active, children = null }) => (
   <header className={styles.header}>
     <div className={styles.headerMain}>
-      <p className={styles.kicker}>Photography</p>
-      <h1 className={styles.title}>On film, for a reason.</h1>
+      {/* The nameplate, as Writings sets its own: the name centred, its
+          first letter in italic, the line beneath. */}
+      <div className={styles.nameplate}>
+        <h1 className={styles.name}>
+          <span className={styles.initial}>P</span>hotography
+        </h1>
+        <p className={styles.tagline}>On film, for a reason.</p>
+      </div>
       <ul className={styles.kit}>
         {KIT.map(item => (
           <li className={styles.kitItem} key={item.label} data-now={item.now}>

@@ -52,11 +52,14 @@
 .header {
   display: flex;
   flex-direction: column;
-  padding: 40px 0 22px;
+  padding: 48px 0 16px;
   border-bottom: 1px solid var(--rule);
 }
 
 .headerMain {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   min-width: 0;
 }
 
@@ -72,33 +75,41 @@
   border-top: 1px solid var(--rule-subtle);
 }
 
-.kicker {
-  margin: 0;
-  color: var(--brand);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+/* The nameplate, shared with Writings: the name in ink, its first letter in
+   italic, as the wordmark sets "Non"; the line beneath, upright. */
+.nameplate {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  text-align: center;
 }
 
-.title {
-  margin: 12px 0 14px;
-  /* The global stylesheet paints every h1 orange; the homepage hero opts out
-     the same way. --ink is the same #eee8df the hero title uses. */
+.name {
+  margin: 0;
   color: var(--ink);
-  font-family: var(--font-title);
-  font-size: clamp(30px, 5vw, 54px);
-  font-weight: 400;
-  line-height: 0.97;
-  letter-spacing: var(--tracking-display);
+  font: 300 clamp(48px, 8vw, 104px) / 0.95 var(--font-title);
+  letter-spacing: -0.03em;
+  font-variation-settings: "opsz" 72;
+}
+
+.initial {
+  font-style: italic;
+}
+
+.tagline {
+  margin: 0;
+  color: var(--ink);
+  font: 400 20px / 1.3 var(--font-body);
+  letter-spacing: -0.006em;
 }
 
 /* Kit — what the frames were actually made with, in place of a blurb. */
 .kit {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 14px 34px;
-  margin: 4px 0 0;
+  margin: 32px 0 0;
   padding: 0;
   list-style: none;
 }
@@ -711,7 +722,18 @@
   }
 
   /* Kit is the widest thing under the title; a smaller column gap lets it wrap
-     to two per row rather than pushing past the edge. */
+     to two per row rather than pushing past the edge. Centred, it wraps
+     ragged, so below the nameplate everything sets left on a phone, as
+     Writings sets its filters. */
+  .headerMain {
+    align-items: stretch;
+  }
+
+  .headerMain .kit,
+  .headerMain .views {
+    justify-content: flex-start;
+  }
+
   .kit {
     gap: 12px 22px;
   }
@@ -761,14 +783,16 @@
 .views {
   display: flex;
   flex-wrap: wrap;
-  gap: 28px;
-  margin-top: 26px;
+  justify-content: center;
+  gap: 4px 22px;
+  margin-top: 28px;
 }
 
+/* Set as Writings sets its filter options, with a dot between. */
 .view {
   position: relative;
-  padding-bottom: 7px;
-  color: var(--ink-3);
+  padding: 5px 0;
+  color: var(--ink-2);
   font-family: var(--font-mono);
   font-size: 13px;
   text-decoration: none;
@@ -783,6 +807,16 @@
   background: currentColor;
   opacity: 0;
   transition: opacity 150ms ease;
+}
+
+.view + .view::before {
+  content: "·";
+  position: absolute;
+  top: 50%;
+  left: -13px;
+  transform: translateY(-50%);
+  color: var(--ink-3);
+  pointer-events: none;
 }
 
 .view:hover,
@@ -1039,7 +1073,4 @@
     max-width: 66% !important;
   }
 
-  .views {
-    gap: 20px;
-  }
 }

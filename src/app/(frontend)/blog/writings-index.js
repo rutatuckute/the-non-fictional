@@ -218,7 +218,9 @@ const WritingsIndex = ({ posts, library }) => {
       <main className={styles.main}>
         <header className={styles.header}>
           <div className={styles.nameplate}>
-            <h1 className={styles.name}>Writings</h1>
+            <h1 className={styles.name}>
+              <span className={styles.initial}>W</span>ritings
+            </h1>
             <p className={styles.tagline}>Making sense out of it.</p>
           </div>
 
