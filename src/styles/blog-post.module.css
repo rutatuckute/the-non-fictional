@@ -516,29 +516,65 @@
   text-decoration-color: var(--form);
 }
 
+/* Quotes, set as pull quotes: no rules; a large opening mark in the form's
+   colour hangs in the margin; the words a step larger than the text; the
+   credit below as a label. The old site's global stylesheet (style.css) still
+   sets every blockquote right-aligned with an orange rule on the right and a
+   negative margin, so all of that is undone here first. */
 .prose blockquote {
-  margin: 1.8em 0;
-  padding: 0 0 0 20px;
-  border-left: 2px solid var(--form);
+  position: relative;
+  margin: 2.4em 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-size: inherit;
+  text-align: left;
 }
 
 .prose blockquote p {
-  margin: 0 0 0.5em;
+  margin: 0;
   color: var(--ink);
-  font-size: 20px;
-  line-height: 1.5;
+  font-size: 24px;
   font-style: italic;
+  line-height: 1.42;
+  text-wrap: pretty;
 }
 
-/* The citation under a quote is a bare link in the markdown. */
-.prose blockquote a {
+.prose blockquote p + p {
+  margin-top: 0.7em;
+}
+
+.prose :global(.quote-words)::before {
+  content: "\201C";
+  position: absolute;
+  top: -0.18em;
+  left: -0.62em;
+  color: var(--form);
+  font: 400 64px / 1 var(--font-title);
+}
+
+.prose :global(.quote-credit) {
+  display: block;
+  margin-top: 16px;
   color: var(--ink-3);
-  font-family: var(--font-mono);
-  font-size: 13px;
+  font: 500 11px / 1.5 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.prose :global(.quote-credit)::before {
+  content: "\2014\00a0";
+}
+
+.prose blockquote a {
+  color: var(--ink-2);
+  font: inherit;
   text-decoration: none;
 }
 
-.prose blockquote a:hover {
+.prose blockquote a:hover,
+.prose blockquote a:focus-visible {
   color: var(--form);
 }
 
@@ -814,6 +850,20 @@
 @media (max-width: 48rem) {
   .prose {
     font-size: 18px;
+  }
+
+  /* No margin to hang the mark in: the quote steps in for it. */
+  .prose blockquote {
+    padding-left: 34px;
+  }
+
+  .prose blockquote p {
+    font-size: 21px;
+  }
+
+  .prose :global(.quote-words)::before {
+    left: -6px;
+    font-size: 56px;
   }
 }
 

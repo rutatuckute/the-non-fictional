@@ -120,10 +120,37 @@ const withSectionIds = (html: string): { html: string; sections: Section[] } => 
 const withFormHighlights = (html: string): string =>
   html.replace(/style="color:\s*(?:#8ac926|orange);?\s*"/gi, 'class="highlight"')
 
+// The quotes were written by hand, three ways: the words in <p><em>, some
+// wrapped in « », and the credit as a plain paragraph, a name and a link, or a
+// bare link. The article sets one design for all of them, so they are handed
+// over in one shape: the words with their outer marks taken off (the design
+// sets the mark), and the credit as "Name · link". A quote that does not
+// follow the pattern is left as written.
+const withTidyQuotes = (html: string): string =>
+  html.replace(/<blockquote>([\s\S]*?)<\/blockquote>/g, (whole, inner: string) => {
+    const said = [...inner.matchAll(/<p>\s*<em>([\s\S]*?)<\/em>\s*<\/p>/g)].map((match) => match[1].trim())
+    if (!said.length) return whole
+
+    const credit = inner
+      .replace(/<p>\s*<em>[\s\S]*?<\/em>\s*<\/p>/g, '')
+      .trim()
+      .replace(/^<p>|<\/p>$/g, '')
+      .replace(/\s*<br\s*\/?>\s*/g, ' · ')
+      .trim()
+    const words = said
+      .map((paragraph) => paragraph.replace(/^«\s*/, '').replace(/\s*»$/, ''))
+      .map((paragraph) => `<p>${paragraph}</p>`)
+      .join('')
+
+    return `<blockquote class="quote"><div class="quote-words">${words}</div>${
+      credit ? `<footer class="quote-credit">${credit}</footer>` : ''
+    }</blockquote>`
+  })
+
 export const renderMarkdown = async (
   body: string,
 ): Promise<{ html: string; sections: Section[] }> => {
   const file = await processor.process(body || '')
 
-  return withSectionIds(withFormHighlights(withResizedImages(withoutLeadingRule(String(file)))))
+  return withSectionIds(withTidyQuotes(withFormHighlights(withResizedImages(withoutLeadingRule(String(file))))))
 }
