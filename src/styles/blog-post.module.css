@@ -516,29 +516,65 @@
   text-decoration-color: var(--form);
 }
 
+/* Quotes, set as pull quotes: no rules; a large opening mark in the form's
+   colour hangs in the margin; the words a step larger than the text; the
+   credit below as a label. The old site's global stylesheet (style.css) still
+   sets every blockquote right-aligned with an orange rule on the right and a
+   negative margin, so all of that is undone here first. */
 .prose blockquote {
-  margin: 1.8em 0;
-  padding: 0 0 0 20px;
-  border-left: 2px solid var(--form);
+  position: relative;
+  margin: 2.4em 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-size: inherit;
+  text-align: left;
 }
 
 .prose blockquote p {
-  margin: 0 0 0.5em;
+  margin: 0;
   color: var(--ink);
-  font-size: 20px;
-  line-height: 1.5;
+  font-size: 24px;
   font-style: italic;
+  line-height: 1.42;
+  text-wrap: pretty;
 }
 
-/* The citation under a quote is a bare link in the markdown. */
-.prose blockquote a {
+.prose blockquote p + p {
+  margin-top: 0.7em;
+}
+
+.prose :global(.quote-words)::before {
+  content: "\201C";
+  position: absolute;
+  top: -0.18em;
+  left: -0.62em;
+  color: var(--form);
+  font: 400 64px / 1 var(--font-title);
+}
+
+.prose :global(.quote-credit) {
+  display: block;
+  margin-top: 16px;
   color: var(--ink-3);
-  font-family: var(--font-mono);
-  font-size: 13px;
+  font: 500 11px / 1.5 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.prose :global(.quote-credit)::before {
+  content: "\2014\00a0";
+}
+
+.prose blockquote a {
+  color: var(--ink-2);
+  font: inherit;
   text-decoration: none;
 }
 
-.prose blockquote a:hover {
+.prose blockquote a:hover,
+.prose blockquote a:focus-visible {
   color: var(--form);
 }
 
@@ -574,13 +610,115 @@
   margin-bottom: 0.5em;
 }
 
-.prose pre {
-  overflow-x: auto;
-  padding: 16px 18px;
-  border: 1px solid var(--rule);
+/* Code: flush with the text on the raised ground, a header with the
+   language, length and Copy. The colours are the house theme's variables
+   (see houseTheme in src/lib/markdown.ts): names in ink, keywords quieter,
+   comments in meta, strings and numbers in the form's colour. */
+.prose :global(figure.code) {
+  --code-foreground: var(--ink);
+  --code-token-parameter: var(--ink);
+  --code-token-function: var(--ink);
+  --code-token-punctuation: var(--ink-2);
+  --code-token-keyword: var(--ink-2);
+  --code-token-comment: var(--ink-3);
+  --code-token-string: var(--form);
+  --code-token-string-expression: var(--form);
+  --code-token-constant: color-mix(in srgb, var(--form) 70%, var(--ink));
+  --code-token-link: var(--form);
+  --code-line: 1.65;
+  position: relative;
+  margin: 2em 0;
   background: var(--raised);
-  font-size: 14px;
-  line-height: 1.55;
+}
+
+.prose :global(.code-head) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-3);
+  font: 500 11px / 1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.prose :global(.code-lang) {
+  color: var(--form);
+}
+
+.prose :global(.code-copy),
+.prose :global(.code-more) {
+  display: none;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  font: 500 11px / 1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.prose :global(.code-copy) {
+  margin-left: auto;
+  padding: 4px 0;
+}
+
+.prose :global(figure.code[data-ready="true"]) :global(.code-copy) {
+  display: inline-block;
+}
+
+.prose :global(.code-copy):hover,
+.prose :global(.code-copy):focus-visible,
+.prose :global(.code-more):hover,
+.prose :global(.code-more):focus-visible {
+  color: var(--form);
+}
+
+.prose :global(.code-body) {
+  position: relative;
+}
+
+.prose pre {
+  margin: 0;
+  padding: 18px 20px 20px;
+  overflow-x: auto;
+  border: 0;
+  background: none;
+  color: var(--code-foreground);
+  font: 400 14px / var(--code-line) ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  scrollbar-color: var(--rule-strong) transparent;
+  scrollbar-width: thin;
+}
+
+.prose pre code {
+  font: inherit;
+}
+
+/* Folded: the first ten lines and a fade, until "Show all". */
+.prose :global(figure.code[data-open="false"]) :global(.code-body) {
+  max-height: calc(10 * 14px * 1.65 + 18px);
+  overflow: hidden;
+}
+
+.prose :global(figure.code[data-open="false"]) :global(.code-body)::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 64px;
+  background: linear-gradient(to bottom, transparent, var(--raised));
+  pointer-events: none;
+}
+
+.prose :global(figure.code[data-ready="true"]) :global(.code-more) {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  border-top: 1px solid var(--rule);
+  text-align: left;
 }
 
 .prose table {
@@ -814,6 +952,33 @@
 @media (max-width: 48rem) {
   .prose {
     font-size: 18px;
+  }
+
+  /* Code runs edge to edge. */
+  .prose :global(figure.code) {
+    margin-inline: calc(-1 * var(--page-margin));
+  }
+
+  .prose pre {
+    font-size: 13px;
+  }
+
+  .prose :global(figure.code[data-open="false"]) :global(.code-body) {
+    max-height: calc(10 * 13px * 1.65 + 18px);
+  }
+
+  /* No margin to hang the mark in: the quote steps in for it. */
+  .prose blockquote {
+    padding-left: 34px;
+  }
+
+  .prose blockquote p {
+    font-size: 21px;
+  }
+
+  .prose :global(.quote-words)::before {
+    left: -6px;
+    font-size: 56px;
   }
 }
 
