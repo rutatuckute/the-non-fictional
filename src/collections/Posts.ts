@@ -21,6 +21,17 @@ export const INQUIRIES = [
   'memory',
 ] as const
 
+// What a piece draws on, by kind. The labels are what the article's Library
+// heads each group with; the values are what the pieces' old source icons
+// stood for.
+export const SOURCE_KINDS = [
+  { value: 'books', label: 'Books' },
+  { value: 'press', label: 'Articles' },
+  { value: 'film', label: 'Film' },
+  { value: 'music', label: 'Music' },
+  { value: 'data', label: 'Research' },
+] as const
+
 export const Posts: CollectionConfig = {
   slug: 'posts',
   labels: { singular: 'Writing', plural: 'Writings' },
@@ -175,6 +186,64 @@ export const Posts: CollectionConfig = {
       type: 'array',
       fields: [{ name: 'tag', type: 'text', required: true }],
       admin: { initCollapsed: true },
+    },
+    {
+      // The Library: shown at the top of the article's left column, grouped
+      // by kind in the order SOURCE_KINDS gives.
+      name: 'sources',
+      type: 'array',
+      label: 'Library',
+      labels: { singular: 'Source', plural: 'Sources' },
+      admin: {
+        initCollapsed: true,
+        description: 'What the piece draws on. Shown beside it, grouped by kind.',
+        components: { RowLabel: '/src/components/admin/source-row-label#SourceRowLabel' },
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'kind',
+              type: 'select',
+              required: true,
+              defaultValue: 'books',
+              options: SOURCE_KINDS.map((kind) => ({ ...kind })),
+              admin: { width: '30%' },
+            },
+            { name: 'title', type: 'text', required: true, admin: { width: '70%' } },
+          ],
+        },
+        { name: 'url', type: 'text', label: 'Link' },
+        {
+          type: 'row',
+          fields: [
+            { name: 'author', type: 'text', admin: { width: '40%' } },
+            { name: 'year', type: 'text', admin: { width: '20%' } },
+            {
+              name: 'publisher',
+              type: 'text',
+              admin: { width: '40%', description: 'Journal, publisher or series. Optional.' },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      // A note beside the piece: on the right, under its contents, while it is
+      // read; at the end of it on a phone.
+      name: 'sideNote',
+      type: 'group',
+      label: 'Side note',
+      admin: { description: 'Optional. Shown on the right, under the contents.' },
+      fields: [
+        {
+          name: 'label',
+          type: 'text',
+          admin: { placeholder: 'Note', description: 'The small heading. "Note" when left empty.' },
+        },
+        { name: 'text', type: 'textarea', admin: { description: 'Leave a blank line between paragraphs.' } },
+      ],
     },
     {
       // Markdown, and in the older pieces largely raw HTML. It is stored and

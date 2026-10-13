@@ -1,5 +1,8 @@
-/* The article page, treatment 03 from the layout study: metadata and a section
-   index in a rail that stays put, prose in a 68-character column beside it. */
+/* The article page. An opening spread of title and cover on one hairline,
+   then three columns: what the piece is and what it draws on; the prose at a
+   68-character measure; its contents and side note, held in view. Type as
+   Writings sets it. Everything that carries colour takes the form's —
+   clay for an essay, green for data, purple for a reflection. */
 .page {
   --void: var(--surface);
   --raised: var(--surface-raised);
@@ -64,128 +67,105 @@
   margin: 0 auto;
 }
 
-.article {
-  display: grid;
-  grid-template-columns: 210px minmax(0, 68ch);
-  justify-content: center;
-  gap: 56px;
-  padding: 44px 0 20px;
-}
+/* ── shared ── */
 
-/* ── rail ── */
-
-.rail {
-  position: sticky;
-  top: 28px;
-  align-self: start;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  min-width: 0;
-}
-
-.meta {
-  display: grid;
-  gap: 12px;
+.label {
   margin: 0;
-}
-
-.meta dt {
-  margin: 0;
-  color: var(--ink-3);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.meta dd {
-  margin: 3px 0 0;
-  color: var(--ink-2);
-  font-family: var(--font-mono);
-  font-size: 13px;
-  overflow-wrap: anywhere;
-}
-
-.metaForm {
   color: var(--ink);
-}
-
-/* The section index is built from the piece's own headings, so it exists only
-   where the writing has sections to index. */
-.sections {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  padding-top: 16px;
-  border-top: 1px solid var(--rule);
-}
-
-.sections a {
-  color: var(--ink-3);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  line-height: 1.35;
-  letter-spacing: 0.08em;
+  font: 500 11px / 1.4 var(--font-mono);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  text-decoration: none;
-  transition: color 150ms ease;
 }
 
-.sections a:hover,
-.sections a:focus-visible {
-  color: var(--brand);
+.quiet {
+  color: var(--ink-3);
 }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding-top: 16px;
-  border-top: 1px solid var(--rule);
+.in {
+  margin-inline: 1px;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+  text-transform: none;
 }
 
-.action {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 5px 9px;
-  border: 1px solid var(--rule-strong);
-  color: var(--ink-2);
-  font-family: var(--font-mono);
-  font-size: 13px;
-  text-decoration: none;
-  transition:
-    color 150ms ease,
-    border-color 150ms ease;
+.icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
 }
 
-.action:hover,
-.action:focus-visible {
-  color: var(--brand);
-  border-color: var(--brand);
+.page [data-form="essays"] {
+  --fc: var(--essays);
 }
 
-.actionIcon {
-  flex: 0 0 13px;
-  width: 13px;
-  height: 13px;
+.page [data-form="reflections"] {
+  --fc: var(--reflections);
+}
+
+.page [data-form="data"] {
+  --fc: var(--data);
+}
+
+.mark {
+  flex: none;
+  overflow: visible;
+}
+
+.mark line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: square;
+}
+
+.mark circle {
   fill: currentColor;
 }
 
-/* ── body ── */
+.form {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--fc, var(--form));
+}
 
-.body {
-  min-width: 0;
+.byline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── the opening ── */
+
+.spread {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: end;
+  column-gap: 56px;
+  padding-top: 48px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.head {
+  display: grid;
+  align-content: end;
+  gap: 20px;
+  padding-bottom: 36px;
 }
 
 .title {
-  margin: 0 0 18px;
+  margin: 0;
   color: var(--ink);
   font-family: var(--font-title);
-  font-size: clamp(30px, 4.2vw, 44px);
+  font-size: clamp(40px, 5vw, 68px);
   font-weight: 400;
-  line-height: 1.02;
+  line-height: 1.04;
   letter-spacing: var(--tracking-display);
   text-transform: none;
   text-wrap: balance;
@@ -193,16 +173,306 @@
 
 .dek {
   margin: 0;
-  max-width: 60ch;
   color: var(--ink-2);
-  font-size: 19px;
-  line-height: 1.55;
+  font-size: 20px;
+  line-height: 1.5;
+  text-wrap: pretty;
 }
 
-.rule {
-  height: 1px;
-  margin: 26px 0 30px;
-  background: var(--rule);
+.cover {
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--raised);
+}
+
+.cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.phoneOnly,
+.phoneContents,
+.endOnly,
+.library.endOnly,
+.note.endOnly {
+  display: none;
+}
+
+/* ── the three columns ── */
+
+.columns {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 68ch) 12rem;
+  justify-content: space-between;
+  column-gap: 48px;
+  padding: 40px 0 24px;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  min-width: 0;
+  padding-right: 24px;
+  border-right: 1px dotted var(--rule-strong);
+}
+
+.body {
+  min-width: 0;
+}
+
+.right {
+  min-width: 0;
+}
+
+.held {
+  position: sticky;
+  top: 28px;
+  display: grid;
+  gap: 28px;
+}
+
+.facts {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+}
+
+.facts div {
+  display: grid;
+  gap: 4px;
+}
+
+.facts dd {
+  margin: 0;
+  color: var(--ink);
+  font: 400 13px / 1.4 var(--font-mono);
+}
+
+.facts dd.form {
+  color: var(--form);
+}
+
+.topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 18px;
+}
+
+.topics span {
+  position: relative;
+}
+
+.topics span + span::before {
+  content: "·";
+  position: absolute;
+  left: -11px;
+  color: var(--ink-3);
+}
+
+/* The Library, headed as the (Anti)library on Writings is, in the form's
+   colour. */
+.library {
+  display: grid;
+  gap: 18px;
+}
+
+.libraryHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--form);
+}
+
+.shelf {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--form);
+  stroke-width: 1.4;
+  stroke-linecap: square;
+}
+
+.group {
+  display: grid;
+  gap: 10px;
+}
+
+.group + .group {
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.groupHead .icon {
+  color: var(--form);
+}
+
+.entries {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entries a,
+.entries li > span {
+  display: grid;
+  gap: 3px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.entryTitle {
+  color: var(--ink);
+  font: italic 400 16px / 1.3 var(--font-body);
+  text-wrap: pretty;
+}
+
+.entryMeta {
+  color: var(--ink-3);
+  font: 400 12px / 1.45 var(--font-mono);
+}
+
+.entries a:hover .entryTitle,
+.entries a:focus-visible .entryTitle {
+  text-decoration: underline;
+  text-decoration-color: var(--form);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
+}
+
+/* Contents: numbered, in the serif; the section being read in the form's
+   colour. */
+.contents {
+  display: grid;
+  gap: 12px;
+}
+
+.contents ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.contents li {
+  border-bottom: 1px solid var(--rule);
+}
+
+.contents a {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr);
+  align-items: baseline;
+  padding: 10px 0;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.contentsNo {
+  color: var(--ink-3);
+  font: 500 11px / 1 var(--font-mono);
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  transition: color 150ms ease;
+}
+
+.contentsTitle {
+  font: 400 16px / 1.3 var(--font-body);
+  text-wrap: pretty;
+}
+
+.contents a:hover,
+.contents a:focus-visible,
+.contents a[data-on="true"] {
+  color: var(--ink);
+}
+
+.contents a[data-on="true"] .contentsNo {
+  color: var(--form);
+}
+
+.contents a[data-on="true"] .contentsTitle {
+  text-decoration: underline;
+  text-decoration-color: var(--form);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+/* The side note, set as the notes on Writings' (Anti)library are. */
+.note {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px 16px;
+  border-left: 2px solid var(--form);
+  background: var(--raised);
+}
+
+.noteHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--form);
+}
+
+.noteHead .icon {
+  width: 14px;
+  height: 14px;
+}
+
+.noteText {
+  margin: 0;
+  color: var(--ink);
+  font: italic 400 16px / 1.5 var(--font-body);
+  text-wrap: pretty;
+}
+
+.noteText em {
+  font-style: normal;
+}
+
+/* Code and Share: compact, side by side. */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+}
+
+.actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--rule-strong);
+  color: var(--ink);
+  font: 500 13px / 1 var(--font-mono);
+  text-decoration: none;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.actions a:hover,
+.actions a:focus-visible {
+  border-color: var(--form);
+  background: color-mix(in srgb, var(--form) 8%, transparent);
+  color: var(--form);
 }
 
 /* Prose is 19px editorial serif at a 68-character measure. */
@@ -236,20 +506,20 @@
 .prose a {
   color: inherit;
   text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--brand) 60%, transparent);
+  text-decoration-color: color-mix(in srgb, var(--form) 70%, transparent);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
 }
 
 .prose a:hover,
 .prose a:focus-visible {
-  text-decoration-color: var(--brand);
+  text-decoration-color: var(--form);
 }
 
 .prose blockquote {
   margin: 1.8em 0;
   padding: 0 0 0 20px;
-  border-left: 2px solid var(--brand);
+  border-left: 2px solid var(--form);
 }
 
 .prose blockquote p {
@@ -269,7 +539,7 @@
 }
 
 .prose blockquote a:hover {
-  color: var(--brand);
+  color: var(--form);
 }
 
 /* Emphasis was painted in the form colour, which made bold words read as
@@ -329,86 +599,215 @@
   text-align: left;
 }
 
-/* ── prev / next ── */
-
-.nav {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
-  gap: 1px;
-  margin: 40px 0 60px;
-  background: var(--rule);
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
+/* The author's highlights, in the piece's form colour (see withFormHighlights
+   in src/lib/markdown.ts). */
+.prose :global(.highlight) {
+  color: var(--form);
 }
 
-.navItem {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  padding: 18px 0;
-  background: var(--void);
+/* ── previous and next: small, a thumbnail beside the title ── */
+
+.more {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 48px;
+  margin-top: 40px;
+  padding: 28px 0 48px;
+  border-top: 1px solid var(--rule);
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
   color: inherit;
   text-decoration: none;
 }
 
-.navItem:last-child {
-  align-items: flex-end;
+.card[data-side="next"] {
+  grid-template-columns: minmax(0, 1fr) 8.5rem;
   text-align: right;
 }
 
-.navItem:only-child {
-  align-items: flex-start;
-  text-align: left;
+.card[data-side="next"] .cardCover {
+  order: 2;
 }
 
-.navLabel {
-  color: var(--ink-3);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+.card[data-side="next"] .byline {
+  justify-content: flex-end;
 }
 
-.navTitle {
-  color: var(--ink-2);
-  font-family: var(--font-title);
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.2;
-  letter-spacing: var(--tracking-title);
-  transition: color 150ms ease;
+.cardText {
+  display: grid;
+  gap: 8px;
 }
 
-.navItem:hover .navTitle,
-.navItem:focus-visible .navTitle {
-  color: var(--brand);
+.cardCover {
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--raised);
+}
+
+.cardCover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.card:hover .cardCover img {
+  transform: scale(1.03);
+}
+
+.cardTitle {
+  color: var(--ink);
+  font: 400 19px / 1.25 var(--font-title);
+  letter-spacing: -0.004em;
+  text-wrap: balance;
+}
+
+.card:hover .cardTitle,
+.card:focus-visible .cardTitle {
+  text-decoration: underline;
+  text-decoration-color: var(--fc);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.14em;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .action,
-  .navTitle,
-  .sections a {
+  .actions a,
+  .contents a,
+  .contentsNo,
+  .cardCover img {
     transition: none;
+  }
+
+  .card:hover .cardCover img {
+    transform: none;
   }
 }
 
-/* The rail needs a column to earn. Below this it becomes a header. */
+/* Narrower desktops: two columns. The right column's contents, note and
+   actions drop under the library in the left one, and still hold in view. */
+@media (max-width: 75rem) {
+  .columns {
+    grid-template-columns: 14rem minmax(0, 68ch);
+    grid-template-rows: auto 1fr;
+    justify-content: center;
+    column-gap: 40px;
+  }
+
+  .left {
+    grid-column: 1;
+    grid-row: 1;
+    padding-bottom: 36px;
+  }
+
+  .right {
+    grid-column: 1;
+    grid-row: 2;
+    padding-right: 24px;
+    border-right: 1px dotted var(--rule-strong);
+  }
+
+  .body {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
+
+/* One column: the header first, the facts as a byline, the contents folded;
+   the note, library and actions at the end of the piece. */
 @media (max-width: 60rem) {
-  .article {
+  .spread {
     grid-template-columns: minmax(0, 1fr);
-    gap: 26px;
+    padding-top: 32px;
+    border-bottom: 0;
+  }
+
+  .head {
+    padding-bottom: 24px;
+  }
+
+  .cover {
+    aspect-ratio: 3 / 2;
+  }
+
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
     padding-top: 32px;
   }
 
-  .rail {
-    position: static;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--rule);
+  .left,
+  .right {
+    display: none;
   }
 
-  .meta {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 14px 18px;
+  .body {
+    grid-column: 1;
+    grid-row: auto;
+    max-width: 68ch;
+  }
+
+  .head {
+    max-width: 68ch;
+  }
+
+  .phoneOnly,
+  .phoneContents {
+    display: block;
+  }
+
+  .phoneContents summary {
+    display: inline-flex;
+    gap: 6px;
+    padding: 8px 0;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .phoneContents summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .phoneContents summary::after {
+    content: "+";
+  }
+
+  .phoneContents[open] summary::after {
+    content: "–";
+  }
+
+  .endOnly {
+    display: block;
+    margin-top: 32px;
+  }
+
+  .library.endOnly,
+  .note.endOnly {
+    display: grid;
+  }
+
+  .more {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 24px;
+  }
+
+  .card,
+  .card[data-side="next"] {
+    grid-template-columns: 7rem minmax(0, 1fr);
+    text-align: left;
+  }
+
+  .card[data-side="next"] .cardCover {
+    order: 0;
+  }
+
+  .card[data-side="next"] .byline {
+    justify-content: flex-start;
   }
 }
 
@@ -418,8 +817,8 @@
   }
 }
 
-@media (pointer: coarse) {
-  .action {
+@media (pointer: coarse) and (hover: none) {
+  .actions a {
     min-height: 44px;
   }
 }

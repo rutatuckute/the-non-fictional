@@ -168,6 +168,36 @@ export interface Post {
       }[]
     | null;
   /**
+   * What the piece draws on. Shown beside it, grouped by kind.
+   */
+  sources?:
+    | {
+        kind: 'books' | 'press' | 'film' | 'music' | 'data';
+        title: string;
+        url?: string | null;
+        author?: string | null;
+        year?: string | null;
+        /**
+         * Journal, publisher or series. Optional.
+         */
+        publisher?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Shown on the right, under the contents.
+   */
+  sideNote?: {
+    /**
+     * The small heading. "Note" when left empty.
+     */
+    label?: string | null;
+    /**
+     * Leave a blank line between paragraphs.
+     */
+    text?: string | null;
+  };
+  /**
    * Markdown. Raw HTML is passed through untouched.
    */
   body: string;
@@ -485,6 +515,23 @@ export interface PostsSelect<T extends boolean = true> {
     | {
         tag?: T;
         id?: T;
+      };
+  sources?:
+    | T
+    | {
+        kind?: T;
+        title?: T;
+        url?: T;
+        author?: T;
+        year?: T;
+        publisher?: T;
+        id?: T;
+      };
+  sideNote?:
+    | T
+    | {
+        label?: T;
+        text?: T;
       };
   body?: T;
   readingMinutes?: T;
