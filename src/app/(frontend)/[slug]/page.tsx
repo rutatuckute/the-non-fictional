@@ -20,6 +20,7 @@ import { Glyph } from '../../../components/redesign/FieldKey'
 import SiteFooter from '../../../components/site-footer'
 import styles from '../../../styles/blog-post.module.css'
 import ArticleContents from './article-contents'
+import CodeBlocks from './code-blocks'
 
 // The piece is set as a front page sets its lead: an opening spread of title
 // and cover, then three columns — what it is and what it draws on, the text,
@@ -453,6 +454,7 @@ export default async function ArticlePage({
                 dangerouslySetInnerHTML={{ __html: html }}
                 itemProp="articleBody"
               />
+              {html.includes('class="code"') ? <CodeBlocks /> : null}
               {/* A phone has no side columns: the note, the library and the
                   actions follow the piece. */}
               {note ? <Note note={note} className={styles.endOnly} /> : null}

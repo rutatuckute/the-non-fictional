@@ -5,6 +5,8 @@ import remarkGfm from 'remark-gfm'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import remarkSmartypants from 'remark-smartypants'
+import type { ThemeRegistrationRaw } from 'shiki'
+import { createCssVariablesTheme } from 'shiki/core'
 import { unified } from 'unified'
 
 import { imageUrl } from './images'
@@ -17,17 +19,28 @@ export type Section = { id: string; label: string }
 // why allowDangerousHtml and rehype-raw are both on: without them the bodies
 // would render as escaped text. The content is the author's own, from a panel
 // only the author can sign into, so there is nothing here to sanitise against.
+// The code is coloured in the site's own palette rather than an editor's: the
+// highlighter writes each token's colour as a CSS variable (--code-token-*),
+// and the article's stylesheet decides what those are — names in ink,
+// keywords quieter, strings in the piece's form colour. Comments are italic.
+const houseTheme = createCssVariablesTheme({ name: 'house', variablePrefix: '--code-' })
+houseTheme.tokenColors = houseTheme.tokenColors?.map((rule) =>
+  JSON.stringify(rule.scope).includes('"comment"')
+    ? { ...rule, settings: { ...rule.settings, fontStyle: 'italic' } }
+    : rule,
+)
+
 const processor = unified()
   .use(remarkParse)
   .use(remarkGfm)
   .use(remarkSmartypants)
   .use(remarkRehype, { allowDangerousHtml: true })
   .use(rehypeRaw)
-  // Replaces gatsby-remark-vscode. Shiki writes the colours inline, so unlike
-  // the old Prism stylesheet there is no theme CSS to keep in sync.
+  // Replaces gatsby-remark-vscode. The house theme above leaves the colours
+  // to the stylesheet.
   .use(rehypePrettyCode, {
-    theme: 'dark-plus',
-    keepBackground: true,
+    theme: houseTheme as ThemeRegistrationRaw,
+    keepBackground: false,
   })
   .use(rehypeStringify, { allowDangerousHtml: true })
 
@@ -116,7 +129,7 @@ const withSectionIds = (html: string): { html: string; sections: Section[] } => 
 // orange in a data piece — which now clashes with the form colours the rest
 // of the page uses. They become a class, and the article paints it in the
 // piece's form colour. Only these two values are matched: the code
-// highlighter writes its colours inline too, as uppercase hex with no space.
+// highlighter's colours are CSS variables, so they never match.
 const withFormHighlights = (html: string): string =>
   html.replace(/style="color:\s*(?:#8ac926|orange);?\s*"/gi, 'class="highlight"')
 
@@ -147,10 +160,30 @@ const withTidyQuotes = (html: string): string =>
     }</blockquote>`
   })
 
+// Each block gets a header — its language, its length and a Copy button —
+// and, when it runs past twelve lines, a "Show all" to unfold it. The
+// article's CodeBlocks component makes the two buttons work; without it the
+// code simply shows in full.
+const FOLD_AFTER = 12
+
+const withCodeFrames = (html: string): string =>
+  html.replace(
+    /<figure data-rehype-pretty-code-figure="">([\s\S]*?)<\/figure>/g,
+    (whole, inner: string) => {
+      const language = inner.match(/data-language="([^"]+)"/)?.[1] || 'code'
+      const lines = (inner.match(/<span data-line/g) || []).length
+      const long = lines > FOLD_AFTER
+
+      return `<figure class="code" data-lines="${lines}"${long ? ' data-long="true"' : ''}><div class="code-head"><span class="code-lang">${language}</span><span class="code-count">${lines} lines</span><button type="button" class="code-copy">Copy</button></div><div class="code-body">${inner}</div>${
+        long ? `<button type="button" class="code-more" aria-expanded="false">Show all ${lines} lines</button>` : ''
+      }</figure>`
+    },
+  )
+
 export const renderMarkdown = async (
   body: string,
 ): Promise<{ html: string; sections: Section[] }> => {
   const file = await processor.process(body || '')
 
-  return withSectionIds(withTidyQuotes(withFormHighlights(withResizedImages(withoutLeadingRule(String(file))))))
+  return withSectionIds(withCodeFrames(withTidyQuotes(withFormHighlights(withResizedImages(withoutLeadingRule(String(file)))))))
 }
