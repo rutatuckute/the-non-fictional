@@ -29,7 +29,7 @@ export default function AboutPage() {
       <main className="mx-auto w-[var(--page-width)] py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-[minmax(0,1fr)_20rem] md:items-start md:gap-20">
           <article className="brief-essay">
-            <h1 className="editorial-title">In brief</h1>
+            <h1 className="editorial-title brief-title">In brief</h1>
 
             <p className="editorial-copy brief-intro font-serif text-lg leading-relaxed text-muted-foreground">
               I never felt like writing anything fictional. Contemplating the
