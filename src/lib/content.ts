@@ -52,8 +52,22 @@ export type ContentNode = {
     tags: string[]
     type: string | null
     topic: string | null
+    // A writing's Library and side note. Empty for a photograph.
+    sources: Source[]
+    side_note: SideNote | null
   }
 }
+
+export type Source = {
+  kind: string
+  title: string
+  url: string | null
+  author: string | null
+  year: string | null
+  publisher: string | null
+}
+
+export type SideNote = { label: string; paragraphs: string[] }
 
 const getClient = cache(async () => getPayload({ config: configPromise }))
 
@@ -161,6 +175,30 @@ type PostDoc = {
   tags?: unknown
   body: string
   readingMinutes?: number | null
+  sources?: Partial<Source>[] | null
+  sideNote?: { label?: string | null; text?: string | null } | null
+}
+
+const sourcesOf = (doc: PostDoc): Source[] =>
+  (doc.sources || [])
+    .filter((source) => source?.title)
+    .map((source) => ({
+      kind: source.kind || 'books',
+      title: String(source.title),
+      url: source.url || null,
+      author: source.author || null,
+      year: source.year || null,
+      publisher: source.publisher || null,
+    }))
+
+// Paragraphs are split on blank lines, as they are typed in the panel.
+const sideNoteOf = (doc: PostDoc): SideNote | null => {
+  const paragraphs = (doc.sideNote?.text || '')
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+
+  return paragraphs.length ? { label: doc.sideNote?.label?.trim() || 'Note', paragraphs } : null
 }
 
 type PhotographDoc = {
@@ -239,6 +277,8 @@ const postToNode = (doc: PostDoc): ContentNode => {
       tags: tagList(doc.tags),
       type: null,
       topic: doc.topic ?? null,
+      sources: sourcesOf(doc),
+      side_note: sideNoteOf(doc),
     },
   }
 }
@@ -278,6 +318,8 @@ const photographToNode = (doc: PhotographDoc): ContentNode => ({
     tags: tagList(doc.tags),
     type: doc.type ?? null,
     topic: null,
+    sources: [],
+    side_note: null,
   },
 })
 
@@ -316,11 +358,20 @@ export const getAllNodes = cache(async (): Promise<ContentNode[]> => {
   return [...posts, ...photographs]
 })
 
+// Enough of a neighbour to set it as a card: its cover, form and length.
+export type Neighbour = {
+  slug: string
+  title: string
+  cover: string | null
+  form: string | null
+  minutes: number
+}
+
 export type Article = {
   node: ContentNode
   dateLabel: string | null
-  previous: { slug: string; title: string } | null
-  next: { slug: string; title: string } | null
+  previous: Neighbour | null
+  next: Neighbour | null
 }
 
 // Adjacency is oldest-first, which is the order the old build walked the posts
@@ -335,8 +386,16 @@ export const getArticle = cache(async (slug: string): Promise<Article | null> =>
   const node = oldestFirst[index]
   const previous = index > 0 ? oldestFirst[index - 1] : null
   const next = index < oldestFirst.length - 1 ? oldestFirst[index + 1] : null
-  const label = (entry: ContentNode | null) =>
-    entry ? { slug: entry.fields.slug, title: entry.frontmatter.title || entry.fields.slug } : null
+  const label = (entry: ContentNode | null): Neighbour | null =>
+    entry
+      ? {
+          slug: entry.fields.slug,
+          title: entry.frontmatter.title || entry.fields.slug,
+          cover: entry.frontmatter.cover_image,
+          form: entry.frontmatter.category_id,
+          minutes: entry.timeToRead,
+        }
+      : null
 
   return {
     node,

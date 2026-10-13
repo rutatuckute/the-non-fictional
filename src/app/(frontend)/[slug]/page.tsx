@@ -2,17 +2,256 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound, permanentRedirect } from 'next/navigation'
 
-import { getArticle, getPhotographSlugs, getPosts } from '../../../lib/content'
+import type { ReactNode } from 'react'
+
+import {
+  getArticle,
+  getPhotographSlugs,
+  getPosts,
+  type Neighbour,
+  type SideNote,
+  type Source,
+} from '../../../lib/content'
+import { imageUrl } from '../../../lib/images'
 import { renderMarkdown } from '../../../lib/markdown'
 import { absolute, site } from '../../../lib/site'
 import Masthead from '../../../components/masthead'
+import { Glyph } from '../../../components/redesign/FieldKey'
 import SiteFooter from '../../../components/site-footer'
 import styles from '../../../styles/blog-post.module.css'
+import ArticleContents from './article-contents'
 
-const FORMS: Record<string, string> = {
-  essays: 'Essays',
-  reflections: 'Reflections',
+// The piece is set as a front page sets its lead: an opening spread of title
+// and cover, then three columns — what it is and what it draws on, the text,
+// and its contents and side note, which stay in view while it is read.
+// Everything that carries colour takes the form's.
+
+const FORM_ONE: Record<string, string> = {
+  essays: 'Essay',
+  reflections: 'Reflection',
   data: 'Data',
+}
+const FORMAT: Record<string, string> = {
+  essays: 'essay',
+  reflections: 'reflection',
+  data: 'data',
+}
+
+const formOf = (id: string | null | undefined): string => (id && FORM_ONE[id] ? id : 'essays')
+const capitalise = (value: string): string => value.charAt(0).toUpperCase() + value.slice(1)
+
+const SHORT = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+})
+
+// The Library's kinds, in reading order, each with its line icon.
+const KINDS: { id: string; label: string; icon: ReactNode }[] = [
+  {
+    id: 'books',
+    label: 'Books',
+    icon: (
+      <>
+        <path d="M3 6c3-1 6-1 9 1v13c-3-2-6-2-9-1z" />
+        <path d="M21 6c-3-1-6-1-9 1v13c3-2 6-2 9-1z" />
+      </>
+    ),
+  },
+  {
+    id: 'press',
+    label: 'Articles',
+    icon: (
+      <>
+        <rect x="3" y="5" width="14" height="14" />
+        <path d="M17 8h4v9a2 2 0 0 1-2 2h-2" />
+        <path d="M6 9h8" />
+        <path d="M6 12h8" />
+        <path d="M6 15h5" />
+      </>
+    ),
+  },
+  {
+    id: 'film',
+    label: 'Film',
+    icon: (
+      <>
+        <rect x="3" y="6" width="13" height="12" />
+        <path d="M16 10l5-3v10l-5-3" />
+      </>
+    ),
+  },
+  {
+    id: 'music',
+    label: 'Music',
+    icon: (
+      <>
+        <path d="M4 15v-3a8 8 0 0 1 16 0v3" />
+        <rect x="3" y="14" width="4" height="6" />
+        <rect x="17" y="14" width="4" height="6" />
+      </>
+    ),
+  },
+  {
+    id: 'data',
+    label: 'Research',
+    icon: (
+      <>
+        <ellipse cx="12" cy="6" rx="7" ry="2.5" />
+        <path d="M5 6v12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V6" />
+        <path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5" />
+      </>
+    ),
+  },
+]
+
+const Icon = ({ children, className = styles.icon }: { children: ReactNode; className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    {children}
+  </svg>
+)
+
+const Mark = ({ form }: { form: string }) => (
+  <svg className={styles.mark} viewBox="-10 -10 20 20" width="14" height="14" aria-hidden="true">
+    <Glyph format={FORMAT[form]} />
+  </svg>
+)
+
+const Byline = ({ form, minutes, topics = [] }: { form: string; minutes: number; topics?: string[] }) => (
+  <p className={`${styles.label} ${styles.quiet} ${styles.byline}`}>
+    <span className={styles.form} data-form={form}>
+      <Mark form={form} />
+      {FORM_ONE[form]}
+    </span>
+    <span aria-hidden="true">·</span> {minutes} min read
+    {topics.length ? (
+      <>
+        <span aria-hidden="true">·</span> <span>{topics.join(' · ')}</span>
+      </>
+    ) : null}
+  </p>
+)
+
+// What the piece draws on, grouped by kind, titles first.
+const Library = ({ sources, className = '' }: { sources: Source[]; className?: string }) => {
+  if (!sources.length) return null
+
+  const groups = KINDS.map((kind) => ({ ...kind, list: sources.filter((source) => source.kind === kind.id) })).filter(
+    (group) => group.list.length,
+  )
+
+  return (
+    <section className={`${styles.library} ${className}`} aria-label="Library">
+      <h2 className={`${styles.label} ${styles.libraryHead}`}>
+        {/* A bookshelf: four spines of different heights, one leaning. */}
+        <Icon className={styles.shelf}>
+          <path d="M3 20h18" />
+          <path d="M5 20V7h3v13" />
+          <path d="M9 20V5h3v15" />
+          <path d="M13 20V9h2.5v11" />
+          <path d="M16.6 20l1.6-11.5 2.6.4L19.2 20" />
+        </Icon>
+        Library
+      </h2>
+      {groups.map((group) => (
+        <div className={styles.group} key={group.id}>
+          <p className={`${styles.label} ${styles.quiet} ${styles.groupHead}`}>
+            <Icon>{group.icon}</Icon>
+            {group.label}
+          </p>
+          <ul className={styles.entries}>
+            {group.list.map((source) => {
+              const meta = [source.author, source.year, source.publisher].filter(Boolean).join(' · ')
+              const inner = (
+                <>
+                  <span className={styles.entryTitle}>{source.title}</span>
+                  {meta ? <span className={styles.entryMeta}>{meta}</span> : null}
+                </>
+              )
+              return (
+                <li key={`${source.title}${source.url}`}>
+                  {source.url ? (
+                    <a href={source.url} target="_blank" rel="noopener noreferrer">
+                      {inner}
+                    </a>
+                  ) : (
+                    <span>{inner}</span>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      ))}
+    </section>
+  )
+}
+
+// *word* in a note is set upright, as emphasis inside italic is.
+const withEmphasis = (text: string): ReactNode[] =>
+  text.split(/(\*[^*]+\*)/g).map((part, index) =>
+    /^\*[^*]+\*$/.test(part) ? <em key={index}>{part.slice(1, -1)}</em> : part,
+  )
+
+// Set as the notes on Writings' (Anti)library are, the rule in the form's
+// colour.
+const Note = ({ note, className = '' }: { note: SideNote; className?: string }) => (
+  <aside className={`${styles.note} ${className}`} aria-label={note.label}>
+    <p className={`${styles.label} ${styles.noteHead}`}>
+      <Icon>
+        <path d="M4 20l1-4L16 5l3 3L8 19z" />
+        <path d="M14 7l3 3" />
+      </Icon>
+      {note.label}
+    </p>
+    {note.paragraphs.map((paragraph) => (
+      <p className={styles.noteText} key={paragraph}>
+        {withEmphasis(paragraph)}
+      </p>
+    ))}
+  </aside>
+)
+
+const Actions = ({ link, share }: { link: string | null; share: string }) => (
+  <p className={styles.actions}>
+    {link ? (
+      <a href={link} rel="noopener noreferrer" target="_blank">
+        <Icon>
+          <path d="M8 7l-5 5 5 5" />
+          <path d="M16 7l5 5-5 5" />
+          <path d="M14 4l-4 16" />
+        </Icon>
+        Code
+      </a>
+    ) : null}
+    <a href={share} rel="noopener noreferrer" target="_blank">
+      <Icon>
+        <path d="M4 4h4.5L20 20h-4.5z" />
+        <path d="M19.5 4l-6.7 7.3" />
+        <path d="M11.2 12.7L4.5 20" />
+      </Icon>
+      Share
+    </a>
+  </p>
+)
+
+const Card = ({ entry, side }: { entry: Neighbour; side: 'previous' | 'next' }) => {
+  const form = formOf(entry.form)
+  return (
+    <Link className={styles.card} data-form={form} data-side={side} href={entry.slug} rel={side === 'next' ? 'next' : 'prev'}>
+      {entry.cover ? (
+        <span className={styles.cardCover}>
+          <img src={imageUrl(entry.cover, 300, 'lighter')} alt="" loading="lazy" decoding="async" />
+        </span>
+      ) : null}
+      <span className={styles.cardText}>
+        <span className={`${styles.label} ${styles.quiet}`}>{side === 'next' ? 'Next →' : '← Previous'}</span>
+        <span className={styles.cardTitle}>{entry.title}</span>
+        <Byline form={form} minutes={entry.minutes} />
+      </span>
+    </Link>
+  )
 }
 
 // Both the articles, which live at the site root, and the photographs, whose
@@ -72,18 +311,6 @@ export async function generateMetadata({
   }
 }
 
-const GithubIcon = () => (
-  <svg className={styles.actionIcon} viewBox="0 0 16 16" aria-hidden="true">
-    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
-  </svg>
-)
-
-const ShareIcon = () => (
-  <svg className={styles.actionIcon} viewBox="0 0 16 16" aria-hidden="true">
-    <path d="M9.29 6.77 14.9 0h-1.33L8.7 5.88 4.81 0H0l5.88 8.9L0 16h1.33l5.14-6.21L10.58 16h4.81L9.29 6.77Zm-1.82 2.2-.6-.9L1.81 1.04h2.04l3.83 5.77.6.9 4.97 7.48h-2.04L7.47 8.97Z" />
-  </svg>
-)
-
 export default async function ArticlePage({
   params,
 }: {
@@ -108,7 +335,11 @@ export default async function ArticlePage({
 
   const { node, dateLabel, previous, next } = article
   const fm = node.frontmatter
-  const form = fm.category_id && FORMS[fm.category_id] ? fm.category_id : 'essays'
+  const form = formOf(fm.category_id)
+  const topics = (fm.topic || '')
+    .split('/')
+    .map((topic) => topic.trim())
+    .filter(Boolean)
   const { html, sections } = await renderMarkdown(node.body || '')
 
   const url = absolute(node.fields.slug)
@@ -130,6 +361,9 @@ export default async function ArticlePage({
     ...(fm.cover_image ? { image: absolute(fm.cover_image) } : {}),
   }
 
+  const hasContents = sections.length > 1
+  const note = fm.side_note
+
   return (
     <div className={styles.page} data-form={form}>
       <script
@@ -140,101 +374,109 @@ export default async function ArticlePage({
       <Masthead activeSection="writings" />
 
       <main className={styles.main}>
-        <article
-          className={styles.article}
-          itemScope
-          itemType="http://schema.org/Article"
-        >
-          <aside className={styles.rail}>
-            <dl className={styles.meta}>
-              <div>
-                <dt>Form</dt>
-                <dd className={styles.metaForm}>{FORMS[form]}</dd>
+        <article itemScope itemType="http://schema.org/Article">
+          {/* The opening: the words on the left, the cover on the right, both
+              standing on one hairline across the page. */}
+          <header className={styles.spread}>
+            <div className={styles.head}>
+              <p className={styles.label}>
+                <time dateTime={fm.date || undefined} itemProp="datePublished">
+                  {fm.date ? SHORT.format(new Date(fm.date)) : dateLabel}
+                </time>
+                {fm.inquiry ? (
+                  <>
+                    {' '}
+                    <span className={styles.in}>in</span> {capitalise(fm.inquiry)}
+                  </>
+                ) : null}
+              </p>
+              <h1 className={styles.title} itemProp="headline">
+                {fm.title}
+              </h1>
+              {fm.excerpt ? <p className={styles.dek}>{fm.excerpt}</p> : null}
+              {/* On a phone the left column is gone; its facts come back here. */}
+              <div className={styles.phoneOnly}>
+                <Byline form={form} minutes={node.timeToRead} topics={topics} />
               </div>
-              {fm.inquiry ? (
-                <div>
-                  <dt>Inquiry</dt>
-                  <dd>{fm.inquiry.charAt(0).toUpperCase() + fm.inquiry.slice(1)}</dd>
-                </div>
+              {hasContents ? (
+                <details className={styles.phoneContents}>
+                  <summary className={`${styles.label} ${styles.quiet}`}>Contents</summary>
+                  <ArticleContents sections={sections} heading={false} />
+                </details>
               ) : null}
-              <div>
-                <dt>Published</dt>
-                <dd>{dateLabel}</dd>
-              </div>
-              <div>
-                <dt>Length</dt>
-                <dd>{node.timeToRead} min</dd>
-              </div>
-              {fm.topic ? (
-                <div>
-                  <dt>Topic</dt>
-                  <dd>{fm.topic}</dd>
-                </div>
-              ) : null}
-            </dl>
-
-            {sections.length > 1 ? (
-              <nav className={styles.sections} aria-label="Sections">
-                {sections.map((section) => (
-                  <a key={section.id} href={`#${section.id}`}>
-                    {section.label}
-                  </a>
-                ))}
-              </nav>
-            ) : null}
-
-            <div className={styles.actions}>
-              {fm.link ? (
-                <a
-                  className={styles.action}
-                  href={fm.link}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  <GithubIcon />
-                  Code
-                </a>
-              ) : null}
-              <a
-                className={styles.action}
-                href={share}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                <ShareIcon />
-                Share
-              </a>
             </div>
-          </aside>
+            {fm.cover_image ? (
+              <figure className={styles.cover}>
+                <img
+                  src={imageUrl(fm.cover_image, 1680, 'normal')}
+                  alt=""
+                  width={1600}
+                  height={1200}
+                  fetchPriority="high"
+                  decoding="async"
+                />
+              </figure>
+            ) : null}
+          </header>
 
-          <div className={styles.body}>
-            <h1 className={styles.title} itemProp="headline">
-              {fm.title}
-            </h1>
-            {fm.excerpt ? <p className={styles.dek}>{fm.excerpt}</p> : null}
-            <div className={styles.rule} />
-            <div
-              className={styles.prose}
-              dangerouslySetInnerHTML={{ __html: html }}
-              itemProp="articleBody"
-            />
+          <div className={styles.columns}>
+            <aside className={styles.left}>
+              <dl className={styles.facts}>
+                <div>
+                  <dt className={`${styles.label} ${styles.quiet}`}>Form</dt>
+                  <dd className={styles.form} data-form={form}>
+                    <Mark form={form} />
+                    {FORM_ONE[form]}
+                  </dd>
+                </div>
+                <div>
+                  <dt className={`${styles.label} ${styles.quiet}`}>Length</dt>
+                  <dd>{node.timeToRead} min read</dd>
+                </div>
+                {topics.length ? (
+                  <div>
+                    <dt className={`${styles.label} ${styles.quiet}`}>Topics</dt>
+                    <dd className={styles.topics}>
+                      {topics.map((topic) => (
+                        <span key={topic}>{topic}</span>
+                      ))}
+                    </dd>
+                  </div>
+                ) : null}
+              </dl>
+              <Library sources={fm.sources} />
+            </aside>
+
+            <div className={styles.body}>
+              <div
+                className={styles.prose}
+                dangerouslySetInnerHTML={{ __html: html }}
+                itemProp="articleBody"
+              />
+              {/* A phone has no side columns: the note, the library and the
+                  actions follow the piece. */}
+              {note ? <Note note={note} className={styles.endOnly} /> : null}
+              <Library sources={fm.sources} className={styles.endOnly} />
+              <div className={styles.endOnly}>
+                <Actions link={fm.link} share={share} />
+              </div>
+            </div>
+
+            {/* Held in view while the piece is read. */}
+            <aside className={styles.right}>
+              <div className={styles.held}>
+                {hasContents ? <ArticleContents sections={sections} /> : null}
+                {note ? <Note note={note} /> : null}
+                <Actions link={fm.link} share={share} />
+              </div>
+            </aside>
           </div>
         </article>
 
         {previous || next ? (
-          <nav className={styles.nav} aria-label="More writings">
-            {previous ? (
-              <Link className={styles.navItem} href={previous.slug} rel="prev">
-                <span className={styles.navLabel}>Previous</span>
-                <span className={styles.navTitle}>{previous.title}</span>
-              </Link>
-            ) : null}
-            {next ? (
-              <Link className={styles.navItem} href={next.slug} rel="next">
-                <span className={styles.navLabel}>Next</span>
-                <span className={styles.navTitle}>{next.title}</span>
-              </Link>
-            ) : null}
+          <nav className={styles.more} aria-label="More writings">
+            {previous ? <Card entry={previous} side="previous" /> : <span />}
+            {next ? <Card entry={next} side="next" /> : null}
           </nav>
         ) : null}
       </main>

@@ -112,10 +112,18 @@ const withSectionIds = (html: string): { html: string; sections: Section[] } => 
   return { html: marked, sections }
 }
 
+// The author's own highlights were painted by hand — green in the essays,
+// orange in a data piece — which now clashes with the form colours the rest
+// of the page uses. They become a class, and the article paints it in the
+// piece's form colour. Only these two values are matched: the code
+// highlighter writes its colours inline too, as uppercase hex with no space.
+const withFormHighlights = (html: string): string =>
+  html.replace(/style="color:\s*(?:#8ac926|orange);?\s*"/gi, 'class="highlight"')
+
 export const renderMarkdown = async (
   body: string,
 ): Promise<{ html: string; sections: Section[] }> => {
   const file = await processor.process(body || '')
 
-  return withSectionIds(withResizedImages(withoutLeadingRule(String(file))))
+  return withSectionIds(withFormHighlights(withResizedImages(withoutLeadingRule(String(file)))))
 }
