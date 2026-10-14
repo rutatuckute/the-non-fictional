@@ -909,6 +909,13 @@
     display: block;
   }
 
+  /* Code and Share, then the side note, under the byline. */
+  .phoneOnly.phoneTop {
+    display: grid;
+    gap: 16px;
+    padding-top: 4px;
+  }
+
   .phoneContents summary {
     display: inline-flex;
     gap: 6px;

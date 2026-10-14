@@ -145,11 +145,27 @@
   .tm-story .tm-step[data-last="true"] { flex-direction: column; justify-content: flex-end; padding-bottom: 24px; }
   /* It passes over the held chart, as the steps do, on the page's ground. */
   .tm-story .tm-closing { pointer-events: auto; margin-top: 0; padding: 24px 0 8px; background: var(--void); }
-  .tm-story .tm-sticky { position: sticky; top: 0; z-index: 0; height: 100vh; padding: 3vh 0 36vh; background: var(--void); }
-  .tm-story .tm-steps { position: relative; z-index: 1; margin-top: -40vh; padding: 0 0 10vh; pointer-events: none; }
+  /* The chart takes the screen's whole width and the top three quarters of
+     its height; the steps pass through the bottom quarter. */
+  .tm-story .tm-sticky {
+    position: sticky; top: 0; z-index: 0; align-self: stretch;
+    height: 100vh; margin-inline: calc(-1 * var(--page-margin)); padding: 2vh 0 29vh;
+    background: var(--void);
+  }
+  .tm-story .tm-chartHead { padding-inline: var(--page-margin); margin-bottom: 4px; }
+  .tm-story .tm-steps { position: relative; z-index: 1; margin-top: -30vh; padding: 0 0 6vh; pointer-events: none; }
   .tm-story .tm-step { min-height: 100vh; display: flex; align-items: flex-end; }
-  .tm-story .tm-card { pointer-events: auto; font-size: 17px; background: color-mix(in srgb, var(--raised) 94%, transparent); }
-  .tm-chartTitle { font-size: 19px; }
+  .tm-story .tm-card {
+    pointer-events: auto; padding: 14px 16px 16px; font-size: 16px; line-height: 1.5;
+    background: color-mix(in srgb, var(--raised) 94%, transparent);
+  }
+  /* The reader's turn, kept short so it leaves the chart in view. */
+  .tm-story .tm-booking { gap: 8px; margin-top: 12px; padding-top: 12px; }
+  .tm-story .tm-bookResult { font-size: 15px; }
+  /* The last step is the tallest; it starts further down so the one before
+     has left the screen when it arrives. */
+  .tm-story .tm-step[data-last="true"] { min-height: 160vh; }
+  .tm-chartTitle { font-size: 17px; }
 }
 
 /* ── the recreated screenshots ──
