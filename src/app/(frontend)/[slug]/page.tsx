@@ -143,7 +143,7 @@ const Library = ({ sources, className = '' }: { sources: Source[]; className?: s
   )
 
   return (
-    <section className={`${styles.library} ${className}`} aria-label="Library">
+    <section className={`${styles.library} ${className}`} aria-label="(Anti)library">
       <h2 className={`${styles.label} ${styles.libraryHead}`}>
         {/* A bookshelf: four spines of different heights, one leaning. */}
         <Icon className={styles.shelf}>
@@ -153,7 +153,7 @@ const Library = ({ sources, className = '' }: { sources: Source[]; className?: s
           <path d="M13 20V9h2.5v11" />
           <path d="M16.6 20l1.6-11.5 2.6.4L19.2 20" />
         </Icon>
-        Library
+        (Anti)library
       </h2>
       {groups.map((group) => (
         <div className={styles.group} key={group.id}>

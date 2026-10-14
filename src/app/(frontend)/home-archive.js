@@ -109,7 +109,7 @@ const HomeArchive = ({ nodes }) => {
           <div className={styles.layout}>
             <section className={styles.hero} aria-labelledby="hero-title">
               <p className={`${styles.label} ${styles.kicker}`}>
-                Photography <span aria-hidden="true">&middot;</span> Writings
+                Writings <span aria-hidden="true">&middot;</span> Photography
               </p>
               <h1
                 className={`${styles.display} ${styles.heroTitle}`}
