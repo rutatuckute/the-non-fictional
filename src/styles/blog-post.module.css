@@ -743,6 +743,16 @@
   color: var(--form);
 }
 
+/* After a story: the reading column again, its rails empty. The closing
+   matter for phones sits in a last row that is empty on a desktop. */
+.continued {
+  padding-top: 0;
+}
+
+.tail {
+  padding: 0;
+}
+
 /* ── previous and next: small, a thumbnail beside the title ── */
 
 .more {

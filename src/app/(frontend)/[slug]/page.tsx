@@ -14,10 +14,12 @@ import {
 } from '../../../lib/content'
 import { imageUrl } from '../../../lib/images'
 import { renderMarkdown } from '../../../lib/markdown'
+import { splitStories, type Part } from '../../../lib/stories'
 import { absolute, site } from '../../../lib/site'
 import Masthead from '../../../components/masthead'
 import { Glyph } from '../../../components/redesign/FieldKey'
 import SiteFooter from '../../../components/site-footer'
+import { StoryBlock, StoryFigure } from '../../../components/stories/StoryBlock'
 import styles from '../../../styles/blog-post.module.css'
 import ArticleContents from './article-contents'
 import CodeBlocks from './code-blocks'
@@ -312,6 +314,25 @@ export async function generateMetadata({
   }
 }
 
+// The prose of a piece, with any interactive figures set where the body
+// marks them.
+const Prose = ({ parts, articleBody = false }: { parts: Part[]; articleBody?: boolean }) => (
+  <>
+    {parts.map((part, index) =>
+      part.kind === 'figure' ? (
+        <StoryFigure key={index} name={part.name} />
+      ) : (
+        <div
+          key={index}
+          className={styles.prose}
+          dangerouslySetInnerHTML={{ __html: part.html }}
+          {...(articleBody && index === 0 ? { itemProp: 'articleBody' } : {})}
+        />
+      ),
+    )}
+  </>
+)
+
 export default async function ArticlePage({
   params,
 }: {
@@ -364,6 +385,23 @@ export default async function ArticlePage({
 
   const hasContents = sections.length > 1
   const note = fm.side_note
+  // The body, split where it marks a story: the first stretch of prose sits in
+  // the columns; a story takes the page across; any prose after it returns to
+  // the reading column.
+  const blocks = splitStories(html)
+  // A phone has no side columns: the note, the library and the actions follow
+  // the piece, wherever it ends.
+  const tail = (
+    <>
+      {note ? <Note note={note} className={styles.endOnly} /> : null}
+      <Library sources={fm.sources} className={styles.endOnly} />
+      <div className={styles.endOnly}>
+        <Actions link={fm.link} share={share} />
+      </div>
+    </>
+  )
+  const first = blocks[0]?.kind === 'prose' ? blocks[0] : { kind: 'prose' as const, parts: [] }
+  const rest = blocks[0]?.kind === 'prose' ? blocks.slice(1) : blocks
 
   return (
     <div className={styles.page} data-form={form}>
@@ -449,19 +487,9 @@ export default async function ArticlePage({
             </aside>
 
             <div className={styles.body}>
-              <div
-                className={styles.prose}
-                dangerouslySetInnerHTML={{ __html: html }}
-                itemProp="articleBody"
-              />
+              <Prose parts={first.parts} articleBody />
               {html.includes('class="code"') ? <CodeBlocks /> : null}
-              {/* A phone has no side columns: the note, the library and the
-                  actions follow the piece. */}
-              {note ? <Note note={note} className={styles.endOnly} /> : null}
-              <Library sources={fm.sources} className={styles.endOnly} />
-              <div className={styles.endOnly}>
-                <Actions link={fm.link} share={share} />
-              </div>
+              {rest.length ? null : tail}
             </div>
 
             {/* Held in view while the piece is read. */}
@@ -473,6 +501,35 @@ export default async function ArticlePage({
               </div>
             </aside>
           </div>
+
+          {rest.map((block, index) =>
+            block.kind === 'story' ? (
+              <StoryBlock
+                key={index}
+                name={block.name}
+                intro={block.intro}
+                steps={block.steps}
+                closing={block.closing}
+              />
+            ) : (
+              <div key={index} className={`${styles.columns} ${styles.continued}`}>
+                <div className={styles.left} aria-hidden="true" />
+                <div className={styles.body}>
+                  <Prose parts={block.parts} />
+                </div>
+                <div className={styles.right} aria-hidden="true" />
+              </div>
+            ),
+          )}
+
+          {/* After a story, the phone's closing matter follows it. */}
+          {rest.length ? (
+            <div className={`${styles.columns} ${styles.continued} ${styles.tail}`}>
+              <div className={styles.left} aria-hidden="true" />
+              <div className={styles.body}>{tail}</div>
+              <div className={styles.right} aria-hidden="true" />
+            </div>
+          ) : null}
         </article>
 
         {previous || next ? (
