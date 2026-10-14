@@ -33,7 +33,9 @@ const PriceChart = ({ state, booked, onBook }) => {
   const [hover, setHover] = React.useState(null)
   const clipId = React.useId().replace(/:/g, "")
   const narrow = width < 480
-  const m = { top: 28, right: narrow ? 16 : 28, bottom: 40, left: narrow ? 40 : 48 }
+  // On a phone the chart runs edge to edge, so its own margins carry the
+  // axis labels.
+  const m = { top: 28, right: narrow ? 14 : 28, bottom: 36, left: narrow ? 46 : 48 }
   const w = width - m.left - m.right
   const h = height - m.top - m.bottom
 
@@ -83,7 +85,7 @@ const PriceChart = ({ state, booked, onBook }) => {
           </g>
         ))}
         {dayTicks.map(d => (
-          <text key={d} className={c("tm-axis")} x={x(d)} y={height - m.bottom + 22} textAnchor="middle">
+          <text key={d} className={c("tm-axis")} x={x(d)} y={height - m.bottom + 22} textAnchor={d === DEPARTURE ? "end" : d === 1 ? "start" : "middle"}>
             {d === 1 ? "1 Dec" : d === DEPARTURE ? "20 Dec" : d}
           </text>
         ))}

@@ -389,17 +389,9 @@ export default async function ArticlePage({
   // the columns; a story takes the page across; any prose after it returns to
   // the reading column.
   const blocks = splitStories(html)
-  // A phone has no side columns: the note, the library and the actions follow
-  // the piece, wherever it ends.
-  const tail = (
-    <>
-      {note ? <Note note={note} className={styles.endOnly} /> : null}
-      <Library sources={fm.sources} className={styles.endOnly} />
-      <div className={styles.endOnly}>
-        <Actions link={fm.link} share={share} />
-      </div>
-    </>
-  )
+  // A phone has no side columns: the library follows the piece, wherever it
+  // ends. (The note and the actions go to the top; see the header.)
+  const tail = <Library sources={fm.sources} className={styles.endOnly} />
   const first = blocks[0]?.kind === 'prose' ? blocks[0] : { kind: 'prose' as const, parts: [] }
   const rest = blocks[0]?.kind === 'prose' ? blocks.slice(1) : blocks
 
@@ -436,6 +428,12 @@ export default async function ArticlePage({
               {/* On a phone the left column is gone; its facts come back here. */}
               <div className={styles.phoneOnly}>
                 <Byline form={form} minutes={node.timeToRead} topics={topics} />
+              </div>
+              {/* And what the right column holds — Code and Share, the side
+                  note — comes up here too, before the piece, not after it. */}
+              <div className={`${styles.phoneOnly} ${styles.phoneTop}`}>
+                <Actions link={fm.link} share={share} />
+                {note ? <Note note={note} /> : null}
               </div>
               {hasContents ? (
                 <details className={styles.phoneContents}>
