@@ -595,8 +595,35 @@
 
   .filters {
     flex-direction: column;
-    align-items: flex-start;
+    flex-wrap: nowrap;
+    align-items: stretch;
     gap: 14px;
+  }
+
+  /* Each row of options stays on one line, as Forms does, and scrolls
+     sideways when it runs out of room; the fade says there is more. The
+     right padding lets the last option clear the fade at the end. */
+  .group {
+    min-width: 0;
+  }
+
+  .options {
+    flex: 1 0 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-right: 32px;
+    scrollbar-width: none;
+    clip-path: none;
+    mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+  }
+
+  .options::-webkit-scrollbar {
+    display: none;
+  }
+
+  .option {
+    flex: none;
+    white-space: nowrap;
   }
 
   .spread,
