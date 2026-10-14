@@ -1,0 +1,249 @@
+/* Take me home's story and figures. The chart is set as the site sets
+   everything else: the line in the form's colour, every word in ink — values,
+   axes and labels never wear the series colour. 2px line, 4px dots with a 2px
+   ground ring, a 10% wash under the line, hairline gridlines. The page's
+   tokens (--ink, --raised, --form …) come from blog-post.module.css. */
+.tm-story, .sv, .sp { --fc: var(--form); }
+.tm-story :where(p), .sv :where(p), .sp :where(p) { margin: 0; }
+
+/* ── the story section ── */
+.tm-story { position: relative; margin: 8px 0 40px; }
+.tm-chartHead { display: grid; gap: 4px; margin-bottom: 8px; }
+.tm-kicker { color: var(--ink-3); font: 500 11px / 1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.tm-chartTitle { color: var(--ink); font: 400 22px / 1.25 var(--font-title); letter-spacing: -0.006em; }
+
+/* Side by side: across the page, the section in a narrow column on the left
+   and the chart held on the right for as long as it scrolls. */
+.tm-story {
+  display: grid;
+  grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+  column-gap: 64px;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+}
+.tm-left { min-width: 0; }
+
+/* The heading and its paragraph stay pinned, level with the top of the
+   chart, while the steps pass beneath them; a short fade under them so the
+   steps slide out of sight. */
+.tm-story .tm-pinned {
+  position: sticky; top: 0; z-index: 2;
+  padding: 6vh 0 18px; background: var(--void);
+}
+.tm-story .tm-pinned h4 { margin: 0 0 12px; scroll-margin-top: 24px; }
+.tm-story .tm-pinned p { margin: 0; }
+.tm-story .tm-pinned::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 48px;
+  background: linear-gradient(to bottom, var(--void), transparent); pointer-events: none;
+}
+.tm-story .tm-sticky {
+  position: sticky; top: 0; align-self: start;
+  display: flex; flex-direction: column; height: 100vh; padding: 6vh 0;
+}
+.tm-story .tm-chart { flex: 1; }
+/* Each step centres its card in the space under the pinned text. */
+.tm-story .tm-steps { padding: 4vh 0 0; }
+.tm-story .tm-step {
+  min-height: 75vh; display: flex; flex-direction: column; justify-content: center; padding-top: 22vh;
+}
+
+/* The last step: its card, and under it the closing paragraph, which comes
+   in with it. The section ends on them, beside the chart's final picture. */
+/* As the story leaves the screen, the last step and the closing pass over
+   the pinned text rather than under it, so the page's end never hides them. */
+.tm-story .tm-step[data-last="true"] {
+  position: relative; z-index: 3;
+  min-height: 100vh; justify-content: flex-end; padding-bottom: 24px;
+}
+.tm-story .tm-step[data-last="true"] .tm-closing { background: var(--void); }
+.tm-closing { margin-top: 28px; opacity: 0; transform: translateY(12px); transition: opacity 500ms ease, transform 500ms ease; }
+.tm-closing[data-on="true"] { opacity: 1; transform: none; }
+.tm-story .tm-closing p, .tm-story .tm-card p { margin: 0; }
+.tm-story .tm-card p + p { margin-top: 0.6em; }
+
+/* The steps: quiet cards; the current one in ink, the others recede. */
+.tm-card {
+  width: 100%;
+  padding: 18px 20px 20px;
+  border-left: 2px solid var(--fc);
+  background: var(--raised);
+  color: var(--ink-2);
+  font: 400 19px / 1.55 var(--font-body);
+  opacity: 0.45;
+  transition: opacity 300ms ease;
+}
+.tm-step[data-on="true"] .tm-card { opacity: 1; }
+.tm-card b, .tm-card strong { color: var(--ink); font-weight: 600; }
+
+/* ── the chart ── */
+.tm-chart { position: relative; min-height: 300px; }
+.tm-chart svg { position: absolute; inset: 0; display: block; overflow: visible; touch-action: pan-y; }
+.tm-chart svg[data-explore="true"] { cursor: pointer; }
+
+.tm-grid line { stroke: var(--rule); stroke-width: 1; }
+.tm-grid text, .tm-axis, .tm-departure text {
+  fill: var(--ink-3); font: 400 12px var(--font-mono); font-variant-numeric: tabular-nums;
+}
+.tm-departure line { stroke: var(--rule-strong); stroke-width: 1; stroke-dasharray: none; }
+.tm-departure text { fill: var(--ink-2); }
+
+.tm-revealRect { transform-box: fill-box; transform-origin: left center; transition: transform 900ms cubic-bezier(0.3, 0.7, 0.2, 1); }
+.tm-area { fill: var(--fc); fill-opacity: 0.1; }
+.tm-line { fill: none; stroke: var(--fc); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.tm-dot { fill: var(--fc); stroke: var(--void); stroke-width: 2; transition: r 150ms ease; }
+.tm-band { fill: var(--ink); fill-opacity: 0.04; }
+/* An event, not data: a hairline in ink and a serif italic note beside it. */
+.tm-note line { stroke: var(--ink-2); stroke-width: 1; }
+.tm-note text { fill: var(--ink-2); font: italic 400 15px var(--font-body); paint-order: stroke; stroke: var(--void); stroke-width: 4px; }
+
+.tm-callout circle { fill: none; stroke: var(--ink); stroke-width: 1; }
+.tm-callout text { fill: var(--ink); font: 600 15px var(--font-mono); font-variant-numeric: tabular-nums; paint-order: stroke; stroke: var(--void); stroke-width: 4px; }
+
+.tm-booked line { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 3 4; }
+
+.tm-cross line { stroke: var(--ink-3); stroke-width: 1; }
+.tm-cross circle { fill: var(--fc); stroke: var(--void); stroke-width: 2; }
+
+.tm-tip {
+  position: absolute; z-index: 2; transform: translate(-50%, 0);
+  display: grid; gap: 2px; min-width: 9rem; padding: 10px 12px;
+  border: 1px solid var(--rule-strong); background: var(--raised);
+  pointer-events: none; text-align: left;
+}
+.tm-tipDate { color: var(--ink-3); font: 500 11px / 1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.tm-tipValue { color: var(--ink); font: 600 20px / 1.2 var(--font-mono); font-variant-numeric: tabular-nums; }
+.tm-tipNote { color: var(--ink-2); font: 400 12px / 1.4 var(--font-mono); }
+
+/* ── the reader's turn ── */
+.tm-booking { display: grid; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.tm-bookLabel { color: var(--ink-3); font: 500 11px / 1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.tm-booking select {
+  justify-self: start; min-height: 40px; padding: 0 36px 0 12px;
+  border: 1px solid var(--rule-strong); border-radius: 0; background: var(--void); color: var(--ink);
+  font: 500 14px var(--font-mono); cursor: pointer;
+}
+.tm-booking select:focus-visible { outline: 2px solid var(--fc); outline-offset: 2px; }
+.tm-bookResult { color: var(--ink-2); font: 400 17px / 1.5 var(--font-body); }
+.tm-bookPrice { color: var(--ink); font: 600 18px var(--font-mono); font-variant-numeric: tabular-nums; }
+
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-revealRect, .tm-card, .tm-dot, .tm-closing { transition: none; }
+}
+
+/* A phone, or a narrow screen: the steps pass over the chart. */
+@media (max-width: 60rem) {
+  /* One column: heading and paragraph, then the chart with the steps passing
+     over it; the closing paragraph under the last step. */
+  .tm-story { display: flex; flex-direction: column; padding: 32px 0 16px; }
+  .tm-story .tm-left { display: contents; }
+  .tm-story .tm-pinned { order: 1; position: static; padding: 0 0 8px; }
+  .tm-story .tm-pinned::after { content: none; }
+  .tm-story .tm-pinned h4 { margin-top: 0; }
+  .tm-story .tm-sticky { order: 2; }
+  .tm-story .tm-steps { order: 3; }
+  .tm-story .tm-step[data-last="true"] { flex-direction: column; justify-content: flex-end; padding-bottom: 24px; }
+  /* It passes over the held chart, as the steps do, on the page's ground. */
+  .tm-story .tm-closing { pointer-events: auto; margin-top: 0; padding: 24px 0 8px; background: var(--void); }
+  .tm-story .tm-sticky { position: sticky; top: 0; z-index: 0; height: 100vh; padding: 3vh 0 36vh; background: var(--void); }
+  .tm-story .tm-steps { position: relative; z-index: 1; margin-top: -40vh; padding: 0 0 10vh; pointer-events: none; }
+  .tm-story .tm-step { min-height: 100vh; display: flex; align-items: flex-end; }
+  .tm-story .tm-card { pointer-events: auto; font-size: 17px; background: color-mix(in srgb, var(--raised) 94%, transparent); }
+  .tm-chartTitle { font-size: 19px; }
+}
+
+/* ── the recreated screenshots ──
+   Set as the site sets its panels: the raised ground, hairlines, 11px labels;
+   the form's colour for what has been reached or done. */
+.sv, .sp { margin: 1.6em 0 2em; background: var(--raised); color: var(--ink); font: 400 14px / 1.5 var(--font-mono); }
+.sv-head {
+  display: flex; gap: 12px; padding: 10px 20px; border-bottom: 1px solid var(--rule);
+  color: var(--ink-3); font: 500 11px / 1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase;
+}
+.sv-app { color: var(--fc); }
+.sv-body { display: grid; gap: 12px; padding: 18px 20px 16px; }
+.sv-row { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); align-items: center; gap: 12px; margin: 0; }
+.sv-label { color: var(--ink-3); font: 500 11px / 1.3 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.sv input, .sv select, .sp input {
+  min-height: 38px; width: 100%; margin: 0; padding: 0 12px; box-sizing: border-box;
+  border: 1px solid var(--rule-strong); border-radius: 0; background: var(--void); color: var(--ink);
+  font: 500 14px var(--font-mono);
+}
+.sv input:focus-visible, .sv select:focus-visible, .sp input:focus-visible, .sp button:focus-visible { outline: 2px solid var(--fc); outline-offset: 2px; }
+.sv-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding-top: 6px; }
+.sv-enc { display: grid; grid-template-columns: 8.5rem auto; align-items: center; gap: 12px; margin-right: auto; }
+.sv-enc select { width: auto; }
+.sv-body > * { margin: 0; }
+.sv-save, .sv-cancel {
+  min-height: 38px; padding: 0 18px; border: 1px solid var(--rule-strong); background: none; cursor: pointer;
+  color: var(--ink); font: 500 13px / 1 var(--font-mono); transition: color 150ms ease, border-color 150ms ease, background-color 150ms ease;
+}
+.sv-save { border-color: var(--fc); color: var(--fc); }
+.sv-save:hover, .sv-save:focus-visible { background: color-mix(in srgb, var(--fc) 10%, transparent); }
+.sv-cancel:hover, .sv-cancel:focus-visible { border-color: var(--ink-2); }
+.sv-result { margin: 0; padding: 12px 20px 14px; border-top: 1px solid var(--rule); color: var(--ink-2); font: 400 16px / 1.5 var(--font-body); }
+.sv-result b { color: var(--ink); font-weight: 600; }
+.sv-result[data-state="ok"] { border-left: 2px solid var(--fc); }
+.sv-result[data-state="ok"] b:first-of-type { color: var(--fc); }
+.sv-result[data-state="warn"] { border-left: 2px solid var(--ink-3); }
+
+/* The way to the scheduler: four stages with the screenshot's icons. */
+.sp-path { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; padding: 22px 12px 16px; list-style: none; }
+.sp-path li { position: relative; display: flex; justify-content: center; }
+.sp-path button {
+  display: grid; justify-items: center; gap: 10px; padding: 6px 4px; border: 0; background: none; cursor: pointer;
+  color: var(--ink-3); transition: color 200ms ease;
+}
+.sp-icon { width: 44px; height: 44px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.sp-icon .sp-fill { fill: currentColor; fill-opacity: 0.18; stroke: none; }
+.sp-label { font: 500 11px / 1.3 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; text-align: center; }
+.sp-path li[data-state="done"] button { color: var(--ink-2); }
+.sp-path li[data-state="on"] button { color: var(--fc); }
+.sp-path button:hover { color: var(--ink); }
+/* The arrow between two stages, drawn as the screenshot drew it. */
+.sp-arrow { position: absolute; top: 28px; right: -18%; width: 36%; height: 1px; background: var(--rule-strong); }
+.sp-arrow::after { content: ""; position: absolute; right: 0; top: -3px; border: 3.5px solid transparent; border-left: 6px solid var(--rule-strong); border-right: 0; }
+.sp-path li[data-state="done"] .sp-arrow { background: var(--fc); }
+.sp-path li[data-state="done"] .sp-arrow::after { border-left-color: var(--fc); }
+
+.sp-detail { display: grid; gap: 14px; padding: 14px 20px 18px; border-top: 1px solid var(--rule); }
+.sp-how { margin: 0; color: var(--ink-2); font: 400 16px / 1.5 var(--font-body); }
+.sp-how b { color: var(--ink); font-weight: 600; }
+.sp-no { margin-right: 10px; color: var(--fc); font: 500 11px var(--font-mono); letter-spacing: 0.08em; }
+.sp-next { justify-self: start; }
+
+.sp-wizard { display: grid; grid-template-columns: 12rem minmax(0, 1fr); border: 1px solid var(--rule); background: var(--void); }
+.sp-pages { margin: 0; padding: 8px 0; list-style: none; border-right: 1px solid var(--rule); }
+.sp-pages button {
+  width: 100%; padding: 8px 14px; border: 0; background: none; cursor: pointer; text-align: left;
+  color: var(--ink-3); font: 400 13px / 1.3 var(--font-mono);
+}
+.sp-pages button[data-done="true"] { color: var(--ink-2); }
+.sp-pages button[data-on="true"] { color: var(--ink); box-shadow: inset 2px 0 0 var(--fc); }
+.sp-page { display: grid; align-content: start; gap: 14px; padding: 16px 18px; }
+.sp-radios { display: grid; gap: 8px; }
+.sp-radios label { display: flex; align-items: center; gap: 10px; color: var(--ink); cursor: pointer; }
+.sp-radios input { width: 16px; min-height: 16px; height: 16px; padding: 0; accent-color: var(--fc); }
+.sp-file { display: grid; gap: 8px; }
+.sp-file code { color: var(--fc); font: 400 13px / 1.5 ui-monospace, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+.sp-summary { display: grid; gap: 6px; margin: 0; }
+.sp-summary div { display: grid; grid-template-columns: 5rem minmax(0, 1fr); }
+.sp-summary dt { color: var(--ink-3); font: 500 11px / 1.6 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.sp-summary dd { margin: 0; color: var(--ink); }
+.sp-nav { display: flex; align-items: center; gap: 10px; }
+.sp-done { color: var(--fc); font: 400 16px / 1.5 var(--font-body); }
+
+@media (prefers-reduced-motion: reduce) { .sp-path button, .sv-save, .sv-cancel { transition: none; } }
+
+@media (max-width: 47.5rem) {
+  .sv-row, .sv-enc { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .sv-enc { margin-right: 0; width: 100%; }
+  .sp-path { gap: 8px 0; padding: 16px 4px 12px; }
+  .sp-icon { width: 36px; height: 36px; }
+  .sp-label { font-size: 10px; letter-spacing: 0.04em; }
+  .sp-arrow { top: 22px; }
+  .sp-wizard { grid-template-columns: minmax(0, 1fr); }
+  .sp-pages { display: flex; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 0; }
+  .sp-pages button { white-space: nowrap; }
+  .sp-pages button[data-on="true"] { box-shadow: inset 0 -2px 0 var(--fc); }
+}

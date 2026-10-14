@@ -170,7 +170,9 @@ const withCodeFrames = (html: string): string =>
   html.replace(
     /<figure data-rehype-pretty-code-figure="">([\s\S]*?)<\/figure>/g,
     (whole, inner: string) => {
-      const language = inner.match(/data-language="([^"]+)"/)?.[1] || 'code'
+      const given = inner.match(/data-language="([^"]+)"/)?.[1] || 'code'
+      // The highlighter's short names, spelled out where they would puzzle.
+      const language = ({ bat: 'batch', py: 'python', js: 'javascript', ts: 'typescript', sh: 'shell' } as Record<string, string>)[given] || given
       const lines = (inner.match(/<span data-line/g) || []).length
       const long = lines > FOLD_AFTER
 
