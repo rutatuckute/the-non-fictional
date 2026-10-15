@@ -1,0 +1,159 @@
+/* Lithuania's timeline. The frame — the section pinned on the left, the
+   timeline held on the right, the steps between — is the one Take me home
+   and Sarajevo use, set out again so each story owns its own. The axis and
+   words in ink; the eras in two kinds — a Lithuanian state in the form's
+   colour, rule by others in grey. The page's tokens come from
+   blog-post.module.css. */
+.lt-story { --fc: var(--form); }
+.lt-story :where(p) { margin: 0; }
+
+/* ── the frame ── */
+.lt-story {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+  column-gap: 64px;
+  margin: 8px 0 40px;
+  border-top: 1px solid var(--rule);
+}
+.lt-left { min-width: 0; }
+.lt-story .lt-pinned { position: sticky; top: 0; z-index: 2; padding: 6vh 0 18px; background: var(--void); }
+.lt-story .lt-pinned h4 { margin: 0; scroll-margin-top: 24px; }
+.lt-story .lt-pinned p { margin: 12px 0 0; }
+.lt-story .lt-pinned::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 48px;
+  background: linear-gradient(to bottom, var(--void), transparent); pointer-events: none;
+}
+.lt-story .lt-sticky { position: sticky; top: 0; align-self: start; display: flex; flex-direction: column; height: 100vh; padding: 6vh 0; }
+.lt-story .lt-steps { padding: 4vh 0 0; }
+.lt-story .lt-step { min-height: 75vh; display: flex; flex-direction: column; justify-content: center; padding-top: 22vh; }
+/* The reader's turn holds the map in view a while before the section ends. */
+.lt-story .lt-step[data-last="true"] { position: relative; z-index: 3; min-height: 100vh; justify-content: flex-end; padding-bottom: 30vh; }
+
+.lt-chartHead { display: grid; gap: 4px; margin-bottom: 8px; }
+.lt-kicker { color: var(--ink-3); font: 500 11px / 1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.lt-chartTitle { color: var(--ink); font: 400 22px / 1.25 var(--font-title); letter-spacing: -0.006em; }
+
+/* The steps: quiet cards; the current one in ink, the others recede. */
+.lt-card-step {
+  width: 100%; padding: 18px 20px 20px;
+  border-left: 2px solid var(--fc); background: var(--raised);
+  color: var(--ink-2); font: 400 19px / 1.55 var(--font-body);
+  opacity: 0.45; transition: opacity 300ms ease;
+}
+.lt-step[data-on="true"] .lt-card-step { opacity: 1; }
+.lt-card-step p { margin: 0; }
+.lt-card-step p + p { margin-top: 0.6em; }
+.lt-card-step b, .lt-card-step strong { color: var(--ink); font-weight: 600; }
+.lt-card-step a { color: inherit; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--fc) 70%, transparent); text-underline-offset: 0.18em; }
+/* The step's label: its number, its kind, its name. */
+.lt-card-step .lt-lead { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; color: var(--ink); font: 500 11px / 1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.lt-no { color: var(--fc); }
+.lt-icon { flex: none; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.lt-lead .lt-icon { color: var(--fc); }
+
+
+/* The closing line: under the last step, coming in with it. */
+.lt-closing { margin-top: 28px; padding: 0; background: var(--void); opacity: 0; transform: translateY(12px); transition: opacity 500ms ease, transform 500ms ease; }
+.lt-closing[data-on="true"] { opacity: 1; transform: none; }
+.lt-story .lt-closing p { margin: 0; }
+
+/* ── the timeline ── */
+.lt-time { position: relative; flex: 1; min-height: 340px; overflow: hidden; }
+.lt-time svg { position: absolute; inset: 0; display: block; overflow: visible; }
+
+.lt-axis { stroke: var(--rule-strong); stroke-width: 1; }
+.lt-tick line { stroke: var(--rule-strong); }
+.lt-tick text { fill: var(--ink-3); font: 400 12px var(--font-mono); font-variant-numeric: tabular-nums; }
+
+.lt-era rect { fill: var(--rule); }
+.lt-era[data-state="true"] rect { fill: color-mix(in srgb, var(--fc) 26%, transparent); }
+.lt-era text { fill: var(--ink-3); font: 500 11px var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.lt-era[data-state="true"] text { fill: var(--ink); }
+
+.lt-event circle { fill: var(--fc); stroke: var(--void); stroke-width: 2; }
+.lt-event[data-on="true"] circle { fill: var(--ink); }
+.lt-stem { stroke: var(--ink-3); stroke-width: 1; }
+.lt-span { fill: var(--fc); opacity: 0.6; }
+
+/* An event: its photo, if it has one, its year, its name. */
+/* Cards sit on the ground colour, so a neighbour's stem passes behind them. */
+.lt-card { position: absolute; display: grid; gap: 4px; padding: 4px 6px 8px 8px; border-left: 1px solid var(--ink-3); background: var(--void); pointer-events: none; }
+.lt-card[data-on="true"] { border-left-color: var(--fc); }
+.lt-card img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; filter: grayscale(0.35); margin-bottom: 4px; }
+.lt-year { color: var(--fc); font: 600 12px / 1 var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+.lt-label { color: var(--ink); font: 400 15px / 1.25 var(--font-title); text-wrap: balance; }
+
+/* The reader's turn: the dates as the site sets its filters; the chosen one
+   told in a panel at the top of the timeline. */
+.lt-dates { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.lt-dates button {
+  min-height: 32px; padding: 0 10px; border: 1px solid var(--rule-strong); background: none; cursor: pointer;
+  color: var(--ink-2); font: 500 12px / 1 var(--font-mono); font-variant-numeric: tabular-nums;
+}
+.lt-dates button[aria-pressed="true"] { border-color: var(--fc); color: var(--fc); background: color-mix(in srgb, var(--fc) 10%, transparent); }
+.lt-dates button:focus-visible { outline: 2px solid var(--fc); outline-offset: 2px; }
+.lt-told {
+  position: absolute; left: 0; top: 0; display: flex; gap: 14px; align-items: flex-start; max-width: 420px; padding: 14px 16px;
+  border-left: 2px solid var(--fc); background: var(--raised); z-index: 2;
+}
+.lt-told img { flex: none; width: 56px; height: 56px; border-radius: 50%; object-fit: cover; filter: grayscale(0.35); }
+.lt-toldLabel { margin: 6px 0 4px; color: var(--ink); font: 400 18px / 1.25 var(--font-title); }
+.lt-note { color: var(--ink-2); font: 400 15px / 1.5 var(--font-body); }
+
+.lt-legend { position: absolute; right: 0; bottom: 4px; display: flex; gap: 16px; color: var(--ink-2); font: 500 11px var(--font-mono); letter-spacing: 0.04em; }
+.lt-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.lt-legend span::before { content: ""; width: 14px; height: 10px; background: var(--rule); }
+.lt-legend span[data-state="true"]::before { background: color-mix(in srgb, var(--fc) 26%, transparent); }
+
+/* The step's label: its number and its years. */
+.lt-stepLead { display: flex; gap: 10px; margin-bottom: 10px; color: var(--ink); font: 500 11px / 1.4 var(--font-mono); letter-spacing: 0.1em; }
+.lt-stepLead span { color: var(--fc); }
+.lt-stepCard p + p { margin-top: 0.6em; }
+
+
+/* A cut-out portrait (Mindaugas): no circle, no grey — the engraving and its
+   copper crown as they are, standing a little taller than the photos. */
+.lt-card img[data-cutout], .lt-told img[data-cutout] { border-radius: 0; filter: none; object-fit: contain; object-position: left bottom; }
+.lt-card img[data-cutout] { width: 96px; height: 108px; }
+.lt-told img[data-cutout] { width: 80px; height: 90px; }
+@media (max-width: 60rem) { .lt-card img[data-cutout] { width: 68px; height: 76px; } }
+
+/* A wide cut-out (the Council of 1918): the card's full width. */
+.lt-card img[data-cutout="wide"] { width: 100%; height: auto; aspect-ratio: auto; }
+.lt-told img[data-cutout="wide"] { width: 160px; height: auto; }
+@media (max-width: 60rem) { .lt-card img[data-cutout="wide"] { width: 100%; height: auto; } }
+
+/* A small cut-out (the tome, the chess pieces): an emblem, not a portrait. */
+.lt-card img[data-cutout="small"] { width: 44px; height: 48px; }
+.lt-told img[data-cutout="small"] { width: 48px; height: 52px; }
+@media (max-width: 60rem) { .lt-card img[data-cutout="small"] { width: 34px; height: 36px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .lt-card-step, .lt-closing { transition: none; }
+}
+
+@media (max-width: 60rem) {
+  .lt-story { display: flex; flex-direction: column; padding: 32px 0 16px; }
+  .lt-story .lt-left { display: contents; }
+  .lt-story .lt-pinned { order: 1; position: static; padding: 0 0 8px; }
+  .lt-story .lt-pinned::after { content: none; }
+  .lt-story .lt-sticky {
+    order: 2; position: sticky; top: 0; z-index: 0; align-self: stretch;
+    height: 100vh; margin-inline: calc(-1 * var(--page-margin)); padding: 2vh 0 29vh; background: var(--void);
+  }
+  .lt-story .lt-chartHead { padding-inline: var(--page-margin); margin-bottom: 4px; }
+  .lt-chartTitle { font-size: 17px; }
+  .lt-story .lt-steps { order: 3; position: relative; z-index: 1; margin-top: -30vh; padding: 0 0 6vh; pointer-events: none; }
+  .lt-story .lt-step { min-height: 125vh; display: flex; align-items: flex-end; justify-content: flex-end; padding-top: 0; }
+  .lt-story .lt-step[data-last="true"] { min-height: 120vh; padding-bottom: 10vh; }
+  .lt-story .lt-card-step { pointer-events: auto; opacity: 1; padding: 14px 16px 16px; font-size: 16px; line-height: 1.5; }
+  .lt-story .lt-step:not([data-on="true"]) .lt-card-step { color: var(--ink-3); }
+  .lt-told { left: var(--page-margin); right: var(--page-margin); max-width: none; }
+  .lt-legend { left: var(--page-margin); right: auto; }
+  .lt-card img { width: 36px; height: 36px; }
+  .lt-label { font-size: 13px; }
+}
+
+/* The step's label keeps its space from the text under it. */
+.lt-card-step .lt-stepLead { margin-bottom: 10px; }
