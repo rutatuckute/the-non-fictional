@@ -8,6 +8,7 @@ import * as migration_20261012_194707_anti_library from './20261012_194707_anti_
 import * as migration_20261013_131436_article_library from './20261013_131436_article_library';
 import * as migration_20261014_160138_take_me_home_story from './20261014_160138_take_me_home_story';
 import * as migration_20261015_122117_sarajevo_walk from './20261015_122117_sarajevo_walk';
+import * as migration_20261015_212733_lithuania_timeline from './20261015_212733_lithuania_timeline';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20261015_122117_sarajevo_walk.up,
     down: migration_20261015_122117_sarajevo_walk.down,
-    name: '20261015_122117_sarajevo_walk'
+    name: '20261015_122117_sarajevo_walk',
+  },
+  {
+    up: migration_20261015_212733_lithuania_timeline.up,
+    down: migration_20261015_212733_lithuania_timeline.down,
+    name: '20261015_212733_lithuania_timeline'
   },
 ];

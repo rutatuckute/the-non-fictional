@@ -9,6 +9,7 @@ import styles from "../../styles/blog-post.module.css"
 const STORIES = {
   "take-me-home-prices": dynamic(() => import("./take-me-home/PriceStory")),
   "sarajevo-walk": dynamic(() => import("./sarajevo/SarajevoWalk")),
+  "lithuania-timeline": dynamic(() => import("./lithuania/LithuaniaTimeline")),
 }
 
 const FIGURES = {
