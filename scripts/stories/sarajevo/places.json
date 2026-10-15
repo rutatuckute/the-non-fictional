@@ -1,0 +1,182 @@
+[
+ {
+  "key": "markale",
+  "name": "Markale",
+  "kind": "shopping",
+  "lat": 43.859016,
+  "lon": 18.4233479,
+  "osm": "Gradska tržnica Markale, 7, Ferhadija, Džidžikovac, Sarajevo, Mjesna zajednica Trg oslobođ"
+ },
+ {
+  "key": "eternal-flame",
+  "name": "Eternal Flame",
+  "kind": "sight",
+  "lat": 43.8588071,
+  "lon": 18.4218192,
+  "osm": "Vječna vatra, Ferhadija, Džidžikovac, Sarajevo, Mjesna zajednica Trg oslobođenja-Centar, O"
+ },
+ {
+  "key": "papagajka",
+  "name": "Papagajka",
+  "kind": "sight",
+  "lat": 43.8565174,
+  "lon": 18.4257031,
+  "osm": "Papagajka, Hamdije Kreševljakovića, MZ \"Mjedenica\", Sarajevo, Općina Stari Grad, Grad Sara"
+ },
+ {
+  "key": "inat-kuca",
+  "name": "Inat Kuća",
+  "kind": "sight",
+  "lat": 43.858557,
+  "lon": 18.4342508,
+  "osm": "Inat kuća, 1, Veliki Alifakovac, Babića bašča, Sarajevo, MZ \"Babića bašča\", Općina Stari G"
+ },
+ {
+  "key": "assassination",
+  "name": "Assassination of Archduke Franz Ferdinand",
+  "kind": "sight",
+  "lat": 43.857917,
+  "lon": 18.42875,
+  "osm": "Corner by the Latin Bridge — coordinates as given in the text (43°51′28.5″N, 18°25′43.5″E)",
+  "approx": false
+ },
+ {
+  "key": "museum-genocide",
+  "name": "Museum of Crimes Against Humanity & Genocide",
+  "kind": "sight",
+  "lat": 43.8589702,
+  "lon": 18.4263536,
+  "osm": "Museum of Crimes against Humanity and Genocide 1992-1995, Saliha Hadžihusejnovića Muvekita",
+  "approx": false
+ },
+ {
+  "key": "central-bank",
+  "name": "Central Bank",
+  "kind": "sight",
+  "lat": 43.8590319,
+  "lon": 18.4200279,
+  "osm": "Centralna banka Bosne i Hercegovine, 25, Maršala Tita, Džidžikovac, Sarajevo, Mjesna zajed"
+ },
+ {
+  "key": "sniper-alley",
+  "name": "Sniper Alley",
+  "kind": "sight",
+  "lat": 43.8549007,
+  "lon": 18.3949664,
+  "osm": "Zmaja od Bosne, Socijalno, Sarajevo, Željeznička, Općina Novo Sarajevo, Grad Sarajevo, Kan"
+ },
+ {
+  "key": "city-hall",
+  "name": "Sarajevo City Hall & Library",
+  "kind": "sight",
+  "lat": 43.8591665,
+  "lon": 18.4333468,
+  "osm": "Vijećnica, 1, Brodac, MZ \"Baščaršija\", Sarajevo, Općina Stari Grad, Grad Sarajevo, Kanton "
+ },
+ {
+  "key": "bobsled",
+  "name": "Sarajevo Abandoned Bobsled Track",
+  "kind": "sight",
+  "lat": 43.8405518,
+  "lon": 18.4431979,
+  "osm": "Old Bobsleigh track, MZ \"Širokača\", Sarajevo, Boguševac, Općina Stari Grad, Grad Sarajevo,"
+ },
+ {
+  "key": "zlatna-ribica",
+  "name": "Zlatna Ribica",
+  "kind": "bar",
+  "lat": 43.8592816,
+  "lon": 18.4218215,
+  "osm": "Goldfish - Zlatna ribica, 5, Kaptol, Džidžikovac, Mejtaš, Sarajevo, Mjesna zajednica Trg o"
+ },
+ {
+  "key": "blind-tiger",
+  "name": "Blind Tiger",
+  "kind": "bar",
+  "lat": 43.8590445,
+  "lon": 18.4204523,
+  "osm": "Blind Tiger, 2, Dalmatinska ulica, Džidžikovac, Mejtaš, Sarajevo, Općina Centar, Grad Sara"
+ },
+ {
+  "key": "brewery",
+  "name": "Sarajevo Brewery",
+  "kind": "bar",
+  "lat": 43.8568226,
+  "lon": 18.4320912,
+  "osm": "Sarajevska pivara, 15, Sarajevo, Bistrik, Općina Stari Grad, Grad Sarajevo, Kanton Sarajev"
+ },
+ {
+  "key": "sac",
+  "name": "Sač",
+  "kind": "food",
+  "lat": 43.858817,
+  "lon": 18.4312768,
+  "osm": "Sač, Bravadžiluk mali, Sarajevo, MZ \"Baščaršija\", Općina Stari Grad, Grad Sarajevo, Kanton"
+ },
+ {
+  "key": "petica",
+  "name": "Ćevabdžinica Petica Ferhatović",
+  "kind": "food",
+  "lat": 43.8590269,
+  "lon": 18.4321819,
+  "osm": "Ćevabdžinica Ferhatović - Petica, 21, Bravadžiluk, MZ \"Baščaršija\", Sarajevo, Baščaršija, "
+ },
+ {
+  "key": "cejf",
+  "name": "Ministry of Ćejf",
+  "kind": "tea",
+  "lat": 43.8603256,
+  "lon": 18.4322633,
+  "osm": "Ministry of Ćejf, Kovači, MZ \"Kovači\", Sarajevo, Kovači, Općina Stari Grad, Grad Sarajevo,"
+ },
+ {
+  "key": "dzirlo",
+  "name": "Teahouse Džirlo",
+  "kind": "tea",
+  "lat": 43.8601786,
+  "lon": 18.432098,
+  "osm": "Čajdžinica Džirlo, 6, Kovači, Sarajevo, MZ \"Kovači\", Općina Stari Grad, Grad Sarajevo, Kan"
+ },
+ {
+  "key": "divan-saraj",
+  "name": "Divan Saraj",
+  "kind": "tea",
+  "lat": 43.8598,
+  "lon": 18.4311,
+  "osm": "APPROXIMATE — not on OpenStreetMap; placed in Baščaršija as on the original map",
+  "approx": true
+ },
+ {
+  "key": "miris-dunja",
+  "name": "Miris Dunja",
+  "kind": "tea",
+  "lat": 43.8596,
+  "lon": 18.4325,
+  "osm": "APPROXIMATE — not on OpenStreetMap; placed near Kovači as on the original map",
+  "approx": true
+ },
+ {
+  "key": "baklava-ducan",
+  "name": "Baklava Dućan",
+  "kind": "sweets",
+  "lat": 43.8591656,
+  "lon": 18.4296486,
+  "osm": "Baklava dućan, 20, Čizmedžiluk, MZ \"Baščaršija\", Sarajevo, Općina Stari Grad, Grad Sarajev"
+ },
+ {
+  "key": "cream-shop",
+  "name": "Cream Shop",
+  "kind": "sweets",
+  "lat": 43.8591233,
+  "lon": 18.4307593,
+  "osm": "Cream Shop, Trgovke, MZ \"Baščaršija\", Sarajevo, Baščaršija, Općina Stari Grad, Grad Saraje"
+ },
+ {
+  "key": "kazandzijska",
+  "name": "Kazandžijske Radnje Huseinović",
+  "kind": "shopping",
+  "lat": 43.8592399,
+  "lon": 18.4314558,
+  "osm": "Kazandžiluk, MZ \"Baščaršija\", Sarajevo, Baščaršija, Općina Stari Grad, Grad Sarajevo, Kant"
+ }
+]

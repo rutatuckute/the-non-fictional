@@ -7,6 +7,7 @@ import * as migration_20261012_152408_covers_in_r2 from './20261012_152408_cover
 import * as migration_20261012_194707_anti_library from './20261012_194707_anti_library';
 import * as migration_20261013_131436_article_library from './20261013_131436_article_library';
 import * as migration_20261014_160138_take_me_home_story from './20261014_160138_take_me_home_story';
+import * as migration_20261015_122117_sarajevo_walk from './20261015_122117_sarajevo_walk';
 
 export const migrations = [
   {
@@ -52,6 +53,11 @@ export const migrations = [
   {
     up: migration_20261014_160138_take_me_home_story.up,
     down: migration_20261014_160138_take_me_home_story.down,
-    name: '20261014_160138_take_me_home_story'
+    name: '20261014_160138_take_me_home_story',
+  },
+  {
+    up: migration_20261015_122117_sarajevo_walk.up,
+    down: migration_20261015_122117_sarajevo_walk.down,
+    name: '20261015_122117_sarajevo_walk'
   },
 ];

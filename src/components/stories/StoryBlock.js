@@ -8,6 +8,7 @@ import styles from "../../styles/blog-post.module.css"
 // on the piece that uses it, so the other articles carry none of their code.
 const STORIES = {
   "take-me-home-prices": dynamic(() => import("./take-me-home/PriceStory")),
+  "sarajevo-walk": dynamic(() => import("./sarajevo/SarajevoWalk")),
 }
 
 const FIGURES = {
