@@ -1,0 +1,134 @@
+/* Sarajevo's walk. The frame — the section pinned on the left, the map held
+   on the right, the steps between — is Take me home's, set out again here so
+   each story owns its own. The city is drawn as the cover draws it: streets
+   as quiet lines, the Miljacka a shade apart; everything the walk adds is in
+   the form's colour. The page's tokens come from blog-post.module.css. */
+.sj-story { --fc: var(--form); }
+.sj-story :where(p) { margin: 0; }
+
+/* ── the frame ── */
+.sj-story {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+  column-gap: 64px;
+  margin: 8px 0 40px;
+  border-top: 1px solid var(--rule);
+}
+.sj-left { min-width: 0; }
+.sj-story .sj-pinned { position: sticky; top: 0; z-index: 2; padding: 6vh 0 18px; background: var(--void); }
+.sj-story .sj-pinned h4 { margin: 0; scroll-margin-top: 24px; }
+.sj-story .sj-pinned p { margin: 12px 0 0; }
+.sj-story .sj-pinned::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 48px;
+  background: linear-gradient(to bottom, var(--void), transparent); pointer-events: none;
+}
+.sj-story .sj-sticky { position: sticky; top: 0; align-self: start; display: flex; flex-direction: column; height: 100vh; padding: 6vh 0; }
+.sj-story .sj-steps { padding: 4vh 0 0; }
+.sj-story .sj-step { min-height: 75vh; display: flex; flex-direction: column; justify-content: center; padding-top: 22vh; }
+/* The reader's turn holds the map in view a while before the section ends. */
+.sj-story .sj-step[data-last="true"] { position: relative; z-index: 3; min-height: 100vh; justify-content: flex-end; padding-bottom: 42vh; }
+
+.sj-chartHead { display: grid; gap: 4px; margin-bottom: 8px; }
+.sj-kicker { color: var(--ink-3); font: 500 11px / 1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.sj-chartTitle { color: var(--ink); font: 400 22px / 1.25 var(--font-title); letter-spacing: -0.006em; }
+
+/* The steps: quiet cards; the current one in ink, the others recede. */
+.sj-card {
+  width: 100%; padding: 18px 20px 20px;
+  border-left: 2px solid var(--fc); background: var(--raised);
+  color: var(--ink-2); font: 400 19px / 1.55 var(--font-body);
+  opacity: 0.45; transition: opacity 300ms ease;
+}
+.sj-step[data-on="true"] .sj-card { opacity: 1; }
+.sj-card p { margin: 0; }
+.sj-card p + p { margin-top: 0.6em; }
+.sj-card b, .sj-card strong { color: var(--ink); font-weight: 600; }
+.sj-card a { color: inherit; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--fc) 70%, transparent); text-underline-offset: 0.18em; }
+/* The step's label: its number, its kind, its name. */
+.sj-card .sj-lead { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; color: var(--ink); font: 500 11px / 1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.sj-no { color: var(--fc); }
+.sj-icon { flex: none; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.sj-lead .sj-icon { color: var(--fc); }
+
+/* ── the map ── */
+.sj-map { position: relative; flex: 1; min-height: 320px; overflow: hidden; background: var(--void); }
+.sj-map svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.sj-world { transform-box: view-box; transform-origin: 0 0; transition: transform 1100ms cubic-bezier(0.45, 0, 0.2, 1); }
+.sj-world path { fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+.sj-minor { stroke: #2a2b2b; stroke-width: 0.6; }
+.sj-mid { stroke: #3b3d3d; stroke-width: 0.9; }
+.sj-major { stroke: #55585a; stroke-width: 1.4; }
+.sj-river { stroke: #3f5a63; stroke-width: 4; }
+/* The walk scales its own width, so it can be drawn on by its length. */
+.sj-world path.sj-leg { vector-effect: none; stroke: var(--fc); stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1200ms ease 400ms, opacity 400ms ease; }
+.sj-world path.sj-leg[data-on="true"] { stroke-dashoffset: 0; }
+.sj-world path.sj-leg[data-faint="true"] { opacity: 0.35; transition-delay: 0ms; }
+
+.sj-place .sj-dot { fill: var(--fc); stroke: var(--void); }
+.sj-place[data-walk="false"] .sj-dot { fill: var(--ink-2); }
+.sj-place[data-on="true"] .sj-dot { fill: var(--fc); }
+.sj-place .sj-ring { fill: none; stroke: var(--fc); }
+.sj-place .sj-hit { fill: transparent; }
+.sj-place[data-tappable="true"] { cursor: pointer; }
+.sj-label { fill: var(--ink-2); font-family: var(--font-mono); font-weight: 500; letter-spacing: 0.02em; paint-order: stroke; stroke: var(--void); stroke-linejoin: round; }
+.sj-label[data-on="true"] { fill: var(--ink); font-weight: 600; }
+
+/* Under the map: where the walk is, or what was tapped, and the way out to
+   Google Maps. */
+.sj-meta {
+  position: absolute; left: 0; bottom: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px;
+  max-width: calc(100% - 180px); padding: 10px 14px; background: color-mix(in srgb, var(--void) 88%, transparent);
+  color: var(--ink-2); font: 500 12px / 1.4 var(--font-mono); letter-spacing: 0.04em;
+}
+.sj-meta > span:first-child { color: var(--fc); }
+.sj-chosen .sj-icon { width: 18px; height: 18px; color: var(--fc); }
+.sj-meta .sj-chosenName { color: var(--ink); font: 400 17px / 1.2 var(--font-title); letter-spacing: 0; }
+.sj-maps { color: var(--ink); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--fc) 70%, transparent); text-underline-offset: 0.2em; }
+.sj-maps:hover, .sj-maps:focus-visible { color: var(--fc); text-decoration-color: var(--fc); }
+.sj-whole {
+  position: absolute; top: 12px; right: 12px; min-height: 32px; padding: 0 12px;
+  border: 1px solid var(--rule-strong); background: color-mix(in srgb, var(--void) 88%, transparent); cursor: pointer;
+  color: var(--ink); font: 500 12px var(--font-mono);
+}
+.sj-whole:hover, .sj-whole:focus-visible { border-color: var(--fc); color: var(--fc); }
+.sj-credit { position: absolute; right: 8px; bottom: 6px; color: var(--ink-3); font: 400 10px var(--font-mono); }
+
+/* The reader's turn: the kinds, as the site sets its filters. */
+.sj-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.sj-filters button {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 10px;
+  border: 1px solid var(--rule-strong); background: none; cursor: pointer;
+  color: var(--ink-2); font: 500 12px / 1 var(--font-mono);
+}
+.sj-filters button[aria-pressed="true"] { border-color: var(--fc); color: var(--fc); background: color-mix(in srgb, var(--fc) 10%, transparent); }
+.sj-filters .sj-icon { width: 14px; height: 14px; }
+.sj-story :focus-visible { outline: 2px solid var(--fc); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sj-world, .sj-world path.sj-leg, .sj-card { transition: none; }
+}
+
+/* One column: the heading, then the map held edge to edge over the top three
+   quarters of the screen, with the steps passing through the bottom quarter.
+   These steps are long, so they stay solid and are spaced to clear the map
+   before the next arrives. */
+@media (max-width: 60rem) {
+  .sj-story { display: flex; flex-direction: column; padding: 32px 0 16px; }
+  .sj-story .sj-left { display: contents; }
+  .sj-story .sj-pinned { order: 1; position: static; padding: 0 0 8px; }
+  .sj-story .sj-pinned::after { content: none; }
+  .sj-story .sj-sticky {
+    order: 2; position: sticky; top: 0; z-index: 0; align-self: stretch;
+    height: 100vh; margin-inline: calc(-1 * var(--page-margin)); padding: 2vh 0 29vh; background: var(--void);
+  }
+  .sj-story .sj-chartHead { padding-inline: var(--page-margin); margin-bottom: 4px; }
+  .sj-chartTitle { font-size: 17px; }
+  .sj-story .sj-steps { order: 3; position: relative; z-index: 1; margin-top: -30vh; padding: 0 0 6vh; pointer-events: none; }
+  .sj-story .sj-step { min-height: 165vh; display: flex; align-items: flex-end; justify-content: flex-end; padding-top: 0; }
+  .sj-story .sj-step[data-last="true"] { min-height: 165vh; padding-bottom: 10vh; }
+  .sj-story .sj-card { pointer-events: auto; opacity: 1; padding: 14px 16px 16px; font-size: 16px; line-height: 1.5; }
+  .sj-story .sj-step:not([data-on="true"]) .sj-card { color: var(--ink-3); }
+  .sj-meta { max-width: 100%; right: 0; bottom: 18px; }
+  .sj-credit { bottom: 2px; }
+}
