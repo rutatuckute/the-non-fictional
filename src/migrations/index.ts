@@ -10,6 +10,7 @@ import * as migration_20261014_160138_take_me_home_story from './20261014_160138
 import * as migration_20261015_122117_sarajevo_walk from './20261015_122117_sarajevo_walk';
 import * as migration_20261015_212733_lithuania_timeline from './20261015_212733_lithuania_timeline';
 import * as migration_20261016_113743_ukraine_lavrov_excerpts from './20261016_113743_ukraine_lavrov_excerpts';
+import * as migration_20261016_121942_general_theory_no_image from './20261016_121942_general_theory_no_image';
 
 export const migrations = [
   {
@@ -70,6 +71,11 @@ export const migrations = [
   {
     up: migration_20261016_113743_ukraine_lavrov_excerpts.up,
     down: migration_20261016_113743_ukraine_lavrov_excerpts.down,
-    name: '20261016_113743_ukraine_lavrov_excerpts'
+    name: '20261016_113743_ukraine_lavrov_excerpts',
+  },
+  {
+    up: migration_20261016_121942_general_theory_no_image.up,
+    down: migration_20261016_121942_general_theory_no_image.down,
+    name: '20261016_121942_general_theory_no_image'
   },
 ];
