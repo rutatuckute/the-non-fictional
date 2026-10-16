@@ -1,0 +1,84 @@
+/* Random Parisian rides: the station map and the Locate Control close-up.
+   The city quiet — the arrondissements a shade off the ground, the rivers a
+   soft line — and the stations in the form's colour; every word in ink. The
+   page's tokens come from blog-post.module.css. */
+.pr { --fc: var(--form); margin: 2.2em 0 2.6em; padding: 0; }
+.pr :where(p, dl, dd) { margin: 0; padding: 0; }
+.wide { margin-inline: -48px; }
+
+.head { display: grid; gap: 4px; margin-bottom: 14px; }
+.kicker { color: var(--ink-3); font: 500 11px / 1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.title { color: var(--ink); font: 400 22px / 1.25 var(--font-title); letter-spacing: -0.006em; }
+.totals { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 4px; color: var(--ink-2); font: 400 13px / 1.4 var(--font-mono); }
+.totals b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* What the dots count, as the site sets its filters. */
+.metrics { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 10px; }
+.metricsLabel { margin-right: 6px; color: var(--ink-3); font: 500 11px var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.metrics button {
+  min-height: 32px; padding: 0 10px; border: 1px solid var(--rule-strong); background: none; cursor: pointer;
+  color: var(--ink-2); font: 500 12px / 1 var(--font-mono);
+}
+.metrics button[aria-pressed="true"] { border-color: var(--fc); color: var(--fc); background: color-mix(in srgb, var(--fc) 10%, transparent); }
+.metrics button:focus-visible { outline: 2px solid var(--fc); outline-offset: 2px; }
+
+.mapWrap, .nearWrap { position: relative; }
+.map, .near { display: block; width: 100%; height: auto; touch-action: manipulation; }
+
+.arr { fill: color-mix(in srgb, var(--ink) 4%, transparent); stroke: var(--rule-strong); stroke-width: 0.8; }
+.river { fill: none; stroke: color-mix(in srgb, var(--ink) 22%, transparent); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+
+.dots circle { fill: color-mix(in srgb, var(--fc) 55%, transparent); stroke: var(--void); stroke-width: 0.5; transition: r 300ms ease; }
+.dots .empty { fill: none; stroke: var(--ink-3); stroke-width: 0.8; }
+.hit { fill: none; stroke: var(--ink); stroke-width: 1.5; pointer-events: none; }
+
+.legend { position: absolute; left: 0; bottom: 4px; display: flex; align-items: center; gap: 12px; color: var(--ink-2); font: 500 11px var(--font-mono); }
+.legend span { display: inline-flex; align-items: center; gap: 4px; }
+.legend circle { fill: color-mix(in srgb, var(--fc) 55%, transparent); }
+.legend .legendEmpty circle { fill: none; stroke: var(--ink-3); }
+
+/* The popup, as the site sets a note: raised, a rule in the form's colour. */
+.tip {
+  position: absolute; z-index: 2; min-width: 180px; max-width: 240px; padding: 10px 12px 12px; pointer-events: none;
+  background: var(--raised); border-left: 2px solid var(--fc); box-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+  transform: translate(14px, -50%);
+}
+.tip[data-side="left"] { transform: translate(calc(-100% - 14px), -50%); }
+.popName { color: var(--ink); font: 400 15px / 1.3 var(--font-title); }
+.popRows { display: grid; gap: 3px; margin-top: 8px; }
+.popRows div { display: flex; justify-content: space-between; gap: 16px; color: var(--ink-2); font: 400 12px / 1.4 var(--font-mono); }
+.popRows dd { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.source { margin-top: 10px; color: var(--ink-3); font: 400 12px / 1.5 var(--font-mono); }
+
+/* The close-up: streets in hairlines, the device's circle in the form's
+   colour, the stations as dots. */
+.nearWrap { border: 1px solid var(--rule); background: color-mix(in srgb, var(--ink) 2%, transparent); overflow: hidden; }
+.street { fill: none; stroke: var(--rule-strong); stroke-width: 1.4; stroke-linecap: round; }
+.street[data-major="true"] { stroke: color-mix(in srgb, var(--ink) 30%, transparent); stroke-width: 3; }
+.streetName { fill: var(--ink-3); font: 500 9px var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.accuracy { fill: color-mix(in srgb, var(--fc) 10%, transparent); stroke: color-mix(in srgb, var(--fc) 40%, transparent); stroke-width: 1; }
+.you { fill: var(--ink); stroke: var(--void); stroke-width: 2.5; }
+.youLabel {
+  position: absolute; transform: translate(calc(-100% - 12px), -50%); pointer-events: none; white-space: nowrap;
+  color: var(--ink); font: 500 10px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase;
+}
+.station { cursor: pointer; outline: none; }
+.station circle:not(.stationHit) { fill: color-mix(in srgb, var(--fc) 70%, transparent); stroke: var(--void); stroke-width: 1.5; }
+.station[data-on="true"] circle:not(.stationHit) { fill: var(--fc); stroke: var(--ink); }
+.station:focus-visible circle:not(.stationHit) { stroke: var(--ink); stroke-width: 2.5; }
+.stationHit { fill: transparent; }
+.card { pointer-events: auto; }
+
+@media (prefers-reduced-motion: reduce) { .dots circle { transition: none; } }
+
+/* Into the margins only while there are margins beside the column. */
+@media (max-width: 75rem) { .wide { margin-inline: 0; } }
+@media (max-width: 47.5rem) {
+  .title { font-size: 19px; }
+  .legend { position: static; margin-top: 8px; }
+  .tip { min-width: 160px; }
+  /* The close-up's card under the map, not over it. */
+  .nearWrap .card { position: static; max-width: none; transform: none; border-left: 0; border-top: 2px solid var(--fc); box-shadow: none; }
+  .youLabel { display: none; }
+}
