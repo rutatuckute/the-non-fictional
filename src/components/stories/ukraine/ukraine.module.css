@@ -1,0 +1,67 @@
+/* War in Ukraine's Lavrov excerpts. Set as the article sets its pull quotes —
+   italic serif, words in ink — with the marked phrases underlined in the
+   form's colour and the tactics as small capitals labels, as the site labels
+   everything. The page's tokens come from blog-post.module.css. */
+.ua { --fc: var(--form); margin: 2.4em 0 2.6em; padding: 0; }
+.ua :where(p, blockquote) { margin: 0; padding: 0; }
+
+/* The filters, as the site sets them, as wide as the grid. */
+.filters { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 -48px 20px; }
+.filtersLabel { margin-right: 6px; color: var(--ink-3); font: 500 11px var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.filters button {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 32px; padding: 0 10px;
+  border: 1px solid var(--rule-strong); background: none; cursor: pointer;
+  color: var(--ink-2); font: 500 12px / 1 var(--font-mono);
+}
+.filters button[aria-pressed="true"] { border-color: var(--fc); color: var(--fc); background: color-mix(in srgb, var(--fc) 10%, transparent); }
+.filters button:focus-visible { outline: 2px solid var(--fc); outline-offset: 2px; }
+
+/* The two-by-two, across the column and into its margins. */
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin-inline: -48px; background: var(--rule); border: 1px solid var(--rule); }
+.cell { padding: 18px 20px 22px; border: 0; background: var(--void); text-align: left; }
+.cell > * { transition: opacity 250ms ease; }
+.cell[data-faint="true"] > * { opacity: 0.35; }
+.tags { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 12px; }
+.tags span { display: inline-flex; align-items: center; gap: 7px; color: var(--fc); font: 500 10px / 1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; transition: opacity 250ms ease; }
+.tags span[data-dim="true"] { opacity: 0.4; }
+.words { color: var(--ink); font: italic 400 17px / 1.55 var(--font-body); text-wrap: pretty; }
+
+/* A marked phrase: an underline in the form's colour, the words in ink. */
+.mark {
+  background: none; color: inherit; font: inherit; cursor: pointer;
+  text-decoration: underline 2px solid var(--fc); text-underline-offset: 0.2em;
+  transition: opacity 250ms ease, text-decoration-color 250ms ease;
+}
+.mark:focus-visible { outline: 2px solid var(--fc); outline-offset: 2px; }
+.mark[data-dim="true"] { text-decoration-color: transparent; opacity: 0.45; }
+.mark[data-tactic="newspeak"] { text-decoration-style: dotted; text-decoration-thickness: 3px; }
+.mark[data-tactic="misleading"] { text-decoration-style: dashed; }
+.mark[data-tactic="whataboutism"] { text-decoration-style: wavy; text-decoration-thickness: 1.5px; text-underline-offset: 0.24em; }
+
+.pop {
+  display: inline-block; margin: 0 4px; padding: 2px 6px; vertical-align: 0.15em;
+  border: 1px solid var(--fc); color: var(--fc); font: normal 500 10px / 1.3 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+/* Each label carries a sample of its tactic's line. */
+.tags span::before, .filters button[data-tactic]::before { content: ""; flex: none; width: 18px; height: 6px; border-bottom: 2px solid var(--fc); }
+.tags span[data-tactic="newspeak"]::before, .filters button[data-tactic="newspeak"]::before { border-bottom: 3px dotted var(--fc); }
+.tags span[data-tactic="misleading"]::before, .filters button[data-tactic="misleading"]::before { border-bottom-style: dashed; }
+.tags span[data-tactic="whataboutism"]::before, .filters button[data-tactic="whataboutism"]::before {
+  border: 0; background: var(--fc);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Cpath d='M0 4 Q1.5 1 3 4 T6 4' fill='none' stroke='black' stroke-width='1.4'/%3E%3C/svg%3E") repeat-x left bottom / 6px 6px;
+}
+
+.credit { margin-top: 20px; color: var(--ink-3); font: 500 11px / 1.5 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.credit a { color: var(--ink-2); text-decoration: none; }
+.credit a:hover, .credit a:focus-visible { color: var(--fc); }
+
+@media (prefers-reduced-motion: reduce) { .cell > *, .tags span, .mark { transition: none; } }
+
+/* Into the margins only while there are margins beside the column. */
+@media (max-width: 75rem) {
+  .filters, .grid { margin-inline: 0; }
+}
+@media (max-width: 47.5rem) {
+  .grid { grid-template-columns: minmax(0, 1fr); }
+}
