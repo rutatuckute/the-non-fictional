@@ -1,0 +1,56 @@
+/* Elections in Belarus: the key players as a ballot. A raised sheet, ruled
+   rows, a box per name; words in ink, labels in small capitals, the form's
+   colour only for the one left standing. The page's tokens come from
+   blog-post.module.css. */
+.by { --fc: var(--form); margin: 2.2em 0 2.6em; padding: 0; }
+.by :where(p, ul, ol, li) { margin: 0; padding: 0; }
+
+.ballot { padding: 18px 22px 8px; background: var(--raised); border-top: 2px solid var(--fc); }
+.ballotHead {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule-strong);
+  color: var(--ink-3); font: 500 11px / 1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+.rows { list-style: none; }
+.row {
+  display: grid; grid-template-columns: 30px 96px minmax(0, 1fr);
+  grid-template-areas: "box face who" "box face fate"; grid-template-rows: auto 1fr;
+  column-gap: 18px; padding: 18px 0;
+}
+.row + .row { border-top: 1px solid var(--rule); }
+
+.box { grid-area: box; width: 30px; height: 30px; display: grid; place-items: center; border: 1.5px solid var(--ink-3); }
+.row[data-standing="true"] .box { border-color: var(--fc); }
+.box .icon { width: 22px; height: 22px; margin: 0; }
+
+.portrait { grid-area: face; width: 96px; height: 112px; object-fit: contain; object-position: center bottom; }
+/* The struck-off in a lower voice; the one left standing as she is. */
+.row[data-standing="false"] .portrait { opacity: 0.6; filter: contrast(0.9); }
+
+.who { grid-area: who; }
+.name { color: var(--ink); font: 400 19px / 1.25 var(--font-title); letter-spacing: -0.004em; }
+.name del { color: var(--ink-2); text-decoration: line-through 1.5px var(--ink-3); }
+.row[data-standing="true"] .name { color: var(--fc); }
+.role { margin-top: 2px; color: var(--ink-3); font: 400 13px / 1.4 var(--font-body); }
+
+.fate { grid-area: fate; align-self: start; display: grid; gap: 6px; margin-top: 10px; list-style: none; }
+.fate li {
+  display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: start; border: 0;
+  color: var(--ink-2); font: 400 15px / 1.45 var(--font-body);
+}
+.fate li::before { content: none; }
+.fate li[data-kind="registered"] { color: var(--ink); }
+
+.icon { fill: none; stroke: var(--ink-3); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; margin-top: 2px; }
+.icon[data-kind="registered"] { stroke: var(--fc); stroke-width: 2.2; }
+
+/* On a phone: box, engraving and name in a row, what happened beneath at
+   full width. */
+@media (max-width: 47.5rem) {
+  .ballot { padding-inline: 16px; }
+  .row { grid-template-columns: 30px 68px minmax(0, 1fr); grid-template-areas: "box face who" "fate fate fate"; grid-template-rows: auto auto; column-gap: 14px; }
+  .portrait { width: 68px; height: 80px; }
+  .who { align-self: center; }
+  .fate { margin-top: 14px; }
+}

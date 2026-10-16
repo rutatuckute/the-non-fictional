@@ -16,6 +16,7 @@ const FIGURES = {
   "take-me-home-save-dialog": dynamic(() => import("./take-me-home/SaveDialog")),
   "take-me-home-scheduler-path": dynamic(() => import("./take-me-home/SchedulerPath")),
   "ukraine-lavrov-excerpts": dynamic(() => import("./ukraine/LavrovExcerpts")),
+  "belarus-key-players": dynamic(() => import("./belarus/KeyPlayersBallot")),
 }
 
 // A name with no component behind it: the words still show, as prose.
