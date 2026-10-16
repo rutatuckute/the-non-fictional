@@ -12,6 +12,7 @@ import * as migration_20261015_212733_lithuania_timeline from './20261015_212733
 import * as migration_20261016_113743_ukraine_lavrov_excerpts from './20261016_113743_ukraine_lavrov_excerpts';
 import * as migration_20261016_121942_general_theory_no_image from './20261016_121942_general_theory_no_image';
 import * as migration_20261016_125924_belarus_key_players from './20261016_125924_belarus_key_players';
+import * as migration_20261016_142231_paris_station_map from './20261016_142231_paris_station_map';
 
 export const migrations = [
   {
@@ -82,6 +83,11 @@ export const migrations = [
   {
     up: migration_20261016_125924_belarus_key_players.up,
     down: migration_20261016_125924_belarus_key_players.down,
-    name: '20261016_125924_belarus_key_players'
+    name: '20261016_125924_belarus_key_players',
+  },
+  {
+    up: migration_20261016_142231_paris_station_map.up,
+    down: migration_20261016_142231_paris_station_map.down,
+    name: '20261016_142231_paris_station_map'
   },
 ];
