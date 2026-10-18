@@ -2,8 +2,8 @@
   "name": "the-non-fictional",
   "private": true,
   "version": "2.0.0",
-  "description": "Personal essays, reflections, and photography by R\u016bta Tu\u010dkut\u0117",
-  "author": "R\u016bta Tu\u010dkut\u0117",
+  "description": "Personal essays, reflections, and photography by Rūta Tučkutė",
+  "author": "Rūta Tučkutė",
   "license": "0BSD",
   "type": "module",
   "engines": {
@@ -54,6 +54,7 @@
     "sharp": "^0.35.4",
     "shiki": "^1.29.2",
     "tailwind-merge": "^2.6.0",
+    "three": "^0.186.1",
     "unified": "^11.0.5"
   },
   "devDependencies": {
