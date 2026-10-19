@@ -573,6 +573,11 @@
     top: calc(63svh + 4px);
   }
 
+  /* Only 05 can be moved on a phone; elsewhere the room is just watched. */
+  .stage:not([data-scene="4"]) .pad {
+    display: none;
+  }
+
   /* The whole introduction fits the first screen, with the pile above
      it; the text carries its own ground up over the prints as it scrolls. */
   .hero {
