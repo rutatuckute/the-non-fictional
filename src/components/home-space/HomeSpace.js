@@ -158,28 +158,30 @@ const HomeSpace = ({ space }) => {
 
         <main className={styles.text} data-hs="text">
           <section className={styles.hero} aria-labelledby="hero-title">
-            <p className={styles.kicker}>
-              Writings <span aria-hidden="true">&middot;</span> Photography
-            </p>
-            <h1 className={styles.title} id="hero-title">
-              <span>I need</span> <span>structure</span>{" "}
-              <span>
-                to <em>think</em>.
-              </span>
-            </h1>
-            <p className={styles.intro}>
-              So I&apos;m building one: <b>essays</b> about how things work,
-              (un)structured <b>reflections</b>, the stories <b>data</b> can
-              tell, and <b>photographs</b> on film. I never felt like writing
-              anything fictional - only questioning, starting with myself.
-              <br />
-              <Link className={styles.argue} href="/about/">
-                Argue with me.
-              </Link>
-            </p>
-            <p className={styles.cue} data-hs="cue" aria-hidden="true">
-              <span>↓</span>
-            </p>
+            <div className={styles.heroText}>
+              <p className={styles.kicker}>
+                Writings <span aria-hidden="true">&middot;</span> Photography
+              </p>
+              <h1 className={styles.title} id="hero-title">
+                <span>I need</span> <span>structure</span>{" "}
+                <span>
+                  to <em>think</em>.
+                </span>
+              </h1>
+              <p className={styles.intro}>
+                So I&apos;m building one: <b>essays</b> about how things work,
+                (un)structured <b>reflections</b>, the stories <b>data</b> can
+                tell, and <b>photographs</b> on film. I never felt like writing
+                anything fictional - only questioning, starting with myself.
+                <br />
+                <Link className={styles.argue} href="/about/">
+                  Argue with me.
+                </Link>
+              </p>
+              <p className={styles.cue} data-hs="cue" aria-hidden="true">
+                <span>↓</span>
+              </p>
+            </div>
           </section>
 
           <section aria-label="Archive structure">

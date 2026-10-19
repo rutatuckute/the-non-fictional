@@ -141,11 +141,11 @@ function pile(g, hero) {
   const { r, S, W, H, narrow } = g
   const rnd = seeded(hero ? 7 : 19)
   const big = hero && settings.pile === "prints"
-  const box = hero ? (narrow ? { x0: -30, x1: W + 30, y0: 52, y1: H * 0.66 } : { x0: g.inset + 360, x1: W + 70, y0: -30, y1: H + 20 }) : r
-  const covW = (hero ? 270 : 230) * S * (narrow ? (hero ? 1.6 : 1.25) : 1)
+  const box = hero ? (narrow ? { x0: -16, x1: W + 16, y0: 50, y1: H * 0.6 } : { x0: g.inset + 360, x1: W + 70, y0: -30, y1: H + 20 }) : r
+  const covW = (hero ? 270 : 230) * S * (narrow ? (hero ? 0.78 : 1.25) : 1)
   const items = [
     ...writings.map(w => ({ id: w.id, w: covW * (0.9 + rnd() * 0.25), weight: 3 })),
-    ...photographs.map(p => { const h = (big ? 82 + rnd() * 46 : 56 + rnd() * 34) * S * (narrow ? (hero ? 1.4 : 1.1) : 1); return { id: p.id, h, w: Math.min(h * p.ratio, h * 1.55) } }),
+    ...photographs.map(p => { const h = (big ? 82 + rnd() * 46 : 56 + rnd() * 34) * S * (narrow ? (hero ? 0.72 : 1.1) : 1); return { id: p.id, h, w: Math.min(h * p.ratio, h * 1.55) } }),
   ].map(it => ({ ...it, h: it.h || it.w / 1.5 }))
   const pos = place(items, box, rnd, big ? -6 : 8 * S)
   const out = {}
