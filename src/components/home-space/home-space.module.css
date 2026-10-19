@@ -546,9 +546,9 @@
     background: linear-gradient(
       180deg,
       rgb(17 16 15 / 0) 0,
-      rgb(17 16 15 / 0) 50%,
-      rgb(17 16 15 / 0.75) 64%,
-      rgb(17 16 15 / 0.97) 76%
+      rgb(17 16 15 / 0) 52%,
+      rgb(17 16 15 / 0.8) 60%,
+      rgb(17 16 15 / 0.97) 66%
     );
   }
 
@@ -573,24 +573,26 @@
     top: calc(63svh + 4px);
   }
 
-  /* The first screen is the pile, with the title at its foot; the
-     introduction follows just below the fold and carries its own ground
-     up over the prints as it scrolls. */
+  /* The whole introduction fits the first screen, with the pile above
+     it; the text carries its own ground up over the prints as it scrolls. */
   .hero {
-    justify-content: flex-start;
+    justify-content: flex-end;
     max-width: none;
-    min-height: 0;
+    min-height: calc(100svh - var(--hs-masthead));
     margin: 0 calc(-1 * var(--hs-inset));
-    padding: calc(100svh - var(--hs-masthead) - 190px) var(--hs-inset) 12svh;
-    background: linear-gradient(
-      180deg,
-      rgb(17 16 15 / 0) calc(100svh - var(--hs-masthead) - 250px),
-      var(--hs-ground) calc(100svh - var(--hs-masthead) - 150px)
-    );
+    padding: 0 var(--hs-inset) 3svh;
+  }
+
+  /* The text's own ground, as tall as the text on any phone, fading in
+     above the kicker. */
+  .heroText {
+    margin: 0 calc(-1 * var(--hs-inset));
+    padding: 6svh var(--hs-inset) 0;
+    background: linear-gradient(180deg, rgb(17 16 15 / 0), var(--hs-ground) 5svh);
   }
 
   .title {
-    font-size: clamp(46px, 13vw, 64px);
+    font-size: clamp(40px, 11.5vw, 56px);
   }
 
   .title span {
@@ -598,36 +600,22 @@
   }
 
   .kicker {
-    margin-bottom: 18px;
+    margin-bottom: 14px;
   }
 
   .intro {
-    margin-top: 18px;
-    font-size: 17px;
+    margin-top: 14px;
+    font-size: 16px;
+    line-height: 1.55;
   }
 
   .argue {
-    margin-top: 12px;
-    font-size: 18px;
+    margin-top: 10px;
+    font-size: 17px;
   }
 
   .cue {
-    margin-top: 18px;
-  }
-
-  /* On the first screen the arrow sits right under the title; the
-     introduction comes after it. */
-  .title {
-    order: 1;
-  }
-
-  .cue {
-    order: 2;
     margin-top: 12px;
-  }
-
-  .intro {
-    order: 3;
   }
 
   .step,
