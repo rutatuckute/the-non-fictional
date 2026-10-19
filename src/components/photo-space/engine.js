@@ -752,7 +752,9 @@ function refilter() {
 
 // ---------- layouts
 function geometry() {
-  const W = innerWidth, H = innerHeight, narrow = narrowQuery.matches
+  // The stage is 100svh: the screen with the browser bars showing. Laying out
+  // to it, not to innerHeight, keeps the prints still as the bars come and go.
+  const W = innerWidth, H = stage.clientHeight || innerHeight, narrow = narrowQuery.matches
   const inset = clamp(W * 0.07, 20, 100), bar = narrow ? 48 : 56
   const r = narrow ? { x0: 12, x1: W - 12, y0: bar + 14, y1: H - 28 } : { x0: inset, x1: W - inset, y0: bar + 30, y1: H - 32 }
   const fh = filtersEl.offsetHeight
@@ -1003,15 +1005,18 @@ addEventListener("keydown", e => {
 })
 
 // ---------- scroll drives the scenes
-track.innerHTML = STEPS.map(([, , h]) => `<div class="step" style="height:${h}vh"></div>`).join("")
+track.innerHTML = STEPS.map(([, , h]) => `<div class="step" style="height:${h}vh;height:${h}svh"></div>`).join("")
+// A steady screen height: the stage's, which doesn't change as a phone's
+// address bar comes and goes.
+const vh = () => stage.clientHeight || innerHeight
 const steps = $$(".step", track)
 const GRID = STEPS.findIndex(s => s[0] === "grid")
-function sizeGridStep() { steps[GRID].style.height = (innerHeight * 1.1 + (F.view === "grid" && L.grid ? L.grid.travel : 0)) + "px" }
+function sizeGridStep() { steps[GRID].style.height = (vh() * 1.1 + (F.view === "grid" && L.grid ? L.grid.travel : 0)) + "px" }
 // Once the grid has arrived, the scroll moves through it like a page.
 function slideGrid() {
   if (scene() !== "grid" || F.view !== "grid" || !stage.dataset.live) return
-  const into = innerHeight * .5 - steps[GRID].getBoundingClientRect().top
-  const off = clamp(into - innerHeight * .2, 0, L.grid.travel)
+  const into = vh() * .5 - steps[GRID].getBoundingClientRect().top
+  const off = clamp(into - vh() * .2, 0, L.grid.travel)
   if (Math.abs(off - gridOffset) < .5) return
   gridOffset = off
   items.forEach(f => {
@@ -1023,7 +1028,7 @@ function slideGrid() {
 function frame() {
   slideGrid()
   let s = 0
-  steps.forEach((el, i) => { if (i && el.getBoundingClientRect().top <= innerHeight * .5) s = i })
+  steps.forEach((el, i) => { if (i && el.getBoundingClientRect().top <= vh() * .5) s = i })
   lightLinks()
   if (s === current) return
   current = s
@@ -1041,7 +1046,7 @@ function lightLinks() {
 }
 function jump(i) {
   if (i <= 0) return scrollTo({ top: 0, behavior: "instant" })
-  scrollTo({ top: steps[i].getBoundingClientRect().top + scrollY - innerHeight * .5 + 4, behavior: "instant" })
+  scrollTo({ top: steps[i].getBoundingClientRect().top + scrollY - vh() * .5 + 4, behavior: "instant" })
 }
 $$("[data-view]").forEach(a => a.addEventListener("click", e => { e.preventDefault(); jump(VIEW_STEP[a.dataset.view]); setQuery({ view: a.dataset.view === "selected" ? "" : a.dataset.view }, true) }))
 $("#toTop").addEventListener("click", () => scrollTo({ top: 0, behavior: "instant" }))
@@ -1050,7 +1055,15 @@ LB.onSeries = slug => { jump(VIEW_STEP.series); requestAnimationFrame(() => show
 
 let raf = 0
 addEventListener("scroll", () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; frame() }) }, { passive: true })
-addEventListener("resize", () => { compute(); sizeGridStep(); current = null; frame() })
+// On a phone the address bar slides away and back as you scroll, and each time
+// the window "resizes" by its height. Only a change of width (or a big change
+// of height, as when the phone turns) re-lays the page; the rest is ignored.
+let lastW = innerWidth, lastH = innerHeight
+addEventListener("resize", () => {
+  if (innerWidth === lastW && Math.abs(innerHeight - lastH) < 160) return
+  lastW = innerWidth; lastH = innerHeight
+  compute(); sizeGridStep(); current = null; frame()
+})
 
 {
   const q = query()
