@@ -351,6 +351,8 @@
 .ps-root .lb .lb-next { right: 1vw; top: 50%; transform: translateY(-50%); }
 .ps-root .lbx-btn svg { display: block; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: square; }
 
+/* No scroll anchoring: the steps change length as the grid is filtered. */
+.ps-root { overflow-anchor: none; }
 /* ---- Back to the start: small, bottom right, once past the header */
 .ps-root .tostart { position: fixed; right: 18px; bottom: 18px; z-index: 720; padding: 6px 10px; background: rgba(17,16,15,.82); border: 1px solid var(--rule); border-radius: 2px; color: var(--meta); font: 12px var(--sans); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .25s linear; }
 .ps-root .tostart.on { opacity: .85; pointer-events: auto; }
