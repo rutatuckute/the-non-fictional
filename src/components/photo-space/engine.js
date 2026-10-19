@@ -662,6 +662,196 @@ function dress(el, f) {
   lift.insertAdjacentHTML("beforeend", `<span class="pcap"><b>${esc(f.title)}</b><span>${esc([f.city, f.year].filter(Boolean).join(", "))}</span></span>`)
 }
 
+// ---------- phones: the pile once, then plain sections that scroll natively.
+// Nothing is pinned or re-laid; a phone only scrolls and taps.
+function setupPhone() {
+  const main = stage.closest(".story").parentElement
+  main.classList.add("phone")
+  track.innerHTML = ""
+  const W = innerWidth, H = stage.clientHeight || innerHeight
+
+  // The opening pile, behind the header, laid once.
+  {
+    const rand = seeded(7)
+    const box = { x0: -40, x1: W + 40, y0: -10, y1: H - 76 + 10 }
+    const base = Math.sqrt((box.x1 - box.x0) * (box.y1 - box.y0) / ARCHIVE.length) * .92
+    const rest = ARCHIVE.filter(f => !f.selected)
+    const inner = { x0: -10, x1: W + 10, y0: H * .52, y1: H - 76 - 30 }
+    const pos = { ...pileLayout(rest, box, rand, base * .8, base * .45, 10, 0), ...pileLayout(SELECTED.slice().reverse(), inner, rand, base * 1.3, base * .3, 8, 200) }
+    ARCHIVE.forEach(f => {
+      const p = pos[f.id]
+      if (!p) return
+      const el = printEl(f, { cls: "item" })
+      const img = $("img", el); img.src = f.thumb
+      dress(el, f)
+      const h = p.h, w = h * f.ratio
+      el.style.cssText = `width:${w.toFixed(1)}px;height:${h.toFixed(1)}px;opacity:1;z-index:${p.z};transform:translate3d(${(p.x - w / 2).toFixed(1)}px,${(p.y - h / 2).toFixed(1)}px,0) rotate(${(p.r || 0).toFixed(2)}deg)`
+      el.classList.add("nocap")
+      stage.insertBefore(el, cap)
+      bindPrint(el, f, () => openLightbox(f.selected ? SELECTED : ARCHIVE, (f.selected ? SELECTED : ARCHIVE).indexOf(f), f.selected ? "Selected" : "Archive"))
+    })
+  }
+
+  const box = document.createElement("div")
+  box.className = "pm"
+  box.innerHTML = `
+    <section class="phs" id="p-selected" data-sec="selected">
+      <h2 class="phs-h">Selected</h2>
+      <a class="sel-big" href="#"><img alt="" decoding="async"></a>
+      <div class="sel-cap"><span class="n"></span><h3></h3><p class="m"></p></div>
+      <div class="sel-thumbs"></div>
+    </section>
+    <section class="phs" id="p-archive" data-sec="archive">
+      <h2 class="phs-h">Archive</h2>
+      <div class="ph-filters"></div>
+      <div class="ph-sheet"></div>
+    </section>
+    <section class="phs" id="p-series" data-sec="series">
+      <h2 class="phs-h">Series</h2>
+      <div class="ph-series"></div>
+    </section>`
+  stage.closest(".story").after(box)
+
+  // ---- Selected: one frame, its caption, the twelve to pick from
+  let focus = 0
+  const bigA = $(".sel-big", box), bigImg = $("img", bigA)
+  const thumbs = $(".sel-thumbs", box)
+  thumbs.innerHTML = SELECTED.map((f, i) => `<button type="button" data-i="${i}" aria-label="${esc(f.title)}"><img alt="" src="${f.thumb}" loading="lazy" style="aspect-ratio:${f.ratio}"></button>`).join("")
+  function showSel(i) {
+    focus = (i + SELECTED.length) % SELECTED.length
+    const f = SELECTED[focus], s = f.series ? seriesBySlug[f.series] : null
+    bigImg.src = f.big; bigImg.alt = f.title; bigImg.style.aspectRatio = String(f.ratio)
+    $(".sel-cap .n", box).innerHTML = `${String(focus + 1).padStart(2, "0")}<small>/ ${SELECTED.length}</small>`
+    $(".sel-cap h3", box).textContent = f.title
+    $(".sel-cap .m", box).textContent = [f.location, f.year].filter(Boolean).join(" · ") + (s ? ` · ${s.title}` : "")
+    $$("button", thumbs).forEach((b, j) => b.toggleAttribute("data-on", j === focus))
+  }
+  $$("button", thumbs).forEach(b => b.addEventListener("click", () => showSel(+b.dataset.i)))
+  bigA.addEventListener("click", e => { e.preventDefault(); openLightbox(SELECTED, focus, "Selected") })
+  // A sideways swipe on the frame steps through the edit.
+  let sx = null
+  bigA.addEventListener("touchstart", e => { sx = e.touches[0].clientX }, { passive: true })
+  bigA.addEventListener("touchend", e => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 50) { showSel(focus + (dx < 0 ? 1 : -1)); bigA.dataset.swiped = "1"; setTimeout(() => delete bigA.dataset.swiped, 400) } })
+  bigA.addEventListener("click", e => { if (bigA.dataset.swiped) e.stopImmediatePropagation() }, true)
+  showSel(0)
+
+  // ---- Archive: the live filters over one grid that can also show where and roll by roll
+  const SIZE = { sm: ["Small", 56], md: ["Medium", 84], lg: ["Large", 110] }
+  const SHOWS = { grid: "Grid", where: "Where", rolls: "Roll by roll" }
+  const F = { size: "lg", show: "grid", type: [], lived: [], year: [], place: [] }
+  let openMenu = null
+  const filtersEl = $(".ph-filters", box), sheet = $(".ph-sheet", box)
+  const countBy = (list, pick) => { const m = new Map(); list.forEach(f => { const v = pick(f); if (v) m.set(v, (m.get(v) || 0) + 1) }); return m }
+  const passes = (f, skip) => (skip === "type" || !F.type.length || F.type.includes(f.type)) && (skip === "lived" || !F.lived.length || F.lived.includes(f.city)) && (skip === "year" || !F.year.length || F.year.includes(String(f.year))) && (skip === "place" || !F.place.length || F.place.includes(f.country))
+  const pool = () => ARCHIVE.filter(f => passes(f))
+  function drawFilters() {
+    const types = countBy(FRAMES.filter(f => passes(f, "type")), f => f.type)
+    const sel = (k, label, entries) => {
+      const v = F[k], summary = !v.length ? "All" : v.length === 1 ? v[0] : `${v.length} selected`
+      return `<div class="dd" data-dd="${k}" ${v.length ? "data-on" : ""}><button type="button" class="dd-btn" aria-haspopup="listbox" aria-expanded="${openMenu === k}"><span class="dd-l">${label}</span><span class="dd-v">${esc(summary)}</span><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>${openMenu === k ? `<div class="dd-menu" role="listbox" aria-multiselectable="true">${entries.map(([val]) => `<button type="button" class="dd-opt" role="option" data-v="${esc(val)}" aria-selected="${v.includes(String(val))}"><span class="dd-t">${v.includes(String(val)) ? "✓" : ""}</span>${esc(val)}</button>`).join("")}${v.length ? `<button type="button" class="dd-reset">Clear ${label.toLowerCase()}</button>` : ""}</div>` : ""}</div>`
+    }
+    const n = pool().length, any = F.type.length || F.lived.length || F.year.length || F.place.length
+    filtersEl.innerHTML = `
+      <div class="ph-row"><span class="pf-label">Show</span><div class="pf-show">${Object.entries(SHOWS).map(([k, l]) => `<button type="button" data-show="${k}" aria-pressed="${F.show === k}">${l}</button>`).join("")}</div></div>
+      <div class="ph-row ph-scroll">
+        <span class="pf-label">Size</span><div class="pf-chips">${Object.entries(SIZE).map(([k, [l]]) => `<button type="button" class="pf-chip" data-size="${k}" aria-pressed="${F.size === k}">${l}</button>`).join("")}</div>
+        <span class="pf-label">Type</span><div class="pf-chips">${Object.keys(TYPE).map(t => `<button type="button" class="pf-chip" data-type="${t}" aria-pressed="${F.type.includes(t)}" ${!types.get(t) && !F.type.includes(t) ? "disabled" : ""}>${TYPE[t]}</button>`).join("")}</div>
+      </div>
+      <div class="ph-row ph-scroll">
+        ${sel("lived", "Lived", [...countBy(FRAMES.filter(f => passes(f, "lived")), f => LIVED.includes(f.city) ? f.city : null)].sort((a, b) => b[1] - a[1]))}
+        ${sel("year", "Year", [...countBy(FRAMES.filter(f => passes(f, "year")), f => String(f.year))].sort((a, b) => b[0] - a[0]))}
+        ${sel("place", "Place", [...countBy(FRAMES.filter(f => passes(f, "place")), f => f.country)].sort((a, b) => b[1] - a[1]))}
+        <span class="pf-count">${n} frame${n === 1 ? "" : "s"}${any ? ' <button type="button" class="ph-clear">Clear</button>' : ""}</span>
+      </div>`
+    $$("[data-show]", filtersEl).forEach(b => b.addEventListener("click", () => { F.show = b.dataset.show; refilter() }))
+    $$("[data-size]", filtersEl).forEach(b => b.addEventListener("click", () => { F.size = b.dataset.size; refilter() }))
+    $$("[data-type]", filtersEl).forEach(b => b.addEventListener("click", () => { const i = F.type.indexOf(b.dataset.type); i < 0 ? F.type.push(b.dataset.type) : F.type.splice(i, 1); refilter() }))
+    $$(".dd", filtersEl).forEach(dd => {
+      const k = dd.dataset.dd
+      $(".dd-btn", dd).addEventListener("click", () => { openMenu = openMenu === k ? null : k; drawFilters() })
+      $$(".dd-opt", dd).forEach(o => o.addEventListener("click", () => { const a = F[k], i = a.indexOf(o.dataset.v); i < 0 ? a.push(o.dataset.v) : a.splice(i, 1); refilter() }))
+      const r = $(".dd-reset", dd); if (r) r.addEventListener("click", () => { F[k] = []; refilter() })
+      const m = $(".dd-menu", dd)
+      if (m) { const b = $(".dd-btn", dd).getBoundingClientRect(); m.style.left = Math.max(8, Math.min(b.left, innerWidth - m.offsetWidth - 8)) + "px"; m.style.top = b.bottom + 4 + "px" }
+    })
+    const c = $(".ph-clear", filtersEl); if (c) c.addEventListener("click", () => { F.type = []; F.lived = []; F.year = []; F.place = []; openMenu = null; refilter() })
+  }
+  docOn("mousedown", e => { if (openMenu && !e.target.closest(".dd")) { openMenu = null; drawFilters() } })
+  // The open list is placed on the screen, so it closes when the page scrolls.
+  addEventListener("scroll", () => { if (openMenu) { openMenu = null; drawFilters() } }, { passive: true })
+  const square = f => `<a class="sq" href="?frame=${encodeURIComponent(f.id)}" data-id="${esc(f.id)}" aria-label="${esc(f.title)}"><img alt="" src="${f.thumb}" loading="lazy" decoding="async"></a>`
+  const grid = fs => `<div class="sqgrid" style="--sq:${SIZE[F.size][1]}px">${fs.map(square).join("")}</div>`
+  function drawSheet() {
+    const list = pool()
+    let html = ""
+    if (!list.length) html = `<p class="empty">Nothing matches. Try clearing a filter.</p>`
+    else if (F.show === "grid") html = grid(list)
+    else if (F.show === "where") {
+      const groups = [...LIVED.map(c => ({ t: c, em: "lived in", fs: list.filter(f => f.city === c) })), { t: "Elsewhere", em: `${new Set(list.filter(f => !LIVED.includes(f.city)).map(f => f.city)).size} places`, fs: list.filter(f => !LIVED.includes(f.city)) }].filter(g => g.fs.length)
+      html = groups.map(g => `<section class="grp"><h3>${g.t}<span>${plural(g.fs.length, "frame")}</span><em>${g.em}</em></h3>${grid(g.fs)}</section>`).join("")
+    } else {
+      const rolls = {}
+      list.filter(f => f.roll != null).forEach(f => (rolls[f.roll] = rolls[f.roll] || []).push(f))
+      const fh = SIZE[F.size][1] * .8
+      html = `<div class="rolls">${Object.keys(rolls).map(Number).sort((a, b) => b - a).map(n => `<div class="roll"><b>Roll ${n}<span>${rolls[n][0].year}</span></b><div class="film">${rolls[n].map(f => `<a class="sq" href="?frame=${encodeURIComponent(f.id)}" data-id="${esc(f.id)}" style="width:${(f.ratio * fh).toFixed(1)}px;height:${fh.toFixed(1)}px" aria-label="${esc(f.title)}"><img alt="" src="${f.thumb}" loading="lazy" decoding="async"></a>`).join("")}</div></div>`).join("")}</div>`
+      const un = list.filter(f => f.roll == null)
+      if (un.length) html += `<section class="unnoted"><h3>${plural(un.length, "frame")} with no roll number yet</h3>${grid(un)}</section>`
+    }
+    sheet.innerHTML = html
+    const order = $$(".sq", sheet).map(el => byId[el.dataset.id])
+    $$(".sq", sheet).forEach((el, i) => el.addEventListener("click", e => { e.preventDefault(); openLightbox(order, i, "Archive") }))
+  }
+  function refilter() { drawFilters(); drawSheet() }
+  refilter()
+
+  // ---- Series: a stack each; tap to open it in place
+  let openS = null
+  const seriesBody = $(".ph-series", box)
+  function drawSeries() {
+    if (openS) {
+      const s = seriesBySlug[openS]
+      seriesBody.innerHTML = `<button type="button" class="ph-back">← All series</button><h3 class="ph-st">${esc(s.title)}</h3><p class="ph-sm">${plural(s.frames.length, "frame")} · ${esc(s.places.join(", "))} · ${s.years}</p><div class="ph-sframes">${s.frames.map(f => `<a class="sq" href="?frame=${encodeURIComponent(f.id)}" data-id="${esc(f.id)}" aria-label="${esc(f.title)}"><img alt="" src="${f.big}" loading="lazy" decoding="async" style="aspect-ratio:${f.ratio}"></a>`).join("")}</div>`
+      $(".ph-back", seriesBody).addEventListener("click", () => { openS = null; drawSeries(); $("#p-series").scrollIntoView() })
+      $$(".sq", seriesBody).forEach((el, i) => el.addEventListener("click", e => { e.preventDefault(); openLightbox(s.frames, i, "Series · " + s.title) }))
+      return
+    }
+    const fan = [["-14%", "-5deg"], ["14%", "5deg"], ["0%", "0deg"]]
+    seriesBody.innerHTML = `<div class="ph-cards">${SERIES.map(s => {
+      const fs = s.frames.slice(0, 3)
+      const order = fs.length === 1 ? [fs[0]] : fs.length === 2 ? [fs[1], fs[0]] : [fs[1], fs[2], fs[0]]
+      const at = fs.length === 1 ? [fan[2]] : fs.length === 2 ? [fan[1], fan[2]] : fan
+      return `<button type="button" class="ph-card" data-s="${esc(s.slug)}"><span class="ph-stack">${order.map((f, i) => `<img alt="" src="${f.thumb}" loading="lazy" style="--x:${at[i][0]};--r:${at[i][1]}">`).join("")}</span><strong>${esc(s.title)}</strong><small>${plural(s.frames.length, "frame")}</small></button>`
+    }).join("")}</div>`
+    $$(".ph-card", seriesBody).forEach(b => b.addEventListener("click", () => { openS = b.dataset.s; drawSeries(); $("#p-series").scrollIntoView() }))
+  }
+  drawSeries()
+  LB.onSeries = slug => { openS = slug; drawSeries(); $("#p-series").scrollIntoView() }
+
+  // ---- The bar, and the three views as places on the page
+  const secs = $$(".phs", box)
+  const go = v => { const el = $("#p-" + v); if (el) scrollTo({ top: el.getBoundingClientRect().top + scrollY - 48, behavior: "instant" }) }
+  $$("[data-view]").forEach(a => a.addEventListener("click", e => { e.preventDefault(); go(a.dataset.view) }))
+  $("#toTop").addEventListener("click", () => scrollTo({ top: 0, behavior: "instant" }))
+  let raf = 0
+  const light = () => {
+    raf = 0
+    const shown = $("#views").getBoundingClientRect().bottom < 0
+    minibar.classList.toggle("on", shown)
+    minibar.setAttribute("aria-hidden", String(!shown))
+    $$("button, a", minibar).forEach(x => (x.tabIndex = shown ? 0 : -1))
+    let on = null
+    secs.forEach(s => { if (s.getBoundingClientRect().top < innerHeight * .5) on = s.dataset.sec })
+    $$("[data-view]").forEach(a => a.toggleAttribute("data-on", a.dataset.view === on))
+  }
+  addEventListener("scroll", () => { if (!raf) raf = requestAnimationFrame(light) }, { passive: true })
+  light()
+  const v = query().get("view")
+  if (v) go(v)
+}
+
+const PHONE = narrowQuery.matches
+if (PHONE) setupPhone()
+else {
 // ---------- one pile, re-laid by the scroll, all the way down
 // [scene, which view it belongs to, height of its stretch of scroll]
 const STEPS = [["pile", null, 30], ["edit", "selected", 130], ["where", "archive", 110], ["rolls", "archive", 110], ["grid", "archive", 120], ["series", "series", 150]]
@@ -1076,6 +1266,7 @@ addEventListener("resize", () => {
   if (q.get("series") && seriesBySlug[q.get("series")]) LB.onSeries(q.get("series"))
 }
 requestAnimationFrame(() => requestAnimationFrame(() => stage.classList.add("anim")))
+}
 openFromUrl(f => f.selected ? { list: SELECTED, label: "Selected" } : { list: ARCHIVE, label: "Archive" })
 
 return () => {
