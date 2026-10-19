@@ -868,6 +868,9 @@ const stepAlong = (dir, amount) => {
   walkLimits()
   wake()
 }
+// On a phone the room is only watched, never walked: the one place you move
+// is 05, along the timeline and round the circle.
+const canMove = () => !mqNarrow.matches || layoutIndex === TIME
 on(canvas, "pointerdown", e => {
   pointerType = e.pointerType
   setPointer(e)
@@ -888,7 +891,7 @@ on(canvas, "pointermove", e => {
   pointerOver = true
   pointerMoved = true
   if (touches.has(e.pointerId)) touches.set(e.pointerId, { x: e.clientX, y: e.clientY })
-  if (touches.size === 2) {
+  if (touches.size === 2 && canMove()) {
     const [a, b] = [...touches.values()]
     const d = Math.hypot(a.x - b.x, a.y - b.y)
     stepAlong(camera.getWorldDirection(tmp), (d - pinch) * 0.04)
@@ -897,7 +900,8 @@ on(canvas, "pointermove", e => {
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y
     drag.moved += Math.abs(dx) + Math.abs(dy)
     drag.x = e.clientX; drag.y = e.clientY
-    if (drag.moved > 4) {
+    // A drag is still told apart from a tap where it can't move anything.
+    if (drag.moved > 4 && canMove()) {
       canvas.setPointerCapture(e.pointerId)
       canvas.classList.add("is-dragging")
       if (layoutIndex === TIME && !ringMode) {
@@ -939,6 +943,7 @@ on(canvas, "click", () => {
 })
 let touchSelected = -1
 on(canvas, "dblclick", e => {
+  if (!canMove()) return
   e.preventDefault()
   setPointer(e)
   raycaster.setFromCamera(pointer, camera)
@@ -970,6 +975,7 @@ const sideStep = amount => {
   wake()
 }
 const applyKeys = dt => {
+  if (!canMove()) { keys.clear(); held.clear(); return }
   if (!keys.size && !held.size) return
   const on = (...names) => names.some(n => keys.has(n) || held.has(n))
   const fwd = (on("arrowup", "w", "fwd") ? 1 : 0) - (on("arrowdown", "s", "back") ? 1 : 0)
