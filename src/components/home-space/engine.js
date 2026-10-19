@@ -931,9 +931,14 @@ const endPointer = e => {
 on(canvas, "pointerup", endPointer)
 on(canvas, "pointercancel", endPointer)
 on(canvas, "pointerleave", () => { pointerOver = false; pointerMoved = true; wake() })
-on(canvas, "click", () => {
+on(canvas, "click", e => {
   if (drag && drag.moved > 4) return
+  // Pick at the click itself: on a touch screen the pointer has already
+  // "left" by the time the click arrives, so the last hover can't be used.
+  setPointer(e)
+  pointerOver = true
   pick()
+  if (pointerType !== "mouse") pointerOver = false
   if (hoverIdx >= 0 && (pointerType === "mouse" || touchSelected === hoverIdx)) {
     navigate(nodes[hoverIdx].href)
     return
@@ -1234,6 +1239,6 @@ return () => {
   scene.traverse(o => { o.geometry?.dispose?.(); o.material?.dispose?.() })
   renderer?.dispose()
   layer.replaceChildren()
-  list.replaceChildren()
+  $("works").replaceChildren()
 }
 }
