@@ -15,6 +15,11 @@
   --hs-photography: #4fbbd4;
   --hs-serif: var(--font-editorial);
   --hs-sans: var(--font-functional);
+  /* The homepage keeps the margins it was designed with rather than the
+     site's 1240px container: on a wide screen the words stay at the left,
+     beside the room, and the masthead and footer follow them. */
+  --page-inset: clamp(20px, 7vw, 100px);
+  --page-width: calc(100% - 2 * var(--page-inset));
   --hs-inset: var(--page-inset);
   --hs-column: min(330px, 26vw);
   --hs-masthead: 76px;
@@ -541,9 +546,9 @@
     background: linear-gradient(
       180deg,
       rgb(17 16 15 / 0) 0,
-      rgb(17 16 15 / 0) 36%,
-      rgb(17 16 15 / 0.94) 47%,
-      rgb(17 16 15 / 0.97) 100%
+      rgb(17 16 15 / 0) 50%,
+      rgb(17 16 15 / 0.75) 64%,
+      rgb(17 16 15 / 0.97) 76%
     );
   }
 
@@ -568,14 +573,20 @@
     top: calc(63svh + 4px);
   }
 
+  /* The first screen is the pile, with the title at its foot; the
+     introduction follows just below the fold and carries its own ground
+     up over the prints as it scrolls. */
   .hero {
-    justify-content: flex-end;
+    justify-content: flex-start;
     max-width: none;
-    min-height: calc(100svh - var(--hs-masthead));
+    min-height: 0;
     margin: 0 calc(-1 * var(--hs-inset));
-    padding: 0 var(--hs-inset) 7svh;
-    background: linear-gradient(180deg, rgb(17 16 15 / 0), var(--hs-ground) 9svh) bottom / 100%
-      calc(100% - 38svh + var(--hs-masthead)) no-repeat;
+    padding: calc(100svh - var(--hs-masthead) - 190px) var(--hs-inset) 12svh;
+    background: linear-gradient(
+      180deg,
+      rgb(17 16 15 / 0) calc(100svh - var(--hs-masthead) - 250px),
+      var(--hs-ground) calc(100svh - var(--hs-masthead) - 150px)
+    );
   }
 
   .title {
@@ -602,6 +613,21 @@
 
   .cue {
     margin-top: 18px;
+  }
+
+  /* On the first screen the arrow sits right under the title; the
+     introduction comes after it. */
+  .title {
+    order: 1;
+  }
+
+  .cue {
+    order: 2;
+    margin-top: 12px;
+  }
+
+  .intro {
+    order: 3;
   }
 
   .step,

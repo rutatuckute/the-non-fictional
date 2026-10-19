@@ -141,11 +141,11 @@ function pile(g, hero) {
   const { r, S, W, H, narrow } = g
   const rnd = seeded(hero ? 7 : 19)
   const big = hero && settings.pile === "prints"
-  const box = hero ? (narrow ? { x0: -24, x1: W + 24, y0: 70, y1: H * 0.43 } : { x0: g.inset + 360, x1: W + 70, y0: -30, y1: H + 20 }) : r
-  const covW = (hero ? 270 : 230) * S * (narrow ? 1.25 : 1)
+  const box = hero ? (narrow ? { x0: -30, x1: W + 30, y0: 52, y1: H * 0.66 } : { x0: g.inset + 360, x1: W + 70, y0: -30, y1: H + 20 }) : r
+  const covW = (hero ? 270 : 230) * S * (narrow ? (hero ? 1.6 : 1.25) : 1)
   const items = [
     ...writings.map(w => ({ id: w.id, w: covW * (0.9 + rnd() * 0.25), weight: 3 })),
-    ...photographs.map(p => { const h = (big ? 82 + rnd() * 46 : 56 + rnd() * 34) * S * (narrow ? 1.1 : 1); return { id: p.id, h, w: Math.min(h * p.ratio, h * 1.55) } }),
+    ...photographs.map(p => { const h = (big ? 82 + rnd() * 46 : 56 + rnd() * 34) * S * (narrow ? (hero ? 1.4 : 1.1) : 1); return { id: p.id, h, w: Math.min(h * p.ratio, h * 1.55) } }),
   ].map(it => ({ ...it, h: it.h || it.w / 1.5 }))
   const pos = place(items, box, rnd, big ? -6 : 8 * S)
   const out = {}
@@ -775,7 +775,8 @@ const computeShot = () => {
     const lineH = 11
     const lineW = lineH * (region.w / region.h)
     lineViewW = lineW
-    const lineX = yearS[0] - YEAR_GAP * 0.7 + lineW / 2
+    // Opens in the middle of the line, so you can walk back or forward.
+    const lineX = 0
     const ringSpan = 2 * R_TIME + 2 * MAX_TY * FAN
     shot.tx = lerp(lineX, 0, u)
     shot.ty = AXIS_Y + lerp(1.75, 0.2, u)
@@ -849,7 +850,8 @@ const walkLimits = () => {
   // The timeline is long, so there you can walk its whole length.
   if (layoutIndex === TIME && !ringMode) {
     // Along the line: from 2011 to 2026, no further.
-    walkTarget.x = clamp(walkTarget.x, -1, Math.max(0, L_TIME - lineViewW + 1))
+    const half = Math.max(0, L_TIME / 2 - lineViewW / 2 + 1)
+    walkTarget.x = clamp(walkTarget.x, -half, half)
     walkTarget.y = 0
     walkTarget.yaw = walkTarget.pitch = 0
   } else walkTarget.x = clamp(walkTarget.x, -12, 12)
