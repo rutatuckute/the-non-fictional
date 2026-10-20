@@ -967,8 +967,8 @@ function setupPhone() {
   stage.closest(".story").after(box)
   // ---- Archive: the live filters over one grid that can also show where and roll by roll
   const SIZE = { sm: ["Small", 56], md: ["Medium", 84], lg: ["Large", 110] }
-  const SHOWS = { grid: "Grid", where: "Where", rolls: "Roll by roll" }
-  const F = { size: "lg", show: "grid", type: [], lived: [], year: [], place: [] }
+  const VIEWS = { grid: "Grid", pile: "Pile" }
+  const F = { size: "lg", view: "grid", type: [], lived: [], year: [], place: [] }
   let openMenu = null
   const filtersEl = $(".ph-filters", box), sheet = $(".ph-sheet", box)
   const countBy = (list, pick) => { const m = new Map(); list.forEach(f => { const v = pick(f); if (v) m.set(v, (m.get(v) || 0) + 1) }); return m }
@@ -982,9 +982,9 @@ function setupPhone() {
     }
     const n = pool().length, any = F.type.length || F.lived.length || F.year.length || F.place.length
     filtersEl.innerHTML = `
-      <div class="ph-row"><span class="pf-label">Show</span><div class="pf-show">${Object.entries(SHOWS).map(([k, l]) => `<button type="button" data-show="${k}" aria-pressed="${F.show === k}">${l}</button>`).join("")}</div></div>
+      <div class="ph-row"><span class="pf-label">View</span><div class="pf-show">${Object.entries(VIEWS).map(([k, l]) => `<button type="button" data-viewas="${k}" aria-pressed="${F.view === k}">${l}</button>`).join("")}</div></div>
       <div class="ph-row ph-scroll">
-        <span class="pf-label">Size</span><div class="pf-chips">${Object.entries(SIZE).map(([k, [l]]) => `<button type="button" class="pf-chip" data-size="${k}" aria-pressed="${F.size === k}">${l}</button>`).join("")}</div>
+        ${F.view === "grid" ? `<span class="pf-label">Size</span><div class="pf-chips">${Object.entries(SIZE).map(([k, [l]]) => `<button type="button" class="pf-chip" data-size="${k}" aria-pressed="${F.size === k}">${l}</button>`).join("")}</div>` : ""}
         <span class="pf-label">Type</span><div class="pf-chips">${Object.keys(TYPE).map(t => `<button type="button" class="pf-chip" data-type="${t}" aria-pressed="${F.type.includes(t)}" ${!types.get(t) && !F.type.includes(t) ? "disabled" : ""}>${TYPE[t]}</button>`).join("")}</div>
       </div>
       <div class="ph-row ph-scroll">
@@ -993,7 +993,7 @@ function setupPhone() {
         ${sel("place", "Place", [...countBy(FRAMES.filter(f => passes(f, "place")), f => f.country)].sort((a, b) => b[1] - a[1]))}
         <span class="pf-count">${n} frame${n === 1 ? "" : "s"}${any ? ' <button type="button" class="ph-clear">Clear</button>' : ""}</span>
       </div>`
-    $$("[data-show]", filtersEl).forEach(b => b.addEventListener("click", () => { F.show = b.dataset.show; refilter() }))
+    $$("[data-viewas]", filtersEl).forEach(b => b.addEventListener("click", () => { F.view = b.dataset.viewas; refilter() }))
     $$("[data-size]", filtersEl).forEach(b => b.addEventListener("click", () => { F.size = b.dataset.size; refilter() }))
     $$("[data-type]", filtersEl).forEach(b => b.addEventListener("click", () => { const i = F.type.indexOf(b.dataset.type); i < 0 ? F.type.push(b.dataset.type) : F.type.splice(i, 1); refilter() }))
     $$(".dd", filtersEl).forEach(dd => {
@@ -1015,17 +1015,14 @@ function setupPhone() {
     const list = pool()
     let html = ""
     if (!list.length) html = `<p class="empty">Nothing matches. Try clearing a filter.</p>`
-    else if (F.show === "grid") html = grid(list)
-    else if (F.show === "where") {
-      const groups = [...LIVED.map(c => ({ t: c, em: "lived in", fs: list.filter(f => f.city === c) })), { t: "Elsewhere", em: `${new Set(list.filter(f => !LIVED.includes(f.city)).map(f => f.city)).size} places`, fs: list.filter(f => !LIVED.includes(f.city)) }].filter(g => g.fs.length)
-      html = groups.map(g => `<section class="grp"><h3>${g.t}<span>${plural(g.fs.length, "frame")}</span><em>${g.em}</em></h3>${grid(g.fs)}</section>`).join("")
-    } else {
-      const rolls = {}
-      list.filter(f => f.roll != null).forEach(f => (rolls[f.roll] = rolls[f.roll] || []).push(f))
-      const fh = SIZE[F.size][1] * .8
-      html = `<div class="rolls">${Object.keys(rolls).map(Number).sort((a, b) => b - a).map(n => `<div class="roll"><b>Roll ${n}<span>${rolls[n][0].year}</span></b><div class="film">${rolls[n].map(f => `<a class="sq" href="?frame=${encodeURIComponent(f.id)}" data-id="${esc(f.id)}" style="width:${(f.ratio * fh).toFixed(1)}px;height:${fh.toFixed(1)}px" aria-label="${esc(f.title)}"><img alt="" src="${f.thumb}" loading="lazy" decoding="async"></a>`).join("")}</div></div>`).join("")}</div>`
-      const un = list.filter(f => f.roll == null)
-      if (un.length) html += `<section class="unnoted"><h3>${plural(un.length, "frame")} with no roll number yet</h3>${grid(un)}</section>`
+    else if (F.view === "grid") html = grid(list)
+    else {
+      // The filtered frames as a pile, laid once: tap a print to open it.
+      const W = sheet.clientWidth || innerWidth - 28
+      const H = Math.round(clamp(Math.sqrt(list.length) * 120, 320, 900))
+      const base = clamp(Math.sqrt(W * H / list.length) * .95, 40, 150)
+      const pos = pileLayout(list, { x0: -6, x1: W + 6, y0: 0, y1: H }, seeded(31), base * .8, base * .4, 10, 0)
+      html = `<div class="ph-pile" style="height:${H}px">${list.map(f => { const p = pos[f.id], h = p.h, w = h * f.ratio; return `<a class="sq" href="?frame=${encodeURIComponent(f.id)}" data-id="${esc(f.id)}" aria-label="${esc(f.title)}" style="width:${w.toFixed(1)}px;height:${h.toFixed(1)}px;z-index:${p.z};transform:translate(${(p.x - w / 2).toFixed(1)}px,${(p.y - h / 2).toFixed(1)}px) rotate(${(p.r || 0).toFixed(2)}deg)"><img alt="" src="${f.thumb}" loading="lazy" decoding="async"></a>` }).join("")}</div>`
     }
     sheet.innerHTML = html
     const order = $$(".sq", sheet).map(el => byId[el.dataset.id])
