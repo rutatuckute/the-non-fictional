@@ -665,76 +665,306 @@ function dress(el, f) {
 // ---------- phones: the pile once, then plain sections that scroll natively.
 // Nothing is pinned or re-laid; a phone only scrolls and taps.
 function setupPhone() {
+  // Phones: the same pinned, scroll-driven stage as on a computer, but every
+  // print is drawn on one canvas, as the homepage does: rearranging the prints
+  // is one redraw rather than eighty-nine elements to move and repaint. The
+  // pile, Selected, where, roll by roll and the series are scenes on the stage;
+  // the archive's grid and filters follow as an ordinary section.
   const main = stage.closest(".story").parentElement
-  main.classList.add("phone")
-  track.innerHTML = ""
-  const W = innerWidth, H = stage.clientHeight || innerHeight
+  main.classList.add("pgl")
+  const canvas = document.createElement("canvas")
+  canvas.className = "gl"
+  canvas.setAttribute("aria-hidden", "true")
+  stage.insertBefore(canvas, cap)
+  const ctx = canvas.getContext("2d")
+  const tapcap = document.createElement("div")
+  tapcap.className = "glcap"
+  stage.insertBefore(tapcap, cap)
 
-  // The opening pile, behind the header, laid once.
-  {
-    const rand = seeded(7)
-    const box = { x0: -40, x1: W + 40, y0: -10, y1: H - 76 + 10 }
-    const base = Math.sqrt((box.x1 - box.x0) * (box.y1 - box.y0) / ARCHIVE.length) * .92
-    const rest = ARCHIVE.filter(f => !f.selected)
-    const inner = { x0: -10, x1: W + 10, y0: H * .52, y1: H - 76 - 30 }
-    const pos = { ...pileLayout(rest, box, rand, base * .8, base * .45, 10, 0), ...pileLayout(SELECTED.slice().reverse(), inner, rand, base * 1.3, base * .3, 8, 200) }
-    ARCHIVE.forEach(f => {
-      const p = pos[f.id]
-      if (!p) return
-      const el = printEl(f, { cls: "item" })
-      const img = $("img", el); img.src = f.thumb
-      dress(el, f)
-      const h = p.h, w = h * f.ratio
-      el.style.cssText = `width:${w.toFixed(1)}px;height:${h.toFixed(1)}px;opacity:1;z-index:${p.z};transform:translate3d(${(p.x - w / 2).toFixed(1)}px,${(p.y - h / 2).toFixed(1)}px,0) rotate(${(p.r || 0).toFixed(2)}deg)`
-      el.classList.add("nocap")
-      stage.insertBefore(el, cap)
-      bindPrint(el, f, () => openLightbox(f.selected ? SELECTED : ARCHIVE, (f.selected ? SELECTED : ARCHIVE).indexOf(f), f.selected ? "Selected" : "Archive"))
+  const STEPS = [["pile", null, 30], ["edit", "selected", 130], ["where", "archive", 110], ["rolls", "archive", 110], ["series", "series", 150]]
+  const STEP_OF = { selected: 1, series: 4 }
+  let current = null, focus = 0, openS = null, L = {}, labelEls = [], W = 0, H = 0, layout = null, tapped = null
+  const vh = () => stage.clientHeight || innerHeight
+  const key = () => STEPS[Math.max(0, current ?? 0)][0]
+
+  // Each print: its image, where it is now, and where it is going.
+  const P = ARCHIVE.map(f => {
+    // Decoded once, ahead of time, so a print is ready to draw the first
+    // time a scene moves it.
+    const im = new Image()
+    const rec = { f, im, bmp: null, big: null, cur: { x: 0, y: 0, h: 0, r: 0, o: 0 }, from: null, to: null, t0: 0, z: 0, thumb: false }
+    im.onload = () => {
+      if (window.createImageBitmap) createImageBitmap(im).then(bm => { rec.bmp = bm; wake() }, () => wake())
+      else wake()
+    }
+    im.src = f.thumb
+    return rec
+  })
+  const byF = new Map(P.map(p => [p.f, p]))
+
+  // ---- layouts, in screen pixels (the phone versions of the computer's)
+  function compute() {
+    W = innerWidth; H = vh()
+    const r = { x0: 12, x1: W - 12, y0: 62, y1: H - 28 }, rw = r.x1 - r.x0, rh = r.y1 - r.y0
+    const S = clamp(Math.min(W / 1440, H / 900), .7, 1.35)
+    L = {}
+    {
+      const rand = seeded(7)
+      const box = { x0: -60, x1: W + 60, y0: -20, y1: H - 76 + 20 }
+      const base = Math.sqrt((box.x1 - box.x0) * (box.y1 - box.y0) / ARCHIVE.length) * .92
+      const rest = ARCHIVE.filter(f => !f.selected)
+      const inner = { x0: -10, x1: W + 10, y0: H * .52, y1: H - 76 - 30 }
+      L.pile = { pos: { ...pileLayout(rest, box, rand, base * .8, base * .45, 10, 0), ...pileLayout(SELECTED.slice().reverse(), inner, rand, base * 1.3, base * .3, 8, 200) }, list: { list: SELECTED, label: "Selected" } }
+    }
+    SELECTED.forEach((fo, i) => {
+      const pos = {}
+      let slot
+      const tg = 5, rowsOf = [SELECTED.slice(0, 6), SELECTED.slice(6)]
+      const hs = rowsOf.map(row => Math.min(52, (rw - tg * (row.length - 1)) / row.reduce((a, f) => a + f.ratio, 0)))
+      const rowsTop = r.y1 - hs[0] - hs[1] - tg
+      let y = rowsTop
+      rowsOf.forEach((row, ri) => {
+        const h = hs[ri], used = row.reduce((a, f) => a + f.ratio * h, 0) + tg * (row.length - 1)
+        let x = r.x0 + (rw - used) / 2
+        row.forEach(f => { const w = f.ratio * h; if (f !== fo) pos[f.id] = { x: x + w / 2, y: y + h / 2, h, z: 300, thumb: true }; else slot = { x, y, w, h }; x += w + tg })
+        y += h + tg
+      })
+      const big = { x0: r.x0, x1: r.x1, y0: r.y0, y1: rowsTop - 158 }
+      const bw = big.x1 - big.x0, bh = big.y1 - big.y0, h = Math.min(bh, bw / fo.ratio)
+      pos[fo.id] = { x: big.x0 + bw / 2, y: big.y0 + bh / 2, h, z: 400, focus: true }
+      L["edit" + i] = { pos, cap: { x: r.x0, y: big.y1 + 12, w: rw }, slot, list: { list: SELECTED, label: "Selected" } }
     })
+    {
+      const box = { ...r, y0: r.y0 + 6 }, bw = box.x1 - box.x0, bh = box.y1 - box.y0
+      const groups = [...LIVED.map(c => ({ label: c, frames: ARCHIVE.filter(f => f.city === c) })), { label: "Elsewhere", frames: ARCHIVE.filter(f => !LIVED.includes(f.city)) }].filter(g => g.frames.length)
+      const pos = {}, labels = [], rand = seeded(23)
+      const cw = (bw - 12) / 2, rows = Math.ceil(groups.length / 2), ch = (bh - 26 * (rows - 1)) / rows
+      groups.forEach((g, i) => {
+        const x0 = box.x0 + (i % 2) * (cw + 12), y0 = box.y0 + Math.floor(i / 2) * (ch + 26)
+        labels.push({ cls: "group", x: x0, y: y0, html: `${g.label}<span>${g.frames.length}</span>` })
+        const hB = clamp(Math.sqrt(cw * (ch - 18) / (g.frames.length * 1.1)), 30, 110)
+        Object.assign(pos, pileLayout(g.frames, { x0, x1: x0 + cw, y0: y0 + 18, y1: y0 + ch }, rand, hB * .85, hB * .3, 9, 0))
+      })
+      L.where = { pos, labels, list: { list: groups.flatMap(g => g.frames), label: "Where" } }
+    }
+    {
+      const rolls = {}
+      ARCHIVE.filter(f => f.roll != null).forEach(f => (rolls[f.roll] = rolls[f.roll] || []).push(f))
+      const groups = Object.keys(rolls).map(Number).sort((a, b) => b - a).map(n => ({ label: "Roll " + n, meta: rolls[n][0].year, frames: rolls[n] }))
+      const unknown = ARCHIVE.filter(f => f.roll == null)
+      const out = flow(groups, { ...r, y1: r.y1 - 60 }, true, { strip: true, labelH: 18, maxH: 210, gap: 3, groupGap: 8, lineGap: 8, pad: 4, minW: 66 })
+      const ub = { x0: r.x0 + 150, x1: r.x1 - 4, y0: r.y1 - 52, y1: r.y1 }
+      const up = pileLayout(unknown, ub, seeded(5), 24 * S, 8 * S, 14, 0)
+      for (const id in up) up[id].o = .6
+      Object.assign(out.pos, up)
+      out.labels.push({ cls: "note", x: r.x0, y: r.y1 - 46, w: 140, html: `${plural(unknown.length, "frame")}, roll not noted` })
+      L.rolls = { ...out, list: { list: [...groups.flatMap(g => g.frames), ...unknown], label: "Roll by roll" } }
+    }
+    {
+      const capBlock = 44, spread = 5 * S
+      let best = null
+      for (const cols of [2, 3]) {
+        const rows = Math.ceil(SERIES.length / cols), cw = rw / cols, ch = rh / rows
+        const h = Math.min(ch - capBlock - 16, 520 * S)
+        const lim = SERIES.map(s => Math.min(h, (cw - 14 - spread * (s.frames.length - 1)) / (Math.max(...s.frames.map(f => f.ratio)) * 1.06)))
+        const ra = SERIES.map(s => s.frames.reduce((a, f) => a + f.ratio, 0) / s.frames.length)
+        const C = Math.min(...lim.map((l, i) => l * l * ra[i])) * 1.6
+        const hs = lim.map((l, i) => Math.min(l, Math.sqrt(C / ra[i])))
+        const score = hs.reduce((a, b, i) => a + b * b * ra[i], 0)
+        if (!best || score > best.score) best = { cols, rows, cw, ch, hs, score }
+      }
+      const { cols, cw, ch, hs } = best
+      const pos = {}, labels = [], lastRow = SERIES.length - cols * (best.rows - 1)
+      SERIES.forEach((s, i) => {
+        const row = Math.floor(i / cols), inRow = row === best.rows - 1 ? lastRow : cols
+        const rowH = Math.max(...hs.slice(row * cols, row * cols + cols))
+        const top = r.y0 + row * ch + Math.max(0, (ch - rowH - capBlock) / 2)
+        const cx = r.x0 + (rw - inRow * cw) / 2 + (i % cols) * cw + cw / 2
+        const n = s.frames.length, h = hs[i]
+        s.frames.slice().reverse().forEach((f, k) => {
+          const j = n - 1 - k, off = j - (n - 1) / 2
+          pos[f.id] = { x: cx + off * spread, y: top + rowH - h / 2 + Math.abs(off) * 2, h, r: off * 3, z: 200 + (n - j), series: s.slug }
+        })
+        labels.push({ cls: "stackcap", x: cx - cw / 2 + 8, y: top + rowH + 14, w: cw - 16, html: `<strong>${esc(s.title)}</strong><small>${plural(n, "frame")}</small>` })
+      })
+      L.series = { pos, labels, list: { list: SERIES.flatMap(s => s.frames), label: "Series" } }
+      SERIES.forEach(s => { L["series:" + s.slug] = { pos: fitRows(s.frames, { ...r, y0: r.y0 + 40 }, 8, 320), list: { list: s.frames, label: "Series · " + s.title } } })
+    }
   }
 
+  // ---- drawing: one canvas, redrawn only while something is moving
+  const DUR = reduceMotion ? 0 : 620
+  const ease = t => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
+  let raf = 0, order = P
+  function wake() { if (!raf) raf = requestAnimationFrame(paint) }
+  let dpr = 1
+  function size() {
+    dpr = Math.min(devicePixelRatio || 1, 2)
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr)
+    canvas.style.width = W + "px"; canvas.style.height = H + "px"
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    ctx.imageSmoothingQuality = "high"
+  }
+  function apply(next, instant = false) {
+    layout = next
+    const now = performance.now()
+    P.forEach((p, i) => {
+      const t = next.pos[p.f.id]
+      p.from = { ...p.cur }
+      p.to = t ? { x: t.x, y: t.y, h: t.h, r: t.r || 0, o: t.o ?? 1 } : { ...p.cur, o: 0 }
+      if (!t && p.cur.o === 0) p.to = { ...p.cur }
+      p.z = t ? (t.z ?? 100) : -1
+      p.thumb = !!(t && t.thumb)
+      p.t0 = now + (instant ? -1e6 : (i % 12) * 6)
+      if (t && t.focus && !p.big && p.f.l) { p.big = new Image(); p.big.onload = () => p.big.decode().then(wake, wake); p.big.src = p.f.big }
+      if (instant) p.cur = { ...p.to }
+    })
+    order = P.slice().sort((a, b) => a.z - b.z)
+    drawLabels(next)
+    hideTap()
+    wake()
+  }
+  function paint(now) {
+    raf = 0
+    let moving = false
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    ctx.clearRect(0, 0, W, H)
+    for (const p of order) {
+      if (p.to) {
+        const k = DUR ? clamp((now - p.t0) / DUR, 0, 1) : 1
+        if (k < 1) moving = true
+        const e = ease(k), a = p.from, b = p.to
+        p.cur = { x: a.x + (b.x - a.x) * e, y: a.y + (b.y - a.y) * e, h: a.h + (b.h - a.h) * e, r: a.r + (b.r - a.r) * e, o: a.o + (b.o - a.o) * e }
+      }
+      const c = p.cur
+      if (c.o < .01 || c.h < 1) continue
+      const im = p.big && p.big.complete && p.big.naturalWidth ? p.big : p.bmp || p.im
+      if (!p.bmp && (!p.im.complete || !p.im.naturalWidth)) continue
+      const h = c.h, w = h * p.f.ratio, ext = Math.max(w, h) * .75
+      // Off the screen: nothing to draw.
+      if (c.x + ext < 0 || c.x - ext > W || c.y + ext < 0 || c.y - ext > H) continue
+      ctx.globalAlpha = c.o
+      if (c.r) {
+        const a = c.r * Math.PI / 180, cs = Math.cos(a), sn = Math.sin(a)
+        ctx.setTransform(dpr * cs, dpr * sn, -dpr * sn, dpr * cs, dpr * c.x, dpr * c.y)
+      } else ctx.setTransform(dpr, 0, 0, dpr, dpr * c.x, dpr * c.y)
+      ctx.drawImage(im, -w / 2, -h / 2, w, h)
+      if (p.thumb) { ctx.fillStyle = "rgba(17,16,15,.42)"; ctx.fillRect(-w / 2, -h / 2, w, h) }
+    }
+    ctx.globalAlpha = 1
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    // The chosen frame keeps its place in the rows, outlined.
+    if (layout && layout.slot && key() === "edit") {
+      const s = layout.slot, p = byF.get(SELECTED[focus])
+      if (p.im.complete && p.im.naturalWidth) ctx.drawImage(p.im, s.x, s.y, s.w, s.h)
+      ctx.strokeStyle = "#ffa500"; ctx.lineWidth = 2
+      ctx.strokeRect(s.x - 2, s.y - 2, s.w + 4, s.h + 4)
+    }
+    ctx.globalAlpha = 1
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    if (moving) wake()
+  }
+  function drawLabels(lay) {
+    labelEls.forEach(el => el.remove())
+    labelEls = (lay.labels || []).map(l => {
+      const el = document.createElement("div")
+      el.className = "lab " + l.cls
+      el.innerHTML = l.html
+      el.style.transform = `translate(${l.x.toFixed(1)}px, ${l.y.toFixed(1)}px)`
+      if (l.w) el.style.width = l.w + "px"
+      if (l.h) el.style.height = l.h + "px"
+      stage.insertBefore(el, canvas)
+      return el
+    })
+    const els = labelEls.slice()
+    setTimeout(() => els.forEach(el => el.classList.add("on")), reduceMotion ? 0 : DUR * .6)
+  }
+
+  // ---- taps: find the print under the finger, top first
+  function hit(x, y) {
+    for (let i = order.length - 1; i >= 0; i--) {
+      const p = order[i], c = p.cur
+      if (p.z < 0 || c.o < .3) continue
+      const a = -(c.r || 0) * Math.PI / 180, dx = x - c.x, dy = y - c.y
+      const lx = dx * Math.cos(a) - dy * Math.sin(a), ly = dx * Math.sin(a) + dy * Math.cos(a)
+      if (Math.abs(lx) <= c.h * p.f.ratio / 2 && Math.abs(ly) <= c.h / 2) return p
+    }
+    return null
+  }
+  function hideTap() { tapped = null; tapcap.classList.remove("on") }
+  function showTap(p) {
+    tapped = p
+    const c = p.cur, w = c.h * p.f.ratio
+    tapcap.innerHTML = `<b>${esc(p.f.title)}</b><span>${esc([p.f.city, p.f.year].filter(Boolean).join(", "))}</span><i>Tap again to open</i>`
+    tapcap.classList.add("on")
+    const tw = tapcap.offsetWidth, th = tapcap.offsetHeight
+    tapcap.style.left = clamp(c.x - tw / 2, 8, W - tw - 8) + "px"
+    tapcap.style.top = clamp(c.y + c.h / 2 + 8, 8, H - th - 8) + "px"
+    if (c.y + c.h / 2 + 8 + th > H - 8) tapcap.style.top = clamp(c.y - c.h / 2 - th - 8, 8, H - th - 8) + "px"
+  }
+  canvas.addEventListener("click", e => {
+    const b = canvas.getBoundingClientRect(), p = hit(e.clientX - b.left, e.clientY - b.top)
+    if (!p) return hideTap()
+    const k = key(), t = layout.pos[p.f.id]
+    if (k === "edit") {
+      if (t && t.thumb) return setFocus(SELECTED.indexOf(p.f))
+      if (t && t.focus) return openLightbox(SELECTED, focus, "Selected")
+      return
+    }
+    if (k === "series" && !openS && t && t.series) return showSeries(t.series)
+    if (tapped === p) { hideTap(); const list = layout.list.list; return openLightbox(list, Math.max(0, list.indexOf(p.f)), layout.list.label) }
+    showTap(p)
+  })
+
+  // ---- Selected's caption
+  function drawCap(box) {
+    const f = SELECTED[focus], s = f.series ? seriesBySlug[f.series] : null
+    cap.style.cssText = `left:${box.x}px;top:${box.y}px;width:${box.w}px`
+    cap.innerHTML = `<span class="n">${String(focus + 1).padStart(2, "0")}<small>/ ${SELECTED.length}</small></span><h2>${esc(f.title)}</h2><p class="m">${esc([f.location, f.year].filter(Boolean).join(" · "))}${s ? `<br>Series: ${esc(s.title)}` : ""}</p>
+      <div class="acts"><button type="button" id="prevF" ${focus === 0 ? "disabled" : ""} aria-label="Previous">←</button><button type="button" id="nextF" ${focus === SELECTED.length - 1 ? "disabled" : ""} aria-label="Next">→</button></div>`
+    $("#prevF").addEventListener("click", () => setFocus(focus - 1))
+    $("#nextF").addEventListener("click", () => setFocus(focus + 1))
+  }
+  function setFocus(i) { focus = clamp(i, 0, SELECTED.length - 1); draw() }
+  function draw(instant = false) {
+    const k = key()
+    stage.dataset.scene = k
+    stage.toggleAttribute("data-open", !!openS)
+    const lay = openS ? L["series:" + openS] : k === "edit" ? L["edit" + focus] : L[k]
+    apply(lay, instant)
+    if (k === "edit") drawCap(lay.cap)
+  }
+  function showSeries(slug) { openS = slug; setQuery({ series: slug }, true); draw() }
+  function closeSeries() { openS = null; setQuery({ series: null }, true); draw() }
+  $("#backS").addEventListener("click", closeSeries)
+
+  // ---- the scroll picks the scene
+  track.innerHTML = STEPS.map(([, , h]) => `<div class="step" style="height:${h}vh;height:${h}svh"></div>`).join("")
+  const steps = $$(".step", track)
+  function frame() {
+    let s = 0
+    steps.forEach((el, i) => { if (i && el.getBoundingClientRect().top <= vh() * .5) s = i })
+    if (s !== current) {
+      current = s
+      if (key() !== "series" && openS) { openS = null; setQuery({ series: null }, true) }
+      draw()
+    }
+    light()
+  }
+  let sraf = 0
+  addEventListener("scroll", () => { hideTap(); if (!sraf) sraf = requestAnimationFrame(() => { sraf = 0; frame() }) }, { passive: true })
+  let lastW = innerWidth, lastH = innerHeight
+  addEventListener("resize", () => {
+    if (innerWidth === lastW && Math.abs(innerHeight - lastH) < 160) return
+    lastW = innerWidth; lastH = innerHeight
+    compute(); size(); draw(true)
+  })
+
+  // ---- the archive's grid and filters, as an ordinary section after the stage
   const box = document.createElement("div")
   box.className = "pm"
-  box.innerHTML = `
-    <section class="phs" id="p-selected" data-sec="selected">
-      <h2 class="phs-h">Selected</h2>
-      <a class="sel-big" href="#"><img alt="" decoding="async"></a>
-      <div class="sel-cap"><span class="n"></span><h3></h3><p class="m"></p></div>
-      <div class="sel-thumbs"></div>
-    </section>
-    <section class="phs" id="p-archive" data-sec="archive">
-      <h2 class="phs-h">Archive</h2>
-      <div class="ph-filters"></div>
-      <div class="ph-sheet"></div>
-    </section>
-    <section class="phs" id="p-series" data-sec="series">
-      <h2 class="phs-h">Series</h2>
-      <div class="ph-series"></div>
-    </section>`
+  box.innerHTML = `<section class="phs" id="p-archive" data-sec="archive"><h2 class="phs-h">Archive</h2><div class="ph-filters"></div><div class="ph-sheet"></div></section>`
   stage.closest(".story").after(box)
-
-  // ---- Selected: one frame, its caption, the twelve to pick from
-  let focus = 0
-  const bigA = $(".sel-big", box), bigImg = $("img", bigA)
-  const thumbs = $(".sel-thumbs", box)
-  thumbs.innerHTML = SELECTED.map((f, i) => `<button type="button" data-i="${i}" aria-label="${esc(f.title)}"><img alt="" src="${f.thumb}" loading="lazy" style="aspect-ratio:${f.ratio}"></button>`).join("")
-  function showSel(i) {
-    focus = (i + SELECTED.length) % SELECTED.length
-    const f = SELECTED[focus], s = f.series ? seriesBySlug[f.series] : null
-    bigImg.src = f.big; bigImg.alt = f.title; bigImg.style.aspectRatio = String(f.ratio)
-    $(".sel-cap .n", box).innerHTML = `${String(focus + 1).padStart(2, "0")}<small>/ ${SELECTED.length}</small>`
-    $(".sel-cap h3", box).textContent = f.title
-    $(".sel-cap .m", box).textContent = [f.location, f.year].filter(Boolean).join(" · ") + (s ? ` · ${s.title}` : "")
-    $$("button", thumbs).forEach((b, j) => b.toggleAttribute("data-on", j === focus))
-  }
-  $$("button", thumbs).forEach(b => b.addEventListener("click", () => showSel(+b.dataset.i)))
-  bigA.addEventListener("click", e => { e.preventDefault(); openLightbox(SELECTED, focus, "Selected") })
-  // A sideways swipe on the frame steps through the edit.
-  let sx = null
-  bigA.addEventListener("touchstart", e => { sx = e.touches[0].clientX }, { passive: true })
-  bigA.addEventListener("touchend", e => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 50) { showSel(focus + (dx < 0 ? 1 : -1)); bigA.dataset.swiped = "1"; setTimeout(() => delete bigA.dataset.swiped, 400) } })
-  bigA.addEventListener("click", e => { if (bigA.dataset.swiped) e.stopImmediatePropagation() }, true)
-  showSel(0)
-
   // ---- Archive: the live filters over one grid that can also show where and roll by roll
   const SIZE = { sm: ["Small", 56], md: ["Medium", 84], lg: ["Large", 110] }
   const SHOWS = { grid: "Grid", where: "Where", rolls: "Roll by roll" }
@@ -804,49 +1034,31 @@ function setupPhone() {
   function refilter() { drawFilters(); drawSheet() }
   refilter()
 
-  // ---- Series: a stack each; tap to open it in place
-  let openS = null
-  const seriesBody = $(".ph-series", box)
-  function drawSeries() {
-    if (openS) {
-      const s = seriesBySlug[openS]
-      seriesBody.innerHTML = `<button type="button" class="ph-back">← All series</button><h3 class="ph-st">${esc(s.title)}</h3><p class="ph-sm">${plural(s.frames.length, "frame")} · ${esc(s.places.join(", "))} · ${s.years}</p><div class="ph-sframes">${s.frames.map(f => `<a class="sq" href="?frame=${encodeURIComponent(f.id)}" data-id="${esc(f.id)}" aria-label="${esc(f.title)}"><img alt="" src="${f.big}" loading="lazy" decoding="async" style="aspect-ratio:${f.ratio}"></a>`).join("")}</div>`
-      $(".ph-back", seriesBody).addEventListener("click", () => { openS = null; drawSeries(); $("#p-series").scrollIntoView() })
-      $$(".sq", seriesBody).forEach((el, i) => el.addEventListener("click", e => { e.preventDefault(); openLightbox(s.frames, i, "Series · " + s.title) }))
-      return
-    }
-    const fan = [["-14%", "-5deg"], ["14%", "5deg"], ["0%", "0deg"]]
-    seriesBody.innerHTML = `<div class="ph-cards">${SERIES.map(s => {
-      const fs = s.frames.slice(0, 3)
-      const order = fs.length === 1 ? [fs[0]] : fs.length === 2 ? [fs[1], fs[0]] : [fs[1], fs[2], fs[0]]
-      const at = fs.length === 1 ? [fan[2]] : fs.length === 2 ? [fan[1], fan[2]] : fan
-      return `<button type="button" class="ph-card" data-s="${esc(s.slug)}"><span class="ph-stack">${order.map((f, i) => `<img alt="" src="${f.thumb}" loading="lazy" style="--x:${at[i][0]};--r:${at[i][1]}">`).join("")}</span><strong>${esc(s.title)}</strong><small>${plural(s.frames.length, "frame")}</small></button>`
-    }).join("")}</div>`
-    $$(".ph-card", seriesBody).forEach(b => b.addEventListener("click", () => { openS = b.dataset.s; drawSeries(); $("#p-series").scrollIntoView() }))
-  }
-  drawSeries()
-  LB.onSeries = slug => { openS = slug; drawSeries(); $("#p-series").scrollIntoView() }
 
-  // ---- The bar, and the three views as places on the page
-  const secs = $$(".phs", box)
-  const go = v => { const el = $("#p-" + v); if (el) scrollTo({ top: el.getBoundingClientRect().top + scrollY - 48, behavior: "instant" }) }
+  // ---- the bar, and the three views as places on the page
+  const archiveEl = $("#p-archive")
+  const go = v => {
+    if (v === "archive") return scrollTo({ top: archiveEl.getBoundingClientRect().top + scrollY - 48, behavior: "instant" })
+    const i = STEP_OF[v]
+    scrollTo({ top: steps[i].getBoundingClientRect().top + scrollY - vh() * .5 + 4, behavior: "instant" })
+  }
   $$("[data-view]").forEach(a => a.addEventListener("click", e => { e.preventDefault(); go(a.dataset.view) }))
   $("#toTop").addEventListener("click", () => scrollTo({ top: 0, behavior: "instant" }))
-  let raf = 0
-  const light = () => {
-    raf = 0
+  function light() {
     const shown = $("#views").getBoundingClientRect().bottom < 0
     minibar.classList.toggle("on", shown)
     minibar.setAttribute("aria-hidden", String(!shown))
     $$("button, a", minibar).forEach(x => (x.tabIndex = shown ? 0 : -1))
-    let on = null
-    secs.forEach(s => { if (s.getBoundingClientRect().top < innerHeight * .5) on = s.dataset.sec })
+    const on = archiveEl.getBoundingClientRect().top < innerHeight * .5 ? "archive" : STEPS[Math.max(0, current ?? 0)][1]
     $$("[data-view]").forEach(a => a.toggleAttribute("data-on", a.dataset.view === on))
   }
-  addEventListener("scroll", () => { if (!raf) raf = requestAnimationFrame(light) }, { passive: true })
-  light()
+  LB.onSeries = slug => { go("series"); requestAnimationFrame(() => showSeries(slug)) }
+  addEventListener("keydown", e => { if (e.key === "Escape" && lb.hidden && openS) closeSeries() })
+
+  compute(); size(); frame()
   const v = query().get("view")
   if (v) go(v)
+  if (query().get("series") && seriesBySlug[query().get("series")]) LB.onSeries(query().get("series"))
 }
 
 const PHONE = narrowQuery.matches
