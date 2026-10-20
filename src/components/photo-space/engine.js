@@ -785,7 +785,7 @@ function setupPhone() {
           const j = n - 1 - k, off = j - (n - 1) / 2
           pos[f.id] = { x: cx + off * spread, y: top + rowH - h / 2 + Math.abs(off) * 2, h, r: off * 3, z: 200 + (n - j), series: s.slug }
         })
-        labels.push({ cls: "stackcap", x: cx - cw / 2 + 8, y: top + rowH + 14, w: cw - 16, html: `<strong>${esc(s.title)}</strong><small>${plural(n, "frame")}</small>` })
+        labels.push({ cls: "stackcap", x: cx - cw / 2 + 8, y: top + rowH + 14, w: cw - 16, html: `<strong>${esc(s.title)}</strong>` })
       })
       L.series = { pos, labels, list: { list: SERIES.flatMap(s => s.frames), label: "Series" } }
       SERIES.forEach(s => { L["series:" + s.slug] = { pos: fitRows(s.frames, { ...r, y0: r.y0 + 40 }, 8, 320), list: { list: s.frames, label: "Series · " + s.title } } })
@@ -1328,7 +1328,7 @@ function compute() {
         const j = n - 1 - k, off = j - (n - 1) / 2
         pos[f.id] = { x: cx + off * spread, y: top + rowH - h / 2 + Math.abs(off) * 2, h, r: off * (narrow ? 3 : 3.5), z: 200 + (n - j) }
       })
-      labels.push({ cls: "stackcap", x: cx - cw / 2 + 8, y: top + rowH + (narrow ? 14 : 24), w: cw - 16, html: narrow ? `<strong>${esc(s.title)}</strong><small>${plural(n, "frame")}</small>` : `<strong>${esc(s.title)}</strong><small>${plural(n, "frame")} · ${esc(s.places.join(", "))} · ${s.years}</small>` })
+      labels.push({ cls: "stackcap", x: cx - cw / 2 + 8, y: top + rowH + (narrow ? 14 : 24), w: cw - 16, html: narrow ? `<strong>${esc(s.title)}</strong>` : `<strong>${esc(s.title)}</strong><small>${esc(s.places.join(", "))} · ${s.years}</small>` })
     })
     L.series = { pos, labels, list: { list: SERIES.flatMap(s => s.frames), label: "Series" } }
     SERIES.forEach(s => { L["series:" + s.slug] = { pos: fitRows(s.frames, { ...r, y0: r.y0 + (narrow ? 40 : 50) }, narrow ? 8 : 18, narrow ? 320 : 660), list: { list: s.frames, label: "Series · " + s.title } } })
