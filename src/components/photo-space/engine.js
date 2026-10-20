@@ -681,8 +681,8 @@ function setupPhone() {
   tapcap.className = "glcap"
   stage.insertBefore(tapcap, cap)
 
-  const STEPS = [["pile", null, 30], ["edit", "selected", 130], ["where", "archive", 110], ["rolls", "archive", 110], ["series", "series", 150]]
-  const STEP_OF = { selected: 1, series: 4 }
+  const STEPS = [["pile", null, 30], ["edit", "selected", 130], ["series", "series", 150], ["where", "archive", 110], ["rolls", "archive", 110]]
+  const STEP_OF = { selected: 1, series: 2, archive: 3, where: 3, rolls: 4 }
   let current = null, focus = 0, openS = null, L = {}, labelEls = [], W = 0, H = 0, layout = null, tapped = null
   const vh = () => stage.clientHeight || innerHeight
   const key = () => STEPS[Math.max(0, current ?? 0)][0]
@@ -963,7 +963,7 @@ function setupPhone() {
   // ---- the archive's grid and filters, as an ordinary section after the stage
   const box = document.createElement("div")
   box.className = "pm"
-  box.innerHTML = `<section class="phs" id="p-archive" data-sec="archive"><h2 class="phs-h">Archive</h2><div class="ph-filters"></div><div class="ph-sheet"></div></section>`
+  box.innerHTML = `<section class="phs" id="p-archive" data-sec="archive"><h2 class="phs-h">Archive</h2><p class="ph-back2">See it as <button type="button" data-go="where">Where</button> · <button type="button" data-go="rolls">Roll by roll</button></p><div class="ph-filters"></div><div class="ph-sheet"></div></section>`
   stage.closest(".story").after(box)
   // ---- Archive: the live filters over one grid that can also show where and roll by roll
   const SIZE = { sm: ["Small", 56], md: ["Medium", 84], lg: ["Large", 110] }
@@ -1038,11 +1038,12 @@ function setupPhone() {
   // ---- the bar, and the three views as places on the page
   const archiveEl = $("#p-archive")
   const go = v => {
-    if (v === "archive") return scrollTo({ top: archiveEl.getBoundingClientRect().top + scrollY - 48, behavior: "instant" })
+    if (v === "grid") return scrollTo({ top: archiveEl.getBoundingClientRect().top + scrollY - 48, behavior: "instant" })
     const i = STEP_OF[v]
     scrollTo({ top: steps[i].getBoundingClientRect().top + scrollY - vh() * .5 + 4, behavior: "instant" })
   }
   $$("[data-view]").forEach(a => a.addEventListener("click", e => { e.preventDefault(); go(a.dataset.view) }))
+  $$("[data-go]", box).forEach(b => b.addEventListener("click", () => go(b.dataset.go)))
   $("#toTop").addEventListener("click", () => scrollTo({ top: 0, behavior: "instant" }))
   function light() {
     const shown = $("#views").getBoundingClientRect().bottom < 0
@@ -1066,8 +1067,8 @@ if (PHONE) setupPhone()
 else {
 // ---------- one pile, re-laid by the scroll, all the way down
 // [scene, which view it belongs to, height of its stretch of scroll]
-const STEPS = [["pile", null, 30], ["edit", "selected", 130], ["where", "archive", 110], ["rolls", "archive", 110], ["grid", "archive", 120], ["series", "series", 150]]
-const VIEW_STEP = { selected: 1, archive: 2, series: 5 }
+const STEPS = [["pile", null, 30], ["edit", "selected", 130], ["series", "series", 150], ["where", "archive", 110], ["rolls", "archive", 110], ["grid", "archive", 120]]
+const VIEW_STEP = { selected: 1, series: 2, archive: 3 }
 const SHOW = { grid: "Grid", where: "Where", rolls: "Roll by roll" }
 // The live archive's sizes: 104, 170 and 260 pixel squares (smaller on a phone).
 const SIZE = { sm: ["Small", 104, 64], md: ["Medium", 170, 92], lg: ["Large", 260, 120] }
@@ -1079,7 +1080,7 @@ addEventListener("keydown", e => { if (e.key === "Escape" && openMenu) { openMen
 let current = null, focus = 0, openSeries = null, L = {}, G = null, labelEls = []
 const scene = () => STEPS[Math.max(0, current ?? 0)][0]
 // The filters come in with the grid, and apply to it.
-const inArchive = () => scene() === "grid"
+const inArchive = () => ["where", "rolls", "grid"].includes(scene())
 
 // ---------- prints
 const items = ARCHIVE.map(f => {
@@ -1121,16 +1122,16 @@ function drawFilters() {
   const n = pool().length, any = F.type.length || F.lived.length || F.year.length || F.place.length
   const k = scene()
   filtersEl.innerHTML = `
-    <span class="pf-title">Archive</span>
-    <div class="pf-group"><span class="pf-label">View</span><div class="pf-show">${[["grid", "Grid"], ["pile", "Pile"]].map(([v, l]) => `<button type="button" data-viewas="${v}" aria-pressed="${F.view === v}">${l}</button>`).join("")}</div></div>
-    ${F.view === "grid" ? `<div class="pf-group"><span class="pf-label">Size</span><div class="pf-chips">${Object.entries(SIZE).map(([s, [l]]) => `<button type="button" class="pf-chip" data-size="${s}" aria-pressed="${F.size === s}">${l}</button>`).join("")}</div></div>` : ""}
-    <div class="pf-group"><span class="pf-label">Type</span><div class="pf-chips">${Object.keys(TYPE).map(t => `<button type="button" class="pf-chip" data-type="${t}" aria-pressed="${F.type.includes(t)}" ${!types.get(t) && !F.type.includes(t) ? "disabled" : ""}>${TYPE[t]}</button>`).join("")}</div></div>
-    <div class="pf-group"><span class="pf-label">Space/time</span><div class="pf-chips">
+    <div class="pf-group"><span class="pf-label">Show</span><div class="pf-show">${[["where", "Where"], ["rolls", "Roll by roll"], ["grid", "Grid"]].map(([v, l]) => `<button type="button" data-show="${v}" aria-pressed="${k === v}">${l}</button>`).join("")}</div></div>
+    <div class="pf-group pf-more"><span class="pf-label">View</span><div class="pf-show">${[["grid", "Grid"], ["pile", "Pile"]].map(([v, l]) => `<button type="button" data-viewas="${v}" aria-pressed="${F.view === v}">${l}</button>`).join("")}</div></div>
+    ${F.view === "grid" ? `<div class="pf-group pf-more"><span class="pf-label">Size</span><div class="pf-chips">${Object.entries(SIZE).map(([s, [l]]) => `<button type="button" class="pf-chip" data-size="${s}" aria-pressed="${F.size === s}">${l}</button>`).join("")}</div></div>` : ""}
+    <div class="pf-group pf-more"><span class="pf-label">Type</span><div class="pf-chips">${Object.keys(TYPE).map(t => `<button type="button" class="pf-chip" data-type="${t}" aria-pressed="${F.type.includes(t)}" ${!types.get(t) && !F.type.includes(t) ? "disabled" : ""}>${TYPE[t]}</button>`).join("")}</div></div>
+    <div class="pf-group pf-more"><span class="pf-label">Space/time</span><div class="pf-chips">
       ${sel("lived", "Lived", [...countBy(FRAMES.filter(f => passes(f, "lived")), f => LIVED.includes(f.city) ? f.city : null)].sort((a, b) => b[1] - a[1]))}
       ${sel("year", "Year", [...countBy(FRAMES.filter(f => passes(f, "year")), f => String(f.year))].sort((a, b) => b[0] - a[0]))}
       ${sel("place", "Place", [...countBy(FRAMES.filter(f => passes(f, "place")), f => f.country)].sort((a, b) => b[1] - a[1]))}
     </div></div>
-    <div class="pf-count">${n} frame${n === 1 ? "" : "s"}${any ? '<button type="button" id="clear">Clear</button>' : ""}</div>`
+    <div class="pf-count pf-more">${n} frame${n === 1 ? "" : "s"}${any ? '<button type="button" id="clear">Clear</button>' : ""}</div>`
   // Show jumps to that lay's stretch of the scroll; the scroll lights it.
   $$("[data-show]", filtersEl).forEach(b => b.addEventListener("click", () => jump(STEPS.findIndex(s => s[0] === b.dataset.show))))
   $$("[data-viewas]", filtersEl).forEach(b => b.addEventListener("click", () => { F.view = b.dataset.viewas; refilter() }))
@@ -1159,9 +1160,15 @@ function geometry() {
   const W = innerWidth, H = stage.clientHeight || innerHeight, narrow = narrowQuery.matches
   const inset = clamp(W * 0.07, 20, 100), bar = narrow ? 48 : 56
   const r = narrow ? { x0: 12, x1: W - 12, y0: bar + 14, y1: H - 28 } : { x0: inset, x1: W - inset, y0: bar + 30, y1: H - 32 }
-  const fh = filtersEl.offsetHeight
+  // The bar is one row (Show) over Where and Roll by roll, and all the
+  // filters over the grid: measure it both ways.
+  const was = filtersEl.hasAttribute("data-full")
+  filtersEl.setAttribute("data-full", ""); const fh = filtersEl.offsetHeight
+  filtersEl.removeAttribute("data-full"); const fs = filtersEl.offsetHeight
+  filtersEl.toggleAttribute("data-full", was)
   const rf = { ...r, y0: bar + fh + (narrow ? 26 : 34) }
-  return { W, H, narrow, r, rf, S: clamp(Math.min(W / 1440, H / 900), .7, 1.35) }
+  const rs = { ...r, y0: bar + fs + (narrow ? 20 : 26) }
+  return { W, H, narrow, r, rf, rs, S: clamp(Math.min(W / 1440, H / 900), .7, 1.35) }
 }
 // Groups as columns of rows, each headed by its name: Where's cities.
 function columns(groups, box, narrow, gap, maxH) {
@@ -1192,7 +1199,7 @@ function columns(groups, box, narrow, gap, maxH) {
 }
 function compute() {
   G = geometry()
-  const { r, rf, narrow, W, H, S } = G
+  const { r, rf, rs, narrow, W, H, S } = G
   const rw = r.x1 - r.x0, rh = r.y1 - r.y0
   const list = pool(), sk = SIZE[F.size][1]
   L = {}
@@ -1243,7 +1250,7 @@ function compute() {
   })
   // Archive · Where: a pile per city lived in, and one for everywhere else.
   {
-    const box = { ...r, y0: r.y0 + 6 }, bw = box.x1 - box.x0, bh = box.y1 - box.y0
+    const box = { ...rs }, bw = box.x1 - box.x0, bh = box.y1 - box.y0
     const groups = [...LIVED.map(c => ({ label: c, em: "lived in", frames: ARCHIVE.filter(f => f.city === c) })), { label: "Elsewhere", em: `${new Set(ARCHIVE.filter(f => !LIVED.includes(f.city)).map(f => f.city)).size} places`, frames: ARCHIVE.filter(f => !LIVED.includes(f.city)) }].filter(g => g.frames.length)
     const pos = {}, labels = [], rand = seeded(23)
     if (narrow) {
@@ -1275,7 +1282,7 @@ function compute() {
     const groups = Object.keys(rolls).map(Number).sort((a, b) => b - a).map(n => ({ label: "Roll " + n, meta: rolls[n][0].year, frames: rolls[n] }))
     const unknown = ARCHIVE.filter(f => f.roll == null), bh = rh
     const pileW = narrow ? 0 : Math.min(240 * S, rw * 0.16)
-    const box = narrow ? { ...r, y1: r.y1 - 60 } : { ...r, y0: r.y0 + 6, x1: r.x1 - pileW - 40 }
+    const box = narrow ? { ...r, y1: r.y1 - 60 } : { ...rs, x1: r.x1 - pileW - 40 }
     const out = flow(groups, box, narrow, { strip: true, labelH: 18, maxH: 210, gap: 3, groupGap: narrow ? 8 : 16, lineGap: narrow ? 8 : 14, pad: narrow ? 4 : 7, minW: narrow ? 66 : 108 })
     const ub = narrow ? { x0: r.x0 + 150, x1: r.x1 - 4, y0: r.y1 - 52, y1: r.y1 } : { x0: r.x1 - pileW, x1: r.x1, y0: r.y0 + bh / 2 - pileW * .55, y1: r.y0 + bh / 2 + pileW * .55 }
     const up = pileLayout(unknown, ub, seeded(5), (narrow ? 24 : 48) * S, (narrow ? 8 : 16) * S, 14, 0)
@@ -1386,6 +1393,7 @@ function draw() {
   stage.toggleAttribute("data-open", !!openSeries)
   hideTip()
   filtersEl.classList.toggle("away", !inArchive())
+  filtersEl.toggleAttribute("data-full", k === "grid")
   $$("[data-show]", filtersEl).forEach(b => b.setAttribute("aria-pressed", String(b.dataset.show === k)))
   const layout = openSeries ? L["series:" + openSeries] : k === "edit" ? L["edit" + focus] : k === "grid" && F.view === "pile" ? L.gridpile : L[k]
   gridOffset = -1

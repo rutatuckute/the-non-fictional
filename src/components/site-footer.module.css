@@ -1,5 +1,5 @@
 .footer {
-  width: var(--page-width);
+  width: var(--wide-width);
   margin: 0 auto;
   padding: 1.5rem 0 2.5rem;
   border-top: 1px solid var(--border);

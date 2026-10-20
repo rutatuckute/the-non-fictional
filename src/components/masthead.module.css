@@ -16,7 +16,7 @@
   /* The bar runs full width, with the homepage's margins on every page, so
      the logo and the menu stay put as you move between sections rather
      than drawing in to the 1240px column on wide screens. */
-  padding: 0 clamp(20px, 7vw, 100px);
+  padding: 0 var(--wide-inset);
   border: 0;
   border-bottom: 1px solid var(--masthead-rule);
   border-radius: 0;

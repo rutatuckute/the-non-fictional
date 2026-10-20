@@ -40,6 +40,11 @@
   --page-margin: clamp(16px, 4vw, 56px);
   --page-width: min(var(--page-max), 100% - 2 * var(--page-margin));
   --page-inset: max(var(--page-margin), (100% - var(--page-max)) / 2);
+  /* The wide frame the homepage and Photography are set in: the masthead,
+   * the footer line share it, so their edges agree. Writings, In brief and
+   * the articles keep the narrower container above. */
+  --wide-inset: clamp(20px, 7vw, 100px);
+  --wide-width: calc(100% - 2 * var(--wide-inset));
 
   /* Editorial system — all page modules inherit these rather than carrying
    * subtly diverging copies of the site palette. */
