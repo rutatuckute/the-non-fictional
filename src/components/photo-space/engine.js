@@ -681,8 +681,8 @@ function setupPhone() {
   tapcap.className = "glcap"
   stage.insertBefore(tapcap, cap)
 
-  const STEPS = [["pile", null, 30], ["edit", "selected", 130], ["where", "archive", 110], ["rolls", "archive", 110], ["series", "series", 150]]
-  const STEP_OF = { selected: 1, series: 4 }
+  const STEPS = [["pile", null, 30], ["edit", "selected", 130], ["series", "series", 150], ["where", "archive", 110], ["rolls", "archive", 110]]
+  const STEP_OF = { selected: 1, series: 2, archive: 3, where: 3, rolls: 4 }
   let current = null, focus = 0, openS = null, L = {}, labelEls = [], W = 0, H = 0, layout = null, tapped = null
   const vh = () => stage.clientHeight || innerHeight
   const key = () => STEPS[Math.max(0, current ?? 0)][0]
@@ -963,7 +963,7 @@ function setupPhone() {
   // ---- the archive's grid and filters, as an ordinary section after the stage
   const box = document.createElement("div")
   box.className = "pm"
-  box.innerHTML = `<section class="phs" id="p-archive" data-sec="archive"><h2 class="phs-h">Archive</h2><div class="ph-filters"></div><div class="ph-sheet"></div></section>`
+  box.innerHTML = `<section class="phs" id="p-archive" data-sec="archive"><h2 class="phs-h">Archive</h2><p class="ph-back2">See it as <button type="button" data-go="where">Where</button> · <button type="button" data-go="rolls">Roll by roll</button></p><div class="ph-filters"></div><div class="ph-sheet"></div></section>`
   stage.closest(".story").after(box)
   // ---- Archive: the live filters over one grid that can also show where and roll by roll
   const SIZE = { sm: ["Small", 56], md: ["Medium", 84], lg: ["Large", 110] }
@@ -1038,11 +1038,12 @@ function setupPhone() {
   // ---- the bar, and the three views as places on the page
   const archiveEl = $("#p-archive")
   const go = v => {
-    if (v === "archive") return scrollTo({ top: archiveEl.getBoundingClientRect().top + scrollY - 48, behavior: "instant" })
+    if (v === "grid") return scrollTo({ top: archiveEl.getBoundingClientRect().top + scrollY - 48, behavior: "instant" })
     const i = STEP_OF[v]
     scrollTo({ top: steps[i].getBoundingClientRect().top + scrollY - vh() * .5 + 4, behavior: "instant" })
   }
   $$("[data-view]").forEach(a => a.addEventListener("click", e => { e.preventDefault(); go(a.dataset.view) }))
+  $$("[data-go]", box).forEach(b => b.addEventListener("click", () => go(b.dataset.go)))
   $("#toTop").addEventListener("click", () => scrollTo({ top: 0, behavior: "instant" }))
   function light() {
     const shown = $("#views").getBoundingClientRect().bottom < 0
@@ -1066,8 +1067,8 @@ if (PHONE) setupPhone()
 else {
 // ---------- one pile, re-laid by the scroll, all the way down
 // [scene, which view it belongs to, height of its stretch of scroll]
-const STEPS = [["pile", null, 30], ["edit", "selected", 130], ["where", "archive", 110], ["rolls", "archive", 110], ["grid", "archive", 120], ["series", "series", 150]]
-const VIEW_STEP = { selected: 1, archive: 2, series: 5 }
+const STEPS = [["pile", null, 30], ["edit", "selected", 130], ["series", "series", 150], ["where", "archive", 110], ["rolls", "archive", 110], ["grid", "archive", 120]]
+const VIEW_STEP = { selected: 1, series: 2, archive: 3 }
 const SHOW = { grid: "Grid", where: "Where", rolls: "Roll by roll" }
 // The live archive's sizes: 104, 170 and 260 pixel squares (smaller on a phone).
 const SIZE = { sm: ["Small", 104, 64], md: ["Medium", 170, 92], lg: ["Large", 260, 120] }
@@ -1122,6 +1123,7 @@ function drawFilters() {
   const k = scene()
   filtersEl.innerHTML = `
     <span class="pf-title">Archive</span>
+    <div class="pf-group"><span class="pf-label">Show</span><div class="pf-show">${[["where", "Where"], ["rolls", "Roll by roll"], ["grid", "Grid"]].map(([v, l]) => `<button type="button" data-show="${v}" aria-pressed="${k === v}">${l}</button>`).join("")}</div></div>
     <div class="pf-group"><span class="pf-label">View</span><div class="pf-show">${[["grid", "Grid"], ["pile", "Pile"]].map(([v, l]) => `<button type="button" data-viewas="${v}" aria-pressed="${F.view === v}">${l}</button>`).join("")}</div></div>
     ${F.view === "grid" ? `<div class="pf-group"><span class="pf-label">Size</span><div class="pf-chips">${Object.entries(SIZE).map(([s, [l]]) => `<button type="button" class="pf-chip" data-size="${s}" aria-pressed="${F.size === s}">${l}</button>`).join("")}</div></div>` : ""}
     <div class="pf-group"><span class="pf-label">Type</span><div class="pf-chips">${Object.keys(TYPE).map(t => `<button type="button" class="pf-chip" data-type="${t}" aria-pressed="${F.type.includes(t)}" ${!types.get(t) && !F.type.includes(t) ? "disabled" : ""}>${TYPE[t]}</button>`).join("")}</div></div>
