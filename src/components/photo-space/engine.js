@@ -664,6 +664,13 @@ function dress(el, f) {
 
 // ---------- phones: the pile once, then plain sections that scroll natively.
 // Nothing is pinned or re-laid; a phone only scrolls and taps.
+// Each frame comes in three copies: small (420px), medium (828px) and large
+// (2048px). A print starts on the small one and moves up once it is shown
+// big enough to need more, so the page stays quick and nothing is stretched.
+function tierFor(shownWidth) {
+  const px = shownWidth * Math.min(devicePixelRatio || 1, 3)
+  return px > 900 ? 2 : px > 430 ? 1 : 0
+}
 function setupPhone() {
   // Phones: the same pinned, scroll-driven stage as on a computer, but every
   // print is drawn on one canvas, as the homepage does: rearranging the prints
@@ -816,7 +823,11 @@ function setupPhone() {
       p.z = t ? (t.z ?? 100) : -1
       p.thumb = !!(t && t.thumb)
       p.t0 = now + (instant ? -1e6 : (i % 12) * 6)
-      if (t && t.focus && !p.big && p.f.l) { p.big = new Image(); p.big.onload = () => p.big.decode().then(wake, wake); p.big.src = p.f.big }
+      if (t) {
+        const tier = tierFor(t.h * p.f.ratio)
+        if (tier === 2 && !p.big) { p.big = new Image(); p.big.onload = () => p.big.decode().then(wake, wake); p.big.src = p.f.big }
+        else if (tier === 1 && !p.med && !p.big) { p.med = new Image(); p.med.onload = () => p.med.decode().then(wake, wake); p.med.src = p.f.src }
+      }
       if (instant) p.cur = { ...p.to }
     })
     order = P.slice().sort((a, b) => a.z - b.z)
@@ -838,7 +849,8 @@ function setupPhone() {
       }
       const c = p.cur
       if (c.o < .01 || c.h < 1) continue
-      const im = p.big && p.big.complete && p.big.naturalWidth ? p.big : p.bmp || p.im
+      const ok = x => x && x.complete && x.naturalWidth
+      const im = ok(p.big) ? p.big : ok(p.med) ? p.med : p.bmp || p.im
       if (!p.bmp && (!p.im.complete || !p.im.naturalWidth)) continue
       const h = c.h, w = h * p.f.ratio, ext = Math.max(w, h) * .75
       // Off the screen: nothing to draw.
@@ -1341,7 +1353,13 @@ function render(layout) {
   items.forEach(f => {
     const p = layout.pos[f.id], el = f.el
     if (!p) { el.style.opacity = 0; el.classList.add("off"); el.tabIndex = -1; return }
-    if (p.focus && f.l && !f.bigLoaded) { $("img", el).src = f.big; f.bigLoaded = true }
+    const tier = tierFor(p.sq ? p.h * Math.max(1, f.ratio) : p.h * f.ratio)
+    if (tier > (f.tier || 0)) {
+      // The old picture stays on screen until the sharper one has arrived.
+      const src = tier === 2 ? f.big : f.src
+      if (src) $("img", el).src = src
+      f.tier = tier
+    }
     const s = p.h / f.bh, bw = p.sq ? f.bh : f.bw
     el.style.width = bw + "px"
     el.classList.toggle("sq", !!p.sq)
