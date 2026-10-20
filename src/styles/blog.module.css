@@ -53,7 +53,7 @@
 
 .main {
   flex: 1;
-  width: var(--wide-width);
+  width: var(--page-width);
   margin: 0 auto;
 }
 

@@ -83,7 +83,7 @@ export default function AboutPage() {
     <div className="tw min-h-screen bg-background">
       <Masthead activeSection="in-brief" />
 
-      <main className="mx-auto w-[var(--wide-width)] py-16 md:py-24">
+      <main className="mx-auto w-[var(--page-width)] py-16 md:py-24">
         <div className="brief-layout">
           <article className="brief-essay">
             <h1 className="editorial-title brief-title">In brief</h1>
