@@ -120,10 +120,12 @@
   color: var(--masthead-ink);
 }
 
+/* Above every page's own layers (the homepage's words and Photography's
+   header and bar sit as high as 900), below only the photo viewer (1000). */
 .menuBackdrop {
   position: fixed;
   inset: 0;
-  z-index: 95;
+  z-index: 960;
   background: rgba(0, 0, 0, 0.55);
   opacity: 0;
   visibility: hidden;
@@ -144,7 +146,7 @@
   position: fixed;
   top: 0;
   right: 0;
-  z-index: 96;
+  z-index: 961;
   display: flex;
   flex-direction: column;
   width: min(20rem, 82%);
