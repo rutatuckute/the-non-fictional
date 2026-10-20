@@ -403,6 +403,15 @@
 .ps-root .ph-sm { margin: 0 0 16px; font: 12px var(--sans); color: var(--meta); }
 .ps-root .ph-sframes { display: flex; flex-direction: column; gap: 6px; }
 .ps-root .ph-sframes img { display: block; width: 100%; height: auto; }
+
+/* ---- Phones: one canvas for the stage --------------------------------- */
+.ps-root .pgl .stage canvas.gl { position: absolute; left: 0; top: 0; z-index: 100; display: block; }
+.ps-root .pgl .lab.group, .ps-root .pgl .lab.note, .ps-root .pgl .lab.stackcap { z-index: 390; }
+.ps-root .glcap { position: absolute; z-index: 430; max-width: 240px; padding: 9px 11px; background: rgba(17,16,15,.92); border: 1px solid var(--rule); pointer-events: none; opacity: 0; transition: opacity .15s linear; }
+.ps-root .glcap.on { opacity: 1; }
+.ps-root .glcap b { display: block; font: 400 11px/1.3 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
+.ps-root .glcap span { display: block; margin-top: 3px; font: 12px/1.3 var(--sans); color: var(--ink-2); }
+.ps-root .glcap i { display: block; margin-top: 5px; font: italic 300 13px/1.2 var(--serif); color: var(--meta); }
 /* ---- Back to the start: small, bottom right, once past the header */
 .ps-root .tostart { position: fixed; right: 18px; bottom: 18px; z-index: 720; padding: 6px 10px; background: rgba(17,16,15,.82); border: 1px solid var(--rule); border-radius: 2px; color: var(--meta); font: 12px var(--sans); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .25s linear; }
 .ps-root .tostart.on { opacity: .85; pointer-events: auto; }
