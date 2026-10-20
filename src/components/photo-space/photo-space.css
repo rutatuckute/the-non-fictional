@@ -414,6 +414,7 @@
 .ps-root .glcap i { display: block; margin-top: 5px; font: italic 300 13px/1.2 var(--serif); color: var(--meta); }
 .ps-root .ph-back2 { margin: -8px 0 14px; font: 13px var(--sans); color: var(--meta); }
 .ps-root .ph-back2 button { background: none; border: 0; padding: 0; color: var(--ink-2); font: inherit; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; cursor: pointer; }
+.ps-root .stage .pf:not([data-full]) .pf-more { display: none; }
 /* ---- Back to the start: small, bottom right, once past the header */
 .ps-root .tostart { position: fixed; right: 18px; bottom: 18px; z-index: 720; padding: 6px 10px; background: rgba(17,16,15,.82); border: 1px solid var(--rule); border-radius: 2px; color: var(--meta); font: 12px var(--sans); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .25s linear; }
 .ps-root .tostart.on { opacity: .85; pointer-events: auto; }
