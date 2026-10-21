@@ -11,3 +11,22 @@
   line-height: 1.5;
   text-align: left;
 }
+
+.sep {
+  margin: 0 0.5em;
+}
+
+/* A link in a line of text: its own colour, underlined in the accent. */
+.credit {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color 150ms ease;
+}
+
+.credit:hover,
+.credit:focus-visible {
+  color: var(--text-primary);
+}
