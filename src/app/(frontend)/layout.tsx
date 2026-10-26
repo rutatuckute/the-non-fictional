@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import { Inter, Newsreader } from "next/font/google"
+import { Analytics } from "@vercel/analytics/next"
 
 import { site, siteUrl } from "../../lib/site"
 import "../../styles/globals.css"
@@ -107,7 +108,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${newsreader.variable} ${inter.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* Vercel Web Analytics: cookie-free page views. It lives in this layout,
+            not the root, so visits to /admin are never counted. */}
+        <Analytics />
+      </body>
     </html>
   )
 }
