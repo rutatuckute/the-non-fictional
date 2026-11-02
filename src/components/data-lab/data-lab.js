@@ -8,8 +8,7 @@ import Methodology from "./methodology"
 import StateOfThings from "./state-of-things"
 import styles from "./data-lab.module.css"
 
-// Every line of the page in both languages. French is the default: the lab is
-// about France and most of its sources are French.
+// Every line of the page in both languages. English is the default.
 const STRINGS = {
   fr: {
     label: "Data\u00a0Lab · France · Automne\u00a02026",
@@ -28,8 +27,8 @@ const STRINGS = {
   },
 }
 
-// English first in the toggle; French stays the default (the lab is about
-// France and most of its sources are French).
+// English first in the toggle, and the default when the address names no
+// language.
 const LANGS = ["en", "fr"]
 
 const SECTIONS = [
@@ -44,12 +43,13 @@ const SECTIONS = [
 ]
 
 export default function DataLab() {
-  const [lang, setLang] = React.useState("fr")
+  const [lang, setLang] = React.useState("en")
   const t = STRINGS[lang]
   const f = React.useMemo(() => makeFormat(lang), [lang])
 
-  // The language lives in the address (?lang=en), so a shared link opens in
-  // the language it was read in. Read once on arrival, rewritten on change.
+  // The language lives in the address (?lang=en or ?lang=fr), so a shared link
+  // opens in the language it was read in. Read once on arrival, written on
+  // change, whichever language is chosen.
   React.useEffect(() => {
     const requested = new URLSearchParams(window.location.search).get("lang")
     if (LANGS.includes(requested)) setLang(requested)
@@ -58,8 +58,7 @@ export default function DataLab() {
   const choose = next => {
     setLang(next)
     const url = new URL(window.location.href)
-    if (next === "fr") url.searchParams.delete("lang")
-    else url.searchParams.set("lang", next)
+    url.searchParams.set("lang", next)
     window.history.replaceState(null, "", url)
   }
 

@@ -1,8 +1,8 @@
 // Every editorial line of the "Connect the dots" story, in one place.
 //
 // English is the editorial master. The French lines are provisional drafts,
-// written to hold the page until the French rewrite (it is French by
-// default): each is marked FR-DRAFT. Rewrite them in French, don't translate
+// written to hold the French version until its rewrite: each is marked
+// FR-DRAFT. Rewrite them in French, don't translate
 // the English word for word.
 //
 // Quotations are never written here: they come from data/threads.json,
