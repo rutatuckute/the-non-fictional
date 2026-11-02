@@ -1,12 +1,12 @@
-/* The Data Lab sits in the wide frame the homepage and Photography use: it is
- * an instrument with maps and charts, not a reading column. Type and colour
- * come only from the site's roles in globals.css. */
+/* The Data Lab sits in the same centred container as Writings: past its maximum
+ * width, a larger window only widens the margins. Type and colour come only from
+ * the site's roles in globals.css. */
 /* The Data Lab belongs to the Data form: as on a Data article, everything
  * that carries colour on the page takes the form's colour, while the
  * masthead and footer keep the site's own. */
 .lab {
   --form: var(--form-data);
-  width: var(--wide-width);
+  width: var(--page-width);
   margin: 0 auto;
   padding: clamp(40px, 7vw, 88px) 0 clamp(64px, 9vw, 120px);
 }
@@ -120,7 +120,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
-  gap: 32px clamp(40px, 5vw, 80px);
+  gap: 32px clamp(40px, 5vw, 64px);
 }
 .lab .sections {
   display: flex;
