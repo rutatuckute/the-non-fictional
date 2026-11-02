@@ -10,11 +10,11 @@ const description =
 export const metadata: Metadata = {
   title: "Data Lab",
   description,
-  alternates: { canonical: "/projects/france-data-lab/" },
+  alternates: { canonical: "/projects/data-lab-france/" },
   openGraph: {
     title: "Data Lab",
     description,
-    url: "/projects/france-data-lab/",
+    url: "/projects/data-lab-france/",
     type: "website",
   },
 }

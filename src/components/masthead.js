@@ -11,6 +11,7 @@ const navigation = [
   { label: "Structure", to: "/", section: "structure" },
   { label: "Writings", to: "/blog/", section: "writings" },
   { label: "Photography", to: "/photography/", section: "photography" },
+  { label: "Projects", to: "/projects/data-lab-france/", section: "projects" },
   { label: "In brief", to: "/about/", section: "in-brief" },
 ]
 
@@ -18,6 +19,7 @@ const getActiveSection = (pathname = "/") => {
   if (pathname === "/") return "structure"
   if (pathname.startsWith("/blog")) return "writings"
   if (pathname.startsWith("/photography")) return "photography"
+  if (pathname.startsWith("/projects")) return "projects"
   if (pathname.startsWith("/about")) return "in-brief"
   return null
 }

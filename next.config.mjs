@@ -52,6 +52,13 @@ const nextConfig = {
 
   async redirects() {
     return [
+      // One project so far, so the section opens on it. Not permanent: this
+      // can become an index when there are more.
+      {
+        source: "/projects",
+        destination: "/projects/data-lab-france/",
+        permanent: false,
+      },
       // The redesign prototype was folded into the homepage.
       { source: "/redesign-lab", destination: "/", permanent: true },
       // A leftover page from the Gatsby starter. It is in the old sitemap, so

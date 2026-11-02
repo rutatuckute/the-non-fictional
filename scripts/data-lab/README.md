@@ -1,6 +1,6 @@
 # Data Lab — France
 
-The data behind `/projects/france-data-lab/`. It comes from the data pipeline in
+The data behind `/projects/data-lab-france/`. It comes from the data pipeline in
 the `the-non-fictional-data-stories` repository (`france-protests-story/`),
 which fetches and cleans every source. This folder only exports what the page
 shows into `src/components/data-lab/data/`:
