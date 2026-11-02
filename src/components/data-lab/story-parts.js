@@ -171,11 +171,12 @@ export const Quote = ({
   const words = translated ? fromTranslation : fromOriginal
   const shownLang = translated ? f.lang : lang
   return (
-    <figure
-      className={`${styles.quote} ${styles[`q_${size}`]}`}
-      style={shared(name)}
-    >
-      <blockquote lang={shownLang} className={styles.quoteText}>
+    <figure className={`${styles.quote} ${styles[`q_${size}`]}`}>
+      <blockquote
+        lang={shownLang}
+        className={styles.quoteText}
+        style={shared(name)}
+      >
         <span aria-hidden="true" className={styles.quoteMark}>
           {shownLang === "fr" ? "« " : "“"}
         </span>

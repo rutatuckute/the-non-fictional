@@ -1,0 +1,402 @@
+/* The stage of "Connect the dots": no box, on the page's own ground. Scoped
+ * under .story: the page sits in .tw, whose element resets outrank one class. */
+
+.story {
+  --ink: #ede9e2;
+  --nav: #70c982;
+  --thread: #c96a4b;
+  --form: var(--nav);
+  position: relative;
+  margin-bottom: clamp(40px, 6vw, 72px);
+}
+.story :focus-visible {
+  outline: 2px solid var(--nav);
+  outline-offset: 2px;
+}
+
+/* ---------- along the top ---------- */
+
+.story .top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 28px;
+  min-height: 62px;
+  padding-bottom: 12px;
+}
+.story .where {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 14px;
+  min-width: 0;
+}
+.story .chapter {
+  color: var(--ink);
+  font: 400 13px / 1.4 var(--font-functional);
+  white-space: nowrap;
+}
+.story .memory {
+  color: var(--text-metadata);
+  font: 400 13px / 1.4 var(--font-functional);
+  animation: memoryIn 420ms ease;
+}
+@keyframes memoryIn {
+  from {
+    opacity: 0;
+  }
+}
+.story .tools {
+  display: flex;
+  flex: none;
+  align-items: baseline;
+  gap: 20px;
+}
+.story .quiet {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  font: 400 13px / 1.4 var(--font-functional);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+.story .quiet:hover,
+.story .quiet[aria-expanded="true"] {
+  color: var(--nav);
+}
+
+/* the contents */
+.story .contents {
+  position: relative;
+}
+.story .contentsPanel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 20;
+  display: grid;
+  gap: 16px;
+  width: min(300px, 82vw);
+  padding: 16px 18px;
+  border: 1px solid var(--site-rule-strong);
+  border-radius: 6px;
+  background: var(--surface-raised);
+  box-shadow: 0 14px 36px rgb(0 0 0 / 0.5);
+}
+.story .contentsAct {
+  display: grid;
+  gap: 4px;
+}
+.story .contentsAct > span {
+  color: var(--text-metadata);
+  font: 400 12px / 1.4 var(--font-functional);
+}
+.story .contentsAct ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.story .contentsAct li {
+  margin: 0;
+}
+.story .contentsAct button {
+  width: 100%;
+  padding: 3px 0;
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  font: 400 16px / 1.3 var(--font-editorial);
+  text-align: left;
+  cursor: pointer;
+}
+.story .contentsAct button:hover {
+  color: var(--ink);
+}
+.story .contentsAct button[aria-current] {
+  color: var(--nav);
+}
+.story .restart {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 0 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+  background: none;
+  color: var(--text-metadata);
+  font: 400 13px / 1.3 var(--font-functional);
+  cursor: pointer;
+}
+.story .restart:hover {
+  color: var(--ink);
+}
+.story .restartIcon {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* the two ways in, at the start and in the explorer */
+.story .ways {
+  display: flex;
+  flex: none;
+  gap: 22px;
+}
+.story .ways.isFull {
+  flex: 1;
+  gap: 0;
+}
+.story .way {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-metadata);
+  text-align: left;
+  cursor: pointer;
+}
+.story .ways.isFull .way {
+  flex: 1;
+  gap: 12px;
+  padding-right: 24px;
+}
+.story .ways.isFull .way + .way {
+  padding-left: 24px;
+  border-left: 1px solid var(--rule);
+}
+.story .wayIcon {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  margin-top: 1px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.story .ways.isFull .wayIcon {
+  width: 21px;
+  height: 21px;
+  margin-top: 3px;
+}
+.story .way[aria-current] .wayIcon {
+  stroke: var(--nav);
+}
+.story .wayText {
+  display: grid;
+  gap: 3px;
+}
+.story .wayTitle {
+  color: var(--text-secondary);
+  font: 500 14px / 1.3 var(--font-functional);
+  text-decoration-color: var(--nav);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 7px;
+}
+.story .ways.isFull .wayTitle {
+  font: 400 20px / 1.2 var(--font-editorial);
+}
+.story .way[aria-current] .wayTitle,
+.story .way:hover .wayTitle {
+  color: var(--text-primary);
+}
+.story .ways:not(.isFull) .way[aria-current] .wayTitle {
+  text-decoration-line: underline;
+}
+.story .wayResume {
+  color: var(--text-metadata);
+  font-weight: 400;
+}
+.story .wayDesc {
+  color: var(--text-metadata);
+  font: 400 13px / 1.45 var(--font-functional);
+}
+.story .way:hover .wayDesc {
+  color: var(--text-secondary);
+}
+.story .explorer {
+  min-width: 0;
+  padding-top: 12px;
+}
+
+/* ---------- the scene ---------- */
+
+.story .body {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.62fr) minmax(0, 1.9fr);
+  gap: 0 40px;
+  min-height: 612px;
+}
+.story .caption {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  grid-column: 1;
+  grid-row: 1;
+}
+.story .captionText {
+  margin: 0;
+  color: var(--ink);
+  font: 400 clamp(22px, 1.75vw, 27px) / 1.34 var(--font-editorial);
+  letter-spacing: -0.005em;
+  text-wrap: pretty;
+  transition: opacity 400ms ease;
+}
+.story .caption.isSilent .captionText {
+  opacity: 0;
+}
+.story .stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  --form: var(--thread);
+  touch-action: pan-y;
+}
+.story .scene {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+}
+.story.isWide .stage {
+  grid-column: 1 / -1;
+}
+.story.isWide .caption {
+  position: relative;
+  z-index: 3;
+  justify-content: flex-start;
+  padding-top: 64px;
+  pointer-events: none;
+}
+.story.isFull .body {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+}
+.story.isFull .caption {
+  margin-bottom: 18px;
+}
+.story.isFull .stage {
+  grid-column: 1;
+  grid-row: 2;
+}
+.story.isUncaptioned .body {
+  grid-template-rows: 1fr;
+}
+.story.isUncaptioned .caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.story.isUncaptioned .stage {
+  grid-row: 1;
+}
+
+/* ---------- back and forward, always here ---------- */
+
+.story .controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 18px;
+}
+.story .arrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--site-rule-strong);
+  border-radius: 50%;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+.story .arrow svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+.story .arrowNext {
+  border-color: var(--nav);
+  background: rgb(112 201 130 / 0.07);
+  color: var(--ink);
+}
+.story .arrow:hover:not(:disabled) {
+  border-color: var(--text-secondary);
+  color: var(--ink);
+}
+.story .arrowNext:hover:not(:disabled) {
+  border-color: var(--nav);
+  background: rgb(112 201 130 / 0.15);
+}
+.story .arrow:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+@media (max-width: 860px) {
+  .story .top {
+    flex-wrap: wrap;
+    min-height: 0;
+  }
+  .story .ways.isFull {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .story .ways.isFull .way,
+  .story .ways.isFull .way + .way {
+    padding: 0;
+    border: 0;
+  }
+  .story .ways.isFull .wayTitle {
+    font-size: 18px;
+  }
+  .story .body,
+  .story.isFull .body {
+    display: block;
+    min-height: 0;
+  }
+  .story .caption,
+  .story.isWide .caption {
+    padding-top: 0;
+    margin-bottom: 14px;
+  }
+  .story .captionText {
+    font-size: 19px;
+  }
+  .story .caption.isSilent {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .story .memory {
+    animation: none;
+  }
+  .story .captionText,
+  .story .quiet,
+  .story .arrow {
+    transition: none;
+  }
+}

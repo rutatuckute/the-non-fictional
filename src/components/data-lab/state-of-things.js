@@ -382,6 +382,8 @@ export default function StateOfThings({ f }) {
   const [id, setId] = React.useState(DEFAULT)
   // the box opens on the story; a question link (?q=) opens the explorer
   const [mode, setMode] = React.useState("story")
+  // the heading introduces the story, then steps back
+  const [begun, setBegun] = React.useState(false)
   const frame = React.useRef(null)
   const toFrame = () => frame.current?.scrollIntoView({ block: "start" })
   const [tip, showTip, hideTip] = useTip()
@@ -439,7 +441,9 @@ export default function StateOfThings({ f }) {
       id="state"
       aria-labelledby="state-title"
     >
-      <header className={styles.head}>
+      <header
+        className={`${styles.head} ${begun && mode === "story" ? styles.isQuiet : ""}`}
+      >
         <span className={styles.numeral}>01</span>
         <div>
           <h2 className={styles.title} id="state-title">
@@ -464,6 +468,7 @@ export default function StateOfThings({ f }) {
         onMode={setMode}
         frameRef={frame}
         exploreTopic={topic}
+        onBegun={setBegun}
         explorer={
           <>
             <div

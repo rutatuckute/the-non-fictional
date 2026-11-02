@@ -7,14 +7,21 @@ import TEXTS from "./data/texts.json"
 import { COUNTRIES } from "./questions"
 import StoryArchive from "./story-archive"
 import { loadTexts } from "./story-corpus"
-import { ACTS, BEATS, ENDING, THREAD_EXTRAS, say } from "./story-copy"
+import {
+  ACTS,
+  BEATS,
+  ENDING,
+  TEST_PARTS,
+  THREAD_EXTRAS,
+  say,
+} from "./story-copy"
 import { Chamber, Checked, Travels } from "./story-examine"
 import { ANGLES, Debates, THREADS, threadAngle } from "./story-follow"
-import StoryFrame from "./story-frame"
 import { Interview, TopicIndex } from "./story-listen"
 import { transition } from "./story-motion"
 import { Disclosure } from "./story-parts"
-import { ClaimTest, readTest } from "./story-test"
+import StoryStage from "./story-stage"
+import { ClaimTest, readTest, revealGroups } from "./story-test"
 import { TOPICS } from "./topics"
 import styles from "./narrative.module.css"
 
@@ -93,8 +100,8 @@ const topicQuestions = (topic, questions) => {
     .filter(q => q && !q.prep && !q.pending)
 }
 
-// The beats, rebuilt for the topic followed. `stage` is the height the beat
-// needs on a wide screen: the frame is only as tall as its scene.
+// The beats, rebuilt for the topic followed. `memory` is the quiet line along
+// the top: what the investigation has narrowed down to so far.
 const buildBeats = (topic, questions, f) => {
   const th = THREADS[topic]
   const x = THREAD_EXTRAS[topic] || {}
@@ -105,13 +112,13 @@ const buildBeats = (topic, questions, f) => {
   const add = (id, set, props = {}, vars = {}) =>
     out.push({ id, set, ...props, caption: say(f, BEATS[id].text, vars) })
 
-  add("opening", "interview", { mode: 0, layout: "wide", stage: 600 })
-  add("question", "interview", { mode: 1, layout: "wide", stage: 600 })
-  add("answers", "interview", { mode: 2, layout: "wide", stage: 600 })
+  add("opening", "interview", { mode: 0, layout: "wide" })
+  add("question", "interview", { mode: 1, layout: "wide" })
+  add("answers", "interview", { mode: 2, layout: "wide" })
   add(
     "concerns",
     "topics",
-    { stage: 480 },
+    {},
     { followed: x.followed ? say(f, x.followed) : lower(name) },
   )
 
@@ -121,65 +128,86 @@ const buildBeats = (topic, questions, f) => {
     add(
       "debates",
       "debates",
-      { stage: 470 },
+      { memory: name },
       { k: word(f, angles.length, true) },
     )
+  const memory = `${name} / ${x.short ? say(f, x.short) : followed ? f.L(followed.name) : ""}`
   if (th) {
     const argument = x.argument
       ? say(f, x.argument)
       : followed
         ? lower(f.L(followed.name))
         : lower(name)
+    const scene = { layout: "full", quiet: true, memory }
     add(
       "asked",
       "chamber",
-      { mode: 0, vt: true, layout: "full", quiet: true, stage: 480 },
-      { argument },
+      { ...scene, mode: 0, vt: true },
+      { argument, why: x.why ? say(f, x.why) : null },
     )
-    add("answered", "chamber", {
-      mode: 1,
-      vt: true,
-      layout: "full",
-      quiet: true,
-      stage: 480,
-    })
+    add(
+      "answered",
+      "chamber",
+      { ...scene, mode: 1, vt: true },
+      { minister: th.qag.minister },
+    )
     if (th.factcheck) {
       const weeks = th.test
         ? Math.round(
             (new Date(th.factcheck.date) - new Date(th.qag.date)) / 864e5 / 7,
           )
         : 0
-      add(
-        "checked",
-        "checked",
-        { layout: "full", quiet: true, stage: 480 },
-        {
-          weeks:
-            weeks >= 1
-              ? `${word(f, weeks, true)} ${f.L(weeks > 1 ? ["semaines", "weeks"] : ["semaine", "week"])}`
-              : null,
-        },
-      )
+      add("checked", "checked", scene, {
+        weeks:
+          weeks >= 1
+            ? `${word(f, weeks, true)} ${f.L(weeks > 1 ? ["semaines", "weeks"] : ["semaine", "week"])}`
+            : null,
+      })
     }
     if (th.social)
-      add(
-        "travels",
-        "travels",
-        { layout: "full", stage: 500 },
-        { line: x.social?.line ? say(f, x.social.line) : null },
-      )
+      add("travels", "travels", scene, {
+        line: x.social?.line ? say(f, x.social.line) : null,
+      })
   }
 
   const read = th?.test && readTest(topic)
   if (read) {
-    add("claim", "test", { mode: 0, vt: true, layout: "full", stage: 380 })
-    add("parts", "test", { mode: 1, vt: true, layout: "full", stage: 420 })
-    add("evidence", "test", { mode: 2, vt: true, layout: "full", stage: 520 })
+    const parts = TEST_PARTS[topic]
+    const groups = revealGroups(parts)
+    const full = { layout: "full" }
+    add("claim", "test", {
+      ...full,
+      mode: "parts",
+      reveal: 0,
+      memory: say(f, x.claimRef),
+    })
+    // one click per phrase; the line along the top collects what it fixes
+    groups.forEach((_, k) =>
+      add("parts", "test", {
+        ...full,
+        mode: "parts",
+        reveal: k + 1,
+        memory: groups
+          .slice(0, k + 1)
+          .flat()
+          .map(i => say(f, parts[i].short))
+          .join(" · "),
+      }),
+    )
+    add("evidence", "test", {
+      ...full,
+      mode: "evidence",
+      vt: true,
+      memory: groups
+        .flat()
+        .map(i => say(f, parts[i].short))
+        .join(" · "),
+    })
   } else if (q1) {
-    add("figure", "figure", { stage: 420 })
-    if (q1.chart || q1.compare || q1.bars) add("chart", "chart", { stage: 460 })
+    add("figure", "figure", { memory })
+    if (q1.chart || q1.compare || q1.bars) add("chart", "chart", { memory })
   }
-  add("ending", "ending", { layout: "full", stage: 460 })
+  add("ending", "ending", { layout: "full" })
   return {
     beats: out.map(b => ({
       ...b,
@@ -303,6 +331,7 @@ export default function Story({
   onMode,
   explorer,
   exploreTopic,
+  onBegun,
   frameRef,
 }) {
   const [topic, setTopic] = React.useState("cost")
@@ -313,6 +342,9 @@ export default function Story({
   const i = Math.min(at, beats.length - 1)
   const beat = beats[i]
   const fieldAt = beats.findIndex(b => b.id === "concerns")
+  React.useEffect(() => {
+    onBegun?.(i > 0)
+  }, [i > 0]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // the explorer's topic and the story's stay the same
   React.useEffect(() => {
@@ -348,7 +380,7 @@ export default function Story({
   const scene = () => {
     switch (beat.set) {
       case "interview":
-        return <Interview mode={beat.mode} f={f} />
+        return <Interview mode={beat.mode} topic={topic} f={f} />
       case "topics":
         return <TopicIndex mode="field" topic={topic} onPick={pick} f={f} />
       case "debates":
@@ -374,12 +406,13 @@ export default function Story({
           />
         )
       case "travels":
-        return <Travels topic={topic} f={f} />
+        return <Travels topic={topic} line={beat.caption} f={f} />
       case "test":
         return (
           <ClaimTest
             topic={topic}
             mode={beat.mode}
+            reveal={beat.reveal}
             f={f}
             onMore={() => openBehind("test")}
           />
@@ -407,9 +440,8 @@ export default function Story({
   }
 
   return (
-    <StoryFrame
+    <StoryStage
       f={f}
-      variant="narrative"
       label={[
         "Relier les points : de la préoccupation aux chiffres",
         "Connect the dots: from concern to figures",
@@ -434,6 +466,6 @@ export default function Story({
       <div className={styles.beat} data-beat={beat.id} data-set={beat.set}>
         {scene()}
       </div>
-    </StoryFrame>
+    </StoryStage>
   )
 }

@@ -1,7 +1,7 @@
 import * as React from "react"
 
 import THREADS from "./data/threads.json"
-import { THREAD_EXTRAS, say } from "./story-copy"
+import { THREAD_EXTRAS, fragmentOf, say } from "./story-copy"
 import { shared } from "./story-motion"
 import { Quote, Verdict, cut, day, groupName } from "./story-parts"
 import styles from "./narrative.module.css"
@@ -9,8 +9,9 @@ import styles from "./narrative.module.css"
 // What is said, made concrete. The argument in the chamber (the question,
 // then the answer, as a shot and its reverse shot: the same room seen from
 // the benches, then from the government's side), then checked by a
-// fact-checker, then out on social media, where a post comes out of the
-// phone. One voice at a time; the rest is in "Behind the story".
+// fact-checker, then a detour to social media, where a post comes out of the
+// phone. What the reader was looking at stays in view as the scene changes; the
+// rest is in "Behind the story".
 
 const CHAMBER = {
   asked: {
@@ -34,6 +35,26 @@ const Illustration = ({ f }) => (
     {f.L(["Illustration", "Illustration"])}
   </figcaption>
 )
+
+// The question carried into the answer: a few of its words, in the reader's
+// language, so the reply is visibly a reply
+const Asked = ({ th, x, f }) => {
+  const q = th.qag
+  const en = f.lang !== "fr" && x.question?.fragmentEn
+  const piece = en || fragmentOf(q.question, x.question) || cut(q.question, 90)
+  return (
+    <p className={styles.asked} lang={en ? "en" : "fr"} style={shared("doc-q")}>
+      <span>
+        {en ? "“" : "« "}
+        {piece}
+        {en ? "…”" : " … »"}
+      </span>
+      <small>
+        {q.deputy}, {groupName(q.group)}
+      </small>
+    </p>
+  )
+}
 
 export const Chamber = ({ topic, mode, line, f }) => {
   const th = THREADS[topic]
@@ -68,24 +89,27 @@ export const Chamber = ({ topic, mode, line, f }) => {
             }}
           />
         ) : (
-          <Quote
-            name="doc-a"
-            text={q.answer}
-            translation={x.answer?.en}
-            size="l"
-            f={f}
-            cite={{
-              who: q.minister,
-              role: x.answer?.role
-                ? say(f, x.answer.role)
-                : f.lang === "fr"
-                  ? cut(q.ministerTitle, 50)
-                  : null,
-              date: q.date,
-              url: q.url,
-              link: source,
-            }}
-          />
+          <>
+            <Asked th={th} x={x} f={f} />
+            <Quote
+              name="doc-a"
+              text={q.answer}
+              translation={x.answer?.en}
+              size="l"
+              f={f}
+              cite={{
+                who: q.minister,
+                role: x.answer?.role
+                  ? say(f, x.answer.role)
+                  : f.lang === "fr"
+                    ? cut(q.ministerTitle, 50)
+                    : null,
+                date: q.date,
+                url: q.url,
+                link: source,
+              }}
+            />
+          </>
         )}
       </div>
     </div>
@@ -114,6 +138,7 @@ export const Checked = ({ topic, line, f, onMore }) => {
       <div className={styles.checkedWords}>
         <p className={styles.lead}>{line}</p>
         <Quote
+          name={th.test ? "doc-claim" : null}
           text={fc.claim}
           translation={x.factcheck?.en}
           size="l"
@@ -150,16 +175,19 @@ const PLATFORMS = {
   youtube: "YouTube",
 }
 
-// The post comes out of the phone: an ivory slip, the only light object in
-// the story, opening from the phone's screen.
-export const Travels = ({ topic, f }) => {
+// A detour: another claim around the same concern. The post comes out of the
+// phone, an ivory slip, the only light object in the story, opening from the
+// screen. The tax claim stays in view, small, and comes back as the phone
+// recedes.
+export const Travels = ({ topic, line, f }) => {
   const th = THREADS[topic]
   const x = THREAD_EXTRAS[topic] || {}
   const s = th?.social
   if (!s) return null
+  const en = f.lang !== "fr" && x.factcheck?.en
   return (
     <div className={styles.travels}>
-      <figure className={styles.phoneImg} style={shared("scene-img")}>
+      <figure className={styles.phoneImg} style={shared("phone")}>
         <img
           src="/images/data-lab/phone.webp"
           alt={f.L([
@@ -170,21 +198,33 @@ export const Travels = ({ topic, f }) => {
           height="1125"
         />
       </figure>
-      <div className={styles.post}>
-        <span className={styles.postHead}>
-          <b>
-            {PLATFORMS[s.platform] || f.L(["Réseaux sociaux", "Social media"])}
-          </b>
-          {x.social?.claimant ? null : ` · ${s.claimant}`} · {day(f, s.date)}
-        </span>
-        <Quote text={s.claim} translation={x.social?.en} size="m" f={f}>
-          <Verdict
-            rating={s.rating}
-            publisher={s.publisher}
-            url={s.url}
-            f={f}
-          />
-        </Quote>
+      <div className={styles.travelsWords}>
+        <p className={styles.lead}>{line}</p>
+        <div className={styles.post}>
+          <span className={styles.postHead}>
+            <b>
+              {PLATFORMS[s.platform] ||
+                f.L(["Réseaux sociaux", "Social media"])}
+            </b>
+            {x.social?.claimant ? null : ` · ${s.claimant}`} · {day(f, s.date)}
+          </span>
+          <Quote text={s.claim} translation={x.social?.en} size="m" f={f}>
+            <Verdict
+              rating={s.rating}
+              publisher={s.publisher}
+              url={s.url}
+              f={f}
+            />
+          </Quote>
+        </div>
+        {th.test && x.stillOpen ? (
+          <p className={styles.stillOpen}>
+            <small>{say(f, x.stillOpen)}</small>
+            <span lang={en ? "en" : "fr"} style={shared("doc-claim")}>
+              {en ? `“${en}”` : `« ${th.factcheck.claim} »`}
+            </span>
+          </p>
+        ) : null}
       </div>
     </div>
   )

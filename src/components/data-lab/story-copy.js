@@ -81,14 +81,19 @@ export const BEATS = {
     act: 1,
     title: { en: "The question in Parliament", fr: "La question au Parlement" },
     text: {
-      en: ({ argument }) => `We follow one argument: ${argument}.`,
-      fr: ({ argument }) => `Nous suivons un argument : ${argument}.`, // FR-DRAFT
+      en: ({ argument, why }) =>
+        `We follow ${argument}.${why ? ` ${why}` : ""}`,
+      fr: ({ argument, why }) =>
+        `Nous suivons ${argument}.${why ? ` ${why}` : ""}`, // FR-DRAFT
     },
   },
   answered: {
     act: 1,
     title: { en: "The government answers", fr: "Le gouvernement répond" },
-    text: { en: "The government answers.", fr: "Le gouvernement répond." },
+    text: {
+      en: "The minister answers, in the same exchange.",
+      fr: ({ minister }) => `${minister} répond, dans le même échange.`, // FR-DRAFT
+    },
   },
   checked: {
     act: 1,
@@ -106,27 +111,39 @@ export const BEATS = {
   },
   travels: {
     act: 1,
-    title: { en: "Beyond Parliament", fr: "Au-delà du Parlement" },
+    title: {
+      en: "A detour, on social media",
+      fr: "Un détour, sur les réseaux",
+    },
     text: {
       en: ({ line }) =>
-        line || "Online, the subject travels and changes shape.",
+        line ||
+        "A brief detour: online, the subject travels and changes shape.",
       fr: ({ line }) =>
-        line || "En ligne, le sujet circule et change de forme.", // FR-DRAFT
+        line ||
+        "Un bref détour : en ligne, le sujet circule et change de forme.", // FR-DRAFT
     },
   },
 
   /* ---------- What the data says ---------- */
+  // One scene: the sentence, then its words acquire their definitions
   claim: {
     act: 2,
-    title: { en: "One claim", fr: "Une affirmation" },
+    title: {
+      en: "One claim, made measurable",
+      fr: "Une affirmation, rendue mesurable",
+    },
     text: {
-      en: "Of everything said, one sentence can be tested.",
-      fr: "De tout ce qui s'est dit, une phrase peut être éprouvée.", // FR-DRAFT
+      en: "Back to the tax claim. Of everything said, this sentence can be tested.",
+      fr: "Retour aux taxes. De tout ce qui s'est dit, cette phrase peut être éprouvée.", // FR-DRAFT
     },
   },
   parts: {
     act: 2,
-    title: { en: "What can be measured", fr: "Ce qui se mesure" },
+    title: {
+      en: "One claim, made measurable",
+      fr: "Une affirmation, rendue mesurable",
+    },
     text: {
       en: "What exactly can we measure?",
       fr: "Que peut-on mesurer, exactement ?",
@@ -175,12 +192,12 @@ export const NOTES = {
   // beside the one figure shown in the guided story; the full lists are in
   // "Behind the story"
   answerEB: {
-    en: "of people in France named it. Up to two answers each. Standard Eurobarometer, average of autumn 2025 and spring 2026.",
-    fr: "des personnes en France l'ont cité. Jusqu'à deux réponses. Eurobaromètre standard, moyenne de l'automne 2025 et du printemps 2026.",
+    en: "Share of people in France naming it. Up to two answers each. Standard Eurobarometer, average of autumn 2025 and spring 2026.",
+    fr: "Part des personnes en France qui le citent. Jusqu'à deux réponses. Eurobaromètre standard, moyenne de l'automne 2025 et du printemps 2026.",
   },
   answerIpsos: {
-    en: "of people named it. Two answers each. Ipsos BVA, Fractures françaises, October 2025, 3,000 people.",
-    fr: "des personnes l'ont cité. Deux réponses chacune. Ipsos BVA, Fractures françaises, octobre 2025, 3 000 personnes.",
+    en: "Share of people naming it. Two answers each. Ipsos BVA, Fractures françaises, October 2025, 3,000 people.",
+    fr: "Part des personnes qui le citent. Deux réponses chacune. Ipsos BVA, Fractures françaises, octobre 2025, 3 000 personnes.",
   },
   answersEB: {
     en: "Share of respondents in France naming each issue. Up to two answers each, so the shares add up to more than 100%.",
@@ -237,6 +254,17 @@ export const NOTES = {
 export const THREAD_EXTRAS = {
   cost: {
     argument: { en: "fuel taxes", fr: "les taxes sur les carburants" },
+    short: { en: "Fuel taxes", fr: "Taxes sur les carburants" },
+    why: {
+      en: "A small debate, but it makes a comparison official figures can test.",
+      fr: "Un petit débat, mais il fait une comparaison que les chiffres officiels peuvent éprouver.", // FR-DRAFT
+    },
+    // the tax claim, as the line along the top keeps it
+    claimRef: {
+      en: "“All our European neighbours…”",
+      fr: "« Tous nos voisins européens… »",
+    },
+    stillOpen: { en: "Still to test", fr: "Reste à éprouver" },
     followed: { en: "the cost of living", fr: "le pouvoir d'achat" },
     question: {
       fragment: "Toute l'Europe prend des mesures dans ce sens",
@@ -279,8 +307,8 @@ export const THREAD_EXTRAS = {
       en: "Don't you get the feeling your diesel is evaporating faster than usual?",
       claimant: { en: "TikTok", fr: "TikTok" },
       line: {
-        en: "Online, the subject changes shape: this post is about diesel evaporating, not taxes.",
-        fr: "En ligne, le sujet change de forme : cette publication parle d'un gazole qui s'évapore, pas de taxes.", // FR-DRAFT
+        en: "A brief detour: same concern, another claim. This post is about diesel evaporating, and is no evidence on fuel taxes.",
+        fr: "Un bref détour : même préoccupation, autre affirmation. Cette publication parle d'un gazole qui s'évapore, et n'apporte rien sur les taxes.", // FR-DRAFT
       },
     },
     also: {
@@ -301,47 +329,57 @@ export const TEST_PARTS = {
   cost: [
     {
       text: "Tous nos voisins européens",
+      textEn: "All our European neighbours",
       q: { en: "Which countries?", fr: "Quels pays ?" },
       d: {
         en: "France's EU neighbours by land: Belgium, Germany, Italy, Luxembourg, Spain. Others aren't in the EU bulletin.",
         fr: "Les voisins terrestres de la France dans l'UE : Allemagne, Belgique, Espagne, Italie, Luxembourg. Les autres sont hors du bulletin européen.", // FR-DRAFT
       },
       head: { en: "EU neighbours by land", fr: "Voisins terrestres, UE" },
+      short: { en: "5 EU neighbours", fr: "5 voisins de l'UE" },
     },
     {
       text: "ont baissé",
+      textEn: "have cut",
       q: { en: "Which dates?", fr: "Quelles dates ?" },
       d: {
         en: "23 February 2026, before prices jumped, against 20 April 2026, the week of the claim.",
         fr: "Le 23 février 2026, avant la flambée, contre le 20 avril 2026, la semaine de l'affirmation.", // FR-DRAFT
       },
+      short: { en: "23 Feb → 20 Apr 2026", fr: "23 févr. → 20 avr. 2026" },
     },
     {
       text: "ont baissé",
+      textEn: "have cut",
       q: { en: "What counts as a cut?", fr: "Qu'est-ce qu'une baisse ?" },
       d: {
         en: "A lower tax rate. VAT moves with the price, so less tax per litre isn't enough.",
         fr: "Un taux plus bas. La TVA suit le prix : moins de taxe par litre ne suffit pas.", // FR-DRAFT
       },
       head: { en: "Rate cut?", fr: "Taux baissé ?" },
+      short: { en: "rate cuts", fr: "baisses de taux" },
     },
     {
       text: "les taxes",
+      textEn: "taxes",
       q: { en: "Which tax?", fr: "Quelle taxe ?" },
       d: {
         en: "Excise duties and VAT, per litre.",
         fr: "Accises et TVA, par litre.", // FR-DRAFT
       },
       head: { en: "Tax per litre", fr: "Taxe par litre" },
+      short: { en: "excise + VAT", fr: "accises + TVA" },
     },
     {
       text: "sur les carburants",
+      textEn: "fuel",
       q: { en: "Which fuel?", fr: "Quel carburant ?" },
       d: {
         en: "Diesel. Petrol would need its own test.",
         fr: "Le gazole. L'essence demanderait son propre test.", // FR-DRAFT
       },
       head: { en: "of diesel", fr: "de gazole" },
+      short: { en: "diesel", fr: "gazole" },
     },
   ],
 }
@@ -360,11 +398,13 @@ export const FINDINGS = {
     fr: "La TVA est une part du prix : la taxe par litre peut monter sans changement de taux.", // FR-DRAFT
   },
   labels: {
-    cut: {
-      en: "What counts as a tax cut?",
-      fr: "Qu'est-ce qu'une baisse de taxe ?",
-    },
+    total: { en: "Tax per litre", fr: "Taxe par litre" },
     split: { en: "Price or policy?", fr: "Prix ou décision ?" },
+    about: { en: "About this evidence", fr: "À propos de ces chiffres" },
+    cut: {
+      en: "What counts as a tax cut",
+      fr: "Ce qui compte comme une baisse",
+    },
     measures: { en: "Each country's measure", fr: "La mesure de chaque pays" },
     open: { en: "What this can't settle", fr: "Ce que cela ne tranche pas" },
     method: { en: "Method and sources", fr: "Méthode et sources" },

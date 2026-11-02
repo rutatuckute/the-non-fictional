@@ -4,15 +4,15 @@ import TESTS from "./data/tests.json"
 import THREADS from "./data/threads.json"
 import { FINDINGS, TEST_PARTS, THREAD_EXTRAS, say } from "./story-copy"
 import { shared, still } from "./story-motion"
-import { Ext, Verdict, day } from "./story-parts"
+import { Disclosure, Ext, Verdict, day } from "./story-parts"
 import styles from "./narrative.module.css"
 
-// What the data says. One claim is left at the centre. Its words become the
+// What the data says. One claim comes back to the centre. Its words become the
 // analysis: each measurable phrase is underlined and answered with the
-// definition we chose. The definitions then move into the headers of the chart
-// that tests them. The finding comes first, the chart proves it, and everything
-// else (price against policy, each country's measure, the method, what can't be
-// settled) opens on demand.
+// definition we chose, one click at a time. The definitions then move into the
+// headers of the chart that tests them. The finding comes first, the chart proves
+// it, and the chart's second state separates price from policy; everything else
+// is under one disclosure.
 
 export { TESTS }
 const COUNTRY = {
@@ -76,42 +76,55 @@ export const readTest = topic => {
   return { data, nb, cut, later, fell, rose }
 }
 
-// the claim, its words cut at its measurable phrases (a phrase can hold
-// two parts)
-const segments = (claim, parts) => {
+// What each click brings out: a phrase with its questions (one phrase can hold
+// two), in the same order whichever language the sentence is in
+export const revealGroups = parts => {
+  const groups = []
+  parts.forEach((p, i) => {
+    const last = groups.at(-1)
+    if (last && parts[last[0]].text === p.text) last.push(i)
+    else groups.push([i])
+  })
+  return groups
+}
+
+// the sentence, cut at its measurable phrases, in reading order
+const segments = (text, parts, anchor) => {
+  const marks = revealGroups(parts)
+    .map(group => {
+      const word = anchor(parts[group[0]])
+      return { word, group, at: text.indexOf(word) }
+    })
+    .filter(m => m.at >= 0)
+    .sort((a, b) => a.at - b.at)
   const out = []
-  let rest = claim
-  let k = 0
-  const seen = new Set()
-  for (const [i, p] of parts.entries()) {
-    if (seen.has(p.text)) {
-      out.find(s => s.text === p.text)?.parts.push(i)
-      continue
-    }
-    const at = rest.indexOf(p.text)
-    if (at < 0) continue
-    if (at) out.push({ text: rest.slice(0, at), parts: [], k: k++ })
-    out.push({ text: p.text, parts: [i], k: k++ })
-    seen.add(p.text)
-    rest = rest.slice(at + p.text.length)
+  let from = 0
+  for (const m of marks) {
+    if (m.at > from) out.push({ text: text.slice(from, m.at), group: null })
+    out.push({ text: m.word, group: m.group })
+    from = m.at + m.word.length
   }
-  if (rest) out.push({ text: rest, parts: [], k: k++ })
+  if (from < text.length) out.push({ text: text.slice(from), group: null })
   return out
 }
 
-// mode 0 the claim, 1 its parts, 2 the evidence
-export const ClaimTest = ({ topic, mode, f, onMore }) => {
+// One scene for the claim. reveal 0: the sentence alone, who said it, and the
+// fact-checker's verdict. Each click then underlines a phrase and draws it to
+// its definitions, until all are visible. Nothing moves to make room: the space
+// for the definitions is held from the start. The sentence is in the reader's
+// language, the original a click away.
+//   mode "parts" | "evidence"
+export const ClaimTest = ({ topic, mode, reveal = 0, f, onMore }) => {
   const th = THREADS[topic]
   const parts = TEST_PARTS[topic]
   const read = readTest(topic)
   const x = THREAD_EXTRAS[topic] || {}
   const ref = React.useRef(null)
-  const [english, setEnglish] = React.useState(false)
+  const [original, setOriginal] = React.useState(false)
+  const translated = f.lang !== "fr" && !original
   const [lines, setLines] = React.useState([])
-  // the thin connectors from each phrase to its question
   React.useLayoutEffect(() => {
-    setLines([])
-    if (mode !== 1) return undefined
+    if (mode !== "parts") return undefined
     const measure = () => {
       const box = ref.current?.getBoundingClientRect()
       if (!box) return
@@ -132,19 +145,19 @@ export const ClaimTest = ({ topic, mode, f, onMore }) => {
       })
       setLines(out)
     }
+    measure()
     const t = setTimeout(measure, still() ? 0 : 80)
     window.addEventListener("resize", measure)
+    document.fonts?.ready.then(measure)
     return () => {
       clearTimeout(t)
       window.removeEventListener("resize", measure)
     }
-  }, [mode, f.lang])
+  }, [mode, f.lang, original])
   if (!th?.test || !parts || !read) return null
-  const fc = th.factcheck
-  const segs = segments(th.test.claim, parts)
-  if (mode === 2)
+  if (mode === "evidence")
     return (
-      <div className={styles.test} data-mode={mode} ref={ref}>
+      <div className={styles.test} data-mode="evidence" ref={ref}>
         <Evidence
           topic={topic}
           parts={parts}
@@ -155,90 +168,98 @@ export const ClaimTest = ({ topic, mode, f, onMore }) => {
         />
       </div>
     )
-  const showEnglish = mode === 0 && english && f.lang !== "fr"
+  const fc = th.factcheck
+  const groups = revealGroups(parts)
+  const shown = new Set(groups.slice(0, reveal).flat())
+  const anchor = p => (translated ? p.textEn : p.text)
+  const segs = segments(
+    translated ? th.test.translation : th.test.claim,
+    parts,
+    anchor,
+  )
+  // the definitions, in the order their words come in the sentence
+  const order = segs.flatMap(g => g.group || [])
   return (
-    <div className={styles.test} data-mode={mode} ref={ref}>
-      <figure className={styles.claim} style={shared("doc-claim")}>
-        <blockquote
-          lang={showEnglish ? "en" : "fr"}
-          className={styles.claimText}
-        >
-          {showEnglish ? (
-            `“${th.test.translation}”`
-          ) : (
-            <>
-              «&nbsp;
-              {segs.map(s =>
-                s.parts.length && mode === 1 ? (
-                  <span
-                    key={s.k}
-                    className={styles.claimPart}
-                    data-parts={s.parts.join(" ")}
-                    style={{ "--i": s.parts[0] }}
-                  >
-                    {s.text}
-                  </span>
-                ) : (
-                  <span key={s.k}>{s.text}</span>
-                ),
-              )}
-              &nbsp;»
-            </>
-          )}
-        </blockquote>
-        {mode === 0 ? (
-          <figcaption className={styles.claimCite}>
-            <span>
-              {x.factcheck?.claimant
-                ? say(f, x.factcheck.claimant)
-                : fc.claimant}{" "}
-              · {day(f, fc.date)}
-            </span>
-            <Verdict
-              rating={fc.rating}
-              publisher={fc.publisher}
-              url={fc.url}
-              f={f}
-            />
-            {f.lang !== "fr" ? (
-              <button
-                type="button"
-                className={styles.expand}
-                aria-pressed={english}
-                onClick={() => setEnglish(e => !e)}
-              >
-                {english ? "Original French" : "Read in English"}
-              </button>
-            ) : null}
-          </figcaption>
-        ) : null}
-      </figure>
-      {mode === 1 ? (
-        <>
-          <ol className={styles.partNotes}>
-            {parts.map((p, i) => (
-              <li key={i} data-part={i} style={{ "--i": i }}>
-                <span className={styles.partQ} style={shared(`part-${i}`)}>
-                  {say(f, p.q)}
-                </span>
-                <span className={styles.partD}>{say(f, p.d)}</span>
-              </li>
-            ))}
-          </ol>
-          {lines.length ? (
-            <svg className={styles.partLines} aria-hidden="true">
-              {lines.map(l => (
-                <path
-                  key={l.i}
-                  style={{ "--i": l.i }}
-                  pathLength="1"
-                  d={`M ${l.x1} ${l.y1} C ${l.x1} ${(l.y1 + l.y2) / 2}, ${l.x2} ${(l.y1 + l.y2) / 2}, ${l.x2} ${l.y2}`}
-                />
-              ))}
-            </svg>
-          ) : null}
-        </>
+    <div
+      className={styles.test}
+      data-mode="parts"
+      data-reveal={reveal}
+      ref={ref}
+    >
+      {f.lang !== "fr" ? (
+        <span className={styles.claimTools}>
+          {translated ? <span>Our translation</span> : null}
+          <button
+            type="button"
+            className={styles.expand}
+            aria-pressed={original}
+            onClick={() => setOriginal(o => !o)}
+          >
+            {translated ? "Original French" : "English"}
+          </button>
+        </span>
       ) : null}
+      <figure className={styles.claim}>
+        <blockquote
+          lang={translated ? "en" : "fr"}
+          className={styles.claimText}
+          style={shared("doc-claim")}
+        >
+          {translated ? "“" : "« "}
+          {segs.map((g, k) =>
+            g.group ? (
+              <span
+                key={k}
+                data-parts={g.group.join(" ")}
+                className={`${styles.claimPart} ${g.group.some(i => shown.has(i)) ? styles.isOn : ""}`}
+              >
+                {g.text}
+              </span>
+            ) : (
+              <span key={k}>{g.text}</span>
+            ),
+          )}
+          {translated ? "”" : " »"}
+        </blockquote>
+        <figcaption
+          className={`${styles.claimCite} ${reveal ? styles.isGone : ""}`}
+        >
+          <span>
+            {x.factcheck?.claimant ? say(f, x.factcheck.claimant) : fc.claimant}{" "}
+            · {day(f, fc.date)}
+          </span>
+          <Verdict
+            rating={fc.rating}
+            publisher={fc.publisher}
+            url={fc.url}
+            f={f}
+          />
+        </figcaption>
+      </figure>
+      <ol className={styles.partNotes}>
+        {order.map(i => (
+          <li key={i} data-part={i} data-on={shown.has(i) ? "" : undefined}>
+            <span
+              className={styles.partQ}
+              style={shown.has(i) ? shared(`part-${i}`) : undefined}
+            >
+              {say(f, parts[i].q)}
+            </span>
+            <span className={styles.partD}>{say(f, parts[i].d)}</span>
+          </li>
+        ))}
+      </ol>
+      <svg className={styles.partLines} aria-hidden="true">
+        {lines
+          .filter(l => shown.has(l.i))
+          .map(l => (
+            <path
+              key={`${l.i}-${translated}`}
+              pathLength="1"
+              d={`M ${l.x1} ${l.y1} C ${l.x1} ${(l.y1 + l.y2) / 2}, ${l.x2} ${(l.y1 + l.y2) / 2}, ${l.x2} ${l.y2}`}
+            />
+          ))}
+      </svg>
     </div>
   )
 }
@@ -273,7 +294,6 @@ export const Evidence = ({
 }) => {
   const { data, nb, cut, fell, rose } = read
   const [split, setSplit] = React.useState(false)
-  const [panel, setPanel] = React.useState(null)
   // the neighbours, from the largest fall; France last, for reference
   const rows = [
     ...[...nb].sort((a, b) => a.claim - a.before - (b.claim - b.before)),
@@ -290,7 +310,6 @@ export const Evidence = ({
   const words = WORD[f.lang === "fr" ? "fr" : "en"]
   const part = i => say(f, parts[i].head)
   const L = FINDINGS.labels
-  const toggle = k => setPanel(p => (p === k ? null : k))
   return (
     <div className={styles.evidence}>
       <h3 className={styles.finding} style={name("doc-claim")}>
@@ -301,6 +320,27 @@ export const Evidence = ({
         })}
       </h3>
       <div className={styles.chartBlock}>
+        {/* the chart's two states: the same marks, a different question */}
+        <div
+          className={styles.views}
+          role="group"
+          aria-label={f.L(["Vue du graphique", "Chart view"])}
+        >
+          <button
+            type="button"
+            aria-pressed={!split}
+            onClick={() => setSplit(false)}
+          >
+            {say(f, L.total)}
+          </button>
+          <button
+            type="button"
+            aria-pressed={split}
+            onClick={() => setSplit(true)}
+          >
+            {say(f, L.split)}
+          </button>
+        </div>
         <div className={styles.chartHead} aria-hidden="true">
           <span style={name("part-0")}>{part(0)}</span>
           <span className={styles.chartHeadMid}>
@@ -377,45 +417,51 @@ export const Evidence = ({
                       style={{ left: split ? dx(t) : x(t) }}
                     />
                   ))}
-                  {split ? (
-                    <>
-                      <i className={styles.zero} style={{ left: zero }} />
-                      <i
-                        className={styles.segPrice}
-                        style={{
-                          left: zero,
-                          width: `calc(${dx(r.price)} - ${zero})`,
-                        }}
-                      />
-                      {r.rate < -0.005 ? (
-                        <i
-                          className={styles.segRate}
-                          style={{
+                  {/* the same marks in both states: the dumbbell's end
+                      becomes the net change, its start closes on zero, and the
+                      two causes open out of zero */}
+                  <i
+                    className={styles.zero}
+                    data-off={split ? undefined : ""}
+                    style={{ left: zero }}
+                  />
+                  <i
+                    className={styles.segPrice}
+                    data-off={split ? undefined : ""}
+                    style={{
+                      left: zero,
+                      width: split ? `calc(${dx(r.price)} - ${zero})` : 0,
+                    }}
+                  />
+                  <i
+                    className={styles.segRate}
+                    data-off={split && r.rate < -0.005 ? undefined : ""}
+                    style={
+                      split && r.rate < -0.005
+                        ? {
                             left: dx(r.rate),
                             width: `calc(${zero} - ${dx(r.rate)})`,
-                          }}
-                        />
-                      ) : null}
-                      <i className={styles.dotNet} style={{ left: dx(d) }} />
-                    </>
-                  ) : (
-                    <>
-                      <i
-                        className={styles.span}
-                        style={{ left: x(a), width: `calc(${x(b)} - ${x(a)})` }}
-                        data-down={d < 0 ? "" : undefined}
-                      />
-                      <i
-                        className={styles.dotBefore}
-                        style={{ left: x(r.before) }}
-                      />
-                      <i
-                        className={styles.dotClaim}
-                        style={{ left: x(r.claim) }}
-                        data-down={d < 0 ? "" : undefined}
-                      />
-                    </>
-                  )}
+                          }
+                        : { left: zero, width: 0 }
+                    }
+                  />
+                  <i
+                    className={styles.span}
+                    data-off={split ? "" : undefined}
+                    style={{ left: x(a), width: `calc(${x(b)} - ${x(a)})` }}
+                    data-down={d < 0 ? "" : undefined}
+                  />
+                  <i
+                    className={styles.dotBefore}
+                    data-off={split ? "" : undefined}
+                    style={{ left: split ? zero : x(r.before) }}
+                  />
+                  <i
+                    className={styles.dotClaim}
+                    data-net={split ? "" : undefined}
+                    data-down={d < 0 ? "" : undefined}
+                    style={{ left: split ? dx(d) : x(r.claim) }}
+                  />
                 </span>
                 <span
                   className={styles.rowDelta}
@@ -439,92 +485,54 @@ export const Evidence = ({
         </div>
         <p className={styles.caveat}>{say(f, FINDINGS.caveat)}</p>
       </div>
-      <div className={styles.depth}>
-        <div className={styles.depthLinks}>
-          {[
-            ["cut", L.cut],
-            ["measures", L.measures],
-            ["open", L.open],
-            ["method", L.method],
-          ].map(([k, label]) => (
-            <button
-              key={k}
-              type="button"
-              aria-expanded={panel === k}
-              onClick={() => toggle(k)}
-            >
-              {say(f, label)}
-            </button>
+      <Disclosure label={say(f, L.about)} className={styles.about}>
+        <h5>{say(f, L.cut)}</h5>
+        <p>
+          {say(f, FINDINGS[topic].established, {
+            fell: `${names(f, fell, IN)} (${fell.map(r => signed(f, r.claim - r.before)).join(", ")})`,
+            rose: names(f, rose, IN),
+          })}
+        </p>
+        <p>{say(f, FINDINGS[topic].suggested)}</p>
+        <h5>{say(f, L.measures)}</h5>
+        <ul>
+          {rows.map(r => (
+            <li key={r.geo}>
+              <b>{f.L(COUNTRY[r.geo])}</b>{" "}
+              {r.measure ? (
+                <Ext href={r.measure.source[1]}>{f.L(r.measure.what)}</Ext>
+              ) : (
+                f.L([
+                  "Aucune mesure trouvée ; la part fixe de la taxe reste plate.",
+                  "No measure found; the fixed part of the tax stays flat.",
+                ])
+              )}
+            </li>
           ))}
-          <button
-            type="button"
-            aria-pressed={split}
-            onClick={() => setSplit(s => !s)}
-          >
-            {split
-              ? f.L(["Revenir à la taxe par litre", "Back to tax per litre"])
-              : say(f, L.split)}
+        </ul>
+        <h5>{say(f, L.open)}</h5>
+        <p>{say(f, FINDINGS[topic].open)}</p>
+        <h5>{say(f, L.method)}</h5>
+        <p>{say(f, FINDINGS.method)}</p>
+        <p>
+          {f.L(["Taux normaux de TVA : ", "Standard VAT rates: "])}
+          {Object.entries(data.vat)
+            .map(
+              ([g, v]) =>
+                `${f.L(COUNTRY[g])} ${f.num(v * 100)}${f.lang === "fr" ? " %" : "%"}`,
+            )
+            .join(" · ")}
+          .{" "}
+          <Ext href="https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en">
+            {f.L(data.source)}
+          </Ext>
+        </p>
+        {onMore ? (
+          <button type="button" className={styles.expand} onClick={onMore}>
+            {f.L(["Derrière l'histoire", "Behind the story"])} →
           </button>
-          {onMore ? (
-            <button type="button" onClick={onMore}>
-              {f.L(["Derrière l'histoire", "Behind the story"])} →
-            </button>
-          ) : null}
-        </div>
-        {panel ? (
-          <div className={styles.depthPanel}>
-            {panel === "cut" ? (
-              <>
-                <p>
-                  {say(f, FINDINGS[topic].established, {
-                    fell: `${names(f, fell, IN)} (${fell.map(r => signed(f, r.claim - r.before)).join(", ")})`,
-                    rose: names(f, rose, IN),
-                  })}
-                </p>
-                <p>{say(f, FINDINGS[topic].suggested)}</p>
-              </>
-            ) : null}
-            {panel === "measures" ? (
-              <ul>
-                {rows.map(r => (
-                  <li key={r.geo}>
-                    <b>{f.L(COUNTRY[r.geo])}</b>{" "}
-                    {r.measure ? (
-                      <Ext href={r.measure.source[1]}>
-                        {f.L(r.measure.what)}
-                      </Ext>
-                    ) : (
-                      f.L([
-                        "Aucune mesure trouvée ; la part fixe de la taxe reste plate.",
-                        "No measure found; the fixed part of the tax stays flat.",
-                      ])
-                    )}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-            {panel === "open" ? <p>{say(f, FINDINGS[topic].open)}</p> : null}
-            {panel === "method" ? (
-              <>
-                <p>{say(f, FINDINGS.method)}</p>
-                <p>
-                  {f.L(["Taux normaux de TVA : ", "Standard VAT rates: "])}
-                  {Object.entries(data.vat)
-                    .map(
-                      ([g, v]) =>
-                        `${f.L(COUNTRY[g])} ${f.num(v * 100)}${f.lang === "fr" ? " %" : "%"}`,
-                    )
-                    .join(" · ")}
-                  .{" "}
-                  <Ext href="https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en">
-                    {f.L(data.source)}
-                  </Ext>
-                </p>
-              </>
-            ) : null}
-          </div>
         ) : null}
-      </div>
+      </Disclosure>
     </div>
   )
 }

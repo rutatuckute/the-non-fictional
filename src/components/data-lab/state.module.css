@@ -41,6 +41,17 @@
   gap: 20px;
   margin-bottom: 24px;
 }
+.section .head {
+  transition: opacity 500ms ease;
+}
+.section .head.isQuiet {
+  opacity: 0.4;
+}
+@media (prefers-reduced-motion: reduce) {
+  .section .head {
+    transition: none;
+  }
+}
 .section .numeral {
   color: var(--form);
   font: italic 300 clamp(40px, 4vw, 56px) / 1 var(--font-editorial);

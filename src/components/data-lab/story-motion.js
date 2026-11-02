@@ -19,9 +19,12 @@ export const still = () =>
 
 // The name a shared element carries on both sides of a transition. Names
 // are page-wide, so each is prefixed; a falsy key gives no name.
-export const shared = key =>
+export const shared = (key, group) =>
   key
-    ? { viewTransitionName: `dl-${String(key).replace(/[^\w-]/g, "-")}` }
+    ? {
+        viewTransitionName: `dl-${String(key).replace(/[^\w-]/g, "-")}`,
+        ...(group ? { viewTransitionClass: `dl-${group}` } : {}),
+      }
     : undefined
 
 // Run a state change as a shared-element transition.
@@ -41,16 +44,42 @@ export const transition = update => {
   }
 }
 
-// The transition's timing. Groups (the shared elements) glide; the root
-// (everything else) cross-fades a little faster, so the moving pieces lead.
+// The transition's timing: what is shared glides, everything else follows a
+// little later or leaves a little sooner, so the eye stays on what remains.
+// The concerns gather only once the followed one has started to move; the phone
+// comes and goes on its own.
 export const TRANSITION_CSS = `
 ::view-transition-group(*) {
-  animation-duration: 640ms;
+  animation-duration: 620ms;
   animation-timing-function: cubic-bezier(0.22, 0.72, 0.2, 1);
 }
-::view-transition-old(root),
+::view-transition-old(root) {
+  animation-duration: 240ms;
+}
 ::view-transition-new(root) {
-  animation-duration: 380ms;
+  animation-duration: 420ms;
+  animation-delay: 160ms;
+}
+::view-transition-group(.dl-concern) {
+  animation-delay: 110ms;
+}
+::view-transition-old(dl-phone):only-child {
+  animation: 460ms cubic-bezier(0.4, 0, 0.6, 1) both dl-recede;
+}
+::view-transition-new(dl-phone):only-child {
+  animation: 560ms cubic-bezier(0.22, 0.72, 0.2, 1) both dl-approach;
+}
+@keyframes dl-recede {
+  to {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+}
+@keyframes dl-approach {
+  from {
+    opacity: 0;
+    transform: scale(0.86) translateY(18px);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),

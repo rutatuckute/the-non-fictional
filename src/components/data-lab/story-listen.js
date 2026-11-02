@@ -66,12 +66,12 @@ const LOOSE = [0, 52, 20, 74, 8, 44, 86, 28, 62, 14]
 
 const Figure = ({ to, delay, f }) => f.num(Math.round(useCount(to, delay, 900)))
 
-export const Interview = ({ mode, f }) => {
+export const Interview = ({ mode, topic, f }) => {
   const ask = ASK[f.lang] || ASK.en
   const answers = answersFor(f.lang)
   const first = answers[0]
-  // the answers are said first, then one comes forward (the beat's own
-  // sequence, after the reader's click)
+  // the answers are said first, then one comes forward with its figure (the
+  // beat's own sequence, after the reader's click)
   const emerged = useArrived(1700, mode) && mode === 2
   const ref = React.useRef(null)
 
@@ -163,27 +163,37 @@ export const Interview = ({ mode, f }) => {
                 className={`${styles.answer} ${i === 0 ? styles.isFirst : ""}`}
                 style={{ "--i": i, "--o": `${LOOSE[i % LOOSE.length]}px` }}
               >
+                {/* each topic's first answer becomes its name among the concerns */}
                 <span
                   className={styles.answerText}
-                  style={shared(a === first ? `topic-${a.topic}` : null)}
+                  style={
+                    answers.findIndex(x => x.topic === a.topic) === i &&
+                    KEPT.includes(a.topic)
+                      ? a.topic === topic
+                        ? shared("topic-title")
+                        : shared(`topic-${a.topic}`, "concern")
+                      : undefined
+                  }
                 >
                   {a.text}
                 </span>
+                {i === 0 ? (
+                  <span
+                    className={styles.answerN}
+                    aria-hidden={emerged ? undefined : "true"}
+                  >
+                    {emerged ? (
+                      <Figure to={first.share} delay={120} f={f} />
+                    ) : null}
+                    {emerged ? (f.lang === "fr" ? " %" : "%") : null}
+                  </span>
+                ) : null}
               </li>
             ))}
           </ol>
-          <div
-            className={styles.answerFigure}
-            aria-hidden={emerged ? undefined : "true"}
-          >
-            <span className={styles.answerN}>
-              {emerged ? <Figure to={first.share} delay={120} f={f} /> : null}
-              {emerged ? (f.lang === "fr" ? " %" : "%") : null}
-            </span>
-            <span className={styles.answerSay}>
-              {say(f, f.lang === "fr" ? NOTES.answerIpsos : NOTES.answerEB)}
-            </span>
-          </div>
+          <span className={styles.answerSay}>
+            {say(f, f.lang === "fr" ? NOTES.answerIpsos : NOTES.answerEB)}
+          </span>
         </div>
       ) : null}
     </div>
@@ -203,33 +213,29 @@ const FIELD = [
 ]
 const INDENT = [6, 0, 16, 3, 11]
 
-// Every name carries its own identity in from the answers; once the followed
-// topic has come forward, it carries the story on into its debates.
-const FieldName = ({ k, name, carries }) => (
-  <span
-    className={styles.fieldName}
-    style={shared(carries ? "topic-title" : `topic-${k}`)}
-  >
-    {name}
-  </span>
-)
-
-//   mode "field": it assembles, then the followed topic comes forward by
-//                 itself; any measurable topic can be chosen instead
+//   mode "field": the followed topic in terracotta, carried in from the
+//                 answers, the others gathered around it; any measurable topic
+//                 can be chosen instead
 //   mode "index": the closing list of other concerns, the same names
 export const TopicIndex = ({ mode, topic, onPick, f }) => {
-  const emerged = useArrived(1150, mode)
   const entry = key => {
     const t = TOPICS[key]
     const measurable = t.measurable !== false
     const chosen = key === topic
-    const name = f.L(t.name)
-    const label =
-      mode === "field" ? (
-        <FieldName k={key} name={name} carries={chosen && emerged} />
-      ) : (
-        <span className={styles.fieldName}>{name}</span>
-      )
+    const label = (
+      <span
+        className={styles.fieldName}
+        style={
+          mode === "field"
+            ? chosen
+              ? shared("topic-title")
+              : shared(`topic-${key}`, "concern")
+            : undefined
+        }
+      >
+        {f.L(t.name)}
+      </span>
+    )
     const aside = !measurable
       ? f.L(["non mesuré ici", "not measured here"])
       : t.exception
@@ -240,7 +246,6 @@ export const TopicIndex = ({ mode, topic, onPick, f }) => {
         key={key}
         role="listitem"
         className={`${styles.fieldItem} ${chosen ? styles.isChosen : ""} ${measurable ? "" : styles.isUnmeasured}`}
-        style={{ "--n": KEPT.indexOf(key) }}
       >
         {measurable ? (
           <button
@@ -266,10 +271,7 @@ export const TopicIndex = ({ mode, topic, onPick, f }) => {
     )
   return (
     <div className={styles.field}>
-      <div
-        className={`${styles.fieldRows} ${emerged ? styles.isEmerged : ""}`}
-        role="list"
-      >
+      <div className={styles.fieldRows} role="list">
         {FIELD.map((row, r) => (
           <div
             key={row[0]}
