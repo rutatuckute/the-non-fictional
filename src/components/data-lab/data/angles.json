@@ -1,0 +1,1254 @@
+{
+ "cost": [
+  {
+   "id": "fuel_energy",
+   "name": [
+    "Prix des carburants et de l'énergie",
+    "Fuel and energy prices"
+   ],
+   "n": {
+    "p": 35,
+    "g": 125,
+    "f": 6
+   },
+   "questions": [
+    "fuel",
+    "shortage"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-07-22",
+     "who": "Thomas Ménagé",
+     "group": "RN",
+     "subject": "Hausse des prix de l'énergie",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1794"
+    },
+    "g": {
+     "date": "2026-10-15",
+     "who": "Sébastien Lecornu",
+     "type": "Conférence de presse",
+     "media": "",
+     "subject": "Le suivi de la crise agricole, le mouvement lycéen et l'éventuelle convergence des luttes et le carburant, à Paris le 15 octobre 2026",
+     "url": "https://www.vie-publique.fr/discours/304986-sebastien-lecornu-15102026-suivi-de-la-crise-agricole-lyceen-convergence"
+    },
+    "f": {
+     "date": "2026-09-25",
+     "claim": "De l’eau dans le carburant. Des centaines de plaintes de consommateurs en France",
+     "claimant": "TikTok",
+     "publisher": "20 Minutes",
+     "rating": "Faux",
+     "url": "https://www.20minutes.fr/societe/4248196-20260925-eau-carburant-centaines-plaintes-consommateurs-france-panique"
+    }
+   }
+  },
+  {
+   "id": "prices",
+   "name": [
+    "Inflation et pouvoir d'achat",
+    "Inflation and purchasing power"
+   ],
+   "n": {
+    "p": 4,
+    "g": 98,
+    "f": 3
+   },
+   "questions": [
+    "prices"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-06-10",
+     "who": "Catherine Dellong Meng",
+     "group": "RN",
+     "subject": "Pouvoir d'achat",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1645"
+    },
+    "g": {
+     "date": "2026-10-13",
+     "who": "David Amiel",
+     "type": "Interview",
+     "media": "France 2",
+     "subject": "La contestation lycéenne, le prix du gazole et le budget pour 2027",
+     "url": "https://www.vie-publique.fr/discours/304951-david-amiel-13102026-france-2-politique-economique"
+    },
+    "f": {
+     "date": "2026-09-29",
+     "claim": "Le taux d'inflation est passé de 25,5% à 1,7% entre 2023 et 2026",
+     "claimant": "Des publications sur les réseaux sociaux",
+     "publisher": "TF1 Info",
+     "rating": "Plutôt vrai",
+     "url": "https://www.tf1info.fr/international/le-taux-d-inflation-en-argentine-est-il-passe-de-15-a-1-7-grace-a-la-politique-mise-en-place-par-javier-milei-2466978.html"
+    }
+   }
+  },
+  {
+   "id": "wages",
+   "name": [
+    "Salaires et Smic",
+    "Wages and the minimum wage"
+   ],
+   "n": {
+    "p": 1,
+    "g": 24,
+    "f": 3
+   },
+   "questions": [],
+   "examples": {
+    "p": {
+     "date": "2025-10-29",
+     "who": "Pascal Lecamp",
+     "group": "DEM",
+     "subject": "Rémunération du travail",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG925"
+    },
+    "g": {
+     "date": "2026-09-30",
+     "who": "Jean-Pierre Farandou",
+     "type": "Interview",
+     "media": "France 2",
+     "subject": "Les blocages dans les lycées, les manifestations pour les salaires, le budget 2027 et la réforme des retraites",
+     "url": "https://www.vie-publique.fr/discours/304805-jean-pierre-farandou-30092026-blocages-lycees-manifestations-budget"
+    },
+    "f": {
+     "date": "2026-09-04",
+     "claim": "Une entreprise doit payer 483 euros pour augmenter de 100 euros net le salaire d'un employé payé au Smic",
+     "claimant": "Dominique Schelcher",
+     "publisher": "franceinfo",
+     "rating": "Plutôt Faux",
+     "url": "https://www.franceinfo.fr/vrai-ou-fake/vrai-ou-faux-une-entreprise-doit-elle-debourser-483-euros-pour-augmenter-de-100-euros-net-le-salaire-d-un-employe-paye-au-smic-comme-l-affirme-le-pdg-de-cooperative-u_8173814.html"
+    }
+   }
+  },
+  {
+   "id": "fuel_taxes_neighbours",
+   "name": [
+    "Taxes sur les carburants, comparées aux voisins",
+    "Fuel taxes compared with neighbours"
+   ],
+   "n": {
+    "p": 3,
+    "g": 4,
+    "f": 3
+   },
+   "questions": [
+    "fuel_eu"
+   ],
+   "examples": {
+    "p": {
+     "date": "2025-11-27",
+     "who": "",
+     "group": "HOR",
+     "subject": "Fiscalité de l’électricité",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1031"
+    },
+    "g": {
+     "date": "2026-03-09",
+     "who": "Maud Bregeon",
+     "type": "Interview",
+     "media": "RTL",
+     "subject": "La hausse des prix des carburants, les taxes sur les carburants et le blocage du détroit d'Ormuz",
+     "url": "https://www.vie-publique.fr/discours/302390-interview-de-maud-bregeon-sur-la-hausse-de-prix-des-carburants-mars-2026"
+    },
+    "f": {
+     "date": "2026-04-21",
+     "claim": "Tous nos voisins européens ont baissé les taxes sur les carburants",
+     "claimant": "Le député du RN Julien Odoul",
+     "publisher": "TF1 Info",
+     "rating": "Faux",
+     "url": "https://www.tf1info.fr/international/verif-prix-des-carburants-pouvoir-d-achat-est-il-vrai-que-tous-nos-voisins-ont-baisse-les-taxes-sur-l-essence-et-le-gasoil-2437326.html"
+    }
+   }
+  },
+  {
+   "id": "rents",
+   "name": [
+    "Loyers",
+    "Rents"
+   ],
+   "n": {
+    "p": 1,
+    "g": 1,
+    "f": 0
+   },
+   "questions": [],
+   "examples": {
+    "p": {
+     "date": "2026-06-03",
+     "who": "Boris Tavernier",
+     "group": "ECOS",
+     "subject": "Encadrement des loyers",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1624"
+    },
+    "g": {
+     "date": "2026-07-07",
+     "who": "Vincent Jeanbrun",
+     "type": "Interview",
+     "media": "France Info",
+     "subject": "L'adaptation des logements au réchauffement climatique, l'encadrement des loyers et l'élection présidentielle de 2027",
+     "url": "https://www.vie-publique.fr/discours/303987-vincent-jeanbrun-07072026-france-info-politique-du-logement"
+    },
+    "f": null
+   }
+  }
+ ],
+ "security": [
+  {
+   "id": "sexual_violence",
+   "name": [
+    "Violences sexistes et sexuelles",
+    "Gender-based and sexual violence"
+   ],
+   "n": {
+    "p": 13,
+    "g": 55,
+    "f": 0
+   },
+   "questions": [
+    "sexual_violence"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-06-24",
+     "who": "Mathilde Feld",
+     "group": "LFI-NFP",
+     "subject": "Violence contre les enfants et les femmes",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1708"
+    },
+    "g": {
+     "date": "2026-09-17",
+     "who": "Aurore Bergé",
+     "type": "Interview",
+     "media": "France Info",
+     "subject": "Les moyens accordés à la lutte contre les violences faites aux femmes…",
+     "url": "https://www.vie-publique.fr/discours/304705-aurore-berge-17092026-violences-femmes-protection-enfants"
+    },
+    "f": null
+   }
+  },
+  {
+   "id": "drugs",
+   "name": [
+    "Narcotrafic",
+    "Drug trafficking"
+   ],
+   "n": {
+    "p": 9,
+    "g": 45,
+    "f": 0
+   },
+   "questions": [],
+   "examples": {
+    "p": {
+     "date": "2026-05-20",
+     "who": "Karim Benbrahim",
+     "group": "SOC",
+     "subject": "Narcotrafic",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1559"
+    },
+    "g": {
+     "date": "2026-09-10",
+     "who": "None",
+     "type": "Communiqué",
+     "media": "",
+     "subject": "La lutte contre le narcotrafic, le 10 septembre 2026",
+     "url": "https://www.vie-publique.fr/discours/304635-ministere-de-leurope-et-des-affaires-etrangeres-10092026-narcotrafic"
+    },
+    "f": null
+   }
+  },
+  {
+   "id": "prisons",
+   "name": [
+    "Surpopulation carcérale",
+    "Prison overcrowding"
+   ],
+   "n": {
+    "p": 2,
+    "g": 19,
+    "f": 0
+   },
+   "questions": [],
+   "examples": {
+    "p": {
+     "date": "2026-05-06",
+     "who": "Roger Vicot",
+     "group": "SOC",
+     "subject": "Surpopulation carcérale",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1512"
+    },
+    "g": {
+     "date": "2026-09-04",
+     "who": "Jean-Noël Barrot",
+     "type": "Interview",
+     "media": "France Inter",
+     "subject": "Les tensions avec la Russie, la guerre au Moyen-Orient, la libération de réalisateurs français détenus au Togo et…",
+     "url": "https://www.vie-publique.fr/discours/304597-entretien-jean-noel-barrot-04092026-france-inter-politique-etrangere"
+    },
+    "f": null
+   }
+  },
+  {
+   "id": "violence",
+   "name": [
+    "Violences et insécurité du quotidien",
+    "Violence and everyday insecurity"
+   ],
+   "n": {
+    "p": 10,
+    "g": 5,
+    "f": 5
+   },
+   "questions": [
+    "violence"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-07-16",
+     "who": "Vincent Trébuchet",
+     "group": "UDDPLR",
+     "subject": "Insécurité dans les territoires ruraux",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1779"
+    },
+    "g": {
+     "date": "2026-10-14",
+     "who": "Maud Bregeon",
+     "type": "Conférence de presse",
+     "media": "",
+     "subject": "Le mouvement lycéen, le remplacement des enseignants, les violences urbaines, la relance du nucléaire pour réduire notre dépendance aux én…",
+     "url": "https://www.vie-publique.fr/discours/304969-maud-bregeon-14102026-mouvement-lyceen-relance-du-nucleaire-budget"
+    },
+    "f": {
+     "date": "2026-09-28",
+     "claim": "La France a l’indice de criminalité le plus élevé d’Europe",
+     "claimant": "Numbeo",
+     "publisher": "20 Minutes",
+     "rating": "Faux",
+     "url": "https://www.20minutes.fr/societe/4248197-20260928-france-indice-criminalite-plus-eleve-europe-constat-fonde-chiffres-bidons"
+    }
+   }
+  }
+ ],
+ "immigration": [
+  {
+   "id": "immigration_level",
+   "name": [
+    "Niveau de l'immigration",
+    "The level of immigration"
+   ],
+   "n": {
+    "p": 9,
+    "g": 21,
+    "f": 3
+   },
+   "questions": [
+    "immigration"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-07-02",
+     "who": "Olivier Fayssat",
+     "group": "UDDPLR",
+     "subject": "Politique migratoire",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1746"
+    },
+    "g": {
+     "date": "2026-06-04",
+     "who": "Benjamin Haddad",
+     "type": "Interview",
+     "media": "Europe 1",
+     "subject": "Les centres de retour pour les migrants et la politique de l'immigration",
+     "url": "https://www.vie-publique.fr/discours/303579-entretien-benjamin-haddad-04062026-europe-1-politique-de-limmigration"
+    },
+    "f": {
+     "date": "2026-09-01",
+     "claim": "50.000 des 500.000 personnes entrées légalement en France chaque année ont un contrat de travail",
+     "claimant": "Jordan Bardella",
+     "publisher": "TF1 Info",
+     "rating": "Plutôt faux",
+     "url": "https://www.tf1info.fr/politique/verif-seuls-10-des-immigres-entrent-ils-legalement-en-france-avec-du-travail-comme-le-dit-jordan-bardella-2461437.html"
+    }
+   }
+  },
+  {
+   "id": "irregular",
+   "name": [
+    "Immigration irrégulière et expulsions",
+    "Irregular immigration and removals"
+   ],
+   "n": {
+    "p": 3,
+    "g": 22,
+    "f": 0
+   },
+   "questions": [
+    "removals"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-07-01",
+     "who": "Anchya Bamana",
+     "group": "RN",
+     "subject": "Réponse à l'immigration illégale à Mayotte",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1738"
+    },
+    "g": {
+     "date": "2026-08-27",
+     "who": "Sébastien Lecornu",
+     "type": "Conférence de presse",
+     "media": "",
+     "subject": "Les efforts de reconstruction après la catastrophe de Chido, l'eau potable, la santé, l'école et la lutte contre l'immigration clandestine, à Mayotte le 27 août 2026",
+     "url": "https://www.vie-publique.fr/discours/304541-sebatien-lecornu-27082026-reconstruction-eau-sante-ecole-immigration"
+    },
+    "f": null
+   }
+  },
+  {
+   "id": "asylum",
+   "name": [
+    "Asile",
+    "Asylum"
+   ],
+   "n": {
+    "p": 3,
+    "g": 4,
+    "f": 0
+   },
+   "questions": [],
+   "examples": {
+    "p": {
+     "date": "2026-06-17",
+     "who": "Gabriel Tomatis",
+     "group": "RN",
+     "subject": "Pacte européen sur la migration et l'asile",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1674"
+    },
+    "g": {
+     "date": "2026-06-03",
+     "who": "Laurent Nunez",
+     "type": "Communiqué",
+     "media": "",
+     "subject": "Conseil des ministres du 3 juin 2026. Modification du code de l'entrée et de séjour des étrangers et du droit d'asile",
+     "url": "https://www.vie-publique.fr/discours/303471-code-de-lentree-et-de-sejour-des-etrangers-et-du-droit-dasile"
+    },
+    "f": null
+   }
+  }
+ ],
+ "public": [
+  {
+   "id": "debt",
+   "name": [
+    "Dette et déficit publics",
+    "Public debt and deficit"
+   ],
+   "n": {
+    "p": 9,
+    "g": 51,
+    "f": 4
+   },
+   "questions": [
+    "debt"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-07-08",
+     "who": "Jean-Paul Mattei",
+     "group": "DEM",
+     "subject": "Situation des finances publiques",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1750"
+    },
+    "g": {
+     "date": "2026-10-19",
+     "who": "Françoise Gatel",
+     "type": "Déclaration",
+     "media": "",
+     "subject": "La situation des finances publiques locales, à l'Assemblée nationale le 19 oct",
+     "url": "https://www.vie-publique.fr/discours/305056-francoise-gatel-david-amiel-19102026-finances-publiques-locales"
+    },
+    "f": {
+     "date": "2026-10-15",
+     "claim": "Les retraites et la santé à l'origine de 80 % de la hausse des dépenses publiques depuis 50 ans",
+     "claimant": "David Amiel, ministre de l'Action et des comptes publics",
+     "publisher": "Poligraph",
+     "rating": "En partie vrai",
+     "url": "https://poligraph.fr/factchecks/2026-10-15-verif-les-retraites-et-la-sante-a-l-origine-de-80-de-la-hausse-des-de"
+    }
+   }
+  },
+  {
+   "id": "tax_fairness",
+   "name": [
+    "Impôts et justice fiscale",
+    "Taxes and tax fairness"
+   ],
+   "n": {
+    "p": 9,
+    "g": 32,
+    "f": 2
+   },
+   "questions": [
+    "tax_fairness"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-02-25",
+     "who": "Eva Sas",
+     "group": "ECOS",
+     "subject": "Impôts des millionnaires",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1341"
+    },
+    "g": {
+     "date": "2026-09-02",
+     "who": "Serge Papin",
+     "type": "Interview",
+     "media": "Sud Radio",
+     "subject": "Les plateformes chinoises de fast fashion, les commerces de centre-ville, le pouvoir d'achat, les impôts…",
+     "url": "https://www.vie-publique.fr/discours/304593-serge-papin-02092026-sud-radio-politique-economique"
+    },
+    "f": {
+     "date": "2026-09-15",
+     "claim": "Les 10% d'abattement des retraités sur l'impôt sur le revenu sont accordés pour \"frais professionnels\"",
+     "claimant": "Aurore Bergé",
+     "publisher": "Poligraph",
+     "rating": "Plutôt faux",
+     "url": "https://poligraph.fr/factchecks/2026-09-15-verif-impot-sur-le-revenu-les-10-d-abattement-des-retraites-sont-ils"
+    }
+   }
+  }
+ ],
+ "health": [
+  {
+   "id": "access",
+   "name": [
+    "Accès aux soins et déserts médicaux",
+    "Access to care and medical deserts"
+   ],
+   "n": {
+    "p": 12,
+    "g": 28,
+    "f": 1
+   },
+   "questions": [
+    "doctors"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-06-17",
+     "who": "Sébastien Humbert",
+     "group": "RN",
+     "subject": "Accès aux soins dans les vosges",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1678"
+    },
+    "g": {
+     "date": "2026-02-06",
+     "who": "Stéphanie Rist",
+     "type": "Interview",
+     "media": "BFM TV",
+     "subject": "Le rappel de lots de lait infantile, les déserts médicaux et les innovations en terme de médicament, de p…",
+     "url": "https://www.vie-publique.fr/discours/301976-stephanie-rist-06022026-bfmtv-lait-infantile-deserts-medicaux-innovation"
+    },
+    "f": {
+     "date": "2026-04-20",
+     "claim": "En France, 85% du territoire est un désert médical",
+     "claimant": "Le député RN Philippe Ballard",
+     "publisher": "TF1 Info",
+     "rating": "Vrai",
+     "url": "https://www.tf1info.fr/societe/verif-sante-france-85-du-territoire-francais-est-il-un-desert-medical-2437118.html"
+    }
+   }
+  },
+  {
+   "id": "hospital",
+   "name": [
+    "État de l'hôpital public",
+    "The state of public hospitals"
+   ],
+   "n": {
+    "p": 5,
+    "g": 24,
+    "f": 0
+   },
+   "questions": [],
+   "examples": {
+    "p": {
+     "date": "2026-07-08",
+     "who": "Jorys Bovet",
+     "group": "RN",
+     "subject": "Moyens des hôpitaux et des établissements médico-sociaux",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1766"
+    },
+    "g": {
+     "date": "2026-05-19",
+     "who": "Stéphanie Rist",
+     "type": "Déclaration",
+     "media": "",
+     "subject": "Son plan d'action pour l'avenir de l'hôpital, Paris le 19 mai 2026",
+     "url": "https://www.vie-publique.fr/discours/303275-stephanie-rist-19052026-plan-d-action-avenir-de-l-hopital"
+    },
+    "f": null
+   }
+  },
+  {
+   "id": "mental_health",
+   "name": [
+    "Santé mentale, notamment des jeunes",
+    "Mental health, especially of young people"
+   ],
+   "n": {
+    "p": 7,
+    "g": 19,
+    "f": 0
+   },
+   "questions": [
+    "mental_health"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-05-20",
+     "who": "Alim Latrèche",
+     "group": "EPR",
+     "subject": "Santé mentale des jeunes",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1560"
+    },
+    "g": {
+     "date": "2026-06-02",
+     "who": "Stéphanie Rist",
+     "type": "Interview",
+     "media": "France Info",
+     "subject": "La santé mentale des jeunes",
+     "url": "https://www.vie-publique.fr/discours/303542-stephanie-rist-02062026-france-info-sante-mentale-des-jeunes"
+    },
+    "f": null
+   }
+  }
+ ],
+ "environment": [
+  {
+   "id": "heat",
+   "name": [
+    "Canicules et changement climatique en France",
+    "Heatwaves and climate change in France"
+   ],
+   "n": {
+    "p": 29,
+    "g": 109,
+    "f": 3
+   },
+   "questions": [
+    "heat"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-07-22",
+     "who": "Sandra Regol",
+     "group": "ECOS",
+     "subject": "Réchauffement climatique et moyens de lutte contre les incendies",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1799"
+    },
+    "g": {
+     "date": "2026-10-15",
+     "who": "Annie Genevard",
+     "type": "Interview",
+     "media": "France Info",
+     "subject": "Le plan de relance à destination des agriculteurs après la canicule et la sécheresse",
+     "url": "https://www.vie-publique.fr/discours/304995-annie-genevard-15102026-france-info-politique-agricole"
+    },
+    "f": {
+     "date": "2026-08-13",
+     "claim": "Les incendies en France imputables aux pyromanes, pas au réchauffement",
+     "claimant": "Sources multiples",
+     "publisher": "AFP Factuel",
+     "rating": "Faux",
+     "url": "https://factuel.afp.com/doc.afp.com.C4FN6ZQ"
+    }
+   }
+  },
+  {
+   "id": "water",
+   "name": [
+    "Qualité de l'eau et polluants",
+    "Water quality and pollutants"
+   ],
+   "n": {
+    "p": 12,
+    "g": 19,
+    "f": 0
+   },
+   "questions": [],
+   "examples": {
+    "p": {
+     "date": "2026-06-24",
+     "who": "Sophie Errante",
+     "group": "NI",
+     "subject": "Accès à l'eau potable en Loire-Atlantique",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1705"
+    },
+    "g": {
+     "date": "2026-10-08",
+     "who": "Naïma Moutchou",
+     "type": "Déclaration",
+     "media": "",
+     "subject": "Une proposition de résolution visant à garantir un accès continu à l'eau potable dans les territoires ultramarins, à l'Assemblée nationale le 8 octobre 2026",
+     "url": "https://www.vie-publique.fr/discours/304910-naima-moutchou-08102026-acces-continu-eau-potable-territoires-ultramarin"
+    },
+    "f": null
+   }
+  },
+  {
+   "id": "emissions",
+   "name": [
+    "Émissions de gaz à effet de serre",
+    "Greenhouse gas emissions"
+   ],
+   "n": {
+    "p": 3,
+    "g": 12,
+    "f": 1
+   },
+   "questions": [
+    "emissions"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-07-01",
+     "who": "Marie-Agnès Poussier-Winsback",
+     "group": "HOR",
+     "subject": "Freins aux projets industriels décarbonés",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1735"
+    },
+    "g": {
+     "date": "2026-01-08",
+     "who": "Mathieu Lefèvre",
+     "type": "Déclaration",
+     "media": "",
+     "subject": "Le thème : \" La décarbonation des mobilités : quels enjeux, quels leviers ? \", à l'Assemblée nationale le 8 janvier 2026",
+     "url": "https://www.vie-publique.fr/discours/301599-mathieu-lefevre-08012026-decarbonation-des-mobilites"
+    },
+    "f": {
+     "date": "2025-12-17",
+     "claim": "\"18% d'augmentation des gaz à effet de serre entre 2005 et 2015\", contre \"1,8% entre 2015 et aujourd'hui\".",
+     "claimant": "Laurence Tubiana",
+     "publisher": "TF1 Info",
+     "rating": "Plutôt vrai",
+     "url": "https://www.tf1info.fr/environnement-ecologie/verif-la-hausse-des-emissions-de-gaz-a-effet-de-serre-co2-est-elle-en-chute-enorme-depuis-l-accord-de-paris-10-ans-2413172.html"
+    }
+   }
+  },
+  {
+   "id": "floods",
+   "name": [
+    "Inondations",
+    "Floods"
+   ],
+   "n": {
+    "p": 8,
+    "g": 3,
+    "f": 0
+   },
+   "questions": [],
+   "examples": {
+    "p": {
+     "date": "2026-03-19",
+     "who": "Sophie Mette",
+     "group": "DEM",
+     "subject": "Inondations en Gironde et dans le Lot-et-Garonne",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1335"
+    },
+    "g": {
+     "date": "2026-02-25",
+     "who": "Maud Bregeon",
+     "type": "Conférence de presse",
+     "media": "",
+     "subject": "La mort du jeune Quentin Deranque, le salon de l'agriculture, les inondations, la composition du Conseil économique, social et environnemental, la sécurisation…",
+     "url": "https://www.vie-publique.fr/discours/302238-maud-bregeon-25022026-compte-rendu-du-conseil-des-ministres"
+    },
+    "f": null
+   }
+  }
+ ],
+ "economy": [
+  {
+   "id": "agriculture",
+   "name": [
+    "Crise agricole",
+    "The farming crisis"
+   ],
+   "n": {
+    "p": 50,
+    "g": 92,
+    "f": 0
+   },
+   "questions": [
+    "farm_income"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-07-22",
+     "who": "Anne Stambach-Terrenoir",
+     "group": "LFI-NFP",
+     "subject": "Projet de loi d'urgence agricole",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1790"
+    },
+    "g": {
+     "date": "2026-10-15",
+     "who": "Annie Genevard",
+     "type": "Interview",
+     "media": "France Info",
+     "subject": "Le plan de relance à destination des agriculteurs après la canicule et la sécheresse",
+     "url": "https://www.vie-publique.fr/discours/304995-annie-genevard-15102026-france-info-politique-agricole"
+    },
+    "f": null
+   }
+  },
+  {
+   "id": "industry",
+   "name": [
+    "Industrie et fermetures d'usines",
+    "Industry and plant closures"
+   ],
+   "n": {
+    "p": 39,
+    "g": 100,
+    "f": 1
+   },
+   "questions": [
+    "industry"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-07-22",
+     "who": "Emmanuel Taché",
+     "group": "RN",
+     "subject": "Fibre excellence",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1797"
+    },
+    "g": {
+     "date": "2026-10-16",
+     "who": "None",
+     "type": "Communiqué",
+     "media": "",
+     "subject": "L'avenir de l'industrie automobile européenne, le 16 octobre 2026",
+     "url": "https://www.vie-publique.fr/discours/305015-presidence-de-la-republique-16102026-industrie-automobile-europeenne"
+    },
+    "f": {
+     "date": "2025-12-17",
+     "claim": "L'industrie automobile française a perdu 40.000 emplois en à peine six ans",
+     "claimant": "Le député RN Pierre Meurin",
+     "publisher": "TF1 Info",
+     "rating": "Vrai",
+     "url": "https://www.tf1info.fr/economie/verif-en-six-ans-a-peine-l-industrie-automobile-francaise-a-t-elle-perdu-40-000-emplois-2413398.html"
+    }
+   }
+  },
+  {
+   "id": "business_failures",
+   "name": [
+    "Défaillances d'entreprises",
+    "Business failures"
+   ],
+   "n": {
+    "p": 3,
+    "g": 6,
+    "f": 0
+   },
+   "questions": [],
+   "examples": {
+    "p": {
+     "date": "2026-07-16",
+     "who": "Marie-Noëlle Battistel",
+     "group": "SOC",
+     "subject": "Entreprises en difficulté",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1783"
+    },
+    "g": {
+     "date": "2026-09-15",
+     "who": "Maud Bregeon",
+     "type": "Interview",
+     "media": "France 2",
+     "subject": "Les pénuries dans les stations-services, les gros rouleurs, les entreprises en difficulté, le tarif agent pour les électricie…",
+     "url": "https://www.vie-publique.fr/discours/304583-maud-bregeon-15092026-carburant-entreprises-electriciens-gaziers-budget"
+    },
+    "f": null
+   }
+  }
+ ],
+ "jobs": [
+  {
+   "id": "unemployment",
+   "name": [
+    "Chômage",
+    "Unemployment"
+   ],
+   "n": {
+    "p": 6,
+    "g": 33,
+    "f": 1
+   },
+   "questions": [
+    "unemployment"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-07-22",
+     "who": "Sabine Gervais",
+     "group": "DEM",
+     "subject": "Fermeture d'usines Legrand",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1796"
+    },
+    "g": {
+     "date": "2026-09-03",
+     "who": "Sébastien Martin",
+     "type": "Interview",
+     "media": "France 2",
+     "subject": "L'augmentation du chômage, la situation de l'industrie en France, les prix de l'énergie et l'élection présidentielle de 2027",
+     "url": "https://www.vie-publique.fr/discours/304596-sebastien-martin-03092026-france-2-politique-economique"
+    },
+    "f": {
+     "date": "2026-09-23",
+     "claim": "La France est le \"seul pays européen à voir le chômage augmenter\"",
+     "claimant": "Bruno Retailleau",
+     "publisher": "TF1 Info",
+     "rating": "Faux",
+     "url": "https://www.tf1info.fr/economie/verif-la-france-est-elle-vraiment-le-seul-pays-europeen-a-voir-le-chomage-augmenter-comme-l-affirme-bruno-retailleau-2465813.html"
+    }
+   }
+  },
+  {
+   "id": "youth_jobs",
+   "name": [
+    "Emploi des jeunes",
+    "Youth employment"
+   ],
+   "n": {
+    "p": 1,
+    "g": 17,
+    "f": 1
+   },
+   "questions": [
+    "youth"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-06-11",
+     "who": "Sylvain Berrios",
+     "group": "HOR",
+     "subject": "Apprentissage",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1663"
+    },
+    "g": {
+     "date": "2026-08-25",
+     "who": "Sabrina Roubache",
+     "type": "Déclaration",
+     "media": "",
+     "subject": "France compétences et la politique de l'apprentissage, à Paris le 25 août 2026",
+     "url": "https://www.vie-publique.fr/discours/304425-sabrina-roubache-25082026-france-competences-politique-apprentissage"
+    },
+    "f": {
+     "date": "2026-03-10",
+     "claim": "En France, l'âge moyen du premier \"emploi réel\" est aujourd'hui de 27 ans ?",
+     "claimant": "Marine Le Pen",
+     "publisher": "Poligraph",
+     "rating": "Plutôt vrai",
+     "url": "https://poligraph.fr/factchecks/2026-03-10-verif-l-age-moyen-du-premier-emploi-reel-en-france-est-il-aujourd-hui-de-27-ans"
+    }
+   }
+  }
+ ],
+ "social": [
+  {
+   "id": "pensions",
+   "name": [
+    "Retraites",
+    "Pensions"
+   ],
+   "n": {
+    "p": 15,
+    "g": 47,
+    "f": 5
+   },
+   "questions": [
+    "pensioners"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-06-18",
+     "who": "Pierre Cazeneuve",
+     "group": "EPR",
+     "subject": "Déficit du régime des retraites",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1683"
+    },
+    "g": {
+     "date": "2026-10-05",
+     "who": "Jean-Pierre Farandou",
+     "type": "Interview",
+     "media": "",
+     "subject": "Interview de M. Jean-Pierre Farandou, ministre du travail et des solidarités, à LCI le 5 octobre 2026, sur le mouvement lycéen, leurs revendications, la revalorisation des retraites, le budget 2027, le coût du travail et l'Unédic",
+     "url": "https://www.vie-publique.fr/discours/304849-jean-pierre-farandou-05102026-mouvement-lyceen-revendications-retraites"
+    },
+    "f": {
+     "date": "2026-10-15",
+     "claim": "Les retraites et la santé à l'origine de 80 % de la hausse des dépenses publiques depuis 50 ans",
+     "claimant": "David Amiel, ministre de l'Action et des comptes publics",
+     "publisher": "Poligraph",
+     "rating": "En partie vrai",
+     "url": "https://poligraph.fr/factchecks/2026-10-15-verif-les-retraites-et-la-sante-a-l-origine-de-80-de-la-hausse-des-de"
+    }
+   }
+  },
+  {
+   "id": "disability",
+   "name": [
+    "Handicap et autonomie",
+    "Disability and old-age care"
+   ],
+   "n": {
+    "p": 10,
+    "g": 39,
+    "f": 0
+   },
+   "questions": [],
+   "examples": {
+    "p": {
+     "date": "2026-07-22",
+     "who": "Audrey Abadie-Amiel",
+     "group": "LIOT",
+     "subject": "Autisme",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1789"
+    },
+    "g": {
+     "date": "2026-10-14",
+     "who": "Maud Bregeon",
+     "type": "Conférence de presse",
+     "media": "",
+     "subject": "Le mouvement lycéen, le remplacement des enseignants, les violences urbaines, la relance du nucléaire pour réduire notre dépendance aux én…",
+     "url": "https://www.vie-publique.fr/discours/304969-maud-bregeon-14102026-mouvement-lyceen-relance-du-nucleaire-budget"
+    },
+    "f": null
+   }
+  },
+  {
+   "id": "social_fraud",
+   "name": [
+    "Fraude sociale",
+    "Benefit fraud"
+   ],
+   "n": {
+    "p": 2,
+    "g": 15,
+    "f": 2
+   },
+   "questions": [
+    "fraud"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-04-02",
+     "who": "Xavier Roseren",
+     "group": "HOR",
+     "subject": "Lutte contre la fraude aux arrêts maladie",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1419"
+    },
+    "g": {
+     "date": "2026-04-09",
+     "who": "Jean-Pierre Farandou",
+     "type": "Déclaration",
+     "media": "",
+     "subject": "Sa feuille de route pour l'année à venir et le projet de loi relatif à la lutte contre les fraudes sociales et fiscales, au Sénat le 9 avril 2026",
+     "url": "https://www.vie-publique.fr/discours/302887-jean-pierre-farandou-09042026-politique-de-l-emploi-pjl-fraudes"
+    },
+    "f": {
+     "date": "2026-09-18",
+     "claim": "La France compte sept millions de bénéficiaires en trop inscrits à l'Assurance maladie",
+     "claimant": "Des publications sur les réseaux sociaux",
+     "publisher": "TF1 Info",
+     "rating": "Plutôt faux",
+     "url": "https://www.tf1info.fr/societe/verif-la-france-compte-t-elle-7-millions-de-beneficiaires-en-trop-inscrits-a-l-assurance-maladie-2464795.html"
+    }
+   }
+  }
+ ],
+ "education": [
+  {
+   "id": "parcoursup",
+   "name": [
+    "Parcoursup et accès aux études",
+    "Parcoursup and access to higher education"
+   ],
+   "n": {
+    "p": 3,
+    "g": 39,
+    "f": 1
+   },
+   "questions": [],
+   "examples": {
+    "p": {
+     "date": "2026-07-01",
+     "who": "Sacha Houlié",
+     "group": "SOC",
+     "subject": "Régulation de l'enseignement supérieur privé",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1736"
+    },
+    "g": {
+     "date": "2026-10-12",
+     "who": "Maud Bregeon",
+     "type": "Interview",
+     "media": "France Info",
+     "subject": "Le prix du diesel, la crise géopolitique, le mouvement lycéen, le remplacement des professeurs, Parcoursup et la prochaine é…",
+     "url": "https://www.vie-publique.fr/discours/304933-maud-bregeon-12102026-diesel-geopolitique-lyceens-presidentielles-2027"
+    },
+    "f": {
+     "date": "2026-10-17",
+     "claim": "Seuls 38 bacheliers \"n'ont pas eu de solution\" sur Parcoursup en 2025",
+     "claimant": "Philippe Baptiste",
+     "publisher": "franceinfo",
+     "rating": "C’est plus compliqué",
+     "url": "https://www.franceinfo.fr/vrai-ou-fake/vrai-ou-faux-n-y-a-t-il-eu-que-38-bacheliers-qui-n-ont-pas-eu-de-solution-sur-parcoursup-en-2025-comme-l-affirme-le-gouvernement_8239924.html"
+    }
+   }
+  },
+  {
+   "id": "school_spending",
+   "name": [
+    "Moyens de l'école et des lycées",
+    "Funding for schools and lycées"
+   ],
+   "n": {
+    "p": 5,
+    "g": 32,
+    "f": 1
+   },
+   "questions": [
+    "school_spending"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-05-21",
+     "who": "Anthony Boulogne",
+     "group": "RN",
+     "subject": "Politique scolaire",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1574"
+    },
+    "g": {
+     "date": "2026-10-02",
+     "who": "Stéphanie Rist",
+     "type": "Interview",
+     "media": "Sud Radio",
+     "subject": "Le mouvement lycéen, la loi de financement de la sécurité sociale, la taxe sucre, les arrêts maladie et l…",
+     "url": "https://www.vie-publique.fr/discours/304850-stephanie-rist-02102026-mouvement-lyceen-plfss-taxe-sucre-arret-maladie"
+    },
+    "f": {
+     "date": "2026-10-08",
+     "claim": "La France investit-elle 27 % de plus que la moyenne européenne pour ses lycées",
+     "claimant": "Bruno Retailleau",
+     "publisher": "Poligraph",
+     "rating": "Vrai",
+     "url": "https://poligraph.fr/factchecks/2026-10-08-verif-x27-la-france-investit-elle-27-de-plus-que-la-moyenne-europeenn"
+    }
+   }
+  },
+  {
+   "id": "teachers",
+   "name": [
+    "Postes et remplacement des enseignants",
+    "Teacher posts and replacement"
+   ],
+   "n": {
+    "p": 6,
+    "g": 26,
+    "f": 1
+   },
+   "questions": [
+    "teachers"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-04-02",
+     "who": "Murielle Lepvraud",
+     "group": "LFI-NFP",
+     "subject": "Suppressions de postes à l'éducation nationale",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1413"
+    },
+    "g": {
+     "date": "2026-10-14",
+     "who": "Maud Bregeon",
+     "type": "Conférence de presse",
+     "media": "",
+     "subject": "Le mouvement lycéen, le remplacement des enseignants, les violences urbaines, la relance du nucléaire pour réduire notre dépendance aux én…",
+     "url": "https://www.vie-publique.fr/discours/304969-maud-bregeon-14102026-mouvement-lyceen-relance-du-nucleaire-budget"
+    },
+    "f": {
+     "date": "2026-09-02",
+     "claim": "La réforme du concours des enseignants a permis de \"recruter quasiment à plein\"",
+     "claimant": "Edouard Geffray",
+     "publisher": "Poligraph",
+     "rating": "C’est plus compliqué",
+     "url": "https://poligraph.fr/factchecks/2026-09-02-vrai-ou-faux-la-r-eacute-forme-du-concours-des-enseignants-a-t-elle-permis-de-quot-recruter-quasiment-agrave"
+    }
+   }
+  },
+  {
+   "id": "school_violence",
+   "name": [
+    "Violences et harcèlement à l'école",
+    "Violence and bullying at school"
+   ],
+   "n": {
+    "p": 5,
+    "g": 17,
+    "f": 0
+   },
+   "questions": [],
+   "examples": {
+    "p": {
+     "date": "2026-07-16",
+     "who": "Danièle Carteron",
+     "group": "EPR",
+     "subject": "Harcèlement des mineurs",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1770"
+    },
+    "g": {
+     "date": "2026-09-17",
+     "who": "Édouard Geffray",
+     "type": "Interview",
+     "media": "France 2",
+     "subject": "La rentrée scolaire, le budget 2027, la campagne pour les élections présidentielles, les violences dans le périscolaire et le questionnaire à destina…",
+     "url": "https://www.vie-publique.fr/discours/304680-edouard-geffray-21092026-budget-presidentielle-periscolaire-violences"
+    },
+    "f": null
+   }
+  },
+  {
+   "id": "classes",
+   "name": [
+    "Fermetures de classes et effectifs",
+    "Class closures and class sizes"
+   ],
+   "n": {
+    "p": 6,
+    "g": 13,
+    "f": 0
+   },
+   "questions": [
+    "classes"
+   ],
+   "examples": {
+    "p": {
+     "date": "2026-07-01",
+     "who": "Bastien Marchive",
+     "group": "EPR",
+     "subject": "Fermetures de classes à la prochaine rentrée scolaire",
+     "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1737"
+    },
+    "g": {
+     "date": "2026-05-27",
+     "who": "None",
+     "type": "Communiqué",
+     "media": "",
+     "subject": "La démographie et la carte scolaire",
+     "url": "https://www.vie-publique.fr/discours/303392-communique-des-services-du-premier-ministre-sur-la-carte-scolaire"
+    },
+    "f": null
+   }
+  }
+ ]
+}

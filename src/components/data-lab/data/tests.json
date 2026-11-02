@@ -1,0 +1,226 @@
+{
+ "cost": {
+  "weeks": {
+   "before": "2026-02-23",
+   "claim": "2026-04-20",
+   "after": "2026-05-04"
+  },
+  "unit": "eur_per_litre",
+  "vat": {
+   "FR": 0.2,
+   "BE": 0.21,
+   "DE": 0.19,
+   "ES": 0.21,
+   "IT": 0.22,
+   "LU": 0.17
+  },
+  "series": [
+   "2026-02-23",
+   "2026-03-02",
+   "2026-03-09",
+   "2026-03-16",
+   "2026-03-23",
+   "2026-03-30",
+   "2026-04-06",
+   "2026-04-13",
+   "2026-04-20",
+   "2026-04-27",
+   "2026-05-04"
+  ],
+  "rows": [
+   {
+    "geo": "FR",
+    "before": 0.882,
+    "claim": 0.982,
+    "after": 0.968,
+    "excise": 0.607,
+    "pretax": [
+     0.767,
+     1.263
+    ],
+    "price": 0.099,
+    "rate": 0.0,
+    "fixed": [
+     0.607,
+     0.607,
+     0.607,
+     0.608,
+     0.608,
+     0.608,
+     0.608,
+     0.607,
+     0.607,
+     0.607,
+     0.608
+    ]
+   },
+   {
+    "geo": "BE",
+    "before": 0.883,
+    "claim": 0.981,
+    "after": 0.967,
+    "excise": 0.6,
+    "pretax": [
+     0.745,
+     1.212
+    ],
+    "price": 0.098,
+    "rate": -0.0,
+    "fixed": [
+     0.6,
+     0.6,
+     0.6,
+     0.6,
+     0.6,
+     0.6,
+     0.6,
+     0.6,
+     0.6,
+     0.6,
+     0.6
+    ]
+   },
+   {
+    "geo": "DE",
+    "before": 0.909,
+    "claim": 0.973,
+    "after": 0.825,
+    "excise": 0.632,
+    "pretax": [
+     0.824,
+     1.16
+    ],
+    "price": 0.064,
+    "rate": 0.0,
+    "fixed": [
+     0.632,
+     0.632,
+     0.632,
+     0.632,
+     0.632,
+     0.632,
+     0.632,
+     0.632,
+     0.632,
+     0.632,
+     0.492
+    ],
+    "measure": {
+     "from": "2026-05-01",
+     "what": [
+      "Taxe sur l'énergie −14,04 centimes par litre, 1er mai – 30 juin",
+      "Energy tax −14.04 cents per litre, 1 May – 30 June"
+     ],
+     "source": [
+      "PwC Deutschland",
+      "https://blogs.pwc.de/de/steuern-und-recht/article/254299/update-bundestag-stimmt-gesetz-zur-senkung-der-energiesteuern-zu/"
+     ]
+    }
+   },
+   {
+    "geo": "ES",
+    "before": 0.626,
+    "claim": 0.494,
+    "after": 0.488,
+    "excise": 0.379,
+    "pretax": [
+     0.797,
+     1.313
+    ],
+    "price": 0.108,
+    "rate": -0.24,
+    "fixed": [
+     0.379,
+     0.379,
+     0.379,
+     0.379,
+     0.323,
+     0.183,
+     0.18,
+     0.174,
+     0.181,
+     0.187,
+     0.187
+    ],
+    "measure": {
+     "from": "2026-03",
+     "what": [
+      "TVA de 21 % à 10 %, accise ramenée au minimum européen (RDL 7/2026)",
+      "VAT cut from 21% to 10%, excise cut to the EU minimum (RDL 7/2026)"
+     ],
+     "source": [
+      "CNMC",
+      "https://www.cnmc.es/en/node/420673"
+     ]
+    }
+   },
+   {
+    "geo": "IT",
+    "before": 0.98,
+    "claim": 0.854,
+    "after": 0.842,
+    "excise": 0.673,
+    "pretax": [
+     0.722,
+     1.26
+    ],
+    "price": 0.118,
+    "rate": -0.244,
+    "fixed": [
+     0.673,
+     0.673,
+     0.673,
+     0.673,
+     0.473,
+     0.473,
+     0.473,
+     0.473,
+     0.473,
+     0.473,
+     0.473
+    ],
+    "measure": {
+     "from": "2026-03-19",
+     "what": [
+      "Accise −20 centimes par litre (DL 33/2026)",
+      "Excise −20 cents per litre (DL 33/2026)"
+     ],
+     "source": [
+      "Sky TG24",
+      "https://tg24.sky.it/economia/2026/03/19/prezzo-benzina-diesel-taglio-accise"
+     ]
+    }
+   },
+   {
+    "geo": "LU",
+    "before": 0.678,
+    "claim": 0.737,
+    "after": 0.742,
+    "excise": 0.465,
+    "pretax": [
+     0.787,
+     1.135
+    ],
+    "price": 0.059,
+    "rate": -0.0,
+    "fixed": [
+     0.465,
+     0.465,
+     0.465,
+     0.465,
+     0.465,
+     0.465,
+     0.465,
+     0.465,
+     0.465,
+     0.465,
+     0.465
+    ]
+   }
+  ],
+  "source": [
+   "Commission européenne, Bulletin pétrolier hebdomadaire (gazole)",
+   "European Commission, Weekly Oil Bulletin (diesel)"
+  ]
+ }
+}

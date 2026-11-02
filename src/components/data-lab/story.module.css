@@ -1,0 +1,589 @@
+/* The story that opens "The state of things". Every rule is scoped under
+ * .story: the page sits in .tw, whose element resets (.tw button, .tw a)
+ * outrank a single class. One frame of constant size on desktop: caption and
+ * buttons on the left, the graphic on the right, progress along the bottom.
+ * Colours and type come only from the site's roles in globals.css. */
+
+.story {
+  display: grid;
+  grid-template-columns: 44px minmax(220px, 0.7fr) minmax(0, 1.75fr) 44px;
+  grid-template-rows: auto 1fr;
+  gap: 0 28px;
+  margin-bottom: clamp(40px, 6vw, 72px);
+  padding: 18px 20px 24px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: #151413;
+}
+/* Colour roles: green for navigation and progress (--nav), terracotta for
+ * the active narrative thread (--thread), ivory and grey for everything
+ * else. Inside the stage, the form colour is the thread's, so whatever a
+ * scene highlights (the chosen topic, the angle we follow, the thread's
+ * texts, a chart's focus line) is terracotta; controls keep --nav. */
+.story {
+  --nav: var(--form-data);
+  --thread: var(--form-essay);
+}
+.story .stage {
+  --form: var(--thread);
+}
+.story :focus-visible {
+  outline: 2px solid var(--nav);
+  outline-offset: 2px;
+}
+
+/* Shared roles */
+.story .label {
+  color: var(--text-metadata);
+  font: 500 11px / 1.4 var(--font-functional);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.story .meta {
+  color: var(--text-metadata);
+  font: 400 13px / 1.5 var(--font-functional);
+}
+.story .note {
+  max-width: 640px;
+  margin: 0;
+  color: var(--text-metadata);
+  font: 400 12px / 1.5 var(--font-functional);
+}
+.story .note b {
+  color: var(--form);
+  font-weight: 500;
+}
+.story .note a {
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.story .chip {
+  justify-self: start;
+  padding: 3px 5px 2px;
+  border: 1px solid var(--site-rule-strong);
+  border-radius: 3px;
+  color: var(--text-metadata);
+  font: 500 10px / 1.2 var(--font-functional);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Caption, centred in its column */
+.story .caption {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+  grid-column: 2;
+  grid-row: 2;
+}
+.story .act {
+  color: var(--form);
+  font: 500 11px / 1.4 var(--font-functional);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.story .captionText {
+  margin: 0;
+  color: var(--text-primary);
+  font: 400 21px / 1.5 var(--font-editorial);
+}
+.story .caption > * {
+  transition: opacity 400ms ease;
+}
+.story .caption.isSilent > * {
+  opacity: 0;
+}
+.story .caption.isDim > * {
+  opacity: 0.24;
+}
+@media (min-width: 861px) {
+  .story.isWide .stage {
+    grid-column: 2 / 4;
+  }
+  .story.isWide .caption {
+    position: relative;
+    z-index: 3;
+    pointer-events: none;
+  }
+}
+
+/* One arrow on each side, centred on the frame's height */
+.story .arrow {
+  display: grid;
+  place-items: center;
+  grid-row: 2;
+  align-self: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--site-rule-strong);
+  border-radius: 50%;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+.story .arrow svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+.story .arrowBack {
+  grid-column: 1;
+}
+.story .arrowNext {
+  grid-column: 4;
+  border-color: var(--form);
+  background: rgb(110 203 120 / 0.08);
+  color: var(--text-primary);
+}
+.story .arrow:hover:not(:disabled) {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+.story .arrowNext:hover:not(:disabled) {
+  border-color: var(--form);
+  background: rgb(110 203 120 / 0.16);
+}
+.story .arrow:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+/* The stage: a fixed height, so the page never moves */
+.story .stage {
+  display: flex;
+  align-items: center;
+  grid-column: 3;
+  grid-row: 2;
+  min-width: 0;
+  height: 600px;
+  overflow: hidden;
+}
+.story .scene {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  animation: fadeIn 260ms ease;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* The top bar: the two ways in, then where you are (one segment per step,
+ * grouped by act) */
+.story .top {
+  display: flex;
+  align-items: flex-end;
+  gap: 28px;
+  min-height: 62px;
+  grid-column: 1 / -1;
+  grid-row: 1;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+}
+/* The two ways in. At the entry: two editorial links, a line each; inside
+ * either experience: their names, the current one underlined. */
+.story .ways {
+  display: flex;
+  flex: none;
+  gap: 22px;
+}
+.story .ways.isFull {
+  flex: 1;
+  gap: 0;
+}
+.story .way {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-metadata);
+  text-align: left;
+  cursor: pointer;
+}
+.story .ways.isFull .way {
+  flex: 1;
+  gap: 12px;
+  padding-right: 24px;
+}
+.story .ways.isFull .way + .way {
+  padding-left: 24px;
+  border-left: 1px solid var(--rule);
+}
+.story .wayIcon {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  margin-top: 1px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.story .ways.isFull .wayIcon {
+  width: 21px;
+  height: 21px;
+  margin-top: 3px;
+}
+.story .way[aria-current] .wayIcon {
+  stroke: var(--form);
+}
+.story .wayText {
+  display: grid;
+  gap: 3px;
+}
+.story .wayTitle {
+  color: var(--text-secondary);
+  font: 500 14px / 1.3 var(--font-functional);
+  text-decoration-color: var(--form);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 7px;
+}
+.story .ways.isFull .wayTitle {
+  font: 400 20px / 1.2 var(--font-editorial);
+}
+.story .way[aria-current] .wayTitle,
+.story .way:hover .wayTitle {
+  color: var(--text-primary);
+}
+.story .ways:not(.isFull) .way[aria-current] .wayTitle {
+  text-decoration-line: underline;
+}
+.story .restart {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  align-self: flex-end;
+  gap: 6px;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  color: var(--text-metadata);
+  font: 400 13px / 1.3 var(--font-functional);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.story .restart:hover {
+  color: var(--text-primary);
+}
+.story .restartIcon {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.story.isExplore .restart {
+  margin-left: -6px;
+}
+.story .wayResume {
+  color: var(--text-metadata);
+  font-weight: 400;
+}
+.story .wayDesc {
+  color: var(--text-metadata);
+  font: 400 13px / 1.45 var(--font-functional);
+}
+.story .way:hover .wayDesc {
+  color: var(--text-secondary);
+}
+.story .progress {
+  display: flex;
+  flex: 1;
+  gap: 14px;
+  min-width: 0;
+}
+/* Explore mode: the section's explorer fills the box */
+.story.isExplore {
+  grid-template-rows: auto auto;
+}
+.story .explorer {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  min-width: 0;
+  padding: 0 4px;
+}
+.story .progressAct {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.story .progressName {
+  overflow: hidden;
+  color: var(--text-metadata);
+  font: 500 10px / 1.3 var(--font-functional);
+  letter-spacing: 0.1em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.story .progressSteps {
+  display: flex;
+  gap: 4px;
+}
+.story .progressSteps button {
+  flex: 1;
+  height: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: var(--site-rule-strong);
+  cursor: pointer;
+}
+.story .progressSteps button.isDone {
+  background: #3f8a49;
+}
+.story .progressSteps button.isOn {
+  background: var(--form);
+}
+.story .progressSteps button:hover:not(.isOn) {
+  background: var(--text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story .scene {
+    animation: none;
+  }
+  .story .caption > * {
+    transition: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .story {
+    grid-template-columns: 40px minmax(0, 1fr) 40px;
+    grid-template-rows: auto auto auto;
+    gap: 0 10px;
+    padding: 14px 12px 16px;
+  }
+  .story > * {
+    min-width: 0;
+  }
+  .story .top {
+    flex-wrap: wrap;
+    gap: 12px;
+    min-height: 0;
+  }
+  .story .ways.isFull {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .story .ways.isFull .way,
+  .story .ways.isFull .way + .way {
+    padding: 0;
+    border: 0;
+  }
+  .story .ways.isFull .wayTitle {
+    font-size: 18px;
+  }
+  .story .progress {
+    flex-basis: 100%;
+  }
+  .story .progressName {
+    display: none;
+  }
+  .story .arrow {
+    width: 40px;
+    height: 40px;
+  }
+  .story .arrowNext {
+    grid-column: 3;
+  }
+  .story .caption {
+    grid-column: 2;
+    gap: 8px;
+  }
+  .story .captionText {
+    font-size: 18px;
+  }
+  .story .stage {
+    display: block;
+    grid-column: 1 / 4;
+    grid-row: 3;
+    height: auto;
+    margin-top: 18px;
+    overflow: visible;
+  }
+}
+
+/* ---------- The narrative variant (section 01, "Connect the dots") ----------
+ * The same frame, with less of it. The chapters are named once, along the
+ * top, over a progress line with no visible steps; the stage takes the
+ * height its beat needs (set per beat, --stage), and the arrows keep their
+ * place so the eye doesn't have to find them again. Three layouts: "split"
+ * (the narration beside the scene), "wide" (the scene runs under it), "full"
+ * (a line above, the scene across the frame, or no line at all). */
+.story.isNarrative {
+  --ink: #ede9e2;
+  --nav: #70c982;
+  --thread: #c96a4b;
+  --form: var(--nav);
+  grid-template-columns: 44px minmax(220px, 0.62fr) minmax(0, 1.9fr) 44px;
+  border-color: #2a2a2a;
+  background: #161616;
+}
+.story.isNarrative .stage {
+  --form: var(--thread);
+  flex-direction: column;
+  align-items: stretch;
+  height: auto;
+  min-height: var(--stage, 460px);
+  overflow: visible;
+  touch-action: pan-y;
+  transition: min-height 420ms cubic-bezier(0.22, 0.72, 0.2, 1);
+}
+.story.isNarrative .scene {
+  flex: 1 0 auto;
+  animation-duration: 320ms;
+}
+.story.isNarrative .progress {
+  gap: 18px;
+}
+.story.isNarrative .progressName {
+  color: var(--text-metadata);
+  font: 400 13px / 1.3 var(--font-functional);
+  letter-spacing: 0;
+  text-transform: none;
+  transition: color 300ms ease;
+}
+.story.isNarrative .progressName.isHere {
+  color: var(--ink);
+}
+/* one continuous line per chapter: no segments to count */
+.story.isNarrative .progressSteps {
+  gap: 0;
+}
+.story.isNarrative .progressSteps button {
+  position: relative;
+  height: 2px;
+  border-radius: 0;
+  background: #383838;
+  transition: background-color 300ms ease;
+}
+.story.isNarrative .progressSteps button.isDone,
+.story.isNarrative .progressSteps button.isOn {
+  background: var(--nav);
+}
+.story.isNarrative .progressSteps button:hover:not(.isOn) {
+  background: var(--text-secondary);
+}
+.story.isNarrative .progressSteps button::after {
+  position: absolute;
+  inset: -10px 0;
+  content: "";
+}
+.story.isNarrative .captionText {
+  color: var(--ink);
+  font: 400 clamp(22px, 1.75vw, 27px) / 1.34 var(--font-editorial);
+  letter-spacing: -0.005em;
+  text-wrap: pretty;
+}
+.story.isNarrative .arrowNext {
+  border-color: var(--nav);
+  background: rgb(112 201 130 / 0.07);
+}
+.story.isNarrative .arrowNext:hover:not(:disabled) {
+  background: rgb(112 201 130 / 0.15);
+}
+@media (min-width: 861px) {
+  /* a chapter's name is never cut */
+  .story.isNarrative .progressAct {
+    min-width: max-content;
+  }
+  .story.isNarrative .top {
+    min-height: 80px;
+  }
+  /* the arrows stay put, whatever the height of the beat */
+  .story.isNarrative .arrow {
+    align-self: start;
+    margin-top: 190px;
+  }
+  .story.isNarrative.isWide .caption {
+    justify-content: flex-start;
+    padding-top: 64px;
+  }
+  .story.isNarrative.isSpread {
+    grid-template-rows: auto auto 1fr;
+  }
+  .story.isNarrative.isSpread .caption {
+    grid-column: 2 / 4;
+    grid-row: 2;
+    margin-bottom: 18px;
+  }
+  .story.isNarrative.isSpread .stage {
+    grid-column: 2 / 4;
+    grid-row: 3;
+  }
+  .story.isNarrative.isSpread .arrow {
+    grid-row: 2 / 4;
+  }
+  .story.isNarrative.isUncaptioned {
+    grid-template-rows: auto 1fr;
+  }
+  /* the scene says it, close to what it introduces; screen readers keep it here */
+  .story.isNarrative.isUncaptioned .caption {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .story.isNarrative.isUncaptioned .stage {
+    grid-row: 2;
+  }
+  .story.isNarrative.isUncaptioned .arrow {
+    grid-row: 2;
+  }
+}
+@media (max-width: 860px) {
+  .story.isNarrative .stage {
+    min-height: 0;
+  }
+  .story.isNarrative .captionText {
+    font-size: 19px;
+  }
+  /* phones: only the current chapter is named */
+  .story.isNarrative .progressName {
+    visibility: hidden;
+  }
+  .story.isNarrative .progressName.isHere {
+    visibility: visible;
+    overflow: visible;
+  }
+  .story.isNarrative.isUncaptioned .caption {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .story.isNarrative.isUncaptioned .stage {
+    margin-top: 4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .story.isNarrative .stage {
+    transition: none;
+  }
+}

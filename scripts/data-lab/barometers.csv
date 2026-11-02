@@ -1,0 +1,95 @@
+barometer,wave,fieldwork,published,item,share_pct,topic,source_url,where
+obsoco,1,2025-09,2025-11,Régulation de la vie politique et éthique gouvernementale,30,politics,https://www.sciencespo.fr/cevipof/sites/sciencespo.fr.cevipof/files/ObSoCo_CEVIPOF_MIP_juillet26_vague3et4.pdf,p.2 top-10 chart
+obsoco,1,2025-09,2025-11,"Inflation, prix et taux d'intérêt",27,cost,same,p.2
+obsoco,1,2025-09,2025-11,Justice et criminalité,24,security,same,p.2
+obsoco,1,2025-09,2025-11,Budget et dette nationale,20,public,same,p.2
+obsoco,1,2025-09,2025-11,Immigration,20,immigration,same,p.2
+obsoco,1,2025-09,2025-11,Politique sociale,8,social,same,p.2
+obsoco,1,2025-09,2025-11,Politique macroéconomique,8,economy,same,p.2
+obsoco,1,2025-09,2025-11,"Environnement, pollution et climat",7,environment,same,p.2
+obsoco,1,2025-09,2025-11,Marché de l'emploi et chômage,7,jobs,same,p.2
+obsoco,1,2025-09,2025-11,Santé,3,health,same,p.2
+obsoco,2,2025-12,2026-01,Régulation de la vie politique et éthique gouvernementale,26,politics,same,p.2
+obsoco,2,2025-12,2026-01,"Inflation, prix et taux d'intérêt",26,cost,same,p.2
+obsoco,2,2025-12,2026-01,Justice et criminalité,25,security,same,p.2
+obsoco,2,2025-12,2026-01,Immigration,17,immigration,same,p.2
+obsoco,2,2025-12,2026-01,Budget et dette nationale,17,public,same,p.2
+obsoco,2,2025-12,2026-01,Politique macroéconomique,9,economy,same,p.2
+obsoco,2,2025-12,2026-01,Marché de l'emploi et chômage,8,jobs,same,p.2
+obsoco,2,2025-12,2026-01,"Environnement, pollution et climat",7,environment,same,p.2
+obsoco,2,2025-12,2026-01,Santé,5,health,same,p.2
+obsoco,2,2025-12,2026-01,"Impôt, politique fiscale et réforme fiscale",3,public,same,p.2
+obsoco,3,2026-03,2026-07,"Inflation, prix et taux d'intérêt",36,cost,same,p.2
+obsoco,3,2026-03,2026-07,Justice et criminalité,26,security,same,p.2
+obsoco,3,2026-03,2026-07,Régulation de la vie politique et éthique gouvernementale,21,politics,same,p.2
+obsoco,3,2026-03,2026-07,Immigration,15,immigration,same,p.2
+obsoco,3,2026-03,2026-07,Budget et dette nationale,13,public,same,p.2
+obsoco,3,2026-03,2026-07,Guerres et opérations militaires extérieures,10,world,same,p.2
+obsoco,3,2026-03,2026-07,Marché de l'emploi et chômage,8,jobs,same,p.2
+obsoco,3,2026-03,2026-07,Politique macroéconomique,7,economy,same,p.2
+obsoco,3,2026-03,2026-07,Politique sociale,6,social,same,p.2
+obsoco,3,2026-03,2026-07,"Environnement, pollution et climat",6,environment,same,p.2
+obsoco,4,2026-06,2026-07,"Inflation, prix et taux d'intérêt",29,cost,same,p.2
+obsoco,4,2026-06,2026-07,Justice et criminalité,27,security,same,p.2
+obsoco,4,2026-06,2026-07,"Environnement, pollution et climat",23,environment,same,p.2
+obsoco,4,2026-06,2026-07,Immigration,18,immigration,same,p.2
+obsoco,4,2026-06,2026-07,Régulation de la vie politique et éthique gouvernementale,17,politics,same,p.2
+obsoco,4,2026-06,2026-07,Budget et dette nationale,14,public,same,p.2
+obsoco,4,2026-06,2026-07,Politique macroéconomique,7,economy,same,p.2
+obsoco,4,2026-06,2026-07,Marché de l'emploi et chômage,5,jobs,same,p.2
+obsoco,4,2026-06,2026-07,Politique sociale,5,social,same,p.2
+obsoco,4,2026-06,2026-07,Justice (organisation et fonctionnement),4,security,same,p.2
+obsoco,5,2026-09,2026-10,"Inflation, prix et taux d'intérêt",45,cost,https://www.sciencespo.fr/cevipof/files/ObSoCo_CEVIPOF_MIP_oct26_vague5.pdf,p.2 trend chart (labels)
+obsoco,5,2026-09,2026-10,Budget et dette nationale,19,public,same,p.2
+obsoco,5,2026-09,2026-10,Justice et criminalité,18,security,same,p.2
+obsoco,5,2026-09,2026-10,Régulation de la vie politique et éthique gouvernementale,15,politics,same,p.2
+obsoco,5,2026-09,2026-10,Immigration,15,immigration,same,p.2
+obsoco,5,2026-09,2026-10,Politique macroéconomique,11,economy,same,p.2
+obsoco,5,2026-09,2026-10,"Environnement, pollution et climat",10,environment,same,p.2
+obsoco,5,2026-09,2026-10,Marché de l'emploi et chômage,6,jobs,same,p.2
+obsoco,5,2026-09,2026-10,Politique sociale,4,social,same,p.2
+obsoco,5,2026-09,2026-10,Santé,4,health,same,p.2
+fractures,13,2025-10-01/09,2025-10-21,Les difficultés en termes de pouvoir d'achat,36,cost,https://www.ipsos.com/sites/default/files/ct/news/documents/2025-10/ipsos-bva-fractures-francaises-2025-rapport-complet.pdf,p.13
+fractures,13,2025-10-01/09,2025-10-21,Le niveau de la délinquance,22,security,same,p.13
+fractures,13,2025-10-01/09,2025-10-21,Le niveau de l'immigration,22,immigration,same,p.13
+fractures,13,2025-10-01/09,2025-10-21,La protection de l'environnement,18,environment,same,p.13
+fractures,13,2025-10-01/09,2025-10-21,L'avenir du système social de santé,18,health,same,p.13
+fractures,13,2025-10-01/09,2025-10-21,Le niveau de la dette et des déficits,17,public,same,p.13
+fractures,13,2025-10-01/09,2025-10-21,L'avenir des retraites,15,social,same,p.13
+fractures,13,2025-10-01/09,2025-10-21,La guerre en Ukraine,13,world,same,p.13
+fractures,13,2025-10-01/09,2025-10-21,La montée des inégalités sociales,12,inequality,same,p.13
+fractures,13,2025-10-01/09,2025-10-21,La menace terroriste,7,security,same,p.13
+fractures,13,2025-10-01/09,2025-10-21,L'avenir du système scolaire,6,education,same,p.13
+fractures,13,2025-10-01/09,2025-10-21,La guerre au Moyen-Orient,5,world,same,p.13
+fractures,13,2025-10-01/09,2025-10-21,Le taux de chômage,4,jobs,same,p.13
+fractures,13,2025-10-01/09,2025-10-21,Les risques d'épidémies,3,epidemics,same,p.13
+eurobarometer,105,2026-03/04,2026-05,Crime,15,security,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,Crime,18,security,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"
+eurobarometer,105,2026-03/04,2026-05,The economic situation,17,economy,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,The economic situation,23,economy,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"
+eurobarometer,105,2026-03/04,2026-05,Rising prices / inflation / cost of living,40,cost,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,Rising prices / inflation / cost of living,36,cost,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"
+eurobarometer,105,2026-03/04,2026-05,The conflict in the Middle East,12,world,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,The conflict in the Middle East,2,world,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"
+eurobarometer,105,2026-03/04,2026-05,Unemployment,10,jobs,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,Unemployment,7,jobs,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"
+eurobarometer,105,2026-03/04,2026-05,Housing,6,housing,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,Housing,6,housing,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"
+eurobarometer,105,2026-03/04,2026-05,Government debt,16,public,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,Government debt,24,public,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"
+eurobarometer,105,2026-03/04,2026-05,Immigration,10,immigration,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,Immigration,11,immigration,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"
+eurobarometer,105,2026-03/04,2026-05,Health,17,health,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,Health,16,health,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"
+eurobarometer,105,2026-03/04,2026-05,The education system,8,education,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,The education system,10,education,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"
+eurobarometer,105,2026-03/04,2026-05,The international situation,11,world,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,The international situation,6,world,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"
+eurobarometer,105,2026-03/04,2026-05,Threats to democracy,5,politics,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,Threats to democracy,6,politics,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"
+eurobarometer,105,2026-03/04,2026-05,The environment and climate change,6,environment,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,The environment and climate change,6,environment,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"
+eurobarometer,105,2026-03/04,2026-05,Security and defence,9,world,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,Security and defence,9,world,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"
+eurobarometer,105,2026-03/04,2026-05,Russia's invasion of Ukraine,7,world,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, p.41/43"
+eurobarometer,104,2025-10/11,2025-12,Russia's invasion of Ukraine,4,world,https://euneighbourseast.eu/wp-content/uploads/2026/05/standard-eurobarometer-105-spring-2026_data-annex_en.pdf,"QA3 France, derived from EB105 change column"

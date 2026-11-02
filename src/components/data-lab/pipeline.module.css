@@ -1,0 +1,428 @@
+/* Method and sources at a glance: the five stages and what each holds.
+ * Scoped under .wrap so the page's .tw element resets don't win. The form
+ * colour marks the stage being read and the questions already answered. */
+
+.wrap .pipeline {
+  display: grid;
+  grid-template-columns: 1fr 24px 1fr 24px 1fr 24px 1fr 24px 1fr;
+  align-items: stretch;
+}
+.wrap .arrow {
+  position: relative;
+}
+.wrap .arrow::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  right: 4px;
+  height: 1px;
+  background: var(--site-rule-strong);
+}
+.wrap .arrow::after {
+  content: "";
+  position: absolute;
+  top: calc(50% - 4px);
+  right: 4px;
+  width: 7px;
+  height: 7px;
+  border-top: 1px solid var(--site-rule-strong);
+  border-right: 1px solid var(--site-rule-strong);
+  transform: rotate(45deg);
+}
+
+.wrap .stage {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+.wrap .stage:hover {
+  border-color: var(--site-rule-strong);
+}
+.wrap .stage[aria-expanded="true"] {
+  border-color: var(--form);
+  background: color-mix(in srgb, var(--form) 6%, transparent);
+}
+.wrap .stage:focus-visible,
+.wrap .more:focus-visible,
+.wrap .close:focus-visible {
+  outline: 2px solid var(--form);
+  outline-offset: 2px;
+}
+.wrap .stageN {
+  color: var(--form);
+  font: italic 300 22px / 1 var(--font-editorial);
+}
+.wrap .stageTitle,
+.wrap .label {
+  color: var(--text-metadata);
+  font: 500 11px / 1.4 var(--font-functional);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.wrap .label.isForm {
+  color: var(--form);
+}
+.wrap .stageBig {
+  margin-top: 6px;
+  color: var(--text-primary);
+  font: 300 44px / 1 var(--font-editorial);
+  font-variant-numeric: lining-nums;
+  letter-spacing: -0.02em;
+}
+.wrap .stageUnit {
+  color: var(--text-secondary);
+  font: 400 13px / 1.3 var(--font-functional);
+}
+.wrap .glyph {
+  display: block;
+  width: 90px;
+  height: 24px;
+  margin: 10px 0 8px;
+  overflow: visible;
+}
+.wrap .gInk {
+  fill: var(--text-secondary);
+}
+.wrap .gFaint {
+  fill: var(--rule);
+}
+.wrap .gForm {
+  fill: var(--form);
+}
+.wrap .gDash {
+  fill: none;
+  stroke: var(--text-secondary);
+  stroke-dasharray: 2 1.5;
+}
+.wrap .stageLine,
+.wrap .meta {
+  color: var(--text-metadata);
+  font: 400 13px / 1.45 var(--font-functional);
+}
+
+/* What a stage holds */
+.wrap .panel {
+  margin-top: 18px;
+  padding: 22px;
+  border-radius: 10px;
+  background: var(--surface-raised);
+}
+.wrap .panelHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.wrap .close {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--site-rule-strong);
+  border-radius: 999px;
+  background: none;
+  color: var(--text-primary);
+  font: 400 16px / 1 var(--font-functional);
+  cursor: pointer;
+}
+.wrap .lede {
+  max-width: 700px;
+  margin: 0 0 18px;
+  color: var(--text-secondary);
+  font: 400 17px / 1.55 var(--font-functional);
+}
+.wrap .cardTitle {
+  color: var(--text-primary);
+  font: 400 17px / 1.25 var(--font-editorial);
+}
+.wrap .cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.wrap .card,
+.wrap .producer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+}
+.wrap .quote {
+  margin-top: 6px;
+  color: var(--text-primary);
+  font: italic 400 15px / 1.45 var(--font-editorial);
+}
+
+.wrap .chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.wrap .chipsLabel {
+  min-width: 150px;
+}
+.wrap .chip {
+  padding: 4px 10px;
+  border: 1px solid var(--site-rule-strong);
+  border-radius: 999px;
+  color: var(--text-primary);
+  font: 400 13px / 1.3 var(--font-functional);
+}
+.wrap .chip.isKept {
+  border-color: var(--form);
+}
+.wrap .chip.isException {
+  border-style: dashed;
+}
+.wrap .chip.isOut {
+  opacity: 0.45;
+}
+.wrap .note {
+  max-width: 700px;
+  margin: 0 0 12px 156px;
+}
+
+.wrap .bars {
+  display: flex;
+  flex-direction: column;
+}
+.wrap .barRow {
+  display: grid;
+  grid-template-columns: 200px repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--rule) 60%, transparent);
+}
+.wrap .barHead {
+  align-items: end;
+  padding-bottom: 10px;
+  border-bottom-color: var(--rule);
+}
+.wrap .family {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.wrap .bigSm {
+  color: var(--text-primary);
+  font: 300 34px / 1 var(--font-editorial);
+  font-variant-numeric: lining-nums;
+}
+.wrap .barName {
+  color: var(--text-primary);
+  font: 400 15px / 1.2 var(--font-editorial);
+}
+.wrap .bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40px;
+  gap: 6px;
+  align-items: center;
+}
+.wrap .bar i {
+  display: block;
+  height: 6px;
+  border-radius: 0 3px 3px 0;
+  background: var(--text-secondary);
+}
+.wrap .bar b {
+  color: var(--text-primary);
+  font: 400 12px / 1 var(--font-functional);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.wrap .qgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px 24px;
+}
+.wrap .qcol {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.wrap .q {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  color: var(--text-primary);
+  font: 400 15px / 1.35 var(--font-editorial);
+}
+.wrap .producers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px 24px;
+}
+.wrap .pdots {
+  display: flex;
+  gap: 4px;
+}
+.wrap .dot {
+  display: inline-block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--text-secondary);
+  border-radius: 50%;
+  vertical-align: 0.05em;
+}
+.wrap .dot.isReady {
+  border-color: var(--form);
+  background: var(--form);
+}
+.wrap .legend {
+  display: flex;
+  gap: 18px;
+  margin-top: 16px;
+}
+
+/* The way into the full detail */
+.wrap .more {
+  margin-top: 20px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: 400 14px / 1.4 var(--font-functional);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--form) 70%, transparent);
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+.wrap .more:hover {
+  text-decoration-color: var(--form);
+}
+.wrap .deep {
+  margin-top: 20px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+}
+
+/* Every source */
+.wrap .table {
+  width: 100%;
+  border-collapse: collapse;
+  font: 400 13px / 1.4 var(--font-functional);
+}
+.wrap .table th,
+.wrap .table td {
+  padding: 6px 12px 6px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--rule) 60%, transparent);
+  color: var(--text-secondary);
+  text-align: left;
+  vertical-align: top;
+}
+.wrap .table thead th {
+  color: var(--text-metadata);
+  font: 500 11px / 1.4 var(--font-functional);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.wrap .table td:first-child {
+  color: var(--text-primary);
+}
+.wrap .table td:last-child {
+  white-space: nowrap;
+}
+.wrap .topicRow th {
+  padding-top: 16px;
+  color: var(--text-primary);
+  font: 400 16px / 1.2 var(--font-editorial);
+}
+
+@media (max-width: 900px) {
+  .wrap .pipeline {
+    grid-template-columns: 1fr;
+  }
+  .wrap .arrow {
+    height: 18px;
+  }
+  .wrap .arrow::before {
+    top: 2px;
+    bottom: 2px;
+    left: 24px;
+    right: auto;
+    width: 1px;
+    height: auto;
+  }
+  .wrap .arrow::after {
+    top: auto;
+    bottom: 2px;
+    left: 21px;
+    right: auto;
+    transform: rotate(135deg);
+  }
+  .wrap .stage {
+    display: grid;
+    grid-template-columns: 34px 1fr auto;
+    grid-template-areas: "n title big" "n line unit";
+    gap: 2px 12px;
+    align-items: baseline;
+  }
+  .wrap .stageN {
+    grid-area: n;
+  }
+  .wrap .stageTitle {
+    grid-area: title;
+  }
+  .wrap .stageBig {
+    grid-area: big;
+    margin: 0;
+    font-size: 30px;
+    text-align: right;
+  }
+  .wrap .stageUnit {
+    grid-area: unit;
+    text-align: right;
+  }
+  .wrap .stageLine {
+    grid-area: line;
+  }
+  .wrap .glyph {
+    display: none;
+  }
+  .wrap .cards {
+    grid-template-columns: 1fr;
+  }
+  .wrap .barRow {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px 10px;
+  }
+  .wrap .barName {
+    grid-column: 1 / -1;
+    padding-top: 4px;
+  }
+  .wrap .barHead > span:first-child {
+    display: none;
+  }
+  .wrap .bigSm {
+    font-size: 24px;
+  }
+  .wrap .barHead .cardTitle {
+    font-size: 14px;
+  }
+  .wrap .note {
+    margin-left: 0;
+  }
+  .wrap .panel {
+    padding: 18px 16px;
+  }
+  .wrap .table {
+    display: block;
+    overflow-x: auto;
+  }
+}

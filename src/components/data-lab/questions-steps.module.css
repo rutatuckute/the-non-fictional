@@ -1,0 +1,325 @@
+/* How the questions were chosen. Shares the caption, controls and result
+ * styles of the topics steps (steps.module.css); this file holds the stage.
+ * Scoped under .wrap so the page's .tw element resets don't win. Identity is
+ * by position, fill and label; the form colour marks only what was kept. */
+
+.wrap .stage {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 420px;
+  padding: 18px 0 20px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+/* The three sources */
+.wrap .sources {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.wrap .source {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+.wrap .iconRing {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 6px;
+  border: 1px solid var(--site-rule-strong);
+  border-radius: 999px;
+}
+.wrap .icon {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: var(--text-primary);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.wrap .sourceName {
+  color: var(--text-primary);
+  font: 400 15px / 1.2 var(--font-editorial);
+}
+.wrap .sourceCount {
+  color: var(--text-primary);
+  font: 300 30px / 1.1 var(--font-editorial);
+  font-variant-numeric: lining-nums;
+}
+.wrap .sourceWhat {
+  color: var(--text-metadata);
+  font: 400 12px / 1.4 var(--font-functional);
+}
+
+/* One row per topic */
+.wrap .rows {
+  display: flex;
+  flex-direction: column;
+}
+.wrap .row {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  min-height: 38px;
+  padding: 6px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--rule) 60%, transparent);
+}
+.wrap .topic {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  color: var(--text-primary);
+  font: 400 16px / 1.2 var(--font-editorial);
+}
+.wrap .flag {
+  padding: 2px 5px 1px;
+  border: 1px dashed var(--site-rule-strong);
+  border-radius: 3px;
+  color: var(--text-metadata);
+  font: 500 9px / 1.2 var(--font-functional);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Step 2: three bars per topic, one per source, each on its own scale */
+.wrap .bars {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.wrap .bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 8px;
+}
+.wrap .bar i {
+  display: block;
+  height: 8px;
+  border-radius: 0 3px 3px 0;
+  background: var(--text-secondary);
+  transition: width 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.wrap .bar:nth-child(2) i {
+  background: var(--site-rule-strong);
+}
+.wrap .bar:nth-child(3) i {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--text-secondary) 0 3px,
+    transparent 3px 5px
+  );
+}
+.wrap .bar b {
+  color: var(--text-primary);
+  font: 400 12px / 1 var(--font-functional);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.wrap .legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  color: var(--text-metadata);
+  font: 400 13px / 1.4 var(--font-functional);
+}
+.wrap .legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.wrap .legend i {
+  display: inline-block;
+  width: 18px;
+  height: 8px;
+  border-radius: 2px;
+}
+.wrap .key0 {
+  background: var(--text-secondary);
+}
+.wrap .key1 {
+  background: var(--site-rule-strong);
+}
+.wrap .key2 {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--text-secondary) 0 3px,
+    transparent 3px 5px
+  );
+}
+
+/* Steps 3 and 4: the subjects as pills */
+.wrap .pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.wrap .pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--site-rule-strong);
+  border-radius: 999px;
+  color: var(--text-primary);
+  font: 400 13px / 1.3 var(--font-functional);
+  transition:
+    opacity 300ms ease,
+    border-color 300ms ease,
+    background-color 300ms ease;
+}
+.wrap .pill.isKept {
+  border-color: var(--form);
+  background: color-mix(in srgb, var(--form) 12%, transparent);
+}
+.wrap .pill.isDropped {
+  opacity: 0.4;
+}
+.wrap .rank {
+  color: var(--form);
+  font: 500 11px / 1 var(--font-functional);
+}
+.wrap .pill.isDropped .rank {
+  color: var(--text-metadata);
+}
+.wrap .pillMeta {
+  color: var(--text-metadata);
+  font: 400 11px / 1 var(--font-functional);
+  font-variant-numeric: tabular-nums;
+}
+.wrap .editorial {
+  padding: 1px 5px;
+  border: 1px dashed var(--site-rule-strong);
+  border-radius: 3px;
+  color: var(--text-metadata);
+  font: 500 9px / 1.3 var(--font-functional);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.wrap .notes {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 720px;
+  color: var(--text-secondary);
+  font: 400 13px / 1.5 var(--font-functional);
+}
+.wrap .notes li {
+  margin: 0;
+}
+
+/* Step 5: the questions */
+.wrap .questions {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.wrap .questions li {
+  margin: 0;
+  color: var(--text-primary);
+  font: 400 16px / 1.35 var(--font-editorial);
+}
+
+/* The detail table */
+.wrap .detail {
+  margin-top: 24px;
+}
+.wrap .detail summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-metadata);
+  font: 500 11px / 1.4 var(--font-functional);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+}
+.wrap .detail summary::-webkit-details-marker {
+  display: none;
+}
+.wrap .detail summary::before {
+  content: "+";
+  color: var(--form);
+  font: 400 16px / 1 var(--font-functional);
+  letter-spacing: 0;
+}
+.wrap .detail[open] summary::before {
+  content: "−";
+}
+.wrap .table {
+  width: 100%;
+  margin-top: 14px;
+  border-collapse: collapse;
+  font: 400 13px / 1.4 var(--font-functional);
+}
+.wrap .table th,
+.wrap .table td {
+  padding: 6px 10px 6px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--rule) 60%, transparent);
+  color: var(--text-secondary);
+  text-align: left;
+  vertical-align: top;
+}
+.wrap .table td:nth-child(n + 2):nth-child(-n + 5) {
+  font-variant-numeric: tabular-nums;
+}
+.wrap .table thead th {
+  color: var(--text-metadata);
+  font: 500 11px / 1.4 var(--font-functional);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.wrap .table td,
+.wrap .topicRow th {
+  letter-spacing: normal;
+  text-transform: none;
+}
+.wrap .table td:first-child,
+.wrap .table td:last-child {
+  color: var(--text-primary);
+}
+.wrap .topicRow th {
+  padding-top: 16px;
+  color: var(--text-primary);
+  font: 400 16px / 1.2 var(--font-editorial);
+}
+.wrap .table tr.isDropped td {
+  color: var(--text-metadata);
+}
+
+@media (max-width: 640px) {
+  .wrap .sources {
+    gap: 8px;
+  }
+  .wrap .sourceName {
+    font-size: 13px;
+  }
+  .wrap .sourceCount {
+    font-size: 24px;
+  }
+  .wrap .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+  .wrap .bars {
+    gap: 8px;
+  }
+  .wrap .bar {
+    grid-template-columns: minmax(0, 1fr) 34px;
+  }
+  .wrap .table {
+    display: block;
+    overflow-x: auto;
+  }
+}

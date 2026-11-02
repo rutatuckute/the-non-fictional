@@ -1,0 +1,414 @@
+/* Method and sources. Scoped under .section, as the State of things is, so the
+ * page's .tw element resets don't win. Ranks are shown by fill, not colour:
+ * filled ink inside a barometer's top 10, an outline outside it. The form colour
+ * marks only the cell being read. */
+
+.section {
+  padding-top: clamp(48px, 7vw, 88px);
+  margin-top: clamp(48px, 7vw, 88px);
+  border-top: 1px solid var(--rule);
+}
+.section .title {
+  margin: 0 0 28px;
+  color: var(--text-primary);
+  font: 340 clamp(32px, 3.2vw, 44px) / 1.08 var(--font-editorial);
+  letter-spacing: -0.015em;
+}
+.section .block + .block {
+  margin-top: clamp(48px, 6vw, 72px);
+}
+.section .subtitle {
+  margin: 0 0 8px;
+  color: var(--text-primary);
+  font: 400 clamp(22px, 2vw, 26px) / 1.2 var(--font-editorial);
+}
+.section .rule {
+  max-width: none;
+  margin-bottom: 24px;
+  color: var(--text-secondary);
+  font: 400 17px / 1.6 var(--font-functional);
+}
+.section .detailTitle {
+  margin: 48px 0 14px;
+  color: var(--text-metadata);
+  font: 500 11px / 1.4 var(--font-functional);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.section .label {
+  color: var(--text-metadata);
+  font: 500 11px / 1.4 var(--font-functional);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.section .meta {
+  color: var(--text-metadata);
+  font: 400 13px / 1.5 var(--font-functional);
+}
+
+/* The whole chain, opened on demand under the five stages */
+.section .flowToggle {
+  margin-top: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: 400 14px / 1.4 var(--font-functional);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--form) 70%, transparent);
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+.section .flowToggle:hover {
+  text-decoration-color: var(--form);
+}
+.section .flowToggle:focus-visible {
+  outline: 2px solid var(--form);
+  outline-offset: 2px;
+}
+.section .flow {
+  margin-top: 28px;
+}
+
+.section .layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* The grid */
+.section .grid {
+  display: flex;
+  flex-direction: column;
+}
+.section .row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)) 110px;
+  align-items: center;
+  min-height: 40px;
+  border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent);
+}
+.section .row > span {
+  display: flex;
+  justify-content: center;
+}
+.section .row > span:first-child {
+  justify-content: flex-start;
+}
+.section .head {
+  align-items: end;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+.section .topicHead,
+.section .verdictHead {
+  color: var(--text-metadata);
+  font: 500 11px / 1.4 var(--font-functional);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.section .barometer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.section .barometer:hover,
+.section .barometer[aria-pressed="true"] {
+  background: var(--surface-raised);
+}
+.section .barometerName {
+  color: var(--text-primary);
+  font: 400 15px / 1.2 var(--font-editorial);
+}
+.section .barometer[aria-pressed="true"] .barometerName {
+  box-shadow: inset 0 -1px 0 var(--form);
+}
+.section .barometerShort {
+  display: none;
+  color: var(--text-primary);
+  font: 400 12px / 1.2 var(--font-functional);
+}
+.section .barometerKind {
+  color: var(--text-metadata);
+  font: 400 12px / 1.3 var(--font-functional);
+}
+.section .topic {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  padding: 8px 8px 8px 0;
+  color: var(--text-primary);
+  font: 400 16px / 1.3 var(--font-editorial);
+}
+.section .flag {
+  padding: 2px 5px 1px;
+  border: 1px dashed var(--site-rule-strong);
+  border-radius: 3px;
+  color: var(--text-metadata);
+  font: 500 10px / 1.2 var(--font-functional);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.section .isOut .topic {
+  color: var(--text-metadata);
+}
+.section .exceptionNote {
+  max-width: 640px;
+  margin: 6px 0 4px;
+  color: var(--text-secondary);
+  font: 400 14px / 1.5 var(--font-functional);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.section .divider {
+  padding: 18px 0 6px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--text-metadata);
+  font: 500 11px / 1.4 var(--font-functional);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* A cell: the rank */
+.section .cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 38px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.section .cell:hover,
+.section .cell.isOn {
+  background: var(--surface-raised);
+}
+.section .cell[aria-pressed="true"] .badge,
+.section .cell.isOn .badge {
+  box-shadow:
+    0 0 0 2px var(--surface),
+    0 0 0 3px var(--form);
+}
+.section .badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border: 1px solid var(--site-rule-strong);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font: 500 12px / 1 var(--font-functional);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.section .badge.isTop {
+  border-color: var(--text-primary);
+  background: var(--text-primary);
+  color: var(--surface);
+}
+.section .badge.isUncertain {
+  border-style: dashed;
+  border-color: var(--text-secondary);
+  background: transparent;
+  color: var(--text-primary);
+}
+.section .none {
+  color: var(--site-rule-strong);
+  font: 400 14px / 1 var(--font-functional);
+}
+
+/* The verdict */
+.section .verdict {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.section .row > .verdict {
+  justify-content: center;
+  align-items: flex-end;
+}
+.section .count {
+  color: var(--text-primary);
+  font: 400 15px / 1 var(--font-functional);
+  font-variant-numeric: tabular-nums;
+}
+.section .kept,
+.section .dropped {
+  font: 500 10px / 1.2 var(--font-functional);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.section .kept {
+  color: var(--text-primary);
+}
+.section .dropped {
+  color: var(--text-metadata);
+}
+.section .isOut .count {
+  color: var(--text-metadata);
+}
+
+/* The panel */
+.section .side {
+  position: sticky;
+  top: 16px;
+}
+.section .panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 260px;
+  padding: 18px;
+  border-radius: 8px;
+  background: var(--surface-raised);
+}
+.section .panelTitle {
+  margin: 0;
+  color: var(--text-primary);
+  font: 400 22px / 1.2 var(--font-editorial);
+}
+.section .question {
+  color: var(--text-primary);
+  font: italic 400 17px / 1.45 var(--font-editorial);
+}
+.section .facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 4px 0;
+  font: 400 13px / 1.45 var(--font-functional);
+}
+.section .facts dt {
+  color: var(--text-metadata);
+}
+.section .facts dd {
+  margin: 0;
+  color: var(--text-primary);
+}
+.section .item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule);
+}
+.section .itemName {
+  color: var(--text-primary);
+  font: 400 16px / 1.35 var(--font-editorial);
+}
+.section .waves {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+}
+.section .wave {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) 84px;
+  align-items: center;
+  gap: 8px;
+  font: 400 12px / 1.3 var(--font-functional);
+}
+.section .waveName {
+  color: var(--text-metadata);
+}
+.section .waveTrack {
+  height: 6px;
+}
+.section .waveTrack i {
+  display: block;
+  height: 100%;
+  border-radius: 0 3px 3px 0;
+  background: var(--text-secondary);
+}
+.section .waveValue {
+  color: var(--text-primary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.section .sources {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+}
+.section .sources li {
+  margin: 0;
+}
+.section .source {
+  color: var(--text-primary);
+  font: 400 13px / 1.4 var(--font-functional);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--form) 70%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+.section .source:hover {
+  text-decoration-color: var(--form);
+}
+.section .key {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  align-items: center;
+  gap: 10px 12px;
+  margin: 6px 0;
+}
+.section .key dt {
+  display: flex;
+  justify-content: center;
+}
+.section .key dd {
+  margin: 0;
+  color: var(--text-secondary);
+  font: 400 13px / 1.4 var(--font-functional);
+}
+
+@media (max-width: 1040px) {
+  .section .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .section .side {
+    position: static;
+  }
+}
+@media (max-width: 640px) {
+  .section .row {
+    grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 0.8fr)) 58px;
+  }
+  .section .barometer {
+    padding: 4px 2px;
+  }
+  .section .barometerName {
+    display: none;
+  }
+  .section .barometerShort {
+    display: block;
+  }
+  .section .badge {
+    min-width: 24px;
+    height: 24px;
+    padding: 0 4px;
+    font-size: 11px;
+  }
+  .section .barometerKind {
+    display: none;
+  }
+  .section .topic {
+    font-size: 14px;
+  }
+  .section .kept,
+  .section .dropped {
+    display: none;
+  }
+}

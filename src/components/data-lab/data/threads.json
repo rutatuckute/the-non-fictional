@@ -1,0 +1,599 @@
+{
+  "cost": {
+    "qag": {
+      "id": "QANR5L17QG1367",
+      "date": "2026-03-25",
+      "deputy": "Hervé Saulignac",
+      "group": "SOC",
+      "minister": "Maud Bregeon",
+      "ministerTitle": "ministre déléguée, porte-parole du gouvernement, et ministre déléguée chargée de l'énergie",
+      "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1367",
+      "question": "Rendez au moins la partie de la TVA qui varie en fonction des cours et que vous encaissez pendant cette crise. Toute l'Europe prend des mesures dans ce sens : le gouvernement espagnol a décidé, en une nuit, de baisser la TVA de 21 % à 10 % ; la Suède et l'Italie ont réduit immédiatement leur fiscalité.",
+      "answer": "Vous citez l'exemple de l'Italie qui, en effet, a décidé d'une baisse du prix à la pompe. Mais comment finance-t-elle cette remise ? Par des annulations de crédits sur la sécurité, la santé, les services publics et les transports."
+    },
+    "factcheck": {
+      "claim": "Tous nos voisins européens ont baissé les taxes sur les carburants",
+      "claimant": "Le député du RN Julien Odoul",
+      "publisher": "TF1 Info",
+      "rating": "Faux",
+      "date": "2026-04-21",
+      "url": "https://www.tf1info.fr/international/verif-prix-des-carburants-pouvoir-d-achat-est-il-vrai-que-tous-nos-voisins-ont-baisse-les-taxes-sur-l-essence-et-le-gasoil-2437326.html",
+      "link": "The claim the whole thread turns on; Poligraph rated it false too. Act 3 tests it with the EU Oil Bulletin."
+    },
+    "also": [
+      {
+        "claim": "On peut baisser la TVA sur les carburants jusqu'à 5,5%",
+        "claimant": "Rassemblement national",
+        "publisher": "AFP Factuel",
+        "rating": "Trompeur",
+        "date": "2026-03-12",
+        "url": "https://factuel.afp.com/doc.afp.com.A2HH8WE"
+      },
+      {
+        "claim": "L'Etat profite-t-il vraiment de la crise des carburants ?",
+        "claimant": "Marine Le Pen",
+        "publisher": "franceinfo",
+        "rating": "Plutôt Faux",
+        "date": "2026-03-27",
+        "url": "https://www.franceinfo.fr/vrai-ou-fake/vrai-ou-faux-l-etat-profite-t-il-vraiment-de-la-crise-des-carburants-pour-s-en-mettre-plein-les-poches-comme-l-affirme-le-rassemblement-national_7895645.html"
+      }
+    ],
+    "social": {
+      "claim": "Vous n'avez pas l'impression que votre gasoil, il s'évapore plus vite que d'habitude ?",
+      "claimant": "Compte TikTok",
+      "platform": "tiktok",
+      "publisher": "TF1 Info",
+      "rating": "Faux",
+      "date": "2026-04-22",
+      "url": "https://www.tf1info.fr/economie/verif-le-diesel-s-evapore-t-il-plus-vite-que-d-habitude-comme-l-affirme-une-automobiliste-dans-une-video-virale-sur-tiktok-2437343.html"
+    },
+    "question": "fuel_eu",
+    "notes": "Re-curated 2026-11-01 around one argument: France vs its neighbours on fuel taxes. Quotes verbatim (checked against an.csv). Previous thread: Tanguy (RN) / Lescure, Le Pen fact-check, Lescure France Info statement.",
+    "statement": {
+      "date": "2026-03-09",
+      "speaker": "Maud Bregeon",
+      "role": "Ministre déléguée, porte-parole du Gouvernement",
+      "type": "Interview",
+      "media": "RTL",
+      "subject": "La hausse des prix des carburants, les taxes sur les carburants et le blocage du détroit d'Ormuz",
+      "url": "https://www.vie-publique.fr/discours/302390-interview-de-maud-bregeon-sur-la-hausse-de-prix-des-carburants-mars-2026",
+      "path": "302390-interview-de-maud-bregeon-sur-la-hausse-de-prix-des-carburants-mars-2026",
+      "link": "Same minister as the answer, on fuel taxes, two weeks before the exchange (title from vie-publique)."
+    },
+    "echo": [
+      {
+        "id": "QANR5L17QG1373",
+        "date": "2026-03-25",
+        "deputy": "Éric Pauget",
+        "group": "DR",
+        "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1373",
+        "quote": "il faut aussi regarder ce que font nos partenaires européens : l'Italie, l'Espagne et la Grèce ont baissé leurs taxes sur les carburants ; la France est l'un des pays qui taxe le plus : plus de 60 % sur le litre d'essence !"
+      },
+      {
+        "id": "QANR5L17QG1374",
+        "date": "2026-03-25",
+        "deputy": "Éric Michoux",
+        "group": "UDDPLR",
+        "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1374",
+        "quote": "Allez-vous enfin baisser les taxes sur les carburants comme en Italie, en Espagne et en Suède, où elles sont passées à 5,5 % ?"
+      }
+    ],
+    "previous": {
+      "qag": {
+        "id": "QANR5L17QG1365",
+        "date": "2026-03-25",
+        "deputy": "Jean-Philippe Tanguy",
+        "group": "RN",
+        "minister": "Roland Lescure",
+        "ministerTitle": "ministre de l'économie, des finances et de la souveraineté industrielle, énergétique et numérique",
+        "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1365",
+        "question": "Votre gouvernement est responsable de ce dilemme indigne, puisque près de 60 % du prix du carburant est constitué de taxes […]. Quand baisserez-vous les prix de l'énergie en diminuant les taxes et en utilisant nos stocks dans le seul intérêt des Français ?",
+        "answer": "D'abord, selon vous, l'État s'en mettrait plein les poches depuis 1975. Or, que ce soit en 1975, en 1979, en 1990, en 2003, en 2007 ou en 2022, et comme ce sera le cas en 2026, un choc pétrolier n'est pas une bonne nouvelle pour les comptes de l'État."
+      },
+      "factcheck": {
+        "claim": "L'Etat profite-t-il vraiment de la crise des carburants ?",
+        "claimant": "Marine Le Pen",
+        "publisher": "franceinfo",
+        "rating": "Plutôt Faux",
+        "date": "2026-03-27",
+        "url": "https://www.franceinfo.fr/vrai-ou-fake/vrai-ou-faux-l-etat-profite-t-il-vraiment-de-la-crise-des-carburants-pour-s-en-mettre-plein-les-poches-comme-l-affirme-le-rassemblement-national_7895645.html",
+        "link": "The minister answers the RN line that 'the State is lining its pockets'; franceinfo checked that same RN argument two days later."
+      },
+      "statement": {
+        "date": "2026-04-09",
+        "speaker": "Roland Lescure",
+        "role": "Ministre de l'économie, des finances et de la souveraineté industrielle, énergétique et numérique",
+        "type": "Interview",
+        "media": "France Info",
+        "subject": "La hausse des prix du carburant, le conflit au Moyen-Orient et la politique économique d…",
+        "url": "https://www.vie-publique.fr/discours/302807-roland-lescure-09042026-france-info-politique-economique",
+        "path": "302807-roland-lescure-09042026-france-info-politique-economique",
+        "link": "Same minister, same subject, close to the exchange (vie-publique metadata)."
+      }
+    },
+    "test": {
+      "claim": "Tous nos voisins européens ont baissé les taxes sur les carburants",
+      "translation": "All our European neighbours have cut fuel taxes",
+      "parts": [
+        {
+          "text": "Tous nos voisins européens",
+          "label": ["Les voisins", "The neighbours"],
+          "detail": [
+            "Allemagne, Belgique, Espagne, Italie, Luxembourg",
+            "Germany, Belgium, Spain, Italy, Luxembourg"
+          ]
+        },
+        {
+          "text": "ont baissé",
+          "label": ["Une baisse, sur une période", "A fall, over a period"],
+          "detail": ["23 févr. → 20 avr. 2026", "23 Feb → 20 Apr 2026"]
+        },
+        {
+          "text": "les taxes",
+          "label": ["Les taxes par litre", "Taxes per litre"],
+          "detail": ["accises et TVA", "excise duties and VAT"]
+        },
+        {
+          "text": "sur les carburants",
+          "label": ["Le gazole", "Diesel"],
+          "detail": ["Bulletin pétrolier de l'UE", "EU Oil Bulletin"]
+        }
+      ]
+    }
+  },
+  "security": {
+    "qag": {
+      "id": "QANR5L17QG1610",
+      "date": "2026-06-03",
+      "deputy": "Laure Lavalette",
+      "group": "RN",
+      "minister": "Laurent Nuñez",
+      "ministerTitle": "ministre de l'intérieur",
+      "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1610",
+      "question": "Les mêmes scènes dans soixante et onze villes, de Rennes à Angers, de Grenoble à Bordeaux, et même jusque dans les quartiers paisibles de Toulon. […] Quel est ce pays où une fête est menacée, où la moindre rue devient la scène d’une mauvaise rencontre, où la joie et l’enthousiasme sont confisqués ?",
+      "answer": "L'an dernier, pour la même finale, quarante-six départements avaient été concernés par ces incidents en marge des festivités ; cette fois-ci, ils étaient soixante-deux. […] Il y a eu 891 interpellations. […] À la suite de celles-ci, 720 personnes ont été placées en garde à vue."
+    },
+    "factcheck": {
+      "claim": "Il n'y a qu'en France où la victoire d'un club de foot provoque des émeutes.",
+      "claimant": "Marine Le Pen",
+      "publisher": "franceinfo",
+      "rating": "Faux",
+      "date": "2026-06-02",
+      "url": "https://www.franceinfo.fr/vrai-ou-fake/vrai-ou-faux-violences-apres-le-sacre-europeen-du-psg-la-france-est-elle-le-seul-pays-ou-la-victoire-d-un-club-de-foot-provoque-des-emeutes-comme-l-affirme-marine-le-pen_8039525.html",
+      "link": "Lavalette's 'soixante et onze villes' and the minister's 46-to-62 départements describe the same post-PSG riots that Marine Le Pen had just called a France-only phenomenon; franceinfo rated that claim false the day before the exchange."
+    },
+    "also": [
+      {
+        "claim": "La France a l’indice de criminalité le plus élevé d’Europe",
+        "claimant": "Numbeo",
+        "publisher": "20 Minutes",
+        "rating": "Faux",
+        "date": "2026-09-28",
+        "url": "https://www.20minutes.fr/societe/4248197-20260928-france-indice-criminalite-plus-eleve-europe-constat-fonde-chiffres-bidons"
+      }
+    ],
+    "social": {
+      "claim": "Un classement montre que la France est en tête des pays les plus dangereux d'Europe",
+      "claimant": "Des publications en ligne",
+      "platform": "other",
+      "publisher": "TF1 Info",
+      "rating": "Faux",
+      "date": "2026-09-11",
+      "url": "https://www.tf1info.fr/justice-faits-divers/verif-la-france-est-elle-en-tete-des-pays-les-plus-dangereux-d-europe-2463725.html"
+    },
+    "question": "violence",
+    "notes": "",
+    "statement": {
+      "date": "2026-06-01",
+      "speaker": "Laurent Nunez",
+      "role": "Ministre de l'intérieur",
+      "type": "Interview",
+      "media": "France Inter",
+      "subject": "Les débordements après la victoire du PSG, la situation du journaliste français emprisonné en Algérie et la polémique autour de l'ancienne patronne de Russia Tod…",
+      "url": "https://www.vie-publique.fr/discours/303550-laurent-nunez-01062026-france-inter-ordre-public",
+      "path": "303550-laurent-nunez-01062026-france-inter-ordre-public",
+      "link": "Same minister, same subject, close to the exchange (vie-publique metadata)."
+    }
+  },
+  "immigration": {
+    "qag": {
+      "id": "QANR5L17QG1491",
+      "date": "2026-04-30",
+      "deputy": "Antoine Valentin",
+      "group": "UDDPLR",
+      "minister": "Laurent Nuñez",
+      "ministerTitle": "ministre de l'intérieur",
+      "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1491",
+      "question": "Les chiffres sont accablants : près de 4 millions d'entrées et de titres de séjour délivrés depuis l'arrivée d'Emmanuel Macron au pouvoir. Sur les nouveaux entrants, près de neuf sur dix ne viennent pas pour travailler. […] la France a-t-elle encore les moyens financiers de supporter votre inaction ?",
+      "answer": "Je vous renvoie aux documents budgétaires et aux programmes qui retracent l'ensemble des dépenses liées à l'immigration […] Nous aurons donc l'occasion de débattre du coût de l'immigration […] à la fois en dépenses et en recettes, car l'immigration a beaucoup apporté au développement de notre pays."
+    },
+    "factcheck": {
+      "claim": "50.000 des 500.000 personnes entrées légalement en France chaque année ont un contrat de travail",
+      "claimant": "Jordan Bardella",
+      "publisher": "TF1 Info",
+      "rating": "Plutôt faux",
+      "date": "2026-09-01",
+      "url": "https://www.tf1info.fr/politique/verif-seuls-10-des-immigres-entrent-ils-legalement-en-france-avec-du-travail-comme-le-dit-jordan-bardella-2461437.html",
+      "link": "Valentin's 'près de neuf sur dix ne viennent pas pour travailler' is the same argument as Jordan Bardella's claim that only 50,000 of the 500,000 legal entrants a year come with a work contract, which TF1 Info rated mostly false."
+    },
+    "also": [],
+    "social": {
+      "claim": "Il y a 500.000 immigrés qui entrent en France légalement chaque année",
+      "claimant": "Sources multiples",
+      "platform": "other",
+      "publisher": "AFP Factuel",
+      "rating": "Trompeur",
+      "date": "2026-06-05",
+      "url": "https://factuel.afp.com/doc.afp.com.B46Q7NQ"
+    },
+    "question": "immigration",
+    "notes": "The minister does not engage with the deputy's figures; he answers on principle and defers the cost debate to the RN-requested commission of inquiry.",
+    "statement": {
+      "date": "2026-04-29",
+      "speaker": "Laurent Nunez",
+      "role": "Ministre de l'intérieur",
+      "type": "Déclaration",
+      "media": "",
+      "subject": "La migration et l'asile, au Sénat le 29 avril 2026",
+      "url": "https://www.vie-publique.fr/discours/303261-laurent-nunez-29042026-pacte-europeen-sur-la-migration-et-lasile",
+      "path": "303261-laurent-nunez-29042026-pacte-europeen-sur-la-migration-et-lasile",
+      "link": "Same minister, same subject, close to the exchange (vie-publique metadata)."
+    }
+  },
+  "public": {
+    "qag": {
+      "id": "QANR5L17QG1185",
+      "date": "2026-01-15",
+      "deputy": "Josiane Corneloup",
+      "group": "DR",
+      "minister": "Amélie de Montchalin",
+      "ministerTitle": "ministre de l'action et des comptes publics",
+      "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1185",
+      "question": "La France détient un triste record : celui des prélèvements obligatoires les plus élevés de l’OCDE, couplés à une dette hors de contrôle de plus de 3 400 milliards d'euros. […] quand allez-vous mettre fin à cette folle dérive budgétaire, stopper la frénésie fiscale et normative et rendre enfin leur liberté à ceux qui travaillent ?",
+      "answer": "Quant à ce que nous faisons, je rappelle qu'en 2025 l'État a fait le plus grand effort de réduction de ses dépenses de fonctionnement des vingt-cinq dernières années. Ces plus de 23 milliards d'économies ont permis de compenser 23 milliards de hausses de dépenses pour la santé, les retraites et les collectivités."
+    },
+    "factcheck": {
+      "claim": "Les retraites et la santé à l'origine de 80 % de la hausse des dépenses publiques depuis 50 ans",
+      "claimant": "David Amiel, ministre de l'Action et des comptes publics",
+      "publisher": "Poligraph",
+      "rating": "En partie vrai",
+      "date": "2026-10-15",
+      "url": "https://poligraph.fr/factchecks/2026-10-15-verif-les-retraites-et-la-sante-a-l-origine-de-80-de-la-hausse-des-de",
+      "link": "Montchalin answers that the State's savings were eaten by rising health and pension spending; her successor David Amiel later pushed the same argument to '80 %' of public-spending growth over 50 years, which Poligraph and TF1 Info rated partly true."
+    },
+    "also": [
+      {
+        "claim": "Les retraites et la santé à l'origine de 80 % de la hausse des dépenses publiques depuis 50 ans",
+        "claimant": "David Amiel, ministre de l'Action et des comptes publics",
+        "publisher": "TF1 Info",
+        "rating": "En partie vrai",
+        "date": "2026-10-15",
+        "url": "https://www.tf1info.fr/politique/verif-les-retraites-et-la-sante-a-l-origine-de-80-de-la-hausse-des-depenses-publiques-vraiment-2470134.html"
+      },
+      {
+        "claim": "La dette communale a augmenté de 10 milliards depuis 2017, celle de l'État de près de 1000 milliards",
+        "claimant": "Le sénateur RN Aymeric Durox",
+        "publisher": "TF1 Info",
+        "rating": "Plutôt vrai",
+        "date": "2025-11-24",
+        "url": "https://www.tf1info.fr/economie/verif-la-dette-des-communes-a-t-elle-augmente-de-10-milliards-depuis-2017-contre-1000-pour-celle-de-l-etat-2408656.html"
+      }
+    ],
+    "social": {
+      "claim": "Dès le 1er janvier 2026, vous devrez déclarer TOUS LES DONS que vous recevez en ligne sur le site des impôts. Les sommes d'argent PEU IMPORTE LE MONTANT",
+      "claimant": "Compte X",
+      "platform": "x",
+      "publisher": "TF1 Info",
+      "rating": "Plutôt faux",
+      "date": "2025-12-04",
+      "url": "https://www.tf1info.fr/conso-argent/verif-faudra-t-il-declarer-aux-impots-tous-les-dons-recus-peu-importe-le-montant-des-le-1er-janvier-2026-2410835.html"
+    },
+    "question": "debt",
+    "notes": "Social link is loose: a tax-declaration rumour that fits the deputy's 'frénésie fiscale', not the debt figure itself.",
+    "statement": {
+      "date": "2026-01-16",
+      "speaker": "Amélie de Montchalin",
+      "role": "Ministre de l'action et des comptes publics",
+      "type": "Interview",
+      "media": "France 2",
+      "subject": "Le débat parlementaire concernant le budget pour 2026",
+      "url": "https://www.vie-publique.fr/discours/301734-amelie-de-montchalin-16012026-france-2-budget-2026",
+      "path": "301734-amelie-de-montchalin-16012026-france-2-budget-2026",
+      "link": "Same minister, same subject, close to the exchange (vie-publique metadata)."
+    }
+  },
+  "health": {
+    "qag": {
+      "id": "QANR5L17QG1678",
+      "date": "2026-06-17",
+      "deputy": "Sébastien Humbert",
+      "group": "RN",
+      "minister": "Stéphanie Rist",
+      "ministerTitle": "ministre de la santé, des familles, de l’autonomie et des personnes handicapées",
+      "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1678",
+      "question": "Partout en France, notre système de santé est en souffrance : les urgences ferment, les déserts médicaux se multiplient et les délais d'accès aux soins s'allongent. […] quelles mesures concrètes prendrez-vous pour garantir durablement l'accès aux soins dans l'Ouest vosgien ?",
+      "answer": "Grâce à la fin du numerus clausus, le nombre de nouveaux internes augmentera de 20 % en novembre. En outre, 3 700 docteurs juniors s'installeront, en priorité dans des zones sous-denses. Pour la première fois, les installations de médecins généralistes augmentent : elles ont progressé de 32 % entre 2024 et 2025."
+    },
+    "factcheck": {
+      "claim": "En France, 85% du territoire est un désert médical",
+      "claimant": "Le député RN Philippe Ballard",
+      "publisher": "TF1 Info",
+      "rating": "Vrai",
+      "date": "2026-04-20",
+      "url": "https://www.tf1info.fr/societe/verif-sante-france-85-du-territoire-francais-est-il-un-desert-medical-2437118.html",
+      "link": "Humbert says medical deserts are multiplying; two months earlier his RN colleague Philippe Ballard said 85% of France is a medical desert, which TF1 Info rated true, while the minister answers with rising numbers of interns and new GPs."
+    },
+    "also": [],
+    "social": {
+      "claim": "« Nouvelle mesure qui concerne nos seniors, vous avez bien lu, au-delà de 90 ans, les hôpitaux ont pour consigne de ne plus réanimer. »",
+      "claimant": "Compte sur X",
+      "platform": "x",
+      "publisher": "20 Minutes",
+      "rating": "Faux",
+      "date": "2025-11-28",
+      "url": "https://www.20minutes.fr/sante/4188046-20251128-patients-ages-plus-90-ans-interdits-reanimation-gare-nouvelle-intox"
+    },
+    "question": "doctors",
+    "notes": "No anonymous social claim on medical deserts exists in the file; the social item is a hospital-care rumour on the same topic, a weak link.",
+    "statement": {
+      "date": "2026-06-05",
+      "speaker": "Stéphanie Rist",
+      "role": "Ministre de la santé, des familles, de l'autonomie et des personnes handicapées",
+      "type": "Déclaration",
+      "media": "",
+      "subject": "La médecine d'urgence, à Paris le 5 juin 2026",
+      "url": "https://www.vie-publique.fr/discours/303543-stephanie-rist-05062026-medecine-d-urgence",
+      "path": "303543-stephanie-rist-05062026-medecine-d-urgence",
+      "link": "medium fit: the exchange is about access to care in the Vosges; this is the same minister on emergency medicine, 12 days earlier."
+    }
+  },
+  "environment": {
+    "qag": {
+      "id": "QANR5L17QG1799",
+      "date": "2026-07-22",
+      "deputy": "Sandra Regol",
+      "group": "ECOS",
+      "minister": "Laurent Nuñez",
+      "ministerTitle": "ministre de l'intérieur",
+      "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1799",
+      "question": "le réchauffement climatique, ce sont ces soldats du feu qui le subissent en première ligne […] Sauf que ce sont des moyens adaptés aux années 1980 ou 1990, pas au réchauffement climatique qu'ils subissent aujourd'hui ni au départ simultané de quarante feux.",
+      "answer": "Les moyens ont considérablement augmenté. […] La flotte aérienne a été multipliée par deux depuis 2022. […] Je rappelle que 95 % des feux se combattent par des moyens terrestres, et que 85 % d'entre eux ne parcourent qu'1 à 2 hectares"
+    },
+    "factcheck": {
+      "claim": "\"Si personne ne met le feu, il n'y a pas de feu. Ça n'a aucun rapport avec le changement climatique\"",
+      "claimant": "Christian Pinaudeau",
+      "publisher": "Science Feedback",
+      "rating": "Trompeur",
+      "date": "2026-08-06",
+      "url": "https://science.feedback.org/fr/review/incendies-origine-humaine-depart-de-feu-nexclut-pas-role-cle-du-changement-climatique/",
+      "link": "Regol links the wildfires to global warming; days after the exchange Christian Pinaudeau said fires have nothing to do with climate change, which Science Feedback rated misleading."
+    },
+    "also": [],
+    "social": {
+      "claim": "Les incendies en France imputables aux pyromanes, pas au réchauffement",
+      "claimant": "Sources multiples",
+      "platform": "other",
+      "publisher": "AFP Factuel",
+      "rating": "Faux",
+      "date": "2026-08-13",
+      "url": "https://factuel.afp.com/doc.afp.com.C4FN6ZQ"
+    },
+    "question": "heat",
+    "notes": "",
+    "statement": {
+      "date": "2026-07-20",
+      "speaker": "Laurent Nunez",
+      "role": "Ministre de l'intérieur",
+      "type": "Interview",
+      "media": "France Inter",
+      "subject": "La lutte contre les incendies, la présomption d'usage légitime des armes par les policiers, le nouveau défenseur des droits, le trafic de drogue et le journali…",
+      "url": "https://www.vie-publique.fr/discours/304093-laurent-nunez-20072026-france-inter-ordre-public",
+      "path": "304093-laurent-nunez-20072026-france-inter-ordre-public",
+      "link": "Same minister, same subject, close to the exchange (vie-publique metadata)."
+    }
+  },
+  "economy": {
+    "qag": {
+      "id": "QANR5L17QG1581",
+      "date": "2026-05-27",
+      "deputy": "Sébastien Chenu",
+      "group": "RN",
+      "minister": "Roland Lescure",
+      "ministerTitle": "ministre de l’économie, des finances et de la souveraineté industrielle, énergétique et numérique",
+      "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1581",
+      "question": "Derrière les termes un peu techniques de reconversion, de mutualisation, il faut entendre une baisse de la production, de l'activité industrielle, du nombre d'emplois et plus généralement une situation de plus en plus difficile. […] À quel moment, messieurs les ministres, allez-vous enfin agir pour sauver notre industrie automobile ?",
+      "answer": "Que ferait-on à Valenciennes, chez vous, où Stellantis a investi ces huit dernières années près de 300 millions d'euros ? Le site produisait jusqu'à présent des boîtes de vitesses, demain, on y assemblera des moteurs électriques. L'avenir de l'automobile est électrique."
+    },
+    "factcheck": {
+      "claim": "L'industrie automobile française a perdu 40.000 emplois en à peine six ans",
+      "claimant": "Le député RN Pierre Meurin",
+      "publisher": "TF1 Info",
+      "rating": "Vrai",
+      "date": "2025-12-17",
+      "url": "https://www.tf1info.fr/economie/verif-en-six-ans-a-peine-l-industrie-automobile-francaise-a-t-elle-perdu-40-000-emplois-2413398.html",
+      "link": "Chenu warns of falling car-industry production and jobs; his RN colleague Pierre Meurin had claimed the French car industry lost 40,000 jobs in six years, which TF1 Info rated true."
+    },
+    "also": [],
+    "social": {
+      "claim": "L'industrie de l'alcool a perdu 830 milliards d'euros à cause de la génération Z qui ne boit pas",
+      "claimant": "Des publications sur les réseaux sociaux",
+      "platform": "other",
+      "publisher": "TF1 Info",
+      "rating": "Plutôt faux",
+      "date": "2026-03-19",
+      "url": "https://www.tf1info.fr/societe/verif-l-industrie-de-l-alcool-a-t-elle-perdu-des-milliards-a-cause-de-la-generation-z-genz-qui-ne-boit-pas-2430741.html"
+    },
+    "question": "industry",
+    "notes": "Only economy-tagged anonymous social claim is about the alcohol industry and Gen Z: same topic, different subject (weak).",
+    "statement": {
+      "date": "2026-05-27",
+      "speaker": "Roland Lescure",
+      "role": "Ministre de l'économie, des finances, de la souveraineté industrielle, énergétique et numérique de France",
+      "type": "Interview",
+      "media": "BFM TV",
+      "subject": "La situation économique, les prix du carburant, la politique fiscale et la question mi…",
+      "url": "https://www.vie-publique.fr/discours/303407-roland-lescure-27052026-bfm-tv-politique-economique",
+      "path": "303407-roland-lescure-27052026-bfm-tv-politique-economique",
+      "link": "medium fit: the exchange is about the car industry; this is the same minister on the economic situation, the same day."
+    }
+  },
+  "jobs": {
+    "qag": {
+      "id": "QANR5L17QG1555",
+      "date": "2026-05-20",
+      "deputy": "Gaëtan Dussausaye",
+      "group": "RN",
+      "minister": "Jean-Pierre Farandou",
+      "ministerTitle": "ministre du travail et des solidarités",
+      "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1555",
+      "question": "Pour le cinquième trimestre consécutif, le taux de chômage augmente dans notre pays. […] La France a désormais sa place dans le top 5 des pays européens présentant le taux de chômage le plus élevé. […] quand le gouvernement assumera-t-il la responsabilité de la Macronie dans cette débâcle économique ?",
+      "answer": "Vous avez raison : le taux de chômage atteint 8,1 % au premier trimestre 2026, ce qui représente une augmentation de 0,2 point sur le trimestre et de 0,7 point sur un an. […] les bénéficiaires du RSA et les jeunes de 15 à 29 ans inscrits auprès de France Travail contribuent pour près de 90 % à la hausse totale observée du chômage."
+    },
+    "factcheck": {
+      "claim": "La France est le \"seul pays européen à voir le chômage augmenter\"",
+      "claimant": "Bruno Retailleau",
+      "publisher": "TF1 Info",
+      "rating": "Faux",
+      "date": "2026-09-23",
+      "url": "https://www.tf1info.fr/economie/verif-la-france-est-elle-vraiment-le-seul-pays-europeen-a-voir-le-chomage-augmenter-comme-l-affirme-bruno-retailleau-2465813.html",
+      "link": "Dussausaye puts France in Europe's top 5 for unemployment; Bruno Retailleau later went further, calling France the only European country where unemployment is rising, which TF1 Info and Poligraph rated false."
+    },
+    "also": [
+      {
+        "claim": "La France est le \"seul pays européen à voir le chômage augmenter\"",
+        "claimant": "Bruno Retailleau",
+        "publisher": "Poligraph",
+        "rating": "Faux",
+        "date": "2026-09-23",
+        "url": "https://poligraph.fr/factchecks/2026-09-23-verif-la-france-est-elle-vraiment-le-seul-pays-europeen-a-voir-le-cho"
+      }
+    ],
+    "social": {
+      "claim": "\"Imaginez un monde où France Travail peut légalement traquer les chômeurs grâce à leurs relevés téléphoniques\"",
+      "claimant": "Compte TikTok",
+      "platform": "tiktok",
+      "publisher": "TF1 Info",
+      "rating": "Faux",
+      "date": "2026-08-21",
+      "url": "https://www.tf1info.fr/vie-pro/verif-france-travail-a-t-il-vraiment-ete-autorise-a-traquer-les-chomeurs-grace-a-leurs-releves-telephoniques-2459603.html"
+    },
+    "question": "unemployment",
+    "notes": "",
+    "statement": {
+      "date": "2026-04-16",
+      "speaker": "Jean-Pierre Farandou",
+      "role": "Ministre du travail et des solidarités",
+      "type": "Déclaration",
+      "media": "",
+      "subject": "Le protocole d'accord signé par les partenaires sociaux relatif à l'assurance chômage et le retour à l'emploi après une rupture conventionnelle, à l'Assemblée nationale l…",
+      "url": "https://www.vie-publique.fr/discours/302888-jean-pierre-farandou-16042026-accord-partenaires-sociaux-chomage",
+      "path": "302888-jean-pierre-farandou-16042026-accord-partenaires-sociaux-chomage",
+      "link": "Same minister, same subject, close to the exchange (vie-publique metadata)."
+    }
+  },
+  "social": {
+    "qag": {
+      "id": "QANR5L17QG1683",
+      "date": "2026-06-18",
+      "deputy": "Pierre Cazeneuve",
+      "group": "EPR",
+      "minister": "Jean-Pierre Farandou",
+      "ministerTitle": "ministre du travail et des solidarités",
+      "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1683",
+      "question": "Nous refusons d'écouter les économistes qui tirent la sonnette d'alarme : 420 milliards d'euros par an, 25 % de la dépense publique […] Qui va supporter ce poids toujours plus important de la solidarité nationale ? […] Les actifs et leurs enfants après eux.",
+      "answer": "Non seulement notre système reste structurellement déficitaire, mais ce déficit augmente et nous devons consacrer toujours plus de notre richesse nationale aux dépenses de retraite. […] Peut-être avons-nous aussi parfois voulu protéger davantage les retraités que les actifs. Le débat reste ouvert."
+    },
+    "factcheck": {
+      "claim": "Les retraités gagnent autant que les actifs en France",
+      "claimant": "Jacques Attali",
+      "publisher": "TF1 Info",
+      "rating": "Plutôt faux",
+      "date": "2026-09-22",
+      "url": "https://www.tf1info.fr/economie/verif-pouvoir-achat-les-retraites-gagnent-ils-autant-que-les-actifs-comme-le-dit-jacques-attali-2465640.html",
+      "link": "The minister concedes France may have protected pensioners more than workers; Jacques Attali's claim that pensioners earn as much as workers was rated mostly false by TF1 Info."
+    },
+    "also": [
+      {
+        "claim": "À l'époque où la retraite à 60 ans a été instaurée, l'espérance de vie était en France de seulement 70 ans ?",
+        "claimant": "François Hollande",
+        "publisher": "TF1 Info",
+        "rating": "En partie vrai",
+        "date": "2026-09-01",
+        "url": "https://www.tf1info.fr/politique/verif-a-l-epoque-ou-la-retraite-a-60-ans-a-ete-instauree-l-esperance-de-vie-etait-elle-en-france-de-seulement-70-ans-2461643.html"
+      }
+    ],
+    "social": {
+      "claim": "La France est le seul pays du monde où les retraités ont des revenus supérieurs à ceux des actifs",
+      "claimant": "Des publications sur les réseaux sociaux",
+      "platform": "other",
+      "publisher": "TF1 Info",
+      "rating": "Plutôt faux",
+      "date": "2026-02-04",
+      "url": "https://www.tf1info.fr/economie/verif-la-france-est-elle-le-seul-pays-au-monde-ou-le-niveau-de-vie-des-retraites-francais-depasse-celui-des-actifs-2422760.html"
+    },
+    "question": "pensioners",
+    "notes": "The question excerpt ends on the deputy's rhetorical question and his own answer ('Les actifs…'); his formal question (what measures to contain the pension deficit) is too long to quote within ~300 characters."
+  },
+  "education": {
+    "qag": {
+      "id": "QANR5L17QG1229",
+      "date": "2026-01-28",
+      "deputy": "Arnaud Bonnet",
+      "group": "ECOS",
+      "minister": "Édouard Geffray",
+      "ministerTitle": "ministre de l'éducation nationale",
+      "url": "https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QG1229",
+      "question": "Vous avez menti en minimisant les suppressions de postes : vous prévoyez d'en supprimer 438 de plus que prévu dans le second degré, alors même que les classes françaises sont les plus chargées d'Europe. […] Assumez-vous donc de n'avoir qu'une vision d'économie d'échelle, au détriment du bien-être de nos enfants ?",
+      "answer": "D'abord, le budget de l'éducation nationale dans le projet de loi de finances est en hausse de 200 millions d'euros. Nous créons 5 900 postes, afin de recruter des enseignants à partir de la L3. Actuellement, 80 000 candidats attendent de passer les concours dès la fin du mois de février."
+    },
+    "factcheck": {
+      "claim": "La réforme du concours des enseignants a permis de \"recruter quasiment à plein\"",
+      "claimant": "Edouard Geffray",
+      "publisher": "franceinfo",
+      "rating": "C’est plus compliqué",
+      "date": "2026-09-02",
+      "url": "https://www.franceinfo.fr/vrai-ou-fake/vrai-ou-faux-la-reforme-du-concours-des-enseignants-a-t-elle-permis-de-recruter-quasiment-a-plein-comme-l-affirme-le-ministre-de-l-education-nationale_8171921.html",
+      "link": "The minister answers the job-cuts charge with recruitment through the reformed concours at L3; in August he said that reform let him 'recruter quasiment à plein', which franceinfo and Poligraph found more complicated."
+    },
+    "also": [
+      {
+        "claim": "La réforme du concours des enseignants a permis de \"recruter quasiment à plein\"",
+        "claimant": "Edouard Geffray",
+        "publisher": "Poligraph",
+        "rating": "C’est plus compliqué",
+        "date": "2026-09-02",
+        "url": "https://poligraph.fr/factchecks/2026-09-02-vrai-ou-faux-la-r-eacute-forme-du-concours-des-enseignants-a-t-elle-permis-de-quot-recruter-quasiment-agrave"
+      },
+      {
+        "claim": "La France investit-elle 27 % de plus que la moyenne européenne pour ses lycées",
+        "claimant": "Bruno Retailleau",
+        "publisher": "TF1 Info",
+        "rating": "Vrai",
+        "date": "2026-10-08",
+        "url": "https://www.tf1info.fr/politique/verif-la-france-investit-elle-27-de-plus-que-la-moyenne-europeenne-pour-ses-lycees-comme-l-affirme-bruno-retailleau-2468847.html"
+      }
+    ],
+    "social": {
+      "claim": "Des professeurs en larmes dans leur classe face à leurs élèves qui se moquent d'eux",
+      "claimant": "Publications X",
+      "platform": "x",
+      "publisher": "TF1 Info",
+      "rating": "Faux",
+      "date": "2026-02-09",
+      "url": "https://www.tf1info.fr/societe/verif-pourquoi-ces-videos-virales-de-professeurs-en-larmes-devant-leurs-eleves-sont-des-manipulations-2423602.html"
+    },
+    "question": "teachers",
+    "notes": "Social link is weak: viral (manipulated) videos of teachers in tears, related to teachers' conditions rather than staffing numbers.",
+    "statement": {
+      "date": "2025-12-18",
+      "speaker": "Édouard Geffray",
+      "role": "Ministre de l'éducation nationale",
+      "type": "Interview",
+      "media": "France 2",
+      "subject": "La suppression de 4 000 postes d'enseignants, le plan de lutte contre la grande difficulté scolaire, le trafic de drogue dans et autour des établissem…",
+      "url": "https://www.vie-publique.fr/discours/301440-edouard-geffray-18122025-france-2-enseignants-lutte-difficultes-scolaire",
+      "path": "301440-edouard-geffray-18122025-france-2-enseignants-lutte-difficultes-scolaire",
+      "link": "Same minister, same subject, close to the exchange (vie-publique metadata)."
+    }
+  }
+}

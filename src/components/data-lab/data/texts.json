@@ -1,0 +1,239 @@
+{
+ "topics": {
+  "cost": {
+   "p": 66,
+   "g": 167,
+   "f": 27,
+   "who": {
+    "group": "RN",
+    "groupN": 19,
+    "groups": 12,
+    "speaker": "Maud Bregeon",
+    "speakerN": 33,
+    "social": 15,
+    "named": 10,
+    "unknown": 2,
+    "verdicts": {
+     "m": 7,
+     "f": 12,
+     "t": 5,
+     "p": 1,
+     "x": 2
+    }
+   }
+  },
+  "security": {
+   "p": 67,
+   "g": 301,
+   "f": 24,
+   "who": {
+    "group": "RN",
+    "groupN": 11,
+    "groups": 12,
+    "speaker": "Laurent Nunez",
+    "speakerN": 64,
+    "social": 17,
+    "named": 3,
+    "unknown": 4,
+    "verdicts": {
+     "f": 19,
+     "t": 1,
+     "m": 3,
+     "x": 1
+    }
+   }
+  },
+  "immigration": {
+   "p": 16,
+   "g": 66,
+   "f": 26,
+   "who": {
+    "group": "RN",
+    "groupN": 7,
+    "groups": 5,
+    "speaker": "Laurent Nunez",
+    "speakerN": 12,
+    "social": 17,
+    "named": 7,
+    "unknown": 2,
+    "verdicts": {
+     "m": 7,
+     "f": 14,
+     "t": 1,
+     "x": 2,
+     "p": 2
+    }
+   }
+  },
+  "public": {
+   "p": 56,
+   "g": 385,
+   "f": 14,
+   "who": {
+    "group": "UDDPLR",
+    "groupN": 9,
+    "groups": 11,
+    "speaker": "Maud Bregeon",
+    "speakerN": 51,
+    "social": 4,
+    "named": 10,
+    "unknown": 0,
+    "verdicts": {
+     "m": 5,
+     "f": 3,
+     "t": 3,
+     "x": 3
+    }
+   }
+  },
+  "health": {
+   "p": 59,
+   "g": 217,
+   "f": 20,
+   "who": {
+    "group": "ECOS",
+    "groupN": 9,
+    "groups": 12,
+    "speaker": "Stéphanie Rist",
+    "speakerN": 54,
+    "social": 10,
+    "named": 8,
+    "unknown": 2,
+    "verdicts": {
+     "f": 13,
+     "m": 3,
+     "t": 2,
+     "x": 2
+    }
+   }
+  },
+  "environment": {
+   "p": 72,
+   "g": 238,
+   "f": 28,
+   "who": {
+    "group": "ECOS",
+    "groupN": 17,
+    "groups": 12,
+    "speaker": "Emmanuel Macron",
+    "speakerN": 23,
+    "social": 17,
+    "named": 6,
+    "unknown": 5,
+    "verdicts": {
+     "f": 21,
+     "m": 6,
+     "t": 1
+    }
+   }
+  },
+  "economy": {
+   "p": 119,
+   "g": 441,
+   "f": 7,
+   "who": {
+    "group": "RN",
+    "groupN": 21,
+    "groups": 12,
+    "speaker": "Roland Lescure",
+    "speakerN": 54,
+    "social": 2,
+    "named": 5,
+    "unknown": 0,
+    "verdicts": {
+     "t": 3,
+     "x": 1,
+     "m": 2,
+     "f": 1
+    }
+   }
+  },
+  "jobs": {
+   "p": 14,
+   "g": 68,
+   "f": 10,
+   "who": {
+    "group": "GDR",
+    "groupN": 3,
+    "groups": 7,
+    "speaker": "Jean-Pierre Farandou",
+    "speakerN": 28,
+    "social": 3,
+    "named": 6,
+    "unknown": 1,
+    "verdicts": {
+     "t": 2,
+     "f": 5,
+     "p": 1,
+     "m": 1,
+     "x": 1
+    }
+   }
+  },
+  "social": {
+   "p": 36,
+   "g": 164,
+   "f": 12,
+   "who": {
+    "group": "LIOT",
+    "groupN": 8,
+    "groups": 12,
+    "speaker": "Stéphanie Rist",
+    "speakerN": 37,
+    "social": 5,
+    "named": 5,
+    "unknown": 2,
+    "verdicts": {
+     "m": 6,
+     "t": 1,
+     "f": 3,
+     "x": 2
+    }
+   }
+  },
+  "world": {
+   "p": 39,
+   "g": 519,
+   "f": 0,
+   "who": {
+    "group": "LFI-NFP",
+    "groupN": 10,
+    "groups": 11,
+    "speaker": "Jean-Noël Barrot",
+    "speakerN": 146,
+    "social": 0,
+    "named": 0,
+    "unknown": 0,
+    "verdicts": {}
+   }
+  },
+  "education": {
+   "p": 52,
+   "g": 145,
+   "f": 23,
+   "who": {
+    "group": "EPR",
+    "groupN": 8,
+    "groups": 11,
+    "speaker": "Édouard Geffray",
+    "speakerN": 41,
+    "social": 16,
+    "named": 5,
+    "unknown": 2,
+    "verdicts": {
+     "f": 15,
+     "t": 2,
+     "m": 2,
+     "p": 2,
+     "x": 2
+    }
+   }
+  }
+ },
+ "factchecks": {
+  "collected": 208,
+  "otherDebate": 15,
+  "merged": 18,
+  "kept": 175
+ }
+}

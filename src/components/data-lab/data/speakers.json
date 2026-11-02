@@ -1,0 +1,205 @@
+{
+  "_note": "Party of each government speaker in vie-publique, for colouring the statements. Wikidata (current 'member of political party', P102) where it is right; filled by hand where it is missing or stale, marked 'to check'. 'other' = no party, or no single party.",
+  "speakers": {
+    "Amélie de Montchalin": {
+      "party": "RE",
+      "source": "wikidata",
+      "wikidata": "Q30379410"
+    },
+    "Aurore Bergé": {
+      "party": "RE",
+      "source": "wikidata",
+      "wikidata": "Q29570183"
+    },
+    "Charlotte Parmentier-Lecocq": {
+      "party": "RE",
+      "source": "wikidata",
+      "wikidata": "Q30530300"
+    },
+    "Emmanuel Macron": {
+      "party": "RE",
+      "source": "wikidata",
+      "wikidata": "Q3052772"
+    },
+    "Gérald Darmanin": {
+      "party": "RE",
+      "source": "wikidata; an old LR membership is still listed there",
+      "wikidata": "Q3123610"
+    },
+    "Marie-Pierre Vedrenne": {
+      "party": "RE",
+      "source": "wikidata",
+      "wikidata": "Q63965965"
+    },
+    "Roland Lescure": {
+      "party": "RE",
+      "source": "wikidata",
+      "wikidata": "Q30130489"
+    },
+    "Sabrina Roubache": {
+      "party": "RE",
+      "source": "wikidata",
+      "wikidata": "Q112079050"
+    },
+    "Stéphanie Rist": {
+      "party": "RE",
+      "source": "wikidata",
+      "wikidata": "Q30339281"
+    },
+    "Sébastien Lecornu": {
+      "party": "RE",
+      "source": "wikidata",
+      "wikidata": "Q20089181"
+    },
+    "Maud Bregeon": {
+      "party": "RE",
+      "source": "by hand, to check",
+      "wikidata": null
+    },
+    "Benjamin Haddad": {
+      "party": "RE",
+      "source": "by hand, to check",
+      "wikidata": null
+    },
+    "David Amiel": {
+      "party": "RE",
+      "source": "by hand, to check",
+      "wikidata": null
+    },
+    "Mathieu Lefèvre": {
+      "party": "RE",
+      "source": "by hand, to check",
+      "wikidata": null
+    },
+    "Éléonore Caroit": {
+      "party": "RE",
+      "source": "by hand, to check",
+      "wikidata": null
+    },
+    "Camille Galliard-Minier": {
+      "party": "RE",
+      "source": "by hand, to check",
+      "wikidata": null
+    },
+    "Jean-Noël Barrot": {
+      "party": "MODEM",
+      "source": "wikidata",
+      "wikidata": "Q30339198"
+    },
+    "Catherine Chabaud": {
+      "party": "MODEM",
+      "source": "wikidata",
+      "wikidata": "Q2941852"
+    },
+    "Marina Ferrari": {
+      "party": "MODEM",
+      "source": "by hand, to check",
+      "wikidata": null
+    },
+    "Anne Le Henanff": {
+      "party": "HORIZONS",
+      "source": "wikidata",
+      "wikidata": "Q112651320"
+    },
+    "Catherine Vautrin": {
+      "party": "HORIZONS",
+      "source": "wikidata",
+      "wikidata": "Q2942097"
+    },
+    "Naïma Moutchou": {
+      "party": "HORIZONS",
+      "source": "by hand, to check",
+      "wikidata": null
+    },
+    "Annie Genevard": {
+      "party": "LR",
+      "source": "wikidata lists UMP, LR's former name",
+      "wikidata": "Q2414678"
+    },
+    "Nicolas Forissier": {
+      "party": "LR",
+      "source": "wikidata",
+      "wikidata": "Q3340330"
+    },
+    "Rachida Dati": {
+      "party": "LR",
+      "source": "wikidata",
+      "wikidata": "Q27182"
+    },
+    "Vincent Jeanbrun": {
+      "party": "LR",
+      "source": "wikidata (Libres, within LR)",
+      "wikidata": "Q62078135"
+    },
+    "Jean-Didier Berger": {
+      "party": "LR",
+      "source": "wikidata lists Libres, within LR; to check",
+      "wikidata": "Q17496948"
+    },
+    "Philippe Tabarot": {
+      "party": "LR",
+      "source": "by hand, to check",
+      "wikidata": null
+    },
+    "Sébastien Martin": {
+      "party": "LR",
+      "source": "by hand, to check",
+      "wikidata": null
+    },
+    "Françoise Gatel": {
+      "party": "UDI",
+      "source": "wikidata",
+      "wikidata": "Q18202579"
+    },
+    "Laurent Nunez": {
+      "party": "other",
+      "source": "no party (former prefect); wikidata matched another person",
+      "wikidata": null
+    },
+    "Jean-Pierre Farandou": {
+      "party": "other",
+      "source": "no party",
+      "wikidata": null
+    },
+    "Serge Papin": {
+      "party": "other",
+      "source": "no party",
+      "wikidata": null
+    },
+    "Édouard Geffray": {
+      "party": "other",
+      "source": "no party",
+      "wikidata": null
+    },
+    "Philippe Baptiste": {
+      "party": "other",
+      "source": "no party",
+      "wikidata": null
+    },
+    "Alice Rufo": {
+      "party": "other",
+      "source": "no party",
+      "wikidata": null
+    },
+    "Catherine Pégard": {
+      "party": "other",
+      "source": "no party",
+      "wikidata": null
+    },
+    "Monique Barbut": {
+      "party": "other",
+      "source": "no party, to check",
+      "wikidata": null
+    },
+    "Michel Fournier": {
+      "party": "other",
+      "source": "no party, to check",
+      "wikidata": null
+    },
+    "Laurent Panifous": {
+      "party": "other",
+      "source": "LIOT group, no single party",
+      "wikidata": null
+    }
+  }
+}
