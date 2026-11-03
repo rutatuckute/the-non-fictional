@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { TRANSITION_CSS, shared, still, transition } from "./story-motion"
+import { TRANSITION_CSS, shared, transition } from "./story-motion"
 import styles from "./story-stage.module.css"
 
 // Where "Connect the dots" happens: directly on the page, no box around it.
@@ -10,9 +10,9 @@ import styles from "./story-stage.module.css"
 // wide screens, so nothing below it moves. The same place holds the explorer;
 // the story keeps its place while the reader is there.
 //
-// The page scrolls itself in only two cases: on the first step, when the story
-// doesn't yet fit in the window, and on a phone, when a new scene would start
-// above it. A reveal inside a scene never scrolls anything.
+// The page scrolls itself once, on entry (see state-of-things.js), and then only
+// on a phone, when a new scene would start above the window. A reveal inside a
+// scene never scrolls anything.
 //   steps: [{ act, caption, title, memory?, layout?, quiet?, set?, vt? }]
 //          title: the scene's name, in the chapter lists only
 //          memory: the quiet line that keeps what has been narrowed down
@@ -215,12 +215,10 @@ export default function StoryStage({
     const box = frameRef?.current?.getBoundingClientRect()
     if (box) {
       const phone = window.matchMedia("(max-width: 860px)").matches
-      const firstStep =
-        i === 0 && (box.top < 0 || box.bottom > window.innerHeight)
-      if (firstStep || (phone && newScene && box.top < 0))
+      if (phone && newScene && box.top < 0)
         window.scrollBy({
           top: box.top - 12,
-          behavior: travels || still() ? "auto" : "smooth",
+          behavior: "auto",
         })
     }
     if (travels) transition(() => onGo(j))
@@ -294,7 +292,7 @@ export default function StoryStage({
   return (
     <div
       ref={frameRef}
-      className={`${styles.story} ${mode === "explore" ? styles.isExplore : ""} ${wide ? styles.isWide : ""} ${full ? styles.isFull : ""} ${full && (!caption || quiet) ? styles.isUncaptioned : ""}`}
+      className={`${styles.story} ${mode === "explore" ? styles.isExplore : ""} ${wide ? styles.isWide : ""} ${full ? styles.isFull : ""} ${(full && !caption) || quiet ? styles.isUncaptioned : ""}`}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
       role="region"
@@ -357,7 +355,7 @@ export default function StoryStage({
               </nav>
               <span
                 className={styles.memory}
-                style={memory ? shared("memory") : undefined}
+                style={memory ? shared("topic-title") : undefined}
               >
                 {memory || ""}
               </span>

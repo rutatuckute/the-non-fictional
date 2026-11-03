@@ -382,8 +382,26 @@ export default function StateOfThings({ f }) {
   const [id, setId] = React.useState(DEFAULT)
   // the box opens on the story; a question link (?q=) opens the explorer
   const [mode, setMode] = React.useState("story")
-  // the heading introduces the story, then steps back
+  // The heading introduces the story, then leaves. That happens once, on entry:
+  // the scene moves up, and fits the window if it didn't; afterwards nothing here
+  // moves. Going back to the opening restores it with the scene held in place.
   const [begun, setBegun] = React.useState(false)
+  const topBefore = React.useRef(null)
+  const onBegun = next => {
+    topBefore.current = frame.current?.getBoundingClientRect().top ?? null
+    setBegun(next)
+  }
+  const reading = begun && mode === "story"
+  React.useLayoutEffect(() => {
+    const box = frame.current?.getBoundingClientRect()
+    const before = topBefore.current
+    topBefore.current = null
+    if (!box || before == null) return
+    if (reading) {
+      if (box.top < 0 || box.bottom > window.innerHeight)
+        window.scrollBy(0, box.top - 12)
+    } else if (mode === "story") window.scrollBy(0, box.top - before)
+  }, [reading]) // eslint-disable-line react-hooks/exhaustive-deps
   const frame = React.useRef(null)
   const toFrame = () => frame.current?.scrollIntoView({ block: "start" })
   const [tip, showTip, hideTip] = useTip()
@@ -441,13 +459,11 @@ export default function StateOfThings({ f }) {
 
   return (
     <section
-      className={styles.section}
+      className={`${styles.section} ${reading ? styles.isReading : ""}`}
       id="state"
       aria-labelledby="state-title"
     >
-      <header
-        className={`${styles.head} ${begun && mode === "story" ? styles.isQuiet : ""}`}
-      >
+      <header className={styles.head} hidden={reading}>
         <span className={styles.numeral}>01</span>
         <div>
           <h2 className={styles.title} id="state-title">
@@ -473,7 +489,7 @@ export default function StateOfThings({ f }) {
         frameRef={frame}
         exploreTopic={topic}
         openMethod={openMethod}
-        onBegun={setBegun}
+        onBegun={onBegun}
         explorer={
           <>
             <div

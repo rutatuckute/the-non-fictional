@@ -23,6 +23,8 @@
   --thread: #c96a4b;
   --nav: #70c982;
   --ease: cubic-bezier(0.22, 0.72, 0.2, 1);
+  /* where the anchor and the words start, in every scene of the first chapters */
+  --slot-top: 56px;
   position: relative;
   width: 100%;
   height: 100%;
@@ -288,13 +290,23 @@
   left: 43%;
   z-index: 1;
   width: min(500px, 40.5%, calc(var(--stage-h) * 0.78));
-  transition: left 900ms var(--ease);
+  transition:
+    left 900ms var(--ease),
+    opacity 500ms ease;
 }
 .beat .interview[data-beat="1"] .street {
   left: 56%;
 }
-.beat .interview[data-beat="2"] .street {
+.beat .interview[data-beat="2"] .street,
+.beat .interview[data-beat="3"] .street,
+.beat .interview[data-beat="4"] .street {
   left: 4%;
+}
+.beat .interview[data-beat="3"] .street {
+  opacity: 0.6;
+}
+.beat .interview[data-beat="4"] .street {
+  opacity: 0.32;
 }
 .beat .street img {
   position: absolute;
@@ -341,8 +353,7 @@
   opacity: 0.5;
   content: "";
 }
-.beat .interview[data-beat="1"] .disc,
-.beat .interview[data-beat="2"] .disc {
+.beat .interview:not([data-beat="0"]) .disc {
   transform: translate(-50%, -50%) scale(0.92);
 }
 /* the question, as asked: large italic, no frame; a fine terracotta line
@@ -389,14 +400,88 @@
   animation: appear 300ms ease backwards;
 }
 /* the answers: said loose, then one comes forward with its figure */
-.beat .answersWrap {
+/* One composition: the people on the left, the anchor on the right, what is under
+ * it changing in place. The anchor holds its position from the answers to the
+ * debates; the chamber, the check and the post keep the same two slots. */
+.beat .composition {
   position: absolute;
-  top: 56px;
+  top: var(--slot-top);
   right: 0;
   left: 47%;
   z-index: 2;
   display: grid;
-  gap: 26px;
+  gap: 14px;
+}
+.beat .anchor {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 62px;
+}
+.beat .anchorWords {
+  display: grid;
+  min-width: 0;
+}
+.beat .anchorWords > * {
+  grid-area: 1 / 1;
+  align-self: center;
+  transition:
+    opacity 420ms ease,
+    color 500ms ease,
+    font-size 500ms var(--ease);
+}
+.beat .anchorLong {
+  color: var(--ink);
+  font: italic 400 22px / 1.3 var(--font-editorial);
+}
+.beat .isEmerged .anchorLong {
+  color: var(--thread);
+  font-size: clamp(25px, 2.55cqw, 31px);
+}
+.beat .composition[data-mode="3"] .anchorLong,
+.beat .composition[data-mode="4"] .anchorLong {
+  opacity: 0;
+}
+.beat .anchorName {
+  width: fit-content;
+  margin: 0;
+  color: var(--thread);
+  font: 400 clamp(25px, 2.55cqw, 31px) / 1.2 var(--font-editorial);
+  letter-spacing: -0.008em;
+  opacity: 0;
+}
+.beat .composition[data-mode="3"] .anchorName {
+  opacity: 1;
+}
+.beat .composition[data-mode="4"] .anchorName {
+  font-size: clamp(30px, 3cqw, 38px);
+  opacity: 1;
+}
+.beat .composition[data-mode="3"] .answerN,
+.beat .composition[data-mode="4"] .answerN {
+  opacity: 0;
+}
+.beat .layers {
+  display: grid;
+}
+.beat .layer {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  grid-area: 1 / 1;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 300ms ease,
+    visibility 300ms;
+}
+.beat .layer[data-on] {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 460ms ease 120ms,
+    visibility 0ms;
 }
 .beat .answers {
   display: grid;
@@ -413,15 +498,10 @@
   gap: 36px;
 }
 .beat .fieldRows {
-  max-width: 820px;
-  display: grid;
-  gap: 18px;
-}
-.beat .fieldRow {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 6px 44px;
+  gap: 8px 24px;
 }
 .beat .fieldItem small {
   color: var(--meta);
@@ -439,11 +519,17 @@
   text-align: left;
   cursor: pointer;
 }
-.beat .fieldPick:hover .fieldName {
+/* a concern reads as something to press, before any hover */
+.beat .fieldPick .fieldName {
   text-decoration: underline;
-  text-decoration-color: var(--nav);
+  text-decoration-color: var(--line2);
   text-decoration-thickness: 1px;
-  text-underline-offset: 6px;
+  text-underline-offset: 5px;
+}
+.beat .fieldPick:hover .fieldName,
+.beat .fieldPick:focus-visible .fieldName {
+  color: var(--nav);
+  text-decoration-color: var(--nav);
 }
 .beat .fieldFoot {
   display: flex;
@@ -465,10 +551,7 @@
 }
 .beat .fieldIndex .fieldName {
   color: var(--ink2);
-  font-size: 17px;
-}
-.beat .fieldIndex .fieldPick:hover .fieldName {
-  color: var(--ink);
+  font-size: 15px;
   text-underline-offset: 3px;
 }
 .beat .fieldIndex .isChosen .fieldName {
@@ -479,15 +562,7 @@
 
 .beat .debates {
   display: grid;
-  align-content: center;
-  gap: 18px;
-}
-.beat .debatesTitle {
-  width: fit-content;
-  margin: 0;
-  color: var(--thread);
-  font: 400 clamp(28px, 2.78cqw, 36px) / 1.1 var(--font-editorial);
-  letter-spacing: -0.01em;
+  gap: 14px;
 }
 .beat .angleList {
   padding: 0;
@@ -495,15 +570,17 @@
 }
 .beat .angle {
   border-bottom: 1px solid var(--line);
-  animation: rise 460ms var(--ease) calc(var(--i) * 130ms + 120ms) backwards;
+}
+.beat .layer[data-on] .angle {
+  animation: rise 420ms var(--ease) calc(var(--i) * 80ms + 140ms) backwards;
 }
 .beat .angleRow {
   display: grid;
-  grid-template-columns: minmax(150px, 0.5fr) minmax(0, 1fr) 44px;
+  grid-template-columns: minmax(130px, 0.42fr) minmax(0, 1fr) 36px;
   align-items: center;
   gap: 18px;
   width: 100%;
-  padding: 12px 0;
+  padding: 9px 0;
   border: 0;
   background: none;
   color: inherit;
@@ -572,7 +649,6 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 6px 20px;
-  animation: appear 500ms ease 900ms backwards;
 }
 .beat .keyItems {
   display: flex;
@@ -705,25 +781,19 @@
 /* ---------- III · the chamber, the check, the post ---------- */
 
 .beat .chamber,
-.beat .checked {
+.beat .checked,
+.beat .travels {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
-  grid-template-areas: "words image";
-  align-items: center;
-  gap: 48px;
-}
-.beat .chamber[data-mode="1"] {
-  grid-template-columns: minmax(0, 480px) minmax(0, 1fr);
+  grid-template-columns: 44% minmax(0, 1fr);
   grid-template-areas: "image words";
-}
-.beat .checked {
-  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
-  grid-template-areas: "image words";
+  align-items: start;
+  column-gap: 3%;
 }
 .beat .chamberImg,
 .beat .checkedImg {
   position: relative;
   grid-area: image;
+  align-self: center;
   display: grid;
   place-items: center;
 }
@@ -755,13 +825,16 @@
 .beat .checkedWords {
   grid-area: words;
   display: grid;
-  align-content: center;
+  align-content: start;
   justify-items: start;
   gap: 18px;
   min-width: 0;
+  padding-top: var(--slot-top);
 }
 /* the post comes out of the phone: an ivory slip, opening from the screen */
 .beat .phoneImg {
+  grid-area: image;
+  align-self: center;
   margin: 0;
 }
 @keyframes postOpen {
@@ -1421,51 +1494,70 @@
 
 .beat .ending {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   align-items: center;
   gap: 56px;
 }
+.beat .endingResult {
+  display: grid;
+  gap: 16px;
+}
 .beat .endingLine {
-  max-width: 15em;
   color: var(--ink);
-  font: 400 clamp(30px, 3.36cqw, 42px) / 1.2 var(--font-editorial);
-  letter-spacing: -0.012em;
+  font: 400 clamp(26px, 2.75cqw, 34px) / 1.22 var(--font-editorial);
+  letter-spacing: -0.008em;
+  text-wrap: pretty;
+}
+.beat .endingLimit {
+  max-width: 36em;
+  color: var(--ink2);
+  font: 400 17px / 1.45 var(--font-editorial);
   text-wrap: pretty;
 }
 .beat .endingMore {
   display: grid;
-  justify-items: start;
   gap: 22px;
 }
-.beat .endingQs {
+.beat .endingNext {
   display: grid;
-  gap: 2px;
-  width: 100%;
-  padding: 0;
-  list-style: none;
+  gap: 6px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
 }
-.beat .endingQs button {
-  width: 100%;
-  padding: 6px 0;
+.beat .endingNext button {
+  padding: 0;
   border: 0;
   background: none;
-  color: var(--ink);
-  font: 400 19px / 1.3 var(--font-editorial);
+  color: var(--thread);
+  font: 400 clamp(25px, 2.45cqw, 30px) / 1.2 var(--font-editorial);
+  letter-spacing: -0.006em;
   text-align: left;
   cursor: pointer;
 }
-.beat .endingQs button:hover {
-  text-decoration: underline;
-  text-decoration-color: var(--nav);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
+.beat .endingNext button:hover {
+  color: var(--nav);
 }
-.beat .endingQs span {
-  color: var(--meta);
-}
-.beat .endingTopics {
+.beat .endingQuiet {
   display: grid;
-  gap: 8px;
+  gap: 5px;
+}
+.beat .endingQuiet ol {
+  display: grid;
+  gap: 1px;
+  padding: 0;
+  list-style: none;
+}
+.beat .endingQuiet ol button {
+  padding: 1px 0;
+  border: 0;
+  background: none;
+  color: var(--ink2);
+  font: 400 15px / 1.35 var(--font-editorial);
+  text-align: left;
+  cursor: pointer;
+}
+.beat .endingQuiet ol button:hover {
+  color: var(--nav);
 }
 
 /* ---------- material shown inside Method and sources ---------- */
@@ -1524,34 +1616,20 @@
 /* the answers: said loose, then one comes forward, its figure beside it. The
  * others recede on the words themselves, so they travel as they look. */
 .beat .answer {
-  display: flex;
-  align-items: baseline;
-  gap: 18px;
   min-height: 39px;
   padding: 5px 0;
-  animation: rise 460ms var(--ease) calc(var(--i) * 110ms + 200ms) backwards;
 }
-.beat .answer.isFirst {
-  min-height: 62px;
-  align-items: center;
+.beat .layer[data-on] .answer {
+  animation: rise 460ms var(--ease) calc(var(--i) * 110ms + 200ms) backwards;
 }
 .beat .answerText {
   padding-left: var(--o);
   color: var(--ink);
   font: italic 400 22px / 1.3 var(--font-editorial);
-  transition:
-    opacity 600ms ease,
-    color 500ms ease,
-    font-size 600ms var(--ease),
-    padding-left 600ms var(--ease);
+  transition: opacity 600ms ease;
 }
-.beat .isEmerged .answer:not(.isFirst) .answerText {
+.beat .isEmerged .answerText {
   opacity: 0.2;
-}
-.beat .isEmerged .answer.isFirst .answerText {
-  padding-left: 0;
-  color: var(--thread);
-  font-size: clamp(25px, 2.55cqw, 31px);
 }
 .beat .answerN {
   flex: none;
@@ -1579,26 +1657,9 @@
 }
 .beat .fieldName {
   color: var(--ink);
-  font: 400 clamp(23px, 2.49cqw, 31px) / 1.2 var(--font-editorial);
-  letter-spacing: -0.006em;
-  opacity: 0.42;
-  transition:
-    opacity 300ms ease,
-    color 400ms ease;
-}
-.beat .fieldItem:hover .fieldName,
-.beat .fieldItem:focus-within .fieldName {
-  opacity: 1;
-}
-.beat .fieldItem.isChosen .fieldName {
-  color: var(--thread);
-  opacity: 1;
-}
-.beat .fieldItem small {
-  opacity: 0.7;
-}
-.beat .fieldIndex .fieldName {
-  opacity: 1;
+  font: 400 clamp(21px, 1.95cqw, 25px) / 1.25 var(--font-editorial);
+  letter-spacing: -0.004em;
+  transition: color 200ms ease;
 }
 
 /* the exchange: the question's words stay above the answer */
@@ -1617,16 +1678,13 @@
 }
 
 /* the detour: the phone, the post out of it, the tax claim kept in view */
-.beat .travels {
-  display: grid;
-  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
-  align-items: center;
-}
 .beat .travelsWords {
   display: grid;
+  grid-area: words;
   justify-items: start;
   gap: 20px;
   min-width: 0;
+  padding-top: var(--slot-top);
 }
 .beat .travelsWords .lead {
   max-width: 34em;
@@ -1763,14 +1821,30 @@
   align-content: start;
   gap: 18px;
 }
+.beat .evidenceHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 28px;
+}
 .beat .finding {
   width: fit-content;
-  max-width: 30em;
   margin: 0;
   color: var(--ink);
-  font: 400 clamp(25px, 2.73cqw, 34px) / 1.2 var(--font-editorial);
-  letter-spacing: -0.01em;
+  font: 400 clamp(28px, 3cqw, 38px) / 1.15 var(--font-editorial);
+  letter-spacing: -0.012em;
   text-wrap: pretty;
+}
+.beat .findingSub {
+  max-width: 62ch;
+  margin-top: 6px;
+  color: var(--ink2);
+  font: 400 13px / 1.45 var(--font-functional);
+}
+.beat .sourceVerdict {
+  color: var(--ink2);
+  font: 400 13px / 1.5 var(--font-functional);
 }
 .beat .chartBlock {
   display: grid;
@@ -1779,7 +1853,7 @@
 }
 .beat .views {
   display: inline-flex;
-  justify-self: start;
+  flex: none;
   gap: 2px;
   padding: 2px;
   border: 1px solid var(--line2);
@@ -1859,11 +1933,6 @@
 /* ---------- narrower screens ---------- */
 
 @media (max-width: 1320px) and (min-width: 861px) {
-  .beat .chamber,
-  .beat .chamber[data-mode="1"],
-  .beat .checked {
-    gap: 32px;
-  }
   .beat .chartHead,
   .beat .rows li,
   .beat .axis {
@@ -1906,9 +1975,35 @@
     margin: 0 auto;
   }
   .beat .askWrap,
-  .beat .answersWrap {
+  .beat .composition {
     position: static;
     width: auto;
+  }
+  .beat .layer:not([data-on]) {
+    display: none;
+  }
+  /* the people give their place up, and the anchor rises into it */
+  .beat .street,
+  .beat .interview[data-beat] .street {
+    max-height: 420px;
+    transition:
+      max-height 520ms var(--ease),
+      opacity 400ms ease;
+  }
+  .beat .interview[data-beat="3"] .street,
+  .beat .interview[data-beat="4"] .street {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
+  .beat .interview[data-beat="3"],
+  .beat .interview[data-beat="4"] {
+    gap: 0;
+  }
+  .beat .anchor {
+    flex-wrap: wrap;
+    gap: 2px 14px;
+    min-height: 0;
   }
   .beat .connector {
     display: none;
@@ -1916,13 +2011,6 @@
   .beat .answerText {
     padding-left: calc(var(--o) * 0.4);
     font-size: 18px;
-  }
-  .beat .fieldRow {
-    margin-left: 0 !important;
-    gap: 4px 22px;
-  }
-  .beat .fieldRows {
-    gap: 8px;
   }
   .beat .angleRow {
     grid-template-columns: minmax(0, 1fr) 44px;
@@ -1946,7 +2034,6 @@
     padding-left: 0;
   }
   .beat .chamber,
-  .beat .chamber[data-mode="1"],
   .beat .checked,
   .beat .travels {
     grid-template-columns: minmax(0, 1fr);
@@ -1960,9 +2047,10 @@
   .beat .phoneImg img {
     max-height: 280px;
   }
-  .beat .travels {
-    grid-template-areas: none;
-    gap: 0;
+  .beat .travelsWords,
+  .beat .chamberWords,
+  .beat .checkedWords {
+    padding-top: 0;
   }
   .beat .phoneImg img {
     max-height: 300px;
@@ -2000,7 +2088,14 @@
   .beat .answer.isFirst {
     min-height: 0;
   }
-  /* the narration comes before the phone, clear of the post */
+  /* the narration comes before the phone, clear of the post: in source order,
+     not in the named slots, or it lands beneath the post */
+  .beat .travels {
+    grid-template-areas: none;
+  }
+  .beat .phoneImg {
+    grid-area: auto;
+  }
   .beat .travelsWords {
     display: contents;
   }
@@ -2014,8 +2109,12 @@
   .beat .chartHead,
   .beat .rows li,
   .beat .axis {
-    grid-template-columns: 76px minmax(0, 1fr) 54px;
+    grid-template-columns: 84px minmax(0, 1fr) 54px;
     gap: 8px;
+  }
+  /* the longest name, Luxembourg, stays clear of the scale */
+  .beat .rowName {
+    font-size: 16px;
   }
   .beat .chartHead > span:last-child {
     display: none;
@@ -2031,9 +2130,6 @@
   }
   .beat .ending {
     grid-template-columns: minmax(0, 1fr);
-  }
-  .beat .endingLine {
-    font-size: 26px;
   }
   .beat .sheet {
     width: 100vw;
@@ -2061,6 +2157,22 @@
   .beat .connector path,
   .beat .partLines path {
     stroke-dashoffset: 0;
+  }
+}
+
+/* a short window: the same composition, tighter */
+@media (max-height: 800px) and (min-width: 861px) {
+  .beat {
+    --slot-top: 24px;
+  }
+  .beat .evidence {
+    gap: 10px;
+  }
+  .beat .rows li {
+    min-height: 34px;
+  }
+  .beat .angleRow {
+    padding: 6px 0;
   }
 }
 

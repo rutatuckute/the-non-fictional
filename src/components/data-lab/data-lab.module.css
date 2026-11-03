@@ -5,6 +5,8 @@
  * that carries colour on the page takes the form's colour, while the
  * masthead and footer keep the site's own. */
 .lab {
+  /* collapsing the heading must not make the browser re-anchor the page */
+  overflow-anchor: none;
   --form: var(--form-data);
   width: var(--page-width);
   margin: 0 auto;
@@ -97,6 +99,9 @@
   font-variation-settings: "opsz" 18;
 }
 
+.lab .leadQuestion {
+  color: var(--text-primary);
+}
 .lab .spoiler {
   color: var(--form);
 }

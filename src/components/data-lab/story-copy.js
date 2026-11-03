@@ -176,14 +176,9 @@ export const BEATS = {
 
 // The closing lines
 export const ENDING = {
-  tested: {
-    en: "A concern becomes an argument. An argument becomes a claim. A claim becomes something we can test.",
-    fr: "Une préoccupation devient un argument. Un argument devient une affirmation. Une affirmation devient quelque chose que l'on peut éprouver.", // FR-DRAFT
-  },
-  untested: {
-    en: "A concern becomes an argument. An argument becomes a question. A question becomes something we can measure.",
-    fr: "Une préoccupation devient un argument. Un argument devient une question. Une question devient quelque chose que l'on peut mesurer.", // FR-DRAFT
-  },
+  next: { en: "The next question", fr: "La question suivante" },
+  more: { en: "Other questions", fr: "Autres questions" },
+  other: { en: "Other concerns", fr: "Autres préoccupations" },
 }
 
 // Small fixed lines, near the visuals they describe
@@ -391,10 +386,25 @@ export const TEST_REVEALS = {
 // The evidence: one finding, one chart, and depth on demand
 export const FINDINGS = {
   headline: {
-    en: ({ n, of, who }) =>
-      `By the week of the claim, ${n} of France's ${of} EU neighbours by land had cut diesel tax rates: ${who}.`,
-    fr: ({ n, of, who }) =>
-      `La semaine de l'affirmation, ${n} des ${of} voisins terrestres de la France dans l'UE avaient baissé leurs taux de taxes sur le gazole : ${who}.`, // FR-DRAFT
+    en: ({ n, of }) => `${n} of ${of} neighbours cut diesel tax rates.`,
+    fr: ({ n, of }) =>
+      `${n} voisins sur ${of} ont baissé leurs taux de taxes sur le gazole.`, // FR-DRAFT
+  },
+  sub: {
+    en: ({ who, from, to }) =>
+      `${who}, between ${from} and ${to}. Scope: France's EU land neighbours, diesel.`,
+    fr: ({ who, from, to }) =>
+      `${who}, entre le ${from} et le ${to}. Périmètre : les voisins terrestres de la France dans l'UE, le gazole.`, // FR-DRAFT
+  },
+  // the source's verdict comes here, after the figures, and is kept apart from
+  // this narrower test
+  verdictLabel: {
+    en: "The fact-checker's verdict on the whole sentence:",
+    fr: "Le verdict du fact-checkeur sur toute la phrase :", // FR-DRAFT
+  },
+  narrower: {
+    en: "This test is narrower: one fuel, five countries, two dates.",
+    fr: "Ce test est plus étroit : un carburant, cinq pays, deux dates.", // FR-DRAFT
   },
   // stays beside the chart: it changes how the rises read
   caveat: {
@@ -419,6 +429,16 @@ export const FINDINGS = {
     method: { en: "Method and sources", fr: "Méthode et sources" },
   },
   cost: {
+    result: {
+      en: ({ cut, rest }) =>
+        `${cut} had cut diesel tax rates by the week of the claim. ${rest} had not.`,
+      fr: ({ cut, rest }) =>
+        `${cut} avaient baissé leurs taux de taxes sur le gazole la semaine de l'affirmation. ${rest}, non.`, // FR-DRAFT
+    },
+    limit: {
+      en: "That covers one fuel, five land neighbours and eight weeks. It says nothing about petrol, or about what reached the pump.",
+      fr: "Cela couvre un carburant, cinq voisins terrestres et huit semaines. Rien sur l'essence, ni sur ce qui a atteint la pompe.", // FR-DRAFT
+    },
     established: {
       en: ({ fell, rose }) =>
         `From 23 February to 20 April 2026, tax per litre of diesel fell in ${fell}. It rose in ${rose}, as in France.`,

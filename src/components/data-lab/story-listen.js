@@ -3,6 +3,7 @@ import * as React from "react"
 import BAROMETERS from "./data/topics.json"
 import { NOTES, dots, say } from "./story-copy"
 import { shared, still, useArrived, useCount } from "./story-motion"
+import { Debates } from "./story-follow"
 import { Disclosure } from "./story-parts"
 import { KEPT, TOPICS } from "./topics"
 import styles from "./narrative.module.css"
@@ -64,13 +65,29 @@ const LOOSE = [0, 52, 20, 74, 8, 44, 86, 28, 62, 14]
 
 const Figure = ({ to, delay, f }) => f.num(Math.round(useCount(to, delay, 900)))
 
-export const Interview = ({ mode, topic, f, onMore }) => {
+// One composition from the question to the debates. The people keep the left
+// slot; "Cost of living" holds one place on the right; what is beneath it changes
+// in place: the other answers, then the other concerns, then the debates.
+//   mode 0 the narrator, 1 the question, 2 the answers, 3 the concerns,
+//   4 the debates
+export const Interview = ({
+  mode,
+  topic,
+  narration,
+  onPick,
+  f,
+  total,
+  onAnswers,
+  onTopics,
+  onTexts,
+}) => {
   const ask = ASK[f.lang] || ASK.en
   const answers = answersFor(f.lang)
   const first = answers[0]
   // the answers are said first, then one comes forward with its figure (the
   // beat's own sequence, after the reader's click)
-  const emerged = useArrived(1700, mode) && mode === 2
+  const emerged = useArrived(1700, mode === 2) && mode === 2
+  const pose = Math.min(mode, 2)
   const ref = React.useRef(null)
 
   // the fine line from the microphone to the question
@@ -114,17 +131,20 @@ export const Interview = ({ mode, topic, f, onMore }) => {
 
   return (
     <div className={styles.interview} data-beat={mode} ref={ref}>
-      <div className={styles.street}>
+      <div
+        className={styles.street}
+        style={shared(mode === 4 ? "scene-img" : null)}
+      >
         <div className={styles.disc} aria-hidden="true" />
         {STREET.map(([src, alt], k) => (
           <img
             key={src}
             src={src}
-            alt={k === mode ? f.L(alt) : ""}
+            alt={k === pose ? f.L(alt) : ""}
             width="900"
             height="1125"
-            className={k === mode ? styles.isFrame : undefined}
-            aria-hidden={k === mode ? undefined : "true"}
+            className={k === pose ? styles.isFrame : undefined}
+            aria-hidden={k === pose ? undefined : "true"}
             data-frame={k}
           />
         ))}
@@ -148,59 +168,88 @@ export const Interview = ({ mode, topic, f, onMore }) => {
           <circle cx={line.a[0]} cy={line.a[1]} r="3" />
         </svg>
       ) : null}
-      {mode === 2 ? (
+      {mode >= 2 ? (
         <div
-          className={`${styles.answersWrap} ${emerged ? styles.isEmerged : ""}`}
+          className={`${styles.composition} ${emerged || mode > 2 ? styles.isEmerged : ""}`}
+          data-mode={mode}
         >
-          <ol
-            className={styles.answers}
-            lang={f.lang === "fr" ? "fr" : "en"}
-            aria-label={f.L(["Les réponses", "The answers"])}
-          >
-            {answers.map((a, i) => (
-              <li
-                key={a.text}
-                className={`${styles.answer} ${i === 0 ? styles.isFirst : ""}`}
-                style={{ "--i": i, "--o": `${LOOSE[i % LOOSE.length]}px` }}
+          <div className={styles.anchor}>
+            <span className={styles.anchorWords}>
+              <span
+                className={styles.anchorLong}
+                lang={f.lang === "fr" ? "fr" : "en"}
+                aria-hidden={mode > 2 ? "true" : undefined}
               >
-                {/* each topic's first answer becomes its name among the concerns */}
-                <span
-                  className={styles.answerText}
-                  style={
-                    answers.findIndex(x => x.topic === a.topic) === i &&
-                    KEPT.includes(a.topic)
-                      ? a.topic === topic
-                        ? shared("topic-title")
-                        : shared(`topic-${a.topic}`, "concern")
-                      : undefined
-                  }
-                >
-                  {dots(a.text)}
-                </span>
-                {i === 0 ? (
-                  <span
-                    className={styles.answerN}
-                    aria-hidden={emerged ? undefined : "true"}
-                  >
-                    {emerged ? (
-                      <Figure to={first.share} delay={120} f={f} />
-                    ) : null}
-                    {emerged ? (f.lang === "fr" ? " %" : "%") : null}
-                  </span>
-                ) : null}
-              </li>
-            ))}
-          </ol>
-          <span className={styles.answerSay}>
-            {say(f, f.lang === "fr" ? NOTES.answerIpsos : NOTES.answerEB)}{" "}
-            <button
-              type="button"
-              className={styles.inlineButton}
-              onClick={onMore}
+                {dots(first.text)}
+              </span>
+              <h3
+                className={styles.anchorName}
+                aria-hidden={mode > 2 ? undefined : "true"}
+                style={shared(mode === 4 ? "topic-title" : null)}
+              >
+                {f.L(TOPICS[topic].name)}
+              </h3>
+            </span>
+            <span
+              className={styles.answerN}
+              aria-hidden={emerged ? undefined : "true"}
             >
-              {f.L(["Toutes les réponses", "Every answer"])} →
-            </button>
-          </span>
+              {emerged ? <Figure to={first.share} delay={120} f={f} /> : null}
+              {emerged ? (f.lang === "fr" ? " %" : "%") : null}
+            </span>
+          </div>
+          <div className={styles.layers}>
+            <div className={styles.layer} data-on={mode === 2 ? "" : undefined}>
+              <ol
+                className={styles.answers}
+                lang={f.lang === "fr" ? "fr" : "en"}
+                aria-label={f.L(["Les autres réponses", "The other answers"])}
+              >
+                {answers.slice(1).map((a, i) => (
+                  <li
+                    key={a.text}
+                    className={styles.answer}
+                    style={{
+                      "--i": i + 1,
+                      "--o": `${LOOSE[(i + 1) % LOOSE.length]}px`,
+                    }}
+                  >
+                    <span className={styles.answerText}>{dots(a.text)}</span>
+                  </li>
+                ))}
+              </ol>
+              <span className={styles.answerSay}>
+                {say(f, f.lang === "fr" ? NOTES.answerIpsos : NOTES.answerEB)}{" "}
+                <button
+                  type="button"
+                  className={styles.inlineButton}
+                  onClick={onAnswers}
+                >
+                  {f.L(["Toutes les réponses", "Every answer"])} →
+                </button>
+              </span>
+            </div>
+            <div className={styles.layer} data-on={mode === 3 ? "" : undefined}>
+              <p className={styles.lead}>{mode === 3 ? narration : null}</p>
+              <TopicIndex
+                mode="field"
+                topic={topic}
+                onPick={onPick}
+                f={f}
+                onMore={onTopics}
+              />
+            </div>
+            <div className={styles.layer} data-on={mode === 4 ? "" : undefined}>
+              <p className={styles.lead}>{mode === 4 ? narration : null}</p>
+              <Debates
+                topic={topic}
+                f={f}
+                total={total}
+                onMore={onTexts}
+                live={mode === 4}
+              />
+            </div>
+          </div>
         </div>
       ) : null}
     </div>
@@ -209,40 +258,31 @@ export const Interview = ({ mode, topic, f, onMore }) => {
 
 /* ---------- the field of concerns ---------- */
 
-// The eleven concerns as an open typographic field: one size, because size
-// would say something the data doesn't; placed for balance, not by rank.
+// The other concerns, beneath the one followed: one size, because size would say
+// something the data doesn't, in an order that carries no rank.
 const FIELD = [
-  ["health", "education", "public"],
-  ["immigration", "social"],
-  ["economy", "cost"],
-  ["world", "environment"],
-  ["security", "jobs"],
+  "health",
+  "education",
+  "public",
+  "immigration",
+  "social",
+  "economy",
+  "cost",
+  "world",
+  "environment",
+  "security",
+  "jobs",
 ]
-const INDENT = [6, 0, 16, 3, 11]
 
-//   mode "field": the followed topic in terracotta, carried in from the
-//                 answers, the others gathered around it; any measurable topic
-//                 can be chosen instead
+//   mode "field": the concerns other than the followed one, which stays above
+//                 them; any measurable one can be chosen instead
 //   mode "index": the closing list of other concerns, the same names
 export const TopicIndex = ({ mode, topic, onPick, f, onMore }) => {
   const entry = key => {
     const t = TOPICS[key]
     const measurable = t.measurable !== false
     const chosen = key === topic
-    const label = (
-      <span
-        className={styles.fieldName}
-        style={
-          mode === "field"
-            ? chosen
-              ? shared("topic-title")
-              : shared(`topic-${key}`, "concern")
-            : undefined
-        }
-      >
-        {f.L(t.name)}
-      </span>
-    )
+    const label = <span className={styles.fieldName}>{f.L(t.name)}</span>
     const aside = !measurable
       ? f.L(["non mesuré ici", "not measured here"])
       : t.exception
@@ -279,16 +319,7 @@ export const TopicIndex = ({ mode, topic, onPick, f, onMore }) => {
   return (
     <div className={styles.field}>
       <div className={styles.fieldRows} role="list">
-        {FIELD.map((row, r) => (
-          <div
-            key={row[0]}
-            role="none"
-            className={styles.fieldRow}
-            style={{ marginLeft: `${INDENT[r]}%` }}
-          >
-            {row.map(entry)}
-          </div>
-        ))}
+        {FIELD.filter(k => k !== topic).map(entry)}
       </div>
       <div className={styles.fieldFoot}>
         <span className={styles.fine}>{say(f, NOTES.change)}</span>

@@ -16,12 +16,12 @@ import {
   say,
 } from "./story-copy"
 import { Chamber, Checked, Travels } from "./story-examine"
-import { ANGLES, Debates, THREADS, threadAngle } from "./story-follow"
+import { ANGLES, THREADS, threadAngle } from "./story-follow"
 import { Interview, TopicIndex } from "./story-listen"
 import { transition } from "./story-motion"
 import { Disclosure } from "./story-parts"
 import StoryStage from "./story-stage"
-import { ClaimTest, readTest } from "./story-test"
+import { ClaimTest, readTest, testResult } from "./story-test"
 import { TOPICS } from "./topics"
 import styles from "./narrative.module.css"
 
@@ -114,10 +114,11 @@ const buildBeats = (topic, questions, f) => {
   add("opening", "interview", { mode: 0, layout: "wide" })
   add("question", "interview", { mode: 1, layout: "wide" })
   add("answers", "interview", { mode: 2, layout: "wide" })
+  // the same composition goes on: what changes is under "Cost of living"
   add(
     "concerns",
-    "topics",
-    {},
+    "interview",
+    { mode: 3, layout: "wide", quiet: true },
     { followed: x.followed ? say(f, x.followed) : lower(name) },
   )
 
@@ -126,8 +127,8 @@ const buildBeats = (topic, questions, f) => {
   if (angles.length)
     add(
       "debates",
-      "debates",
-      { memory: name },
+      "interview",
+      { mode: 4, layout: "wide", quiet: true },
       { k: word(f, angles.length, true) },
     )
   const memory = `${name} · ${x.short ? say(f, x.short) : followed ? f.L(followed.name) : ""}`
@@ -280,40 +281,55 @@ const QuestionChart = ({ q, f, onTip, onTipEnd }) => {
 
 /* ---------- the ending ---------- */
 
-// Three sentences, the other questions, the other concerns, and one way into
-// the data: an opening, not a conclusion.
-const Ending = ({ topic, qs, tested, onExplore, onPick, f }) => (
-  <div className={styles.ending}>
-    <p className={styles.endingLine}>
-      {say(f, tested ? ENDING.tested : ENDING.untested)}
-    </p>
-    <div className={styles.endingMore}>
-      <ol className={styles.endingQs}>
-        {qs.map(q => (
-          <li key={q.id}>
-            <button type="button" onClick={() => onExplore(topic, q.id)}>
-              {f.L(q.q)}
-              <span aria-hidden="true"> →</span>
-            </button>
-          </li>
-        ))}
-      </ol>
-      <div className={styles.endingTopics}>
-        <span className={styles.kicker}>
-          {f.L(["Ou une autre préoccupation", "Or another concern"])}
-        </span>
-        <TopicIndex mode="index" topic={topic} onPick={onPick} f={f} />
+// The result and where it stops, then one question to go on with. The rest stays
+// available, and quiet.
+const Ending = ({ topic, qs, tested, onExplore, onPick, f }) => {
+  const h = !tested && qs[0]?.headline(f)
+  const { result, limit } = tested
+    ? testResult(topic, f)
+    : {
+        result: qs[0] ? `${qs[0].value(f)} ${f.L(h.label)}` : "",
+        limit: qs[0]?.cant?.length ? f.L(qs[0].cant[0]) : "",
+      }
+  const next = tested ? qs[0] : qs[1] || qs[0]
+  const others = qs.filter(q => q !== next)
+  return (
+    <div className={styles.ending}>
+      <div className={styles.endingResult}>
+        <p className={styles.endingLine}>{result}</p>
+        <p className={styles.endingLimit}>{limit}</p>
       </div>
-      <button
-        type="button"
-        className={styles.dig}
-        onClick={() => onExplore(topic, qs[0]?.id)}
-      >
-        {f.L(["Creuser les données", "Dig into the data"])} →
-      </button>
+      <div className={styles.endingMore}>
+        {next ? (
+          <div className={styles.endingNext}>
+            <span className={styles.kicker}>{say(f, ENDING.next)}</span>
+            <button type="button" onClick={() => onExplore(topic, next.id)}>
+              {f.L(next.q)} <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        ) : null}
+        {others.length ? (
+          <div className={styles.endingQuiet}>
+            <span className={styles.kicker}>{say(f, ENDING.more)}</span>
+            <ol>
+              {others.map(q => (
+                <li key={q.id}>
+                  <button type="button" onClick={() => onExplore(topic, q.id)}>
+                    {f.L(q.q)}
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ) : null}
+        <div className={styles.endingQuiet}>
+          <span className={styles.kicker}>{say(f, ENDING.other)}</span>
+          <TopicIndex mode="index" topic={topic} onPick={onPick} f={f} />
+        </div>
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 /* ---------- the story ---------- */
 
@@ -337,7 +353,7 @@ export default function Story({
   const i = Math.min(at, beats.length - 1)
   const beat = beats[i]
   const fieldAt = beats.findIndex(b => b.id === "concerns")
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     onBegun?.(i > 0)
   }, [i > 0]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -388,27 +404,13 @@ export default function Story({
           <Interview
             mode={beat.mode}
             topic={topic}
-            f={f}
-            onMore={() => toMethod("concerns", "answers")}
-          />
-        )
-      case "topics":
-        return (
-          <TopicIndex
-            mode="field"
-            topic={topic}
+            narration={beat.caption}
             onPick={pick}
             f={f}
-            onMore={() => toMethod("topics", "steps")}
-          />
-        )
-      case "debates":
-        return (
-          <Debates
-            topic={topic}
-            f={f}
             total={n.p + n.g + n.f}
-            onMore={() => toMethod("debate", "corpus")}
+            onAnswers={() => toMethod("concerns", "answers")}
+            onTopics={() => toMethod("topics", "detail")}
+            onTexts={() => toMethod("debate", "corpus")}
           />
         )
       case "chamber":

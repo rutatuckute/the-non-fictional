@@ -41,31 +41,13 @@
   gap: 20px;
   margin-bottom: 16px;
 }
-.section .head {
-  transition: opacity 500ms ease;
+/* once the story has begun, the heading has done its work */
+.section .head[hidden] {
+  display: none;
 }
-.section .head.isQuiet {
-  opacity: 0.4;
-}
-/* the numeral hangs in the margin; the heading aligns with the main text */
-@media (min-width: 1180px) {
-  .section .head {
-    position: relative;
-    display: block;
-  }
-  .section .numeral {
-    position: absolute;
-    right: 100%;
-    bottom: 100%;
-    margin: 0 14px -1.1em 0;
-    font-size: clamp(32px, 3vw, 44px);
-    white-space: nowrap;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .section .head {
-    transition: none;
-  }
+.section.isReading {
+  padding-top: 20px;
+  margin-top: 20px;
 }
 .section .numeral {
   color: var(--form);

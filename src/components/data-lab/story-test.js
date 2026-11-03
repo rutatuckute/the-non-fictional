@@ -61,6 +61,7 @@ const list = (f, xs) =>
   xs.length > 1
     ? `${xs.slice(0, -1).join(", ")}${f.lang === "fr" ? " et " : " and "}${xs.at(-1)}`
     : xs[0] || ""
+const capital = s => s.charAt(0).toUpperCase() + s.slice(1)
 const names = (f, rows, table) =>
   list(
     f,
@@ -232,12 +233,10 @@ export const ClaimTest = ({ topic, mode, reveal = 0, f, onMore }) => {
             {x.factcheck?.claimant ? say(f, x.factcheck.claimant) : fc.claimant}{" "}
             · {day(f, fc.date)}
           </span>
-          <Verdict
-            rating={fc.rating}
-            publisher={fc.publisher}
-            url={fc.url}
-            f={f}
-          />
+          <span>
+            {f.L(["Vérifié par ", "Fact-checked by "])}
+            <Ext href={fc.url}>{fc.publisher}</Ext>
+          </span>
         </figcaption>
       </figure>
       <ol className={styles.partNotes}>
@@ -296,7 +295,8 @@ export const Evidence = ({
   name = () => undefined,
   onMore,
 }) => {
-  const { data, nb, cut, fell, rose } = read
+  const { data, nb, cut } = read
+  const fc = THREADS[topic]?.factcheck
   const [split, setSplit] = React.useState(false)
   // the neighbours, from the largest fall; France last, for reference
   const rows = [
@@ -316,14 +316,22 @@ export const Evidence = ({
   const L = FINDINGS.labels
   return (
     <div className={styles.evidence}>
-      <h3 className={styles.finding} style={name("doc-claim")}>
-        {say(f, FINDINGS.headline, {
-          n: words[cut.length],
-          of: words[nb.length],
-          who: names(f, cut, NAMED),
-        })}
-      </h3>
-      <div className={styles.chartBlock}>
+      <div className={styles.evidenceHead}>
+        <div>
+          <h3 className={styles.finding} style={name("doc-claim")}>
+            {say(f, FINDINGS.headline, {
+              n: capital(words[cut.length]),
+              of: words[nb.length],
+            })}
+          </h3>
+          <p className={styles.findingSub}>
+            {say(f, FINDINGS.sub, {
+              who: capital(names(f, cut, NAMED)),
+              from: day(f, data.weeks.before),
+              to: day(f, data.weeks.claim),
+            })}
+          </p>
+        </div>
         {/* the chart's two states: the same marks, a different question */}
         <div
           className={styles.views}
@@ -345,6 +353,8 @@ export const Evidence = ({
             {say(f, L.split)}
           </button>
         </div>
+      </div>
+      <div className={styles.chartBlock}>
         <div className={styles.chartHead} aria-hidden="true">
           <span style={name("part-0")}>{part(0)}</span>
           <span className={styles.chartHeadMid}>
@@ -489,6 +499,18 @@ export const Evidence = ({
         </div>
         <p className={styles.caveat}>{say(f, FINDINGS.caveat)}</p>
       </div>
+      {fc ? (
+        <p className={styles.sourceVerdict}>
+          <span>{say(f, FINDINGS.verdictLabel)}</span>{" "}
+          <Verdict
+            rating={fc.rating}
+            publisher={fc.publisher}
+            url={fc.url}
+            f={f}
+          />{" "}
+          <span>{say(f, FINDINGS.narrower)}</span>
+        </p>
+      ) : null}
       {onMore ? (
         <Disclosure label={say(f, L.about)} className={styles.about}>
           <p>{say(f, FINDINGS.short)}</p>
@@ -555,4 +577,22 @@ export const EvidenceDetail = ({ topic, read, f }) => {
       </p>
     </div>
   )
+}
+
+// What the ending says: the result, in plain words, and where it stops
+export const testResult = (topic, f) => {
+  const read = readTest(topic)
+  return {
+    result: say(f, FINDINGS[topic].result, {
+      cut: capital(names(f, read.cut, NAMED)),
+      rest: capital(
+        names(
+          f,
+          read.nb.filter(r => !read.cut.includes(r)),
+          NAMED,
+        ),
+      ),
+    }),
+    limit: say(f, FINDINGS[topic].limit),
+  }
 }

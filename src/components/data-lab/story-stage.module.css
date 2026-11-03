@@ -125,6 +125,9 @@
   color: var(--nav);
 }
 .story .memory {
+  /* its own width: the heading travels into it at the size of its words */
+  justify-self: start;
+  width: fit-content;
   min-height: 18px;
   color: var(--text-metadata);
   font: 400 12px / 18px var(--font-functional);
@@ -348,10 +351,19 @@
 /* ---------- back and forward, always here ---------- */
 
 .story .controls {
+  /* always in reach, at the same place: on a phone the stage is at least as tall
+   * as the window, and past the fold the controls stay on screen */
+  position: sticky;
+  bottom: 12px;
+  z-index: 10;
   display: flex;
   justify-content: center;
   gap: 10px;
   padding-top: 18px;
+  pointer-events: none;
+}
+.story .controls > * {
+  pointer-events: auto;
 }
 .story .arrow {
   display: grid;
@@ -361,7 +373,7 @@
   padding: 0;
   border: 1px solid var(--site-rule-strong);
   border-radius: 50%;
-  background: none;
+  background: var(--background, #11100f);
   color: var(--text-secondary);
   cursor: pointer;
   transition:
@@ -378,7 +390,7 @@
 }
 .story .arrowNext {
   border-color: var(--nav);
-  background: rgb(112 201 130 / 0.07);
+  background: color-mix(in srgb, var(--nav) 8%, var(--background, #11100f));
   color: var(--ink);
 }
 .story .arrow:hover:not(:disabled) {
@@ -387,7 +399,7 @@
 }
 .story .arrowNext:hover:not(:disabled) {
   border-color: var(--nav);
-  background: rgb(112 201 130 / 0.15);
+  background: color-mix(in srgb, var(--nav) 16%, var(--background, #11100f));
 }
 .story .arrow:disabled {
   opacity: 0.25;
@@ -409,13 +421,27 @@
   .story .chapters {
     gap: 8px;
   }
+  /* three equal columns; a long name wraps, and the menus use the full width */
+  .story .chapters {
+    position: relative;
+    align-items: end;
+  }
   .story .chapter {
-    flex: 1;
+    position: static;
+    flex: 1 1 0;
     width: auto;
     min-width: 0;
   }
   .story .chapterName {
     font-size: 12px;
+    line-height: 1.25;
+    white-space: normal;
+  }
+  .story .scenes,
+  .story .scenes[data-side="end"] {
+    right: 0;
+    left: 0;
+    width: auto;
   }
   /* room held for what changes within a scene, so its quotation doesn't move */
   .story .memory {
@@ -430,7 +456,7 @@
   .story .body,
   .story.isFull .body {
     display: block;
-    min-height: 0;
+    min-height: calc(100svh - 190px);
   }
   .story .caption,
   .story.isWide .caption {

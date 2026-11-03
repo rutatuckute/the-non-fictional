@@ -3,12 +3,12 @@ import * as React from "react"
 import THREADS from "./data/threads.json"
 import { THREAD_EXTRAS, fragmentOf, say } from "./story-copy"
 import { shared } from "./story-motion"
-import { Quote, Verdict, cut, day, groupName } from "./story-parts"
+import { Ext, Quote, Verdict, cut, day, groupName } from "./story-parts"
 import styles from "./narrative.module.css"
 
 // What is said, made concrete. The argument in the chamber (the question,
-// then the answer, as a shot and its reverse shot: the same room seen from
-// the benches, then from the government's side), then checked by a
+// then the answer: the same room seen from the benches, then from the
+// government's side), then checked by a
 // fact-checker, then a detour to social media, where a post comes out of the
 // phone. What the reader was looking at stays in view as the scene changes; the
 // rest is in Method and sources.
@@ -155,12 +155,12 @@ export const Checked = ({ topic, line, f, onMore }) => {
             date: fc.date,
           }}
         >
-          <Verdict
-            rating={fc.rating}
-            publisher={fc.publisher}
-            url={fc.url}
-            f={f}
-          />
+          <span className={styles.source}>
+            <span>
+              {f.L(["Vérifié par ", "Fact-checked by "])}
+              <Ext href={fc.url}>{fc.publisher}</Ext>
+            </span>
+          </span>
         </Quote>
         {onMore ? (
           <button type="button" className={styles.expand} onClick={onMore}>

@@ -5,7 +5,6 @@ import THREADS from "./data/threads.json"
 import { NOTES, THREAD_EXTRAS, fragmentOf, say } from "./story-copy"
 import { shared, useCount } from "./story-motion"
 import { Quote, TYPE_EN, Verdict, cut, day, groupName } from "./story-parts"
-import { TOPICS } from "./topics"
 import styles from "./narrative.module.css"
 
 // What is said. The followed concern opens into the angles it is debated
@@ -267,15 +266,12 @@ const Key = ({ f, children }) => (
 
 // The guided story: the landscape of debates, the followed angle in
 // terracotta, the row that opens into the chamber
-export const Debates = ({ topic, f, total, onMore }) => {
+export const Debates = ({ topic, f, total, onMore, live }) => {
   const list = ANGLES[topic] || []
   const followed = threadAngle(topic)
   if (!list.length) return null
   return (
     <div className={styles.debates}>
-      <h3 className={styles.debatesTitle} style={shared("topic-title")}>
-        {f.L(TOPICS[topic].name)}
-      </h3>
       <ol className={styles.angleList}>
         {list.map((a, i) => (
           <li
@@ -283,11 +279,11 @@ export const Debates = ({ topic, f, total, onMore }) => {
             className={`${styles.angle} ${a.id === followed?.id ? styles.isThreadAngle : ""}`}
             style={{
               "--i": i,
-              ...shared(a.id === followed?.id ? "doc-q" : null),
+              ...shared(live && a.id === followed?.id ? "doc-q" : null),
             }}
           >
             <div className={styles.angleRow}>
-              <Row a={a} f={f} delay={200 + i * 130} />
+              <Row a={a} f={f} />
             </div>
           </li>
         ))}
