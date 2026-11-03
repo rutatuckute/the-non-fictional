@@ -40,17 +40,9 @@ import styles from "./narrative.module.css"
 const WAYS = {
   story: {
     title: ["Relier les points", "Connect the dots"],
-    desc: [
-      "Suivre un fil : d'une préoccupation aux chiffres officiels.",
-      "Follow one thread: from a concern to the official figures.",
-    ],
   },
   explore: {
     title: ["Creuser les données", "Dig into the data"],
-    desc: [
-      "Choisir une question et aller directement aux données.",
-      "Choose a question and go straight to the data behind it.",
-    ],
   },
 }
 

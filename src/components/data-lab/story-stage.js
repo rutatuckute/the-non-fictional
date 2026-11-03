@@ -66,9 +66,6 @@ const Ways = ({ f, ways, mode, full, resume, onStory, onExplore }) => (
               <span className={styles.wayResume}> · {resume}</span>
             ) : null}
           </span>
-          {full ? (
-            <span className={styles.wayDesc}>{f.L(ways[key].desc)}</span>
-          ) : null}
         </span>
       </button>
     ))}

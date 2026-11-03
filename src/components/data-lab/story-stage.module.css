@@ -218,7 +218,7 @@
 .story .ways.isFull .wayIcon {
   width: 21px;
   height: 21px;
-  margin-top: 3px;
+  margin-top: 1px;
 }
 .story .way[aria-current] .wayIcon {
   stroke: var(--nav);
@@ -247,13 +247,6 @@
 .story .wayResume {
   color: var(--text-metadata);
   font-weight: 400;
-}
-.story .wayDesc {
-  color: var(--text-metadata);
-  font: 400 12px / 1.4 var(--font-functional);
-}
-.story .way:hover .wayDesc {
-  color: var(--text-secondary);
 }
 .story .explorer {
   min-width: 0;
@@ -414,6 +407,7 @@
   .story .ways.isFull {
     flex-direction: column;
     gap: 12px;
+    margin-bottom: 10px;
   }
   .story .where {
     flex-basis: 100%;
