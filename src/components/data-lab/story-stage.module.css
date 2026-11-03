@@ -237,7 +237,7 @@
   display: grid;
   grid-template-columns: minmax(220px, 0.62fr) minmax(0, 1.9fr);
   gap: 0 40px;
-  min-height: 612px;
+  min-height: 640px;
 }
 .story .caption {
   display: flex;
@@ -280,8 +280,11 @@
 .story.isWide .caption {
   position: relative;
   z-index: 3;
-  justify-content: flex-start;
-  padding-top: 64px;
+  justify-self: start;
+  justify-content: center;
+  width: 25cqw;
+  min-height: 600px;
+  margin-left: 16cqw;
   pointer-events: none;
 }
 .story.isFull .body {
@@ -386,6 +389,9 @@
   }
   .story .caption,
   .story.isWide .caption {
+    width: auto;
+    min-height: 0;
+    margin-left: 0;
     padding-top: 0;
     margin-bottom: 14px;
   }

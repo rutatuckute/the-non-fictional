@@ -360,17 +360,53 @@ function BarometerGrid({ f }) {
   )
 }
 
+// The page's sections: the method is shown for one at a time. Sections not
+// built yet are listed but can't be chosen.
+const PARTS = [
+  ["state", ["L'état des choses", "The state of things"], true],
+  ["happening", ["Ce qui se passe", "What is happening"], false],
+  [
+    "discourse",
+    ["Discours public et attention", "Public discourse and attention"],
+    false,
+  ],
+]
+
 export default function Methodology({ f }) {
   const [flow, setFlow] = React.useState(false)
+  const [part, setPart] = React.useState("state")
   return (
     <section
       className={styles.section}
       id="method"
       aria-labelledby="method-title"
     >
-      <h2 className={styles.title} id="method-title">
-        {f.L(["Méthode et sources", "Method and sources"])}
-      </h2>
+      <div className={styles.methodHead}>
+        <h2 className={styles.title} id="method-title">
+          {f.L(["Méthode et sources", "Method and sources"])}
+        </h2>
+        <div
+          className={styles.partToggle}
+          role="group"
+          aria-label={f.L([
+            "Méthode de quelle section ?",
+            "Method for which section?",
+          ])}
+        >
+          {PARTS.map(([key, label, ready]) => (
+            <button
+              key={key}
+              type="button"
+              disabled={!ready}
+              aria-pressed={part === key}
+              title={ready ? undefined : f.L(["À venir", "To come"])}
+              onClick={() => setPart(key)}
+            >
+              {f.L(label)}
+            </button>
+          ))}
+        </div>
+      </div>
       <p className={styles.rule}>
         {f.L([
           "Des préoccupations aux données, en cinq étapes. Chacune s'ouvre pour montrer comment elle a été faite.",

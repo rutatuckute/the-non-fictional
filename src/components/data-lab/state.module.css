@@ -65,8 +65,8 @@
 }
 .section .sub {
   max-width: none;
-  color: var(--text-secondary);
-  font: 400 17px / 1.6 var(--font-functional);
+  color: var(--text-metadata);
+  font: 400 13px / 1.5 var(--font-functional);
 }
 
 /* Topic chips */

@@ -1,7 +1,7 @@
 import * as React from "react"
 
 import BAROMETERS from "./data/topics.json"
-import { NOTES, say } from "./story-copy"
+import { NOTES, dots, say } from "./story-copy"
 import { shared, still, useArrived, useCount } from "./story-motion"
 import { Disclosure } from "./story-parts"
 import { KEPT, TOPICS } from "./topics"
@@ -17,11 +17,9 @@ import styles from "./narrative.module.css"
 const ASK = {
   en: {
     q: "What do you think are the two most important issues facing France at the moment?",
-    by: "Standard Eurobarometer, QA3",
   },
   fr: {
     q: "Parmi les enjeux suivants, quels sont les deux qui vous préoccupent le plus à titre personnel ?",
-    by: "Ipsos BVA, Fractures françaises",
   },
 }
 // The answers to that question as it was asked, with their shares
@@ -96,11 +94,14 @@ export const Interview = ({ mode, topic, f }) => {
           img.left - box.left + img.width * MIC[0],
           img.top - box.top + img.height * MIC[1],
         ],
-        b: [q.left - box.left - 14, q.top - box.top + 22],
+        // the question is to the left: the line leaves its first row and goes
+        // over the interviewer's hat to the microphone
+        b: [q.right - box.left + 16, q.top - box.top + 24],
+        top: img.top - box.top - 26,
       })
     }
     // once the figures have settled in their new place
-    const t = setTimeout(measure, still() ? 0 : 760)
+    const t = setTimeout(measure, still() ? 0 : 940)
     window.addEventListener("resize", measure)
     return () => {
       clearTimeout(t)
@@ -108,7 +109,7 @@ export const Interview = ({ mode, topic, f }) => {
     }
   }, [mode, f.lang])
   const path = line
-    ? `M ${line.a[0]} ${line.a[1]} C ${line.a[0] + (line.b[0] - line.a[0]) * 0.55} ${line.a[1]}, ${line.b[0] - 40} ${line.b[1]}, ${line.b[0]} ${line.b[1]}`
+    ? `M ${line.b[0]} ${line.b[1]} C ${line.b[0] + 50} ${line.top}, ${line.a[0] - 40} ${line.top}, ${line.a[0]} ${line.a[1]}`
     : null
 
   return (
@@ -133,7 +134,6 @@ export const Interview = ({ mode, topic, f }) => {
           <p className={styles.ask} lang={f.lang === "fr" ? "fr" : "en"}>
             {ask.q}
           </p>
-          <span className={styles.askBy}>{ask.by}</span>
         </div>
       ) : null}
       {path ? (
@@ -175,7 +175,7 @@ export const Interview = ({ mode, topic, f }) => {
                       : undefined
                   }
                 >
-                  {a.text}
+                  {dots(a.text)}
                 </span>
                 {i === 0 ? (
                   <span

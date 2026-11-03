@@ -14,6 +14,52 @@
   font: 340 clamp(32px, 3.2vw, 44px) / 1.08 var(--font-editorial);
   letter-spacing: -0.015em;
 }
+/* Which section the method is about: a quiet choice beside the title */
+.section .methodHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 28px;
+  margin-bottom: 28px;
+}
+.section .methodHead .title {
+  margin: 0;
+}
+.section .partToggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+}
+.section .partToggle button {
+  padding: 0 0 3px;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: none;
+  color: var(--text-secondary);
+  font: 400 13px / 1.4 var(--font-functional);
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease;
+}
+.section .partToggle button:hover:not(:disabled) {
+  color: var(--text-primary);
+}
+.section .partToggle button[aria-pressed="true"] {
+  border-bottom-color: var(--form);
+  color: var(--text-primary);
+}
+.section .partToggle button:disabled {
+  color: var(--text-metadata);
+  opacity: 0.6;
+  cursor: default;
+}
+@media (prefers-reduced-motion: reduce) {
+  .section .partToggle button {
+    transition: none;
+  }
+}
 .section .block + .block {
   margin-top: clamp(48px, 6vw, 72px);
 }

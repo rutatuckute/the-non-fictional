@@ -20,6 +20,9 @@ export const say = (f, entry, vars = {}) => {
   return f.lang === "fr" ? f.L([s, s]) : s
 }
 
+// A survey's slashes, as centred dots ("Rising prices · inflation · …")
+export const dots = text => text.replace(/\s*\/\s*/g, " · ")
+
 export const ACTS = [
   { id: "matters", en: "What matters", fr: "Ce qui compte" }, // FR-DRAFT
   { id: "said", en: "What is said", fr: "Ce qui se dit" }, // FR-DRAFT

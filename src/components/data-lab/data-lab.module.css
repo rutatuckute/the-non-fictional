@@ -11,10 +11,10 @@
   padding: clamp(40px, 7vw, 88px) 0 clamp(64px, 9vw, 120px);
 }
 
-.lab .title {
-  max-width: 980px;
+/* the title is sized from the column, so it holds its row at every width */
+.head {
+  container-type: inline-size;
 }
-
 .lab .title span {
   display: block;
 }
@@ -70,19 +70,27 @@
 .lab .title {
   margin: 18px 0 24px;
   color: var(--text-primary);
-  font: 300 clamp(40px, 6vw, 80px) / 0.98 var(--font-editorial);
+  font: 300 clamp(38px, 6cqw, 74px) / 0.98 var(--font-editorial);
   letter-spacing: -0.03em;
   font-variation-settings: "opsz" 72;
   text-wrap: balance;
 }
 
-/* Lead role, on the same measure as the title above it. */
+.lab .title[data-lang="fr"] {
+  font-size: clamp(40px, 6vw, 80px);
+}
+
+/* Lead role. */
 .lab .lead {
   max-width: 980px;
   margin: 0;
   color: var(--text-secondary);
   font: 400 clamp(19px, 1.6vw, 21px) / 1.55 var(--font-editorial);
   font-variation-settings: "opsz" 18;
+}
+
+.lab .spoiler {
+  color: var(--form);
 }
 
 .toggle button:focus-visible {

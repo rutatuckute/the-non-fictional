@@ -16,13 +16,21 @@ const STRINGS = {
       "France\u00a0: au-\u2060delà des récits.",
       "Les données, telles quelles.",
     ],
-    lead: "Une tentative de cartographier l'état des choses au-delà des convictions préexistantes et des récits concurrents. Non pas les données comme vérité absolue (attention, spoiler : elles aussi se manipulent), mais comme un humble point de départ : ce que montrent les données et d'où elles viennent.",
+    lead: [
+      "Une tentative de cartographier l'état des choses au-delà des convictions préexistantes et des récits concurrents. Non pas les données comme vérité absolue (",
+      "attention, spoiler",
+      " : elles aussi se manipulent), mais comme un humble point de départ : ce que montrent les données et d'où elles viennent.",
+    ],
     toggle: "Langue",
   },
   en: {
     label: "Data\u00a0Lab · France · Autumn\u00a02026",
-    title: ["France: beyond narratives.", "Data, as is."],
-    lead: "An attempt to map the state of things beyond preexisting convictions and competing narratives. Not data as absolute truth (spoiler alert: it can be manipulated too), but as a humble starting point: what the data shows and where it comes from.",
+    title: ["France: beyond narratives. Data, as is."],
+    lead: [
+      "An attempt to map the state of things beyond preexisting convictions and competing narratives. Not data as absolute truth (",
+      "spoiler alert",
+      ": it can be manipulated too), but as a humble starting point: what the data shows and where it comes from.",
+    ],
     toggle: "Language",
   },
 }
@@ -92,17 +100,20 @@ export default function DataLab() {
             ))}
           </div>
         </div>
-        {/* Title and lead on the left, the page's sections on the right. */}
+        {/* In English the title holds one row across the column; in French, two
+            beats, each on its own line. */}
+        <h1 className={styles.title} data-lang={lang}>
+          {t.title.map(line => (
+            <span key={line}>{line}</span>
+          ))}
+        </h1>
+        {/* The lead on the left, the page's sections on the right. */}
         <div className={styles.intro}>
-          <div>
-            {/* Two beats, each on its own line at every width. */}
-            <h1 className={styles.title}>
-              {t.title.map(line => (
-                <span key={line}>{line}</span>
-              ))}
-            </h1>
-            <p className={styles.lead}>{t.lead}</p>
-          </div>
+          <p className={styles.lead}>
+            {t.lead[0]}
+            <span className={styles.spoiler}>{t.lead[1]}</span>
+            {t.lead[2]}
+          </p>
           {/* The page's sections, as the mockup set them. Sections not built
               yet are listed but not linked. */}
           <nav

@@ -131,7 +131,7 @@ const buildBeats = (topic, questions, f) => {
       { memory: name },
       { k: word(f, angles.length, true) },
     )
-  const memory = `${name} / ${x.short ? say(f, x.short) : followed ? f.L(followed.name) : ""}`
+  const memory = `${name} · ${x.short ? say(f, x.short) : followed ? f.L(followed.name) : ""}`
   if (th) {
     const argument = x.argument
       ? say(f, x.argument)

@@ -284,17 +284,17 @@
 }
 .beat .street {
   position: absolute;
-  top: 24px;
-  left: 52%;
+  top: 8px;
+  left: 43%;
   z-index: 1;
-  width: min(390px, 36%);
+  width: min(500px, 40.5%);
   transition: left 900ms var(--ease);
 }
 .beat .interview[data-beat="1"] .street {
-  left: 27%;
+  left: 56%;
 }
 .beat .interview[data-beat="2"] .street {
-  left: 2%;
+  left: 4%;
 }
 .beat .street img {
   position: absolute;
@@ -317,7 +317,7 @@
 /* the house disc: one colour, grain, behind the two figures */
 .beat .disc {
   position: absolute;
-  top: 62%;
+  top: 52%;
   left: 50%;
   width: 130%;
   aspect-ratio: 1;
@@ -330,7 +330,7 @@
     rgb(201 106 75 / 0.05) 70%,
     transparent 71%
   );
-  transform: translate(-50%, -50%) scale(0.7);
+  transform: translate(-50%, -50%) scale(0.84);
   transition: transform 900ms var(--ease);
 }
 .beat .disc::after {
@@ -343,30 +343,30 @@
 }
 .beat .interview[data-beat="1"] .disc,
 .beat .interview[data-beat="2"] .disc {
-  transform: translate(-50%, -50%) scale(0.86);
+  transform: translate(-50%, -50%) scale(0.92);
 }
 /* the question, as asked: large italic, no frame; a fine terracotta line
  * from the microphone */
 .beat .askWrap {
   position: absolute;
-  top: 58px;
-  left: 66%;
+  top: 84px;
+  left: 0;
   z-index: 2;
-  display: grid;
-  gap: 14px;
-  width: min(360px, 32%);
-  animation: rise 500ms var(--ease) 640ms backwards;
+  width: min(480px, 44%);
+  animation: fromLeft 560ms var(--ease) 460ms backwards;
+}
+@keyframes fromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
 }
 .beat .ask {
   margin: 0;
   color: var(--ink);
-  font: italic 400 clamp(24px, 2.44cqw, 31px) / 1.26 var(--font-editorial);
+  font: italic 400 clamp(26px, 2.9cqw, 36px) / 1.24 var(--font-editorial);
   letter-spacing: -0.006em;
   text-wrap: pretty;
-}
-.beat .askBy {
-  color: var(--meta);
-  font: 400 12px / 1.4 var(--font-functional);
 }
 .beat .connector {
   position: absolute;
@@ -391,9 +391,9 @@
 /* the answers: said loose, then one comes forward with its figure */
 .beat .answersWrap {
   position: absolute;
-  top: 40px;
+  top: 56px;
   right: 0;
-  left: 40%;
+  left: 47%;
   z-index: 2;
   display: grid;
   gap: 26px;
@@ -521,42 +521,38 @@
   color: var(--ink);
   font: 400 18px / 1.25 var(--font-editorial);
 }
-.beat .angleBar {
+.beat .angleIcons {
   display: flex;
+  flex-wrap: wrap;
   gap: 2px;
-  height: 9px;
+  min-width: 0;
 }
-.beat .angleBar i {
-  height: 100%;
-  border-radius: 1px;
+/* One icon per text */
+.beat .angleIcons i,
+.beat .keyItems i {
+  display: block;
+  flex: none;
+  width: 11px;
+  height: 11px;
   background: var(--seg);
-  transform-origin: 0 50%;
-  animation: grow 700ms var(--ease) calc(var(--i) * 130ms + 260ms) backwards;
+  -webkit-mask: var(--glyph) center / contain no-repeat;
+  mask: var(--glyph) center / contain no-repeat;
 }
+/* A question, a statement, a fact-check: shape says which, tone follows it */
 .beat [data-k="p"] {
+  --glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 3h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-9l-5 4.5V17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z'/%3E%3C/svg%3E");
   --seg: #ddd7cd;
-  --edge: transparent;
 }
 .beat [data-k="g"] {
-  --seg: #8c867d;
-  --edge: transparent;
+  --glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='6' y='1' width='12' height='14' rx='6'/%3E%3Cpath d='M10.4 14h3.2v5H18v3.5H6V19h4.4z'/%3E%3C/svg%3E");
+  --seg: #a39d93;
 }
 .beat [data-k="f"] {
-  --seg: transparent;
-  --edge: #8c867d;
+  --glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M10 2a8 8 0 0 1 6.3 12.9l5.4 5.4-2.1 2.1-5.4-5.4A8 8 0 1 1 10 2zm0 3.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6z'/%3E%3C/svg%3E");
+  --seg: #ddd7cd;
 }
-.beat .isThreadAngle [data-k="p"] {
+.beat .isThreadAngle .angleIcons [data-k] {
   --seg: var(--thread);
-}
-.beat .isThreadAngle [data-k="g"] {
-  --seg: rgb(201 106 75 / 0.55);
-}
-.beat .isThreadAngle [data-k="f"] {
-  --edge: var(--thread);
-}
-.beat .angleBar i[data-k="f"],
-.beat .keyItems i[data-k="f"] {
-  box-shadow: inset 0 0 0 1px var(--edge);
 }
 .beat .isThreadAngle .angleName {
   color: var(--thread);
@@ -589,12 +585,6 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-}
-.beat .keyItems i {
-  width: 14px;
-  height: 8px;
-  border-radius: 1px;
-  background: var(--seg);
 }
 .beat .trail {
   display: grid;
@@ -1977,7 +1967,7 @@
   .beat .angleRow {
     grid-template-columns: minmax(0, 1fr) 44px;
   }
-  .beat .angleBar {
+  .beat .angleIcons {
     grid-column: 1 / -1;
     grid-row: 2;
   }
@@ -2132,7 +2122,7 @@
   flex: none;
 }
 .beat .interview {
-  min-height: 600px;
+  min-height: 640px;
 }
 @media (max-width: 860px) {
   .beat .interview {

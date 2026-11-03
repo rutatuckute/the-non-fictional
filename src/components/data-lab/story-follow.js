@@ -9,7 +9,7 @@ import { TOPICS } from "./topics"
 import styles from "./narrative.module.css"
 
 // What is said. The followed concern opens into the angles it is debated
-// from: one bar per angle, the volume of collected texts. The followed angle,
+// from: one row per angle, one icon per collected text. The followed angle,
 // in terracotta, opens into the chamber. The evidence trail (who said what,
 // when, the whole quotation one click away) lives in "Behind the story".
 
@@ -224,20 +224,22 @@ const TrailItem = ({ x, open, onOpen, f }) => {
   )
 }
 
-const Row = ({ a, i, max, f, delay }) => (
+const Row = ({ a, f, delay }) => (
   <>
     <span className={styles.angleName}>{f.L(a.name)}</span>
+    {/* one icon per text: a bubble for a question, a microphone for a
+        statement, a magnifying glass for a fact-check */}
     <span
-      className={styles.angleBar}
+      className={styles.angleIcons}
       role="img"
       aria-label={PARTS.map(([k, l]) => `${f.L(l)} ${f.num(a.n[k])}`).join(
         ", ",
       )}
     >
-      {PARTS.map(([k]) =>
-        a.n[k] ? (
-          <i key={k} data-k={k} style={{ width: `${(a.n[k] / max) * 100}%` }} />
-        ) : null,
+      {PARTS.flatMap(([k]) =>
+        Array.from({ length: a.n[k] }, (_, j) => (
+          <i key={`${k}${j}`} data-k={k} />
+        )),
       )}
     </span>
     <span className={styles.angleN}>
@@ -268,7 +270,6 @@ const Key = ({ f, children }) => (
 export const Debates = ({ topic, f, total, onMore }) => {
   const list = ANGLES[topic] || []
   const followed = threadAngle(topic)
-  const max = Math.max(1, ...list.map(angleTotal))
   if (!list.length) return null
   return (
     <div className={styles.debates}>
@@ -286,7 +287,7 @@ export const Debates = ({ topic, f, total, onMore }) => {
             }}
           >
             <div className={styles.angleRow}>
-              <Row a={a} i={i} max={max} f={f} delay={200 + i * 130} />
+              <Row a={a} f={f} delay={200 + i * 130} />
             </div>
           </li>
         ))}
@@ -317,7 +318,6 @@ export const AngleExplorer = ({ topic, f }) => {
   const [open, setOpen] = React.useState(-1)
   React.useEffect(() => setOpen(-1), [chosen])
   if (!list.length) return null
-  const max = Math.max(1, ...list.map(angleTotal))
   const angle = list.find(a => a.id === chosen) || list[0]
   const items = angle.id === followed?.id ? trailFor(topic) : examplesFor(angle)
   return (
@@ -335,7 +335,7 @@ export const AngleExplorer = ({ topic, f }) => {
               aria-pressed={a.id === angle.id}
               onClick={() => setChosen(a.id)}
             >
-              <Row a={a} i={i} max={max} f={f} />
+              <Row a={a} f={f} />
             </button>
           </li>
         ))}
