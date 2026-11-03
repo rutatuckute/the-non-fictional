@@ -41,13 +41,64 @@
   gap: 20px;
   margin-bottom: 16px;
 }
-/* once the story has begun, the heading has done its work */
-.section .head[hidden] {
-  display: none;
+/* once the story has begun the heading steps back, and leads to its beginning */
+.section .head {
+  position: relative;
 }
-.section.isReading {
-  padding-top: 20px;
-  margin-top: 20px;
+.section .head .numeral,
+.section .head .title {
+  transition: opacity 500ms ease;
+}
+.section .head.isQuiet .numeral,
+.section .head.isQuiet .title {
+  opacity: 0.4;
+}
+.section .head.isQuiet:has(.titleBack:hover) .numeral,
+.section .head.isQuiet:has(.titleBack:hover) .title,
+.section .head.isQuiet:has(.titleBack:focus-visible) .numeral,
+.section .head.isQuiet:has(.titleBack:focus-visible) .title {
+  opacity: 1;
+}
+.section .titleBack {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.section .startOver {
+  position: absolute;
+  right: 0;
+  bottom: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-secondary, var(--text-metadata));
+  font: 400 13px / 1.3 var(--font-functional);
+  cursor: pointer;
+}
+.section .startOver:hover {
+  color: var(--text-primary);
+}
+@media (max-width: 860px) {
+  /* no room beside the title: it takes a line it always keeps */
+  .section .head {
+    margin-bottom: 30px;
+  }
+  .section .startOver {
+    right: auto;
+    bottom: -22px;
+    left: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .section .head .numeral,
+  .section .head .title {
+    transition: none;
+  }
 }
 .section .numeral {
   color: var(--form);
@@ -55,15 +106,10 @@
   font-variation-settings: "opsz" 60;
 }
 .section .title {
-  margin: 0 0 6px;
+  margin: 0;
   color: var(--text-primary);
   font: 340 clamp(32px, 3.2vw, 44px) / 1.08 var(--font-editorial);
   letter-spacing: -0.015em;
-}
-.section .sub {
-  max-width: none;
-  color: var(--text-metadata);
-  font: 400 13px / 1.5 var(--font-functional);
 }
 
 /* Topic chips */

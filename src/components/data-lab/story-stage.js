@@ -248,6 +248,16 @@ export default function StoryStage({
     document.addEventListener("click", through)
     return () => document.removeEventListener("click", through)
   })
+  // the section's heading leads back to the beginning, from the story or the
+  // explorer
+  React.useEffect(() => {
+    const restart = () => {
+      onMode?.("story")
+      go(0)
+    }
+    window.addEventListener("datalab:restart", restart)
+    return () => window.removeEventListener("datalab:restart", restart)
+  })
   const touch = React.useRef(null)
   const onTouchStart = e => {
     const t = e.touches[0]

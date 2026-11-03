@@ -382,26 +382,23 @@ export default function StateOfThings({ f }) {
   const [id, setId] = React.useState(DEFAULT)
   // the box opens on the story; a question link (?q=) opens the explorer
   const [mode, setMode] = React.useState("story")
-  // The heading introduces the story, then leaves. That happens once, on entry:
-  // the scene moves up, and fits the window if it didn't; afterwards nothing here
-  // moves. Going back to the opening restores it with the scene held in place.
+  // The heading stays with the story, quieter once it has begun, and leads back
+  // to its beginning. Nothing moves when the story begins, except that the page
+  // scrolls just enough, once, for the scene to fit the window if it didn't.
   const [begun, setBegun] = React.useState(false)
-  const topBefore = React.useRef(null)
-  const onBegun = next => {
-    topBefore.current = frame.current?.getBoundingClientRect().top ?? null
-    setBegun(next)
-  }
   const reading = begun && mode === "story"
-  React.useLayoutEffect(() => {
+  const atStart = !begun && mode === "story"
+  const onBegun = next => {
+    setBegun(next)
+    if (!next) return
     const box = frame.current?.getBoundingClientRect()
-    const before = topBefore.current
-    topBefore.current = null
-    if (!box || before == null) return
-    if (reading) {
-      if (box.top < 0 || box.bottom > window.innerHeight)
-        window.scrollBy(0, box.top - 12)
-    } else if (mode === "story") window.scrollBy(0, box.top - before)
-  }, [reading]) // eslint-disable-line react-hooks/exhaustive-deps
+    if (box && (box.top < 0 || box.bottom > window.innerHeight))
+      window.scrollBy(
+        0,
+        Math.min(box.top - 12, box.bottom - window.innerHeight + 12),
+      )
+  }
+  const restart = () => window.dispatchEvent(new Event("datalab:restart"))
   const frame = React.useRef(null)
   const toFrame = () => frame.current?.scrollIntoView({ block: "start" })
   const [tip, showTip, hideTip] = useTip()
@@ -459,23 +456,30 @@ export default function StateOfThings({ f }) {
 
   return (
     <section
-      className={`${styles.section} ${reading ? styles.isReading : ""}`}
+      className={styles.section}
       id="state"
       aria-labelledby="state-title"
     >
-      <header className={styles.head} hidden={reading}>
+      <header className={`${styles.head} ${reading ? styles.isQuiet : ""}`}>
         <span className={styles.numeral}>01</span>
-        <div>
-          <h2 className={styles.title} id="state-title">
-            {f.L(["L'état des choses", "The state of things"])}
-          </h2>
-          <p className={styles.sub}>
-            {f.L([
-              "Ce qui préoccupe les Français, les questions du débat public, et les données officielles qui aident à y répondre.",
-              "What concerns people in France, the questions of public debate, and the official data that helps answer them.",
-            ])}
-          </p>
-        </div>
+        <h2 className={styles.title} id="state-title">
+          {atStart ? (
+            f.L(["L'état des choses", "The state of things"])
+          ) : (
+            <button
+              type="button"
+              className={styles.titleBack}
+              onClick={restart}
+            >
+              {f.L(["L'état des choses", "The state of things"])}
+            </button>
+          )}
+        </h2>
+        {atStart ? null : (
+          <button type="button" className={styles.startOver} onClick={restart}>
+            ← {f.L(["Recommencer", "Start over"])}
+          </button>
+        )}
       </header>
 
       <Story
