@@ -426,3 +426,57 @@
     overflow-x: auto;
   }
 }
+
+/* What a stage holds beyond its summary: for one concern, opened on demand */
+.wrap .topicFilter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 22px;
+}
+.wrap .topicFilter button {
+  padding: 0 0 2px;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: none;
+  color: var(--text-secondary);
+  font: 400 13px / 1.4 var(--font-functional);
+  cursor: pointer;
+}
+.wrap .topicFilter button:hover {
+  color: var(--text-primary);
+}
+.wrap .topicFilter button[aria-pressed="true"] {
+  border-bottom-color: var(--form);
+  color: var(--text-primary);
+}
+.wrap .parts {
+  margin-top: 18px;
+}
+.wrap .part {
+  border-top: 1px solid var(--rule);
+  scroll-margin-top: 48px;
+}
+.wrap .part summary {
+  display: flex;
+  gap: 10px;
+  padding: 12px 0;
+  color: var(--text-primary);
+  font: 400 18px / 1.3 var(--font-editorial);
+  list-style: none;
+  cursor: pointer;
+}
+.wrap .part summary::-webkit-details-marker {
+  display: none;
+}
+.wrap .part summary::before {
+  color: var(--form);
+  font-family: var(--font-functional);
+  content: "+";
+}
+.wrap .part[open] summary::before {
+  content: "−";
+}
+.wrap .partBody {
+  padding: 4px 0 24px;
+}

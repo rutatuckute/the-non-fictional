@@ -421,17 +421,37 @@ const DETAIL = {
   data: Data,
 }
 
-export default function MethodPipeline({ f, deep }) {
-  const [open, setOpen] = React.useState(null)
-  const [deeper, setDeeper] = React.useState(false)
+// One part of a stage: opens on demand, and only then renders what it holds
+const Part = ({ id, label, open, onToggle, children }) => (
+  <details
+    id={`method-part-${id}`}
+    className={styles.part}
+    open={open}
+    onToggle={e => onToggle(id, e.currentTarget.open)}
+  >
+    <summary>{label}</summary>
+    {open ? <div className={styles.partBody}>{children}</div> : null}
+  </details>
+)
+
+// The stage on show, the parts open and the concern selected are held by the
+// section, so a link from the story or the explorer can set them.
+export default function MethodPipeline({
+  f,
+  deep,
+  open,
+  onOpen,
+  parts,
+  partsOpen,
+  onPart,
+  topic,
+  onTopic,
+}) {
   const stages = STAGES(f)
   const stage = stages.find(s => s.id === open)
   const Detail = open ? DETAIL[open] : null
-  const choose = id => {
-    setOpen(current => (current === id ? null : id))
-    setDeeper(false)
-  }
-
+  const own = open ? parts(open, topic) : []
+  const deepId = "detail"
   return (
     <div className={styles.wrap}>
       <div className={styles.pipeline}>
@@ -443,7 +463,7 @@ export default function MethodPipeline({ f, deep }) {
               className={styles.stage}
               aria-expanded={open === s.id}
               aria-controls="method-stage"
-              onClick={() => choose(s.id)}
+              onClick={() => onOpen(open === s.id ? null : s.id)}
             >
               <span className={styles.stageN}>{s.n}</span>
               <span className={styles.stageTitle}>{f.L(s.title)}</span>
@@ -477,23 +497,51 @@ export default function MethodPipeline({ f, deep }) {
               type="button"
               className={styles.close}
               aria-label={f.L(["Fermer", "Close"])}
-              onClick={() => choose(open)}
+              onClick={() => onOpen(null)}
             >
               ×
             </button>
           </div>
           <Detail f={f} />
-          <button
-            type="button"
-            className={styles.more}
-            aria-expanded={deeper}
-            onClick={() => setDeeper(d => !d)}
-          >
-            {deeper
-              ? f.L(["Refermer le détail", "Close the detail"])
-              : `${f.L(stage.more)} →`}
-          </button>
-          {deeper ? <div className={styles.deep}>{deep[open]}</div> : null}
+          {own.some(([, , , topical]) => topical) ? (
+            <div
+              className={styles.topicFilter}
+              role="group"
+              aria-label={f.L(["Préoccupation", "Concern"])}
+            >
+              {KEPT.filter(k => TOPICS[k].measurable !== false).map(k => (
+                <button
+                  key={k}
+                  type="button"
+                  aria-pressed={k === topic}
+                  onClick={() => onTopic(k)}
+                >
+                  {f.L(TOPICS[k].short)}
+                </button>
+              ))}
+            </div>
+          ) : null}
+          <div className={styles.parts}>
+            {own.map(([id, label, node]) => (
+              <Part
+                key={id}
+                id={id}
+                label={f.L(label)}
+                open={!!partsOpen[id]}
+                onToggle={onPart}
+              >
+                {node}
+              </Part>
+            ))}
+            <Part
+              id={deepId}
+              label={f.L(stage.more)}
+              open={!!partsOpen[deepId]}
+              onToggle={onPart}
+            >
+              {deep[open]}
+            </Part>
+          </div>
         </section>
       ) : null}
     </div>

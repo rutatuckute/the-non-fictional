@@ -13,8 +13,8 @@ const STRINGS = {
   fr: {
     label: "Data\u00a0Lab · France · Automne\u00a02026",
     title: [
-      "France\u00a0: au-\u2060delà des récits.",
-      "Les données, telles quelles.",
+      "France\u00a0:",
+      "Au-\u2060delà des récits. Les données, telles quelles.",
     ],
     lead: [
       "Une tentative de cartographier l'état des choses au-delà des convictions préexistantes et des récits concurrents. Non pas les données comme vérité absolue (",
@@ -25,7 +25,7 @@ const STRINGS = {
   },
   en: {
     label: "Data\u00a0Lab · France · Autumn\u00a02026",
-    title: ["France: beyond narratives. Data, as is."],
+    title: ["France:", "Beyond narratives. Data, as is."],
     lead: [
       "An attempt to map the state of things beyond preexisting convictions and competing narratives. Not data as absolute truth (",
       "spoiler alert",
@@ -100,12 +100,9 @@ export default function DataLab() {
             ))}
           </div>
         </div>
-        {/* In English the title holds one row across the column; in French, two
-            beats, each on its own line. */}
-        <h1 className={styles.title} data-lang={lang}>
-          {t.title.map(line => (
-            <span key={line}>{line}</span>
-          ))}
+        <h1 className={styles.title}>
+          <span className={styles.titleMain}>{t.title[0]}</span>
+          <span className={styles.titleSub}>{t.title[1]}</span>
         </h1>
         {/* The lead on the left, the page's sections on the right. */}
         <div className={styles.intro}>

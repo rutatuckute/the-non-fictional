@@ -2,6 +2,7 @@ import * as React from "react"
 
 import DATA from "./data/topics.json"
 import MethodFlow from "./methodology-flow"
+import { stageParts } from "./method-sections"
 import MethodPipeline, { SourceList } from "./methodology-pipeline"
 import MethodQuestions from "./methodology-questions"
 import MethodSteps from "./methodology-steps"
@@ -375,12 +376,66 @@ const PARTS = [
 export default function Methodology({ f }) {
   const [flow, setFlow] = React.useState(false)
   const [part, setPart] = React.useState("state")
+  // the stage on show, its open parts, the concern selected
+  const [open, setOpen] = React.useState(null)
+  const [partsOpen, setPartsOpen] = React.useState({})
+  const [topic, setTopic] = React.useState("cost")
+  // arrived through a link: where to go back to
+  const [back, setBack] = React.useState(null)
+
+  const chooseStage = id => {
+    setOpen(id)
+    setPartsOpen({})
+  }
+  const togglePart = (id, on) =>
+    setPartsOpen(o => (!!o[id] === on ? o : { ...o, [id]: on }))
+
+  // A link from the story or the explorer: this stage, this concern, this part
+  // open, and a way back to exactly where the reader was.
+  React.useEffect(() => {
+    const go = ({ detail }) => {
+      setOpen(detail.stage)
+      setPartsOpen(detail.part ? { [detail.part]: true } : {})
+      if (detail.topic) setTopic(detail.topic)
+      setBack({
+        y: window.scrollY,
+        label: detail.from,
+        focus: document.activeElement,
+      })
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() =>
+          (
+            document.getElementById(`method-part-${detail.part}`) ||
+            document.getElementById("method-stage")
+          )?.scrollIntoView({ block: "start" }),
+        ),
+      )
+    }
+    const follow = ({ detail }) => setTopic(detail)
+    window.addEventListener("datalab:method", go)
+    window.addEventListener("datalab:topic", follow)
+    return () => {
+      window.removeEventListener("datalab:method", go)
+      window.removeEventListener("datalab:topic", follow)
+    }
+  }, [])
+  const goBack = () => {
+    window.scrollTo({ top: back.y })
+    back.focus?.focus?.({ preventScroll: true })
+    setBack(null)
+  }
+
   return (
     <section
       className={styles.section}
       id="method"
       aria-labelledby="method-title"
     >
+      {back ? (
+        <button type="button" className={styles.backTo} onClick={goBack}>
+          ← {f.L(back.label)}
+        </button>
+      ) : null}
       <div className={styles.methodHead}>
         <h2 className={styles.title} id="method-title">
           {f.L(["Méthode et sources", "Method and sources"])}
@@ -416,6 +471,13 @@ export default function Methodology({ f }) {
 
       <MethodPipeline
         f={f}
+        open={open}
+        onOpen={chooseStage}
+        parts={(stage, t) => stageParts(stage, t, f)}
+        partsOpen={partsOpen}
+        onPart={togglePart}
+        topic={topic}
+        onTopic={setTopic}
         deep={{
           concerns: <BarometerGrid f={f} />,
           topics: <MethodSteps f={f} />,

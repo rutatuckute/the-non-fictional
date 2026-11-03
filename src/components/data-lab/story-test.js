@@ -2,7 +2,13 @@ import * as React from "react"
 
 import TESTS from "./data/tests.json"
 import THREADS from "./data/threads.json"
-import { FINDINGS, TEST_PARTS, THREAD_EXTRAS, say } from "./story-copy"
+import {
+  FINDINGS,
+  TEST_PARTS,
+  TEST_REVEALS,
+  THREAD_EXTRAS,
+  say,
+} from "./story-copy"
 import { shared, still } from "./story-motion"
 import { Disclosure, Ext, Verdict, day } from "./story-parts"
 import styles from "./narrative.module.css"
@@ -76,9 +82,8 @@ export const readTest = topic => {
   return { data, nb, cut, later, fell, rose }
 }
 
-// What each click brings out: a phrase with its questions (one phrase can hold
-// two), in the same order whichever language the sentence is in
-export const revealGroups = parts => {
+// A phrase with its questions (one phrase can hold two)
+const phrases = parts => {
   const groups = []
   parts.forEach((p, i) => {
     const last = groups.at(-1)
@@ -90,7 +95,7 @@ export const revealGroups = parts => {
 
 // the sentence, cut at its measurable phrases, in reading order
 const segments = (text, parts, anchor) => {
-  const marks = revealGroups(parts)
+  const marks = phrases(parts)
     .map(group => {
       const word = anchor(parts[group[0]])
       return { word, group, at: text.indexOf(word) }
@@ -109,8 +114,8 @@ const segments = (text, parts, anchor) => {
 }
 
 // One scene for the claim. reveal 0: the sentence alone, who said it, and the
-// fact-checker's verdict. Each click then underlines a phrase and draws it to
-// its definitions, until all are visible. Nothing moves to make room: the space
+// fact-checker's verdict. Two clicks then underline its phrases and draw them to
+// their definitions: first who and when, then what exactly, until all are visible. Nothing moves to make room: the space
 // for the definitions is held from the start. The sentence is in the reader's
 // language, the original a click away.
 //   mode "parts" | "evidence"
@@ -169,8 +174,7 @@ export const ClaimTest = ({ topic, mode, reveal = 0, f, onMore }) => {
       </div>
     )
   const fc = th.factcheck
-  const groups = revealGroups(parts)
-  const shown = new Set(groups.slice(0, reveal).flat())
+  const shown = new Set(TEST_REVEALS[topic].slice(0, reveal).flat())
   const anchor = p => (translated ? p.textEn : p.text)
   const segs = segments(
     translated ? th.test.translation : th.test.claim,
@@ -283,7 +287,7 @@ const statusOf = (r, weeks, f) => {
 }
 
 // `name` carries the definitions into the chart's headers in the story; the
-// same chart in "Behind the story" doesn't travel
+// same chart in Method and sources doesn't travel
 export const Evidence = ({
   topic,
   parts,
@@ -485,54 +489,70 @@ export const Evidence = ({
         </div>
         <p className={styles.caveat}>{say(f, FINDINGS.caveat)}</p>
       </div>
-      <Disclosure label={say(f, L.about)} className={styles.about}>
-        <h5>{say(f, L.cut)}</h5>
-        <p>
-          {say(f, FINDINGS[topic].established, {
-            fell: `${names(f, fell, IN)} (${fell.map(r => signed(f, r.claim - r.before)).join(", ")})`,
-            rose: names(f, rose, IN),
-          })}
-        </p>
-        <p>{say(f, FINDINGS[topic].suggested)}</p>
-        <h5>{say(f, L.measures)}</h5>
-        <ul>
-          {rows.map(r => (
-            <li key={r.geo}>
-              <b>{f.L(COUNTRY[r.geo])}</b>{" "}
-              {r.measure ? (
-                <Ext href={r.measure.source[1]}>{f.L(r.measure.what)}</Ext>
-              ) : (
-                f.L([
-                  "Aucune mesure trouvée ; la part fixe de la taxe reste plate.",
-                  "No measure found; the fixed part of the tax stays flat.",
-                ])
-              )}
-            </li>
-          ))}
-        </ul>
-        <h5>{say(f, L.open)}</h5>
-        <p>{say(f, FINDINGS[topic].open)}</p>
-        <h5>{say(f, L.method)}</h5>
-        <p>{say(f, FINDINGS.method)}</p>
-        <p>
-          {f.L(["Taux normaux de TVA : ", "Standard VAT rates: "])}
-          {Object.entries(data.vat)
-            .map(
-              ([g, v]) =>
-                `${f.L(COUNTRY[g])} ${f.num(v * 100)}${f.lang === "fr" ? " %" : "%"}`,
-            )
-            .join(" · ")}
-          .{" "}
-          <Ext href="https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en">
-            {f.L(data.source)}
-          </Ext>
-        </p>
-        {onMore ? (
+      {onMore ? (
+        <Disclosure label={say(f, L.about)} className={styles.about}>
+          <p>{say(f, FINDINGS.short)}</p>
           <button type="button" className={styles.expand} onClick={onMore}>
-            {f.L(["Derrière l'histoire", "Behind the story"])} →
+            {f.L(["Toute la méthode", "The full method"])} →
           </button>
-        ) : null}
-      </Disclosure>
+        </Disclosure>
+      ) : null}
+    </div>
+  )
+}
+
+// The whole explanation, in Method and sources: what the figures establish,
+// each country's measure, what they can't settle, how it was measured.
+export const EvidenceDetail = ({ topic, read, f }) => {
+  const { data, nb, fell, rose } = read
+  const rows = [
+    ...[...nb].sort((a, b) => a.claim - a.before - (b.claim - b.before)),
+    ...data.rows.filter(r => r.geo === "FR"),
+  ]
+  const L = FINDINGS.labels
+  return (
+    <div className={styles.about} data-full="">
+      <h5>{say(f, L.cut)}</h5>
+      <p>
+        {say(f, FINDINGS[topic].established, {
+          fell: `${names(f, fell, IN)} (${fell.map(r => signed(f, r.claim - r.before)).join(", ")})`,
+          rose: names(f, rose, IN),
+        })}
+      </p>
+      <p>{say(f, FINDINGS[topic].suggested)}</p>
+      <h5>{say(f, L.measures)}</h5>
+      <ul>
+        {rows.map(r => (
+          <li key={r.geo}>
+            <b>{f.L(COUNTRY[r.geo])}</b>{" "}
+            {r.measure ? (
+              <Ext href={r.measure.source[1]}>{f.L(r.measure.what)}</Ext>
+            ) : (
+              f.L([
+                "Aucune mesure trouvée ; la part fixe de la taxe reste plate.",
+                "No measure found; the fixed part of the tax stays flat.",
+              ])
+            )}
+          </li>
+        ))}
+      </ul>
+      <h5>{say(f, L.open)}</h5>
+      <p>{say(f, FINDINGS[topic].open)}</p>
+      <h5>{say(f, L.method)}</h5>
+      <p>{say(f, FINDINGS.method)}</p>
+      <p>
+        {f.L(["Taux normaux de TVA : ", "Standard VAT rates: "])}
+        {Object.entries(data.vat)
+          .map(
+            ([g, v]) =>
+              `${f.L(COUNTRY[g])} ${f.num(v * 100)}${f.lang === "fr" ? " %" : "%"}`,
+          )
+          .join(" · ")}
+        .{" "}
+        <Ext href="https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en">
+          {f.L(data.source)}
+        </Ext>
+      </p>
     </div>
   )
 }

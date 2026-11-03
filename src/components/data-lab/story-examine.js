@@ -11,7 +11,7 @@ import styles from "./narrative.module.css"
 // the benches, then from the government's side), then checked by a
 // fact-checker, then a detour to social media, where a post comes out of the
 // phone. What the reader was looking at stays in view as the scene changes; the
-// rest is in "Behind the story".
+// rest is in Method and sources.
 
 const CHAMBER = {
   asked: {
@@ -56,7 +56,7 @@ const Asked = ({ th, x, f }) => {
   )
 }
 
-export const Chamber = ({ topic, mode, line, f }) => {
+export const Chamber = ({ topic, mode, line, f, onMore }) => {
   const th = THREADS[topic]
   const x = THREAD_EXTRAS[topic] || {}
   if (!th) return null
@@ -72,22 +72,27 @@ export const Chamber = ({ topic, mode, line, f }) => {
       <div className={styles.chamberWords}>
         <p className={styles.lead}>{line}</p>
         {mode === 0 ? (
-          <Quote
-            name="doc-q"
-            text={q.question}
-            excerpt={x.question?.excerpt}
-            translation={x.question?.en}
-            excerptTranslation={x.question?.excerptEn}
-            size="l"
-            f={f}
-            cite={{
-              who: q.deputy,
-              role: groupName(q.group),
-              date: q.date,
-              url: q.url,
-              link: source,
-            }}
-          />
+          <>
+            <Quote
+              name="doc-q"
+              text={q.question}
+              excerpt={x.question?.excerpt}
+              translation={x.question?.en}
+              excerptTranslation={x.question?.excerptEn}
+              size="l"
+              f={f}
+              cite={{
+                who: q.deputy,
+                role: groupName(q.group),
+                date: q.date,
+                url: q.url,
+                link: source,
+              }}
+            />
+            <button type="button" className={styles.expand} onClick={onMore}>
+              {f.L(["Le fil des sources", "The evidence trail"])} →
+            </button>
+          </>
         ) : (
           <>
             <Asked th={th} x={x} f={f} />
@@ -175,7 +180,7 @@ const PLATFORMS = {
   youtube: "YouTube",
 }
 
-// A detour: another claim around the same concern. The post comes out of the
+// Another claim around the same concern. The post comes out of the
 // phone, an ivory slip, the only light object in the story, opening from the
 // screen. The tax claim stays in view, small, and comes back as the phone
 // recedes.

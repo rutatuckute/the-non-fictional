@@ -434,6 +434,10 @@ export default function StateOfThings({ f }) {
 
   const list = ENTRIES.filter(q => topic === "all" || q.topic === topic)
   const question = ENTRIES.find(q => q.id === id)
+  // Method and sources is one section below both routes: a link opens the stage,
+  // and the section offers the way back
+  const openMethod = detail =>
+    window.dispatchEvent(new CustomEvent("datalab:method", { detail }))
 
   return (
     <section
@@ -468,6 +472,7 @@ export default function StateOfThings({ f }) {
         onMode={setMode}
         frameRef={frame}
         exploreTopic={topic}
+        openMethod={openMethod}
         onBegun={setBegun}
         explorer={
           <>
@@ -560,6 +565,23 @@ export default function StateOfThings({ f }) {
                 )}
               </article>
             </div>
+            <button
+              type="button"
+              className={styles.toMethod}
+              onClick={() =>
+                openMethod({
+                  stage: "questions",
+                  part: "trail",
+                  topic:
+                    TOPICS[question.topic]?.measurable === false
+                      ? "cost"
+                      : question.topic,
+                  from: ["Revenir aux données", "Back to the data explorer"],
+                })
+              }
+            >
+              {f.L(["Méthode et sources", "Method and sources"])} →
+            </button>
           </>
         }
       />

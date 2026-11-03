@@ -4,14 +4,17 @@ import { TRANSITION_CSS, shared, still, transition } from "./story-motion"
 import styles from "./story-stage.module.css"
 
 // Where "Connect the dots" happens: directly on the page, no box around it.
-// Along the top, once the story has begun, a small label (the chapter, and
-// what the investigation has narrowed down to so far), a quiet way out to the
-// data, and a contents control. Back and forward stay at the bottom. The scene
-// keeps one height on wide screens, so the page doesn't jump between beats.
-// The same place holds the explorer; the story keeps its place while the reader
-// is there.
+// Along the top, once the story has begun, a slim row: three chapters with thin
+// progress lines, each opening its own list of scenes, and a quiet way out to
+// the data. Back and forward stay at the bottom. The scene keeps one height on
+// wide screens, so nothing below it moves. The same place holds the explorer;
+// the story keeps its place while the reader is there.
+//
+// The page scrolls itself in only two cases: on the first step, when the story
+// doesn't yet fit in the window, and on a phone, when a new scene would start
+// above it. A reveal inside a scene never scrolls anything.
 //   steps: [{ act, caption, title, memory?, layout?, quiet?, set?, vt? }]
-//          title: the beat's name, in the contents only
+//          title: the scene's name, in the chapter lists only
 //          memory: the quiet line that keeps what has been narrowed down
 //          layout: "split" (default), "wide" (the scene runs under the
 //            narration), "full" (the narration above the scene)
@@ -72,84 +75,90 @@ const Ways = ({ f, ways, mode, full, resume, onStory, onExplore }) => (
   </nav>
 )
 
-// The contents: the chapters, what each holds, and starting over. Beats that
-// build on the same scene are one entry.
-const Contents = ({ f, acts, steps, at, inStory, onGo, onRestart }) => {
-  const [open, setOpen] = React.useState(false)
+// One chapter: its name, its progress, and, opened from its name, a short list
+// of its scenes (steps that build on one scene are one entry) with "Start over".
+// The list floats over the scene: opening it moves nothing.
+const Chapter = ({
+  f,
+  name,
+  entries,
+  here,
+  fill,
+  state,
+  side,
+  open,
+  onToggle,
+  onGo,
+  onRestart,
+}) => {
   const box = React.useRef(null)
   const toggle = React.useRef(null)
-  const close = refocus => {
-    setOpen(false)
-    if (refocus) toggle.current?.focus()
+  const close = () => {
+    onToggle(false)
+    toggle.current?.focus({ preventScroll: true })
   }
   React.useEffect(() => {
     if (!open) return undefined
-    box.current?.querySelector("[data-here], button")?.focus()
+    box.current
+      ?.querySelector("[data-here], button")
+      ?.focus({ preventScroll: true })
     const away = e => {
       if (
         !box.current?.contains(e.target) &&
         !toggle.current?.contains(e.target)
       )
-        setOpen(false)
+        onToggle(false)
     }
     document.addEventListener("pointerdown", away)
     return () => document.removeEventListener("pointerdown", away)
-  }, [open])
-  const entries = steps
-    .map((s, j) => ({ ...s, j }))
-    .filter((s, k, all) => k === 0 || all[k - 1].title !== s.title)
-  const here = entries.filter(s => s.j <= at).at(-1)?.j
+  }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div
-      className={styles.contents}
+      className={styles.chapter}
+      data-state={state}
       onKeyDown={e => {
-        // inside the contents, the arrow keys don't turn the story
+        // inside a list, the arrow keys don't turn the story
         if (open) e.stopPropagation()
-        if (open && e.key === "Escape") close(true)
+        if (open && e.key === "Escape") close()
       }}
     >
       <button
         ref={toggle}
         type="button"
-        className={styles.quiet}
+        className={styles.chapterName}
         aria-expanded={open}
-        onClick={() => setOpen(o => !o)}
+        aria-current={state === "current" ? "true" : undefined}
+        onClick={() => onToggle(!open)}
       >
-        {f.L(["Sommaire", "Contents"])}
+        {f.L(name)}
       </button>
+      <span className={styles.chapterLine} aria-hidden="true">
+        <i style={{ transform: `scaleX(${fill})` }} />
+      </span>
       {open ? (
-        <div ref={box} className={styles.contentsPanel}>
-          {acts.map((name, a) => (
-            <div key={name[1]} className={styles.contentsAct}>
-              <span>{f.L(name)}</span>
-              <ol>
-                {entries
-                  .filter(s => s.act === a + 1)
-                  .map(s => (
-                    <li key={s.j}>
-                      <button
-                        type="button"
-                        data-here={inStory && s.j === here ? "" : undefined}
-                        aria-current={
-                          inStory && s.j === here ? "step" : undefined
-                        }
-                        onClick={() => {
-                          close(true)
-                          onGo(s.j)
-                        }}
-                      >
-                        {s.title}
-                      </button>
-                    </li>
-                  ))}
-              </ol>
-            </div>
-          ))}
+        <div ref={box} className={styles.scenes} data-side={side}>
+          <ol>
+            {entries.map(s => (
+              <li key={s.j}>
+                <button
+                  type="button"
+                  data-here={s.j === here ? "" : undefined}
+                  aria-current={s.j === here ? "step" : undefined}
+                  onClick={() => {
+                    close()
+                    onGo(s.j)
+                  }}
+                >
+                  {s.title}
+                </button>
+              </li>
+            ))}
+          </ol>
           <button
             type="button"
             className={styles.restart}
             onClick={() => {
-              close(true)
+              close()
               onRestart()
             }}
           >
@@ -195,31 +204,52 @@ export default function StoryStage({
     if (caption) setHeard(caption)
   }, [caption])
 
-  // The story fits the window as the reader moves through it: past the heading
-  // on the first step, and on a phone back to the top of a longer scene.
-  const align = smooth => {
-    const box = frameRef?.current?.getBoundingClientRect()
-    if (!box) return
-    if (box.top < 0 || box.bottom > window.innerHeight)
-      window.scrollBy({
-        top: box.top - 16,
-        behavior: smooth && !still() ? "smooth" : "auto",
-      })
-  }
+  const [listed, setListed] = React.useState(null)
   const go = to => {
     const j = Math.max(0, Math.min(steps.length - 1, to))
     if (j === i) return
     const a = steps[i]
     const b = steps[j]
-    // what both sides share travels from one beat to the next
-    if (a.set !== b.set || a.vt || b.vt) {
-      align(false)
-      transition(() => onGo(j))
-    } else {
-      align(true)
-      onGo(j)
+    const newScene = a.set !== b.set
+    const travels = newScene || a.vt || b.vt
+    const box = frameRef?.current?.getBoundingClientRect()
+    if (box) {
+      const phone = window.matchMedia("(max-width: 860px)").matches
+      const firstStep =
+        i === 0 && (box.top < 0 || box.bottom > window.innerHeight)
+      if (firstStep || (phone && newScene && box.top < 0))
+        window.scrollBy({
+          top: box.top - 12,
+          behavior: travels || still() ? "auto" : "smooth",
+        })
     }
+    if (travels) transition(() => onGo(j))
+    else onGo(j)
   }
+  // During a transition the browser hands every click to the page's root. A
+  // click where back or next stands still counts, and ends the transition: the
+  // reader can always go on.
+  const backRef = React.useRef(null)
+  const nextRef = React.useRef(null)
+  React.useEffect(() => {
+    const through = e => {
+      if (e.target !== document.documentElement || mode !== "story") return
+      const on = el => {
+        const r = el?.getBoundingClientRect()
+        return (
+          r &&
+          e.clientX >= r.left &&
+          e.clientX <= r.right &&
+          e.clientY >= r.top &&
+          e.clientY <= r.bottom
+        )
+      }
+      if (on(nextRef.current)) go(i + 1)
+      else if (on(backRef.current)) go(i - 1)
+    }
+    document.addEventListener("click", through)
+    return () => document.removeEventListener("click", through)
+  })
   const touch = React.useRef(null)
   const onTouchStart = e => {
     const t = e.touches[0]
@@ -245,27 +275,22 @@ export default function StoryStage({
       if (top < 0) frameRef.current.scrollIntoView({ block: "start" })
     })
   }
-  const contents = (
-    <Contents
-      f={f}
-      acts={acts}
-      steps={steps}
-      at={i}
-      inStory={mode === "story"}
-      onGo={j => {
-        if (mode === "explore") {
-          onGo(j)
-          backToStory()
-        } else go(j)
-      }}
-      onRestart={() => {
-        if (mode === "explore") {
-          onGo(0)
-          backToStory()
-        } else go(0)
-      }}
-    />
-  )
+  // what each chapter holds, and how far along it the reader is
+  const entries = steps
+    .map((s, j) => ({ ...s, j }))
+    .filter((s, k, all) => k === 0 || all[k - 1].title !== s.title)
+  const here = entries.filter(s => s.j <= i).at(-1)?.j
+  const chapters = acts.map((name, a) => {
+    const own = steps.map((s, j) => [s, j]).filter(([s]) => s.act === a + 1)
+    const state = a + 1 < act ? "done" : a + 1 === act ? "current" : "future"
+    const fill =
+      state === "done"
+        ? 1
+        : state === "future"
+          ? 0
+          : (i - own[0][1] + 1) / own.length
+    return { name, state, fill, entries: entries.filter(s => s.act === a + 1) }
+  })
   return (
     <div
       ref={frameRef}
@@ -298,37 +323,48 @@ export default function StoryStage({
             onExplore={onExplore}
           />
         ) : mode === "explore" ? (
-          <>
-            <Ways
-              f={f}
-              ways={ways}
-              mode={mode}
-              resume={i > 0 ? f.L(["reprendre", "resume"]) : null}
-              onStory={backToStory}
-              onExplore={onExplore}
-            />
-            <span className={styles.tools}>{contents}</span>
-          </>
+          <Ways
+            f={f}
+            ways={ways}
+            mode={mode}
+            resume={i > 0 ? f.L(["reprendre", "resume"]) : null}
+            onStory={backToStory}
+            onExplore={onExplore}
+          />
         ) : (
           <>
-            <span className={styles.where}>
-              <span className={styles.chapter}>{f.L(acts[act - 1])}</span>
-              {memory ? (
-                <span className={styles.memory} style={shared("memory")}>
-                  {memory}
-                </span>
-              ) : null}
-            </span>
-            <span className={styles.tools}>
-              <button
-                type="button"
-                className={styles.quiet}
-                onClick={onExplore}
+            <div className={styles.where}>
+              <nav
+                className={styles.chapters}
+                aria-label={f.L(["Chapitres", "Chapters"])}
               >
-                {f.L(["Explorer les données", "Explore the data"])} ↗
-              </button>
-              {contents}
-            </span>
+                {chapters.map((c, a) => (
+                  <Chapter
+                    key={c.name[1]}
+                    f={f}
+                    name={c.name}
+                    entries={c.entries}
+                    here={here}
+                    fill={c.fill}
+                    state={c.state}
+                    side={a === chapters.length - 1 ? "end" : "start"}
+                    open={listed === a}
+                    onToggle={on => setListed(on ? a : null)}
+                    onGo={go}
+                    onRestart={() => go(0)}
+                  />
+                ))}
+              </nav>
+              <span
+                className={styles.memory}
+                style={memory ? shared("memory") : undefined}
+              >
+                {memory || ""}
+              </span>
+            </div>
+            <button type="button" className={styles.quiet} onClick={onExplore}>
+              {f.L(["Explorer les données", "Explore the data"])} ↗
+            </button>
           </>
         )}
       </div>
@@ -357,6 +393,7 @@ export default function StoryStage({
           </div>
           <div className={styles.controls}>
             <button
+              ref={backRef}
               type="button"
               className={styles.arrow}
               onClick={() => go(i - 1)}
@@ -366,6 +403,7 @@ export default function StoryStage({
               <Chevron back />
             </button>
             <button
+              ref={nextRef}
               type="button"
               className={`${styles.arrow} ${styles.arrowNext}`}
               onClick={() => go(i + 1)}

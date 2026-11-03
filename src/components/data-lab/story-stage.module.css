@@ -6,6 +6,11 @@
   --nav: #70c982;
   --thread: #c96a4b;
   --form: var(--nav);
+  /* the scene fits a short window too; below this height the page just scrolls.
+   * No element here anchors the page's scroll: a scene changing height must not
+   * move what the reader is looking at. */
+  --stage-h: clamp(500px, calc(100svh - 156px), 640px);
+  overflow-anchor: none;
   position: relative;
   margin-bottom: clamp(40px, 6vw, 72px);
 }
@@ -21,24 +26,108 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 12px 28px;
-  min-height: 62px;
+  min-height: 68px;
   padding-bottom: 12px;
 }
 .story .where {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 2px 14px;
+  display: grid;
+  gap: 5px;
   min-width: 0;
 }
-.story .chapter {
-  color: var(--ink);
-  font: 400 13px / 1.4 var(--font-functional);
-  white-space: nowrap;
+.story .chapters {
+  display: flex;
+  gap: 16px;
 }
-.story .memory {
+.story .chapter {
+  position: relative;
+  display: grid;
+  gap: 5px;
+  width: clamp(104px, 12.5vw, 158px);
+}
+.story .chapterName {
+  padding: 0;
+  border: 0;
+  background: none;
   color: var(--text-metadata);
   font: 400 13px / 1.4 var(--font-functional);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 200ms ease;
+}
+.story .chapter[data-state="current"] .chapterName {
+  color: var(--ink);
+}
+.story .chapterName:hover,
+.story .chapterName[aria-expanded="true"] {
+  color: var(--nav);
+}
+.story .chapterLine {
+  display: block;
+  height: 2px;
+  overflow: hidden;
+  background: #303030;
+}
+.story .chapterLine i {
+  display: block;
+  height: 100%;
+  background: var(--nav);
+  transform-origin: 0 50%;
+  transition: transform 500ms cubic-bezier(0.22, 0.72, 0.2, 1);
+}
+.story .chapter[data-state="done"] .chapterLine i {
+  background: #4f8f59;
+}
+/* a chapter's scenes: float over the stage, so opening them moves nothing */
+.story .scenes {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 20;
+  display: grid;
+  gap: 10px;
+  width: min(280px, 78vw);
+  max-height: min(300px, 55svh);
+  padding: 12px 14px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--site-rule-strong);
+  border-radius: 6px;
+  background: var(--surface-raised);
+  box-shadow: 0 14px 36px rgb(0 0 0 / 0.5);
+}
+.story .scenes[data-side="end"] {
+  right: 0;
+  left: auto;
+}
+.story .scenes ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.story .scenes li {
+  margin: 0;
+}
+.story .scenes ol button {
+  width: 100%;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  font: 400 16px / 1.3 var(--font-editorial);
+  text-align: left;
+  cursor: pointer;
+}
+.story .scenes ol button:hover {
+  color: var(--ink);
+}
+.story .scenes ol button[aria-current] {
+  color: var(--nav);
+}
+.story .memory {
+  min-height: 18px;
+  color: var(--text-metadata);
+  font: 400 12px / 18px var(--font-functional);
   animation: memoryIn 420ms ease;
 }
 @keyframes memoryIn {
@@ -46,13 +135,8 @@
     opacity: 0;
   }
 }
-.story .tools {
-  display: flex;
-  flex: none;
-  align-items: baseline;
-  gap: 20px;
-}
 .story .quiet {
+  flex: none;
   padding: 0;
   border: 0;
   background: none;
@@ -62,66 +146,16 @@
   cursor: pointer;
   transition: color 150ms ease;
 }
-.story .quiet:hover,
-.story .quiet[aria-expanded="true"] {
-  color: var(--nav);
-}
-
-/* the contents */
-.story .contents {
-  position: relative;
-}
-.story .contentsPanel {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  z-index: 20;
-  display: grid;
-  gap: 16px;
-  width: min(300px, 82vw);
-  padding: 16px 18px;
-  border: 1px solid var(--site-rule-strong);
-  border-radius: 6px;
-  background: var(--surface-raised);
-  box-shadow: 0 14px 36px rgb(0 0 0 / 0.5);
-}
-.story .contentsAct {
-  display: grid;
-  gap: 4px;
-}
-.story .contentsAct > span {
-  color: var(--text-metadata);
-  font: 400 12px / 1.4 var(--font-functional);
-}
-.story .contentsAct ol {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.story .contentsAct li {
-  margin: 0;
-}
-.story .contentsAct button {
-  width: 100%;
-  padding: 3px 0;
-  border: 0;
-  background: none;
-  color: var(--text-secondary);
-  font: 400 16px / 1.3 var(--font-editorial);
-  text-align: left;
-  cursor: pointer;
-}
-.story .contentsAct button:hover {
-  color: var(--ink);
-}
-.story .contentsAct button[aria-current] {
+.story .quiet:hover {
   color: var(--nav);
 }
 .story .restart {
   display: inline-flex;
   align-items: center;
+  justify-self: start;
   gap: 6px;
-  padding: 10px 0 0;
+  width: 100%;
+  padding: 9px 0 0;
   border: 0;
   border-top: 1px solid var(--rule);
   background: none;
@@ -148,9 +182,9 @@
   flex: none;
   gap: 22px;
 }
+/* close together, under the heading, not spread across the column */
 .story .ways.isFull {
-  flex: 1;
-  gap: 0;
+  gap: 34px;
 }
 .story .way {
   display: flex;
@@ -164,13 +198,8 @@
   cursor: pointer;
 }
 .story .ways.isFull .way {
-  flex: 1;
-  gap: 12px;
-  padding-right: 24px;
-}
-.story .ways.isFull .way + .way {
-  padding-left: 24px;
-  border-left: 1px solid var(--rule);
+  gap: 10px;
+  max-width: 290px;
 }
 .story .wayIcon {
   flex: none;
@@ -203,7 +232,7 @@
   text-underline-offset: 7px;
 }
 .story .ways.isFull .wayTitle {
-  font: 400 20px / 1.2 var(--font-editorial);
+  font: 400 19px / 1.2 var(--font-editorial);
 }
 .story .way[aria-current] .wayTitle,
 .story .way:hover .wayTitle {
@@ -218,7 +247,7 @@
 }
 .story .wayDesc {
   color: var(--text-metadata);
-  font: 400 13px / 1.45 var(--font-functional);
+  font: 400 12px / 1.4 var(--font-functional);
 }
 .story .way:hover .wayDesc {
   color: var(--text-secondary);
@@ -237,7 +266,7 @@
   display: grid;
   grid-template-columns: minmax(220px, 0.62fr) minmax(0, 1.9fr);
   gap: 0 40px;
-  min-height: 640px;
+  min-height: var(--stage-h);
 }
 .story .caption {
   display: flex;
@@ -283,7 +312,7 @@
   justify-self: start;
   justify-content: center;
   width: 25cqw;
-  min-height: 600px;
+  min-height: calc(var(--stage-h) - 40px);
   margin-left: 16cqw;
   pointer-events: none;
 }
@@ -372,12 +401,28 @@
   }
   .story .ways.isFull {
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
   }
-  .story .ways.isFull .way,
-  .story .ways.isFull .way + .way {
-    padding: 0;
-    border: 0;
+  .story .where {
+    flex-basis: 100%;
+  }
+  .story .chapters {
+    gap: 8px;
+  }
+  .story .chapter {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+  }
+  .story .chapterName {
+    font-size: 12px;
+  }
+  /* room held for what changes within a scene, so its quotation doesn't move */
+  .story .memory {
+    min-height: 36px;
+  }
+  .story.isFull .caption {
+    min-height: 54px;
   }
   .story .ways.isFull .wayTitle {
     font-size: 18px;
@@ -408,6 +453,8 @@
   }
   .story .captionText,
   .story .quiet,
+  .story .chapterName,
+  .story .chapterLine i,
   .story .arrow {
     transition: none;
   }

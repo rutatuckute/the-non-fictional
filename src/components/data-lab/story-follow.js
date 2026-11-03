@@ -11,7 +11,7 @@ import styles from "./narrative.module.css"
 // What is said. The followed concern opens into the angles it is debated
 // from: one row per angle, one icon per collected text. The followed angle,
 // in terracotta, opens into the chamber. The evidence trail (who said what,
-// when, the whole quotation one click away) lives in "Behind the story".
+// when, the whole quotation one click away) lives in Method and sources.
 
 export { ANGLES, THREADS }
 const angleTotal = a => a.n.p + a.n.g + a.n.f
@@ -308,7 +308,7 @@ export const Debates = ({ topic, f, total, onMore }) => {
   )
 }
 
-// "Behind the story": every angle, chosen freely, with its sources; for the
+// Method and sources: every angle, chosen freely, with its sources; for the
 // followed one, the whole evidence trail
 export const AngleExplorer = ({ topic, f }) => {
   const list = ANGLES[topic] || []

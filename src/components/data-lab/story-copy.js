@@ -115,16 +115,12 @@ export const BEATS = {
   travels: {
     act: 1,
     title: {
-      en: "A detour, on social media",
-      fr: "Un détour, sur les réseaux",
+      en: "Other claims, online",
+      fr: "D'autres affirmations, en ligne",
     },
     text: {
-      en: ({ line }) =>
-        line ||
-        "A brief detour: online, the subject travels and changes shape.",
-      fr: ({ line }) =>
-        line ||
-        "Un bref détour : en ligne, le sujet circule et change de forme.", // FR-DRAFT
+      en: "Online, the same concern produces other claims.",
+      fr: "En ligne, la même préoccupation nourrit d'autres affirmations.", // FR-DRAFT
     },
   },
 
@@ -193,7 +189,7 @@ export const ENDING = {
 // Small fixed lines, near the visuals they describe
 export const NOTES = {
   // beside the one figure shown in the guided story; the full lists are in
-  // "Behind the story"
+  // Method and sources
   answerEB: {
     en: "Share of people in France naming it. Up to two answers each. Standard Eurobarometer, average of autumn 2025 and spring 2026.",
     fr: "Part des personnes en France qui le citent. Jusqu'à deux réponses. Eurobaromètre standard, moyenne de l'automne 2025 et du printemps 2026.",
@@ -309,10 +305,6 @@ export const THREAD_EXTRAS = {
     social: {
       en: "Don't you get the feeling your diesel is evaporating faster than usual?",
       claimant: { en: "TikTok", fr: "TikTok" },
-      line: {
-        en: "A brief detour: same concern, another claim. This post is about diesel evaporating, and is no evidence on fuel taxes.",
-        fr: "Un bref détour : même préoccupation, autre affirmation. Cette publication parle d'un gazole qui s'évapore, et n'apporte rien sur les taxes.", // FR-DRAFT
-      },
     },
     also: {
       "https://factuel.afp.com/doc.afp.com.A2HH8WE": {
@@ -387,6 +379,15 @@ export const TEST_PARTS = {
   ],
 }
 
+// What each click on the claim brings out, by index in TEST_PARTS: first who and
+// when, then what exactly is being measured.
+export const TEST_REVEALS = {
+  cost: [
+    [0, 1],
+    [2, 3, 4],
+  ],
+}
+
 // The evidence: one finding, one chart, and depth on demand
 export const FINDINGS = {
   headline: {
@@ -399,6 +400,11 @@ export const FINDINGS = {
   caveat: {
     en: "VAT is a share of the price, so tax per litre can rise with no rate change.",
     fr: "La TVA est une part du prix : la taxe par litre peut monter sans changement de taux.", // FR-DRAFT
+  },
+  // beside the chart; the whole method is in Method and sources
+  short: {
+    en: "Spain and Italy lowered their rates in March; Germany did on 1 May, after the claim. Elsewhere tax per litre rose because VAT follows the price.",
+    fr: "L'Espagne et l'Italie ont baissé leurs taux en mars ; l'Allemagne le 1er mai, après l'affirmation. Ailleurs, la taxe par litre a monté parce que la TVA suit le prix.", // FR-DRAFT
   },
   labels: {
     total: { en: "Tax per litre", fr: "Taxe par litre" },

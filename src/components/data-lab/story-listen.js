@@ -64,7 +64,7 @@ const LOOSE = [0, 52, 20, 74, 8, 44, 86, 28, 62, 14]
 
 const Figure = ({ to, delay, f }) => f.num(Math.round(useCount(to, delay, 900)))
 
-export const Interview = ({ mode, topic, f }) => {
+export const Interview = ({ mode, topic, f, onMore }) => {
   const ask = ASK[f.lang] || ASK.en
   const answers = answersFor(f.lang)
   const first = answers[0]
@@ -192,7 +192,14 @@ export const Interview = ({ mode, topic, f }) => {
             ))}
           </ol>
           <span className={styles.answerSay}>
-            {say(f, f.lang === "fr" ? NOTES.answerIpsos : NOTES.answerEB)}
+            {say(f, f.lang === "fr" ? NOTES.answerIpsos : NOTES.answerEB)}{" "}
+            <button
+              type="button"
+              className={styles.inlineButton}
+              onClick={onMore}
+            >
+              {f.L(["Toutes les réponses", "Every answer"])} →
+            </button>
           </span>
         </div>
       ) : null}
@@ -217,7 +224,7 @@ const INDENT = [6, 0, 16, 3, 11]
 //                 answers, the others gathered around it; any measurable topic
 //                 can be chosen instead
 //   mode "index": the closing list of other concerns, the same names
-export const TopicIndex = ({ mode, topic, onPick, f }) => {
+export const TopicIndex = ({ mode, topic, onPick, f, onMore }) => {
   const entry = key => {
     const t = TOPICS[key]
     const measurable = t.measurable !== false
@@ -293,9 +300,13 @@ export const TopicIndex = ({ mode, topic, onPick, f }) => {
               "L'ordre et la place ne disent aucun rang.",
               "Order and position imply no ranking.",
             ])}{" "}
-            <a href="#method" className={styles.inlineLink}>
+            <button
+              type="button"
+              className={styles.inlineButton}
+              onClick={onMore}
+            >
               {say(f, NOTES.method)} →
-            </a>
+            </button>
           </p>
         </Disclosure>
       </div>

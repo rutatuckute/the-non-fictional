@@ -5,13 +5,13 @@ import ORIGINS from "./data/origins.json"
 import STATE from "./data/state.json"
 import TEXTS from "./data/texts.json"
 import { COUNTRIES } from "./questions"
-import StoryArchive from "./story-archive"
 import { loadTexts } from "./story-corpus"
 import {
   ACTS,
   BEATS,
   ENDING,
   TEST_PARTS,
+  TEST_REVEALS,
   THREAD_EXTRAS,
   say,
 } from "./story-copy"
@@ -21,7 +21,7 @@ import { Interview, TopicIndex } from "./story-listen"
 import { transition } from "./story-motion"
 import { Disclosure } from "./story-parts"
 import StoryStage from "./story-stage"
-import { ClaimTest, readTest, revealGroups } from "./story-test"
+import { ClaimTest, readTest } from "./story-test"
 import { TOPICS } from "./topics"
 import styles from "./narrative.module.css"
 
@@ -33,8 +33,7 @@ import styles from "./narrative.module.css"
 // The story runs on its own default (cost of living → fuel taxes compared
 // with the neighbours); another topic is an option, never a step. What the
 // story leaves out (every survey percentage, the evidence trail, the corpus
-// and its lenses, the other fact-checks) is in "Behind the story", in "Dig into
-// the data". Beats are grouped in sets that share one scene: within a set the
+// and its lenses, the other fact-checks) is in Method and sources. Beats are grouped in sets that share one scene: within a set the
 // scene changes in place; between sets, what both sides share travels
 // (story-motion.js). The copy lives in story-copy.js.
 
@@ -164,16 +163,13 @@ const buildBeats = (topic, questions, f) => {
             : null,
       })
     }
-    if (th.social)
-      add("travels", "travels", scene, {
-        line: x.social?.line ? say(f, x.social.line) : null,
-      })
+    if (th.social) add("travels", "travels", scene)
   }
 
   const read = th?.test && readTest(topic)
   if (read) {
     const parts = TEST_PARTS[topic]
-    const groups = revealGroups(parts)
+    const groups = TEST_REVEALS[topic]
     const full = { layout: "full" }
     add("claim", "test", {
       ...full,
@@ -181,7 +177,7 @@ const buildBeats = (topic, questions, f) => {
       reveal: 0,
       memory: say(f, x.claimRef),
     })
-    // one click per phrase; the line along the top collects what it fixes
+    // the line along the top collects what each reveal fixes
     groups.forEach((_, k) =>
       add("parts", "test", {
         ...full,
@@ -332,12 +328,11 @@ export default function Story({
   explorer,
   exploreTopic,
   onBegun,
+  openMethod,
   frameRef,
 }) {
   const [topic, setTopic] = React.useState("cost")
   const [at, setAt] = React.useState(0)
-  // which part of "Behind the story" a link from the story opened
-  const [behind, setBehind] = React.useState(null)
   const { beats, qs, tested } = buildBeats(topic, questions, f)
   const i = Math.min(at, beats.length - 1)
   const beat = beats[i]
@@ -367,11 +362,20 @@ export default function Story({
         setAt(fieldAt)
       })
   }
-  const openBehind = key => {
-    setBehind({ key, at: Date.now() })
-    onMode("explore")
-  }
-  // the texts "Behind the story" may need, fetched while the reader is reading
+  // the supporting detail, in Method and sources, on this topic; the section
+  // offers the way back, and the story keeps its place
+  const toMethod = (stage, part) =>
+    openMethod({
+      stage,
+      part,
+      topic,
+      from: ["Revenir à l'histoire", "Back to the story"],
+    })
+  // Method and sources follows the concern being followed
+  React.useEffect(() => {
+    window.dispatchEvent(new CustomEvent("datalab:topic", { detail: topic }))
+  }, [topic])
+  // the texts Method and sources may need, fetched while the reader is reading
   React.useEffect(() => {
     if (beat.act >= 2) loadTexts(topic).catch(() => {})
   }, [beat.act, topic])
@@ -380,21 +384,42 @@ export default function Story({
   const scene = () => {
     switch (beat.set) {
       case "interview":
-        return <Interview mode={beat.mode} topic={topic} f={f} />
+        return (
+          <Interview
+            mode={beat.mode}
+            topic={topic}
+            f={f}
+            onMore={() => toMethod("concerns", "answers")}
+          />
+        )
       case "topics":
-        return <TopicIndex mode="field" topic={topic} onPick={pick} f={f} />
+        return (
+          <TopicIndex
+            mode="field"
+            topic={topic}
+            onPick={pick}
+            f={f}
+            onMore={() => toMethod("topics", "steps")}
+          />
+        )
       case "debates":
         return (
           <Debates
             topic={topic}
             f={f}
             total={n.p + n.g + n.f}
-            onMore={() => openBehind("corpus")}
+            onMore={() => toMethod("debate", "corpus")}
           />
         )
       case "chamber":
         return (
-          <Chamber topic={topic} mode={beat.mode} line={beat.caption} f={f} />
+          <Chamber
+            topic={topic}
+            mode={beat.mode}
+            line={beat.caption}
+            f={f}
+            onMore={() => toMethod("questions", "trail")}
+          />
         )
       case "checked":
         return (
@@ -402,7 +427,7 @@ export default function Story({
             topic={topic}
             line={beat.caption}
             f={f}
-            onMore={() => openBehind("checks")}
+            onMore={() => toMethod("debate", "checks")}
           />
         )
       case "travels":
@@ -414,7 +439,7 @@ export default function Story({
             mode={beat.mode}
             reveal={beat.reveal}
             f={f}
-            onMore={() => openBehind("test")}
+            onMore={() => toMethod("data", "test")}
           />
         )
       case "figure":
@@ -455,12 +480,7 @@ export default function Story({
       sceneKey={`${beat.set}-${beat.set === "interview" ? "" : topic}`}
       mode={boxMode}
       onMode={onMode}
-      explorer={
-        <>
-          {explorer}
-          <StoryArchive topic={topic} onTopic={setTopic} jump={behind} f={f} />
-        </>
-      }
+      explorer={explorer}
       frameRef={frameRef}
     >
       <div className={styles.beat} data-beat={beat.id} data-set={beat.set}>
