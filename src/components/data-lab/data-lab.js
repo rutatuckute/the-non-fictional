@@ -17,10 +17,9 @@ const STRINGS = {
       "Au-\u2060delà des récits. Les données, telles quelles.",
     ],
     lead: [
-      "Une tentative de cartographier la France au-delà des récits concurrents, avec les données comme point de départ plutôt que comme vérité (",
+      "Une tentative de cartographier l'état des choses au-delà des convictions préexistantes et des récits concurrents. Non pas les données comme vérité absolue (",
       "attention, spoiler",
-      "\u00a0: elles aussi se manipulent).",
-      "Les chiffres confirment-ils les arguments que l'on entend\u00a0?",
+      " : elles aussi se manipulent), mais comme un humble point de départ : ce que montrent les données et d'où elles viennent.",
     ],
     toggle: "Langue",
   },
@@ -28,10 +27,9 @@ const STRINGS = {
     label: "Data\u00a0Lab · France · Autumn\u00a02026",
     title: ["France:", "Beyond narratives. Data, as is."],
     lead: [
-      "An attempt to map France beyond competing narratives, with data as a starting point rather than a truth (",
+      "An attempt to map the state of things beyond preexisting convictions and competing narratives. Not data as absolute truth (",
       "spoiler alert",
-      ": it can be manipulated too).",
-      "Do the figures support the arguments we hear?",
+      ": it can be manipulated too), but as a humble starting point: what the data shows and where it comes from.",
     ],
     toggle: "Language",
   },
@@ -111,7 +109,7 @@ export default function DataLab() {
           <p className={styles.lead}>
             {t.lead[0]}
             <span className={styles.spoiler}>{t.lead[1]}</span>
-            {t.lead[2]} <span className={styles.leadQuestion}>{t.lead[3]}</span>
+            {t.lead[2]}
           </p>
           {/* The page's sections, as the mockup set them. Sections not built
               yet are listed but not linked. */}

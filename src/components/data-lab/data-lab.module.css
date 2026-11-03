@@ -99,9 +99,6 @@
   font-variation-settings: "opsz" 18;
 }
 
-.lab .leadQuestion {
-  color: var(--text-primary);
-}
 .lab .spoiler {
   color: var(--form);
 }
