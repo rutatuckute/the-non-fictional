@@ -1,0 +1,197 @@
+/* The chess story: one scroll in four parts, with a thread through it. This
+   is its skeleton — the scroll, the pinned scenes and the thread — with boxes
+   where the pictures and charts will stand. The page's tokens (--ink, --void,
+   --raised, --rule …) come from blog-post.module.css. */
+.ch-story {
+  /* The thread's own colour, used for nothing else. */
+  --thread: #e5484d;
+  position: relative;
+  isolation: isolate;
+}
+/* The site's paragraphs carry their own line spacing; here a text's box sets it. */
+.ch-story :where(p) { margin: 0; line-height: inherit; }
+
+/* ── the thread ── */
+.ch-thread { position: absolute; top: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+.ch-thread path {
+  fill: none; stroke: var(--thread); stroke-width: 1.7; stroke-linecap: round;
+  transition: stroke-dashoffset 500ms ease-out;
+}
+.ch-knot { position: absolute; left: var(--x); top: var(--y); width: 0; height: 0; }
+
+/* ── words ── */
+.ch-text { position: relative; z-index: 2; min-width: 0; max-width: 34rem; }
+.ch-text > :last-child { margin-bottom: 0; }
+.ch-text.ch-large {
+  max-width: 20em;
+  font-size: clamp(30px, 4.6vw, 56px); line-height: 1.08; letter-spacing: var(--tracking-display); text-wrap: balance;
+}
+.ch-text.ch-medium { font-size: clamp(22px, 2.6vw, 32px); line-height: 1.2; letter-spacing: var(--tracking-title); text-wrap: balance; }
+.ch-text.ch-cardText { font-size: 17px; line-height: 1.5; }
+.ch-missing {
+  padding: 8px 10px; border: 1px dashed var(--rule-strong);
+  color: var(--ink-3); font: 400 13px / 1.4 var(--font-mono);
+}
+.ch-note { margin-top: 12px; color: var(--ink-3); font: 500 11px / 1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* ── boxes for what is still to come ── */
+.ch-holder {
+  position: relative; z-index: 2; min-width: 0;
+  border: 1px solid var(--rule-strong); background-color: var(--raised);
+  background-image:
+    linear-gradient(to top right, transparent calc(50% - 0.5px), var(--rule) calc(50% - 0.5px) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--rule) calc(50% - 0.5px) calc(50% + 0.5px), transparent calc(50% + 0.5px));
+}
+.ch-holder[data-kind="open"] { z-index: auto; background: none; }
+.ch-holderLabel {
+  position: absolute; left: 8px; bottom: 8px; z-index: 2; max-width: calc(100% - 16px); padding: 3px 7px;
+  background: var(--void); color: var(--ink-2);
+  font: 500 11px / 1.35 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+/* ── the opening: one screen ── */
+.ch-open {
+  position: relative; display: grid; align-content: center; gap: 22px;
+  min-height: calc(100vh - 76px); min-height: calc(100svh - 76px); padding: 8vh 0 14vh;
+}
+.ch-kicker { color: var(--ink-3); font: 500 11px / 1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.ch-story .ch-title {
+  margin: 0; color: var(--ink-2);
+  font: 400 22px / 1.25 var(--font-title); letter-spacing: -0.006em; text-transform: none;
+}
+.ch-open .ch-text { margin-top: 14px; }
+
+/* ── free scroll: text and pictures pass by ── */
+.ch-free { position: relative; padding: 6vh 0 12vh; }
+.ch-row { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
+
+.ch-memory { padding-top: 4vh; }
+.ch-device { grid-column: 3 / 5; }
+.ch-memory .ch-col { grid-column: 6 / 12; align-self: center; }
+.ch-years { height: 68vh; }
+
+.ch-b1 { grid-column: 1 / 6; grid-row: 1; }
+.ch-recurring .ch-col { grid-column: 7 / 12; grid-row: 1; margin-top: 12vh; }
+.ch-b2 { grid-column: 9 / 12; grid-row: 2; margin-top: 4vh; }
+.ch-b3 { grid-column: 3 / 6; grid-row: 2; margin-top: 16vh; }
+
+.ch-obsession { padding-top: 22vh; row-gap: 9vh; }
+.ch-c1 { grid-column: 2 / 8; }
+.ch-games { grid-column: 1 / 13; }
+.ch-c2 { grid-column: 6 / 12; }
+.ch-chart { grid-column: 2 / 11; }
+.ch-c3 { grid-column: 5 / 11; }
+.ch-enter { height: 26vh; }
+
+/* ── pinned scenes: the graphic stays, the cards pass ── */
+.ch-pin { position: relative; z-index: 3; border-top: 1px solid var(--rule); background: var(--void); }
+.ch-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.ch-scene { position: absolute; inset: 0 0 0 42%; display: grid; place-items: center; }
+.ch-steps { position: relative; margin-top: -100vh; margin-top: -100svh; padding-bottom: 28vh; pointer-events: none; }
+.ch-step { display: flex; align-items: center; min-height: 88vh; }
+.ch-card {
+  width: min(22rem, 100%); padding: 18px 20px 20px;
+  border-left: 2px solid var(--rule-strong); background: var(--raised);
+  opacity: 0.45; transition: opacity 300ms ease; pointer-events: auto;
+}
+.ch-step[data-on="true"] .ch-card { opacity: 1; }
+
+/* Things on a scene, by step: a layer fades where it is, a panel leaves the flow. */
+.ch-layer { position: absolute; opacity: 0; visibility: hidden; transition: opacity 500ms ease, visibility 0s linear 500ms; }
+.ch-layer[data-on="true"] { opacity: 1; visibility: visible; transition: opacity 500ms ease, visibility 0s; }
+.ch-panel[data-on="false"] { display: none; }
+.ch-panel[data-on="true"] { animation: ch-in 450ms ease both; }
+@keyframes ch-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.ch-stack { display: grid; gap: 22px; width: min(35rem, 100%); }
+
+/* Part II: the board, and what gathers around it. */
+.ch-board {
+  border: 1px solid var(--rule-strong);
+  background: conic-gradient(var(--raised) 25%, var(--void) 0 50%, var(--raised) 0 75%, var(--void) 0) 0 0 / 25% 25%;
+}
+.ch-boardwrap { position: relative; width: min(54vh, 78%); aspect-ratio: 1; }
+.ch-boardwrap > .ch-board { position: absolute; inset: 0; z-index: 2; transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+.ch-boardwrap > .ch-board[data-small="true"] { transform: scale(0.09); }
+.ch-boardSmall { width: min(40vh, 70%); aspect-ratio: 1; margin-inline: auto; }
+.ch-chip {
+  z-index: 3; padding: 6px 12px; border: 1px solid var(--rule-strong); border-radius: 99px;
+  background: var(--void); color: var(--ink-2); font: 500 11px / 1.3 var(--font-mono); letter-spacing: 0.04em; white-space: nowrap;
+}
+.ch-club { z-index: 1; left: -44%; top: -18%; width: 62%; }
+.ch-club .ch-holderLabel { bottom: auto; top: 8px; }
+.ch-said { z-index: 4; right: -12%; bottom: -8%; width: 74%; padding: 16px 18px; border: 1px solid var(--rule-strong); background: var(--void); }
+.ch-minis { inset: -22% -34%; z-index: 1; display: grid; grid-template-columns: repeat(18, 1fr); gap: 5px; align-content: center; }
+.ch-minis b { aspect-ratio: 1; border: 1px solid var(--rule); background: var(--raised); }
+.ch-ask { z-index: 5; inset: 28% -8% auto; padding: 22px 24px; border: 1px solid var(--rule-strong); background: color-mix(in srgb, var(--void) 93%, transparent); }
+
+/* Part III: the investigation. */
+.ch-turn {
+  position: relative; z-index: 3; display: grid; align-content: center;
+  min-height: 100vh; min-height: 100svh; padding: 12vh 0; border-top: 1px solid var(--rule); background: var(--void);
+}
+.ch-bars { display: flex; align-items: flex-end; gap: 9%; height: 240px; padding: 0 8%; border-bottom: 1px solid var(--rule-strong); }
+.ch-bars i { flex: 1; background: var(--rule-strong); }
+.ch-bars i:nth-child(1) { height: 52%; }
+.ch-bars i:nth-child(2) { height: 46%; }
+.ch-bars i:nth-child(3) { height: 78%; border: 1px solid var(--rule-strong); background: var(--rule); }
+.ch-barLabels { display: flex; gap: 9%; padding: 8px 8% 0; }
+.ch-barLabels span { flex: 1; color: var(--ink-2); font: 500 11px / 1.3 var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; text-align: center; }
+.ch-rows { display: grid; gap: 9px; }
+.ch-rows div { display: flex; height: 22px; }
+.ch-rows i { background: var(--rule-strong); }
+.ch-rows i + i { background: color-mix(in srgb, var(--rule-strong) 60%, var(--rule)); }
+.ch-rows i + i + i { background: var(--rule); }
+.ch-rows[data-you="true"] i:first-child { background: var(--thread); }
+.ch-guess { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.ch-guess button {
+  min-height: 40px; padding: 0 16px; border: 1px solid var(--ink-2); border-radius: 99px; background: none; cursor: pointer;
+  color: var(--ink); font: 500 13px / 1 var(--font-mono); transition: background-color 150ms ease, color 150ms ease;
+}
+.ch-guess button:hover { border-color: var(--ink); }
+.ch-guess button[aria-pressed="true"] { background: var(--ink); color: var(--void); }
+.ch-unknown { z-index: 3; border-top: 1px solid var(--rule); background: var(--void); }
+.ch-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 8vh; }
+.ch-two > * { max-width: none; padding: 18px 20px; border: 1px solid var(--rule-strong); }
+
+/* Part IV, and what follows the story. */
+.ch-encounter { padding-top: 14vh; }
+.ch-chat { grid-column: 2 / 7; }
+.ch-encounter .ch-col { grid-column: 8 / 12; align-self: center; }
+.ch-close { padding-top: 22vh; }
+.ch-close .ch-col { grid-column: 3 / 11; display: grid; gap: 9vh; }
+.ch-exit { height: 34vh; }
+.ch-method { position: relative; z-index: 3; padding: 8vh 0; border-top: 1px solid var(--rule); background: var(--void); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ch-thread path, .ch-card, .ch-layer, .ch-layer[data-on="true"], .ch-boardwrap > .ch-board, .ch-guess button { transition: none; }
+  .ch-panel[data-on="true"] { animation: none; }
+}
+
+/* A phone, or a narrow screen: one column; the pinned graphic takes the top
+   of the screen and the cards pass through the bottom of it. */
+@media (max-width: 60rem) {
+  .ch-knot { left: var(--px); top: var(--py); }
+  .ch-row { grid-template-columns: minmax(0, 1fr); row-gap: 5vh; }
+  .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-holder { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
+  .ch-device { width: 42%; }
+  .ch-years { height: 52vh; }
+  .ch-b1 { width: 84%; }
+  .ch-b2 { width: 56%; justify-self: end; }
+  .ch-b3 { width: 50%; }
+  .ch-obsession { padding-top: 14vh; }
+  .ch-chart { aspect-ratio: 4 / 3 !important; }
+
+  .ch-stage { margin-inline: calc(-1 * var(--page-margin)); }
+  .ch-scene { inset: 7svh var(--page-margin) auto; height: 54svh; }
+  .ch-step { align-items: flex-end; min-height: 100vh; padding-bottom: 5vh; }
+  .ch-card { width: 100%; padding: 14px 16px 16px; background: color-mix(in srgb, var(--raised) 94%, transparent); }
+  .ch-text.ch-cardText { font-size: 16px; }
+  .ch-boardwrap { width: min(34svh, 60%); }
+  .ch-club { left: -30%; top: -24%; width: 74%; }
+  .ch-said { right: -16%; width: 90%; }
+  .ch-minis { inset: -14% -22%; grid-template-columns: repeat(12, 1fr); }
+  .ch-bars { height: 170px; }
+  .ch-boardSmall { width: min(34svh, 70%); }
+  .ch-two { grid-template-columns: minmax(0, 1fr); }
+  .ch-close { padding-top: 12vh; }
+}

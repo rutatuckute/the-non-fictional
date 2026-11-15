@@ -14,7 +14,7 @@ import {
 } from '../../../lib/content'
 import { imageUrl } from '../../../lib/images'
 import { renderMarkdown } from '../../../lib/markdown'
-import { splitStories, type Part } from '../../../lib/stories'
+import { pageStory, splitStories, type Part } from '../../../lib/stories'
 import { absolute, site } from '../../../lib/site'
 import Masthead from '../../../components/masthead'
 import { Glyph } from '../../../components/redesign/FieldKey'
@@ -394,6 +394,53 @@ export default async function ArticlePage({
   const tail = <Library sources={fm.sources} className={styles.endOnly} />
   const first = blocks[0]?.kind === 'prose' ? blocks[0] : { kind: 'prose' as const, parts: [] }
   const rest = blocks[0]?.kind === 'prose' ? blocks.slice(1) : blocks
+
+  // A story that is the whole piece sets its own opening, so the spread and
+  // the columns stand down; the masthead, the Library, the neighbours and the
+  // footer are the site's, as on every other piece.
+  const whole = pageStory(blocks)
+  if (whole) {
+    return (
+      <div className={styles.page} data-form={form}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+
+        <Masthead activeSection="writings" />
+
+        <main className={styles.main}>
+          <article itemScope itemType="http://schema.org/Article">
+            <StoryBlock
+              name={whole.name}
+              intro={whole.intro}
+              steps={whole.steps}
+              names={whole.names}
+              closing={whole.closing}
+              title={fm.title}
+              date={fm.date}
+              dateLabel={fm.date ? SHORT.format(new Date(fm.date)) : dateLabel}
+              form={FORM_ONE[form]}
+              minutes={node.timeToRead}
+            />
+            <footer className={styles.wholeEnd}>
+              <Library sources={fm.sources} />
+              <Actions link={fm.link} share={share} />
+            </footer>
+          </article>
+
+          {previous || next ? (
+            <nav className={styles.more} aria-label="More writings">
+              {previous ? <Card entry={previous} side="previous" /> : <span />}
+              {next ? <Card entry={next} side="next" /> : null}
+            </nav>
+          ) : null}
+        </main>
+
+        <SiteFooter />
+      </div>
+    )
+  }
 
   return (
     <div className={styles.page} data-form={form}>
