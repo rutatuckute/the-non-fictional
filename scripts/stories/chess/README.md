@@ -17,8 +17,11 @@ The code is in `src/components/stories/chess/`:
 
 ## The words
 
-Every word comes from the article's body in the panel. Each text is a named
-step, and the code places it by name, so texts can be written in any order:
+Every word comes from the article's body. Until the piece is published that
+body is the file `drafts/chess-story.md`, shown in development and on preview
+deployments only (`src/lib/drafts.ts`); at launch it moves into the panel. Each
+text is a named step, and the code places it by name, so texts can be written
+in any order:
 
     <!--story:chess-->
 
