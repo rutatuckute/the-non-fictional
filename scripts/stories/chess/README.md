@@ -97,6 +97,13 @@ in a large and a phone width:
   bottom, with a legend; the figure's accessible name says in words what both
   lines show and that one is an estimate.
 
+Where the data ends, the thread stops being a line and goes on as a trail of
+question marks (`Trace … then="questions"`, `questions()` in `thread.js`):
+sparse at first, then closer, larger and further from the way, some in pairs,
+each appearing as the reader reaches it, down to the edge of Part II. The
+trail is seeded, so it is the same on every visit, and every mark stays inside
+the screen.
+
 ## State of the build
 
 This is the skeleton. The scroll, the pinned scenes, the reader's guesses and

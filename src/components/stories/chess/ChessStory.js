@@ -198,13 +198,18 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             <TimeChart />
             <Text name="obsession-questions" className={c("ch-c3")} />
             {/* On a phone the thread leaves the chart by the margin, past the words. */}
-            <Knot x={97} y={97} px={103} py={92} />
+            <Knot x={97} y={97} px="calc(100% + 7px)" py={92} />
           </div>
 
-          {/* The thread leads to the board of the next part. */}
+          {/* More games, more questions: the trail of question marks widens
+              across the page and stops at the edge of the next part. */}
           <div className={c("ch-row", "ch-enter")}>
-            <Knot x={96} y={10} px={103} py={6} />
-            <Knot x={70} y={128} px={50} py={128} />
+            <Knot x={97} y={2} px="calc(100% + 7px)" py={2} />
+            <Knot x={88} y={26} px={84} py={24} />
+            <Knot x={62} y={50} px={52} py={48} />
+            <Knot x={46} y={76} px={30} py={74} />
+            <Knot x={58} y={90} px={42} py={90} />
+            <Knot x={64} y={97} px={48} py={97} />
           </div>
         </section>
 

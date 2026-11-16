@@ -43,8 +43,12 @@ export const Knot = ({ run = "a", x, y, px = x, py = y, mark = false, tint }) =>
 // here, and it is drawn left to right as the reader scrolls past. How far it
 // has got across is written on the trace's box as --drawn (0 to 1), so
 // anything else in the box can be drawn in step with it.
-export const Trace = ({ run = "a", points }) => (
-  <i className={c("ch-trace")} data-thread={run} data-trace={JSON.stringify(points)} aria-hidden="true" />
+//
+// With `then="questions"` the thread stops being a line where the data ends:
+// from there on it goes as a trail of question marks, sparse at first, then
+// closer, larger and wider, each appearing as the reader reaches it.
+export const Trace = ({ run = "a", points, then }) => (
+  <i className={c("ch-trace")} data-thread={run} data-trace={JSON.stringify(points)} data-then={then} aria-hidden="true" />
 )
 
 // The knots of one stretch of the page, written as a table: for each run, its
@@ -97,6 +101,8 @@ const STEP = 56
 const along = (points, exact) => {
   const way = [points[0]]
   const firm = [Boolean(exact[0])]
+  // Where each given point falls among the samples.
+  const knotAt = [0]
   stretches(points).forEach(([p0, c1, c2, p1], index) => {
     const count = Math.max(1, Math.ceil(Math.hypot(p1[0] - p0[0], p1[1] - p0[1]) / STEP))
     for (let n = 1; n <= count; n++) {
@@ -108,8 +114,9 @@ const along = (points, exact) => {
       ])
       firm.push(Boolean(exact[index] && exact[index + 1]))
     }
+    knotAt.push(way.length - 1)
   })
-  return { way, firm }
+  return { way, firm, knotAt }
 }
 
 // A number from a name, the same every time, so a thread keeps its own gait.
@@ -157,6 +164,49 @@ const wander = (points, firm, name, amount) => {
   })
 }
 
+// The trail of questions along a stretch of thread. Spacing narrows from about
+// 64px to 14px, the marks grow, and they stray further from the way as it
+// goes, to either side in turn; late on, some come in pairs. Seeded, so the
+// trail is the same on every visit. Returns [x, y, size, turn] for each mark.
+const questions = (way, narrow, width) => {
+  const random = seeded("questions")
+  const lengths = [0]
+  for (let i = 1; i < way.length; i++) lengths.push(lengths[i - 1] + Math.hypot(way[i][0] - way[i - 1][0], way[i][1] - way[i - 1][1]))
+  const total = lengths[lengths.length - 1]
+  const pointAt = s => {
+    let i = 1
+    while (i < lengths.length - 1 && lengths[i] < s) i++
+    const k = (s - lengths[i - 1]) / (lengths[i] - lengths[i - 1] || 1)
+    const [a, b] = [way[i - 1], way[i]]
+    const size = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1
+    return { x: a[0] + (b[0] - a[0]) * k, y: a[1] + (b[1] - a[1]) * k, nx: -(b[1] - a[1]) / size, ny: (b[0] - a[0]) / size }
+  }
+  const [small, large, stray] = narrow ? [12, 19, 16] : [13, 24, 26]
+  const marks = []
+  let side = 1
+  for (let s = 26; s < total - 8; s += 14 + 50 * Math.pow(1 - s / total, 1.5)) {
+    const t = s / total
+    const p = pointAt(s)
+    const size = small + (large - small) * t
+    const place = (sign, scale) => {
+      // A second mark keeps clear of the first.
+      const off = sign * Math.max(stray * Math.pow(t, 1.8) * (0.45 + 0.55 * random()), scale < 1 ? size : 0)
+      // Never past the screen's edge: the drawing is as wide as the screen.
+      const half = size * scale * 0.35 + 3
+      marks.push([
+        Math.round(Math.max(half, Math.min(width - half, p.x + p.nx * off)) * 10) / 10,
+        Math.round((p.y + p.ny * off) * 10) / 10,
+        Math.round(size * scale * 10) / 10,
+        Math.round((random() - 0.5) * 28 * t),
+      ])
+    }
+    place(side, 1)
+    if (t > 0.55 && random() < t - 0.3) place(-side, 0.82)
+    side = -side
+  }
+  return marks
+}
+
 // How much of the screen's height the threads have reached: they are drawn
 // down to this line, so their ends are always in view, ahead of the reading.
 const REACH = 0.7
@@ -172,6 +222,7 @@ export const Thread = () => {
   const [drawing, setDrawing] = React.useState({ runs: [], tint: null })
   const drawn = React.useRef([])
   const beads = React.useRef([])
+  const asks = React.useRef([])
   const reveals = React.useRef([])
 
   const draw = React.useCallback(() => {
@@ -195,6 +246,9 @@ export const Thread = () => {
         length = run.deepest[0] > line ? 0 : run.at[a]
       }
       run.path.style.strokeDashoffset = run.length - length
+    })
+    asks.current.forEach(mark => {
+      mark.node.style.opacity = still || mark.y <= line ? 1 : 0
     })
     beads.current.forEach(bead => {
       bead.node.style.opacity = still || bead.y <= line ? 1 : 0
@@ -222,7 +276,7 @@ export const Thread = () => {
       const tint = {}
       node.querySelectorAll("[data-thread]").forEach(knot => {
         const at = knot.getBoundingClientRect()
-        const group = groups.get(knot.dataset.thread) || { points: [], exact: [], marks: [], traces: [] }
+        const group = groups.get(knot.dataset.thread) || { points: [], exact: [], marks: [], traces: [], breakAt: null }
         groups.set(knot.dataset.thread, group)
         if (knot.dataset.trace) {
           // Data: every point of it, placed in the box the trace fills.
@@ -233,6 +287,7 @@ export const Thread = () => {
             group.exact.push(true)
           }
           group.traces.push({ left: at.left, right: at.right, top, bottom: top + at.height, from: group.points[first][1] })
+          if (knot.dataset.then === "questions") group.breakAt = group.points.length - 1
           return
         }
         const point = [Math.round(at.left), Math.round(at.top - box.top)]
@@ -252,14 +307,19 @@ export const Thread = () => {
       svg.current.style.height = `${box.height}px`
       svg.current.setAttribute("viewBox", `0 0 ${width} ${box.height}`)
 
-      const runs = [...groups].map(([name, { points, exact, marks, traces }]) => {
+      const narrow = window.matchMedia("(max-width: 60rem)").matches
+      const runs = [...groups].map(([name, { points, exact, marks, traces, breakAt }]) => {
         const other = name.startsWith("other")
         const sampled = along(points, exact)
-        const way = wander(sampled.way, sampled.firm, name, other ? 7 : 4)
+        const whole = wander(sampled.way, sampled.firm, name, other ? 7 : 4)
+        // Past the break the thread is drawn as questions, not as a line.
+        const cut = breakAt === null ? whole.length - 1 : sampled.knotAt[breakAt]
+        const way = whole.slice(0, cut + 1)
+        const asked = breakAt === null ? [] : questions(whole.slice(cut), narrow, width)
         // A bead sits on the thread as drawn, at the point nearest its knot.
         const nearest = mark =>
           way.reduce((best, p) => (Math.hypot(p[0] - mark[0], p[1] - mark[1]) < Math.hypot(best[0] - mark[0], best[1] - mark[1]) ? p : best))
-        return { name, other, traces, d: pathOf(way), beads: marks.map(nearest).map(p => [Math.round(p[0]), Math.round(p[1])]) }
+        return { name, other, traces, d: pathOf(way), asked, beads: marks.map(nearest).map(p => [Math.round(p[0]), Math.round(p[1])]) }
       })
       const next = { runs, tint: tint.from !== undefined && tint.to !== undefined ? [tint.from, tint.to] : null }
       setDrawing(before => (JSON.stringify(before) === JSON.stringify(next) ? before : next))
@@ -307,6 +367,7 @@ export const Thread = () => {
       return { path, length, at, deepest }
     })
     beads.current = [...svg.current.querySelectorAll("circle")].map(bead => ({ node: bead, y: Number(bead.getAttribute("cy")) }))
+    asks.current = [...svg.current.querySelectorAll("text")].map(mark => ({ node: mark, y: Number(mark.getAttribute("y")) }))
     draw()
   }, [drawing, draw])
 
@@ -347,6 +408,11 @@ export const Thread = () => {
           />
           {run.beads.map(([x, y]) => (
             <circle key={`${x}-${y}`} cx={x} cy={y} r="4" />
+          ))}
+          {run.asked.map(([x, y, size, turn], index) => (
+            <text key={index} x={x} y={y} fontSize={size} transform={turn ? `rotate(${turn} ${x} ${y})` : undefined}>
+              ?
+            </text>
           ))}
         </g>
       ))}

@@ -117,11 +117,11 @@ export const TimeChart = ({ className = "" }) => {
         {/* The thread comes in from the page's margin, under the side's numbers,
             and becomes the line of data. */}
         <Knot x="calc(-2rem - 10px)" y={97} px="calc(-2rem - 10px)" py={97} />
-        <Trace points={CHESS} />
-        {/* The data ends where it ends. The thread goes on to the side, not
-            down: a fall here would read as time that fell away. */}
-        <Knot x={106} y={END - 4} px={103.5} py={END - 3} />
-        <Knot x={113} y={END + 8} px={104.5} py={END + 12} />
+        <Trace points={CHESS} then="questions" />
+        {/* The data ends where it ends, and the thread goes on as questions:
+            to the side first, not down, which would read as time falling away. */}
+        <Knot x={106} y={END - 4} px="calc(100% + 6px)" py={END - 3} />
+        <Knot x={113} y={END + 8} px="calc(100% + 7px)" py={END + 12} />
       </div>
     </figure>
   )
