@@ -25,6 +25,7 @@
 /* A bead on the story's thread: a game, once in a while. */
 .ch-thread circle { fill: var(--thread); transition: opacity 500ms ease 200ms; }
 .ch-knot { position: absolute; left: var(--x); top: var(--y); width: 0; height: 0; }
+.ch-trace { position: absolute; inset: 0; }
 /* What waits for the threads: there from the start without scripts, and
    otherwise in when their end reaches it. */
 .ch-story[data-live="true"] [data-reveal] { opacity: 0; transition: opacity 600ms ease 150ms; }
@@ -124,7 +125,8 @@
 .ch-phone { grid-column: 8 / 12; grid-row: 1; }
 .ch-games { grid-column: 1 / 13; }
 .ch-c2 { grid-column: 6 / 12; }
-.ch-chart { grid-column: 2 / 11; }
+/* The line of data has a box to itself and nothing else in it. */
+.ch-chart { position: relative; grid-column: 2 / 11; aspect-ratio: 8 / 3; }
 .ch-c3 { grid-column: 5 / 11; }
 .ch-enter { height: 26vh; }
 
@@ -228,7 +230,7 @@
 @media (max-width: 60rem) {
   .ch-knot { left: var(--px); top: var(--py); }
   .ch-row { grid-template-columns: minmax(0, 1fr); row-gap: 5vh; }
-  .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-twoSided { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
+  .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-twoSided, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
   .ch-open .ch-text { max-width: none; }
   .ch-memory { row-gap: 22px; }
   .ch-device, .ch-woodenBoard, .ch-phone { width: 72%; }
@@ -236,7 +238,7 @@
   .ch-decade { left: 42%; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: 46px; }
   .ch-aside, .ch-aside.ch-left, .ch-aside.ch-right { left: 42%; right: 0; top: var(--pat); width: auto; }
   .ch-obsession { padding-top: 14vh; }
-  .ch-chart { aspect-ratio: 4 / 3 !important; }
+  .ch-chart { aspect-ratio: 4 / 3; }
 
   .ch-stage { margin-inline: calc(-1 * var(--page-margin)); }
   .ch-scene { inset: 7svh var(--page-margin) auto; height: 54svh; }

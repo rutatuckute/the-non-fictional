@@ -4,7 +4,8 @@ import * as React from "react"
 
 import { c, Holder, Picture, Text, Turn, Words } from "./parts"
 import { People, Reveal, Say, Wrong } from "./scenes"
-import { Knot, Knots, Thread } from "./thread"
+import { Knot, Knots, Thread, Trace } from "./thread"
+import time from "./time.json"
 
 // The chess story is the whole piece: one continuous scroll in four parts,
 // with threads running through it.
@@ -80,6 +81,18 @@ const LINES = {
     "other-b4": [[-6, 5, -8, 30], [20, 36, 18, 50], [43, 56, 38, 68], [52, 80, 50, 88], [52.5, 112, 52, 112]],
   },
 }
+
+// The author's time on Chess.com as the thread draws it: each point's day
+// across the box, its minutes up from a floor near the bottom to the highest
+// four weeks near the top.
+const TIME_LINE = time.points.map(([day, value]) => [
+  Math.round((0.015 + (day / (time.days - 1)) * 0.97) * 10000) / 10000,
+  Math.round((0.88 - (value / time.max) * 0.78) * 10000) / 10000,
+])
+// Where the data ends, in percent of the box's height.
+const TIME_END = TIME_LINE[TIME_LINE.length - 1][1] * 100
+const LONG = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })
+const TIME_LABEL = `The thread drawn as a line of data: minutes a day in live games on Chess.com, as a four-week average, from ${LONG.format(new Date(time.from))} to ${LONG.format(new Date(time.to))}. It lies close to zero until early 2026, climbs to ${Math.round(time.max)} minutes a day, and ends at ${Math.round(time.points[time.points.length - 1][1])}.`
 
 const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minutes }) => {
   const words = React.useMemo(
@@ -192,23 +205,25 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             />
             <Holder open className={c("ch-games")} label="Your games, one mark each" ratio="16 / 5" />
             <Text name="obsession-time" className={c("ch-c2")} />
-            {/* Here the thread is the chart's own line: time on chess, rising. */}
-            <Holder open className={c("ch-chart")} label="Time on chess and on social media" ratio="16 / 7">
-              {/* It comes in from the side, level with the chart, clear of the words above. */}
-              <Knot x={-4} y={45} px={-3.5} py={45} />
-              <Knot x={6} y={86} />
-              <Knot x={40} y={74} />
-              <Knot x={68} y={40} />
-              <Knot x={94} y={22} />
-            </Holder>
+            {/* Here the thread is a line of data, and nothing else is drawn:
+                the minutes a day spent in live games, from the first game
+                to the day the data was taken (time.json). */}
+            <div className={c("ch-chart")} role="img" aria-label={TIME_LABEL}>
+              <Knot x={-4} y={86} px={-3.5} py={86} />
+              <Trace points={TIME_LINE} />
+              {/* The data ends where it ends. The thread goes on to the side,
+                  not down: a fall here would read as time that fell away. */}
+              <Knot x={109} y={TIME_END - 6} px={103.5} py={TIME_END - 4} />
+              <Knot x={118} y={TIME_END + 6} px={104} py={TIME_END + 10} />
+            </div>
             <Text name="obsession-questions" className={c("ch-c3")} />
             {/* On a phone the thread leaves the chart by the margin, past the words. */}
-            <Knot x={88} y={97} px={103} py={92} />
+            <Knot x={97} y={97} px={103} py={92} />
           </div>
 
           {/* The thread leads to the board of the next part. */}
           <div className={c("ch-row", "ch-enter")}>
-            <Knot x={86} y={10} px={103} py={6} />
+            <Knot x={96} y={10} px={103} py={6} />
             <Knot x={70} y={128} px={50} py={128} />
           </div>
         </section>

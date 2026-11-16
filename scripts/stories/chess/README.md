@@ -70,6 +70,25 @@ in a large and a phone width:
   profile picture are hidden; the copy as supplied is kept out of the
   repository.
 
+## The data
+
+- `src/components/stories/chess/time.json`: the line the thread follows where
+  Chess.com arrives. Minutes a day the author spent in live games (rapid,
+  blitz, bullet), as the mean of each day and the 27 before it, every fourth
+  day from the account's first game, with the first day, the last and the
+  highest always kept. A game's length is the time between its recorded start
+  and end, from Chess.com's public data for the account; days are UTC days.
+  It is time in games, not on the site: puzzles, lessons, analysis, daily
+  games and the minutes between games are not in it.
+
+  It is made in the data-stories repository, in `chess-story/analysis/`:
+  `refresh_personal.py` (bring the games up to date), `time_per_day.py` (the
+  table, day by day), `export_time_line.py` (this file).
+
+  The story draws the line and nothing else: no axis, no labels. `Trace` in
+  `thread.js` carries the thread through every point as given, and the box's
+  accessible name says in words what the line is.
+
 ## State of the build
 
 This is the skeleton. The scroll, the pinned scenes, the reader's guesses and

@@ -34,6 +34,14 @@ export const Knot = ({ run = "a", x, y, px = x, py = y, mark = false, tint }) =>
   />
 )
 
+// A stretch drawn from data: the thread as a chart's line. `points` are [x, y]
+// as shares (0 to 1) of the box the trace fills, left to right, top to bottom.
+// The thread passes through every one of them as given: it does not wander
+// here, and it is drawn left to right as the reader scrolls past.
+export const Trace = ({ run = "a", points }) => (
+  <i className={c("ch-trace")} data-thread={run} data-trace={JSON.stringify(points)} aria-hidden="true" />
+)
+
 // The knots of one stretch of the page, written as a table: for each run, its
 // points as [x, y, phone x, phone y, "mark" | "from" | "to"].
 export const Knots = ({ of }) =>
@@ -78,22 +86,25 @@ const pathOf = points =>
         .map(([, c1, c2, p]) => `C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p[0].toFixed(1)},${p[1].toFixed(1)}`)
         .join(" ")
 
-// The same curve as points a short step apart.
+// The same curve as points a short step apart. A point is firm when the
+// stretch it lies on runs between two points of data: those are not to be moved.
 const STEP = 56
-const along = points => {
-  const out = [points[0]]
-  for (const [p0, c1, c2, p1] of stretches(points)) {
+const along = (points, exact) => {
+  const way = [points[0]]
+  const firm = [Boolean(exact[0])]
+  stretches(points).forEach(([p0, c1, c2, p1], index) => {
     const count = Math.max(1, Math.ceil(Math.hypot(p1[0] - p0[0], p1[1] - p0[1]) / STEP))
     for (let n = 1; n <= count; n++) {
       const t = n / count
       const u = 1 - t
-      out.push([
+      way.push([
         u * u * u * p0[0] + 3 * u * u * t * c1[0] + 3 * u * t * t * c2[0] + t * t * t * p1[0],
         u * u * u * p0[1] + 3 * u * u * t * c1[1] + 3 * u * t * t * c2[1] + t * t * t * p1[1],
       ])
+      firm.push(Boolean(exact[index] && exact[index + 1]))
     }
-  }
-  return out
+  })
+  return { way, firm }
 }
 
 // A number from a name, the same every time, so a thread keeps its own gait.
@@ -108,8 +119,9 @@ const seeded = name => {
 }
 
 // The hand in it: each point moved a little to the side of its way, by two
-// slow waves of the thread's own, fading to nothing at its two ends.
-const wander = (points, name, amount) => {
+// slow waves of the thread's own, fading to nothing at its two ends and
+// wherever the thread carries data.
+const wander = (points, firm, name, amount) => {
   const random = seeded(name)
   const [slow, quick] = [78 + random() * 44, 26 + random() * 22]
   const [first, second] = [random() * 6.28, random() * 6.28]
@@ -117,6 +129,16 @@ const wander = (points, name, amount) => {
   for (let i = 1; i < points.length; i++)
     lengths.push(lengths[i - 1] + Math.hypot(points[i][0] - points[i - 1][0], points[i][1] - points[i - 1][1]))
   const total = lengths[lengths.length - 1]
+  // How far each point is, along the thread, from the nearest firm one.
+  const free = points.map(() => Infinity)
+  for (let i = 0, last = -Infinity; i < points.length; i++) {
+    if (firm[i]) last = lengths[i]
+    free[i] = lengths[i] - last
+  }
+  for (let i = points.length - 1, next = Infinity; i >= 0; i--) {
+    if (firm[i]) next = lengths[i]
+    free[i] = Math.min(free[i], next - lengths[i])
+  }
   return points.map((p, i) => {
     const before = points[i - 1] || p
     const after = points[i + 1] || p
@@ -124,7 +146,7 @@ const wander = (points, name, amount) => {
     const dy = after[1] - before[1]
     const size = Math.hypot(dx, dy) || 1
     const s = lengths[i]
-    const ease = Math.min(1, s / 90, (total - s) / 90)
+    const ease = Math.min(1, s / 90, (total - s) / 90, free[i] / 90)
     const off = amount * ease * (0.62 * Math.sin(s / slow + first) + 0.38 * Math.sin(s / quick + second))
     return [p[0] - (dy / size) * off, p[1] + (dx / size) * off]
   })
@@ -184,12 +206,24 @@ export const Thread = () => {
       const tint = {}
       node.querySelectorAll("[data-thread]").forEach(knot => {
         const at = knot.getBoundingClientRect()
+        const group = groups.get(knot.dataset.thread) || { points: [], exact: [], marks: [], traces: [] }
+        groups.set(knot.dataset.thread, group)
+        if (knot.dataset.trace) {
+          // Data: every point of it, placed in the box the trace fills.
+          const top = at.top - box.top
+          const first = group.points.length
+          for (const [x, y] of JSON.parse(knot.dataset.trace)) {
+            group.points.push([Math.round((at.left + x * at.width) * 10) / 10, Math.round((top + y * at.height) * 10) / 10])
+            group.exact.push(true)
+          }
+          group.traces.push({ left: at.left, right: at.right, top, bottom: top + at.height, from: group.points[first][1] })
+          return
+        }
         const point = [Math.round(at.left), Math.round(at.top - box.top)]
-        const group = groups.get(knot.dataset.thread) || { points: [], marks: [] }
         group.points.push(point)
+        group.exact.push(false)
         if (knot.dataset.mark !== undefined) group.marks.push(point)
         if (knot.dataset.tint) tint[knot.dataset.tint] = point[1]
-        groups.set(knot.dataset.thread, group)
       })
       reveals.current = [...node.querySelectorAll("[data-reveal]")].map(item => ({
         node: item,
@@ -202,13 +236,14 @@ export const Thread = () => {
       svg.current.style.height = `${box.height}px`
       svg.current.setAttribute("viewBox", `0 0 ${width} ${box.height}`)
 
-      const runs = [...groups].map(([name, { points, marks }]) => {
+      const runs = [...groups].map(([name, { points, exact, marks, traces }]) => {
         const other = name.startsWith("other")
-        const way = wander(along(points), name, other ? 7 : 4)
+        const sampled = along(points, exact)
+        const way = wander(sampled.way, sampled.firm, name, other ? 7 : 4)
         // A bead sits on the thread as drawn, at the point nearest its knot.
         const nearest = mark =>
           way.reduce((best, p) => (Math.hypot(p[0] - mark[0], p[1] - mark[1]) < Math.hypot(best[0] - mark[0], best[1] - mark[1]) ? p : best))
-        return { name, other, d: pathOf(way), beads: marks.map(nearest).map(p => [Math.round(p[0]), Math.round(p[1])]) }
+        return { name, other, traces, d: pathOf(way), beads: marks.map(nearest).map(p => [Math.round(p[0]), Math.round(p[1])]) }
       })
       const next = { runs, tint: tint.from !== undefined && tint.to !== undefined ? [tint.from, tint.to] : null }
       setDrawing(before => (JSON.stringify(before) === JSON.stringify(next) ? before : next))
@@ -227,15 +262,29 @@ export const Thread = () => {
   }, [draw])
 
   // Each run, sampled once: how far along it is, and how far down the page it
-  // has been by then.
+  // has been by then. Inside a trace the thread is taken to go down as it goes
+  // across, so the line is drawn left to right over a stretch of scrolling
+  // short enough to finish while the whole of it is still on screen.
   React.useLayoutEffect(() => {
-    drawn.current = [...svg.current.querySelectorAll("path")].map(path => {
+    drawn.current = [...svg.current.querySelectorAll("path")].map((path, index) => {
+      const traces = drawing.runs[index]?.traces || []
+      const depthOf = p => {
+        for (const t of traces) {
+          if (p.x < t.left || p.x > t.right || p.y < t.top - 1 || p.y > t.bottom + 1) continue
+          // It begins when the trace's start comes up to the line and is done
+          // while the box still has a little air above it.
+          const room = window.innerHeight * (REACH - 0.08) - (t.bottom - t.top)
+          const span = Math.max(80, Math.min(window.innerHeight * 0.32, room))
+          return t.from + ((p.x - t.left) / (t.right - t.left)) * span
+        }
+        return p.y
+      }
       const length = path.getTotalLength()
       const at = []
       const deepest = []
       let low = -Infinity
       for (let l = 0; l <= length; l += 6) {
-        low = Math.max(low, path.getPointAtLength(l).y)
+        low = Math.max(low, depthOf(path.getPointAtLength(l)))
         at.push(l)
         deepest.push(low)
       }
