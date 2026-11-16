@@ -20,6 +20,9 @@ import { c } from "./parts"
 // reaches it and goes when they are drawn back. Without scripts, or with
 // motion turned off, all of it shows.
 
+// A position: a number is percent of the box; a string is any length.
+const at = value => (typeof value === "string" ? value : `${value}%`)
+
 // A knot. `px` and `py` place it on a phone, where the page is one column.
 // With `mark` it shows on the thread as a bead: a game, once in a while.
 // `tint` names the two knots between which the story's thread takes its colour.
@@ -29,7 +32,7 @@ export const Knot = ({ run = "a", x, y, px = x, py = y, mark = false, tint }) =>
     data-thread={run}
     data-mark={mark ? "" : undefined}
     data-tint={tint}
-    style={{ "--x": `${x}%`, "--y": `${y}%`, "--px": `${px}%`, "--py": `${py}%` }}
+    style={{ "--x": at(x), "--y": at(y), "--px": at(px), "--py": at(py) }}
     aria-hidden="true"
   />
 )
@@ -37,7 +40,9 @@ export const Knot = ({ run = "a", x, y, px = x, py = y, mark = false, tint }) =>
 // A stretch drawn from data: the thread as a chart's line. `points` are [x, y]
 // as shares (0 to 1) of the box the trace fills, left to right, top to bottom.
 // The thread passes through every one of them as given: it does not wander
-// here, and it is drawn left to right as the reader scrolls past.
+// here, and it is drawn left to right as the reader scrolls past. How far it
+// has got across is written on the trace's box as --drawn (0 to 1), so
+// anything else in the box can be drawn in step with it.
 export const Trace = ({ run = "a", points }) => (
   <i className={c("ch-trace")} data-thread={run} data-trace={JSON.stringify(points)} aria-hidden="true" />
 )
@@ -156,6 +161,10 @@ const wander = (points, firm, name, amount) => {
 // down to this line, so their ends are always in view, ahead of the reading.
 const REACH = 0.7
 
+// How much scrolling a trace takes to draw: short enough to finish while the
+// whole of it is on screen, with a little air above.
+const traceSpan = height => Math.max(80, Math.min(window.innerHeight * 0.32, window.innerHeight * (REACH - 0.08) - height))
+
 // They are drawn over the element they are placed in, which has to be positioned.
 export const Thread = () => {
   const svg = React.useRef(null)
@@ -192,6 +201,13 @@ export const Thread = () => {
     })
     reveals.current.forEach(({ node: item, y }) => {
       item.dataset.reached = still || y <= line ? "true" : "false"
+    })
+    node.querySelectorAll("[data-trace]").forEach(trace => {
+      const box = trace.getBoundingClientRect()
+      trace.firstY ??= JSON.parse(trace.dataset.trace)[0][1]
+      const from = box.top - node.getBoundingClientRect().top + trace.firstY * box.height
+      const drawn = still ? 1 : Math.max(0, Math.min(1, (line - from) / traceSpan(box.height)))
+      trace.parentElement.style.setProperty("--drawn", drawn.toFixed(4))
     })
   }, [])
 
@@ -271,11 +287,8 @@ export const Thread = () => {
       const depthOf = p => {
         for (const t of traces) {
           if (p.x < t.left || p.x > t.right || p.y < t.top - 1 || p.y > t.bottom + 1) continue
-          // It begins when the trace's start comes up to the line and is done
-          // while the box still has a little air above it.
-          const room = window.innerHeight * (REACH - 0.08) - (t.bottom - t.top)
-          const span = Math.max(80, Math.min(window.innerHeight * 0.32, room))
-          return t.from + ((p.x - t.left) / (t.right - t.left)) * span
+          // It begins when the trace's start comes up to the line.
+          return t.from + ((p.x - t.left) / (t.right - t.left)) * traceSpan(t.bottom - t.top)
         }
         return p.y
       }
