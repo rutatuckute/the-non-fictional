@@ -56,12 +56,15 @@ their transparent edge and saved as WebP with alpha by `make-images.cjs`, each
 in a large and a phone width:
 
     node make-images.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess \
-      "device|input.png|800,480" "wooden-set|input.png|1000,600|64"
+      "device|input.png|800,480" "wooden-set|input.png|1000,600|64" "wooden-board|input.png|800,480|64"
 
 - `device`: the Chess King Pocket Micro of the opening memory, supplied by the
   author.
 - `wooden-set`: the wooden travel set of the 2020s, open, supplied by the
   author. Made at `1000,600|64`.
+- `wooden-board`: the same set turned over, the board side with a few pieces
+  around it, supplied by the author. Made at `800,480|64`. The two are the
+  sides of one `Turn`, which turns as the reader reaches it.
 
 ## State of the build
 

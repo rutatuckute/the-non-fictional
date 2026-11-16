@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { c, Holder, Picture, Text, Words } from "./parts"
+import { c, Holder, Picture, Text, Turn, Words } from "./parts"
 import { People, Reveal, Say, Wrong } from "./scenes"
 import { Knot, Knots, Thread } from "./thread"
 
@@ -150,18 +150,27 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             <Knots of={LINES.years} />
           </div>
 
-          {/* The wooden board: different stages of life, the same game. The
-              story's thread passes behind it; the others pass it by. */}
+          {/* The wooden set: different stages of life, the same game. It comes
+              in open, the pieces in their felt, and turns over to the board.
+              The story's thread passes behind it; the others pass it by. */}
           <div className={c("ch-row", "ch-wooden")}>
-            <Picture
+            <Turn
               className={c("ch-woodenBoard")}
-              name="wooden-set"
-              alt="A wooden travel chess set lying open: the pieces rest in hollows of green felt, the light ones in the left half and the dark ones in the right."
-              width={1000}
-              height={829}
-              small={600}
+              front={{
+                name: "wooden-set",
+                width: 1000,
+                height: 829,
+                small: 600,
+                alt: "A wooden travel chess set lying open: the pieces rest in hollows of green felt, the light ones in the left half and the dark ones in the right.",
+              }}
+              back={{
+                name: "wooden-board",
+                width: 800,
+                height: 925,
+                small: 480,
+                alt: "The same set turned over: its outside is the chessboard, in light and dark wood, with a few pieces lying around it.",
+              }}
               sizes="(max-width: 60rem) 72vw, 400px"
-              lazy
             />
             <Text name="board" className={c("ch-col")} />
             <Knots of={LINES.wooden} />
