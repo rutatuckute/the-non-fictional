@@ -120,7 +120,8 @@
 .ch-wooden .ch-col { grid-column: 8 / 13; align-self: center; }
 
 .ch-obsession { padding-top: 22vh; row-gap: 9vh; }
-.ch-c1 { grid-column: 2 / 8; }
+.ch-c1 { grid-column: 2 / 7; grid-row: 1; align-self: center; }
+.ch-phone { grid-column: 8 / 12; grid-row: 1; }
 .ch-games { grid-column: 1 / 13; }
 .ch-c2 { grid-column: 6 / 12; }
 .ch-chart { grid-column: 2 / 11; }
@@ -230,7 +231,8 @@
   .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-twoSided { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
   .ch-open .ch-text { max-width: none; }
   .ch-memory { row-gap: 22px; }
-  .ch-device, .ch-woodenBoard { width: 72%; }
+  .ch-device, .ch-woodenBoard, .ch-phone { width: 72%; }
+  .ch-phone { justify-self: end; }
   .ch-decade { left: 42%; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: 46px; }
   .ch-aside, .ch-aside.ch-left, .ch-aside.ch-right { left: 42%; right: 0; top: var(--pat); width: auto; }
   .ch-obsession { padding-top: 14vh; }

@@ -65,6 +65,10 @@ in a large and a phone width:
 - `wooden-board`: the same set turned over, the board side with a few pieces
   around it, supplied by the author. Made at `800,480|64`. The two are the
   sides of one `Turn`, which turns as the reader reaches it.
+- `phone`: a phone with a Chess.com game about to begin, supplied by the
+  author. Made at `800,480` from a copy in which the opponent's username and
+  profile picture are hidden; the copy as supplied is kept out of the
+  repository.
 
 ## State of the build
 

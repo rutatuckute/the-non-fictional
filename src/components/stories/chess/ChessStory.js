@@ -179,10 +179,23 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           <div className={c("ch-row", "ch-obsession")}>
             <Knots of={LINES.obsession} />
             <Text name="obsession" className={c("ch-c1")} />
+            {/* Chess.com arrives: the third object, after the device and the set. */}
+            <Picture
+              className={c("ch-phone")}
+              name="phone"
+              alt="A phone showing a Chess.com game about to begin: an opponent rated 635 at the top of the board, the-non-fictional rated 921 at the bottom, thirty minutes on each clock."
+              width={800}
+              height={1310}
+              small={480}
+              sizes="(max-width: 60rem) 72vw, 400px"
+              lazy
+            />
             <Holder open className={c("ch-games")} label="Your games, one mark each" ratio="16 / 5" />
             <Text name="obsession-time" className={c("ch-c2")} />
             {/* Here the thread is the chart's own line: time on chess, rising. */}
             <Holder open className={c("ch-chart")} label="Time on chess and on social media" ratio="16 / 7">
+              {/* It comes in from the side, level with the chart, clear of the words above. */}
+              <Knot x={-4} y={45} px={-3.5} py={45} />
               <Knot x={6} y={86} />
               <Knot x={40} y={74} />
               <Knot x={68} y={40} />
