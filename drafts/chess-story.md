@@ -90,19 +90,23 @@ It's far from being a defining part of who I am. I just like the strategic and a
 
 <!--step:say-message-->
 
-*[07 · What we say about ourselves. Your message about blitz.]*
+*[The blitz message: "I would be soooo bad at blitz". Placeholder until the message and its date are settled.]*
 
 <!--step:say-prediction-->
 
-*[Was the prediction right? Your later games answer.]*
+*[What my games say: three blitz games, then 309 bullet games. In July to September my bullet rating sat 253 points below my rapid; for players at my level the drop is 256. Exactly typical.]*
 
 <!--step:say-guess-->
 
-*[The reader's turn: the question about usernames.]*
+*[The reader's turn: an opponent whose name says they are bad at chess. Rated higher, about the same or lower than a typical opponent?]*
 
 <!--step:say-answer-->
 
-*[What the ratings show, next to the reader's guess.]*
+*[The answer: lower, but only a little. 4.2 in 10 are rated above a typical opponent, where any opponent would be 5.]*
+
+<!--step:say-surprise-->
+
+*[The surprises: names that boast are below too (4.5); names that joke about blunders are above (6.4); names with a goal, above again (7.5).]*
 
 <!--step:say-limits-->
 

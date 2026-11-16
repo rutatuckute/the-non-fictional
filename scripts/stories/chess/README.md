@@ -42,7 +42,7 @@ the published site. The names, in reading order:
 | I | `mine`, `memory`, `not-a-player`, `not-defining`, `board`, `obsession`, `obsession-time`, `obsession-questions` |
 | II | `strangers`, `strangers-many`, `professor`, `professor-remark`, `professor-quote`, `boards`, `question`, `question-large` |
 | III | `data-intro` |
-| III, first question | `say-message`, `say-prediction`, `say-guess`, `say-answer`, `say-limits` |
+| III, first question | `say-message`, `say-prediction`, `say-guess`, `say-answer`, `say-surprise`, `say-limits` |
 | III, second question | `wrong-observation`, `wrong-decide`, `wrong-outcome`, `wrong-crowd`, `wrong-you` |
 | III, third question | `reveal-professor`, `reveal-games`, `reveal-style` |
 | III, the end of it | `unknown`, `unknown-showed`, `unknown-cannot` |
@@ -103,6 +103,15 @@ sparse at first, then closer, larger and further from the way, some in pairs,
 each appearing as the reader reaches it, down to the edge of Part II. The
 trail is seeded, so it is the same on every visit, and every mark stays inside
 the screen.
+
+- `src/components/stories/chess/say.json`: the numbers of the first question,
+  made by `chess-story/analysis/export_say.py` (from `names_vs_rating.py`).
+  The author's bullet rating against her rapid, July to September 2026, and the
+  same gap for the 242 sampled players at her rapid level (gaps only, rounded,
+  shuffled). Then usernames sorted by what they say about their owner's chess,
+  against the ratings of the opponents you meet: each opponent counted once per
+  game against the sample, at the rating shown beside their name then. The
+  examples are patterns, never anyone's username.
 
 ## State of the build
 
