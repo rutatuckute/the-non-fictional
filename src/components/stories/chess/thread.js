@@ -367,7 +367,19 @@ export const Thread = () => {
       return { path, length, at, deepest }
     })
     beads.current = [...svg.current.querySelectorAll("circle")].map(bead => ({ node: bead, y: Number(bead.getAttribute("cy")) }))
-    asks.current = [...svg.current.querySelectorAll("text")].map(mark => ({ node: mark, y: Number(mark.getAttribute("y")) }))
+    // A trail of questions follows a trace, so none appears before the line of
+    // data is drawn to its end: the trail's marks wait as long as the trace
+    // takes, beyond its last point, to finish.
+    const wait = {}
+    drawing.runs.forEach((run, index) => {
+      const trace = run.traces[run.traces.length - 1]
+      const path = drawn.current[index]
+      if (!run.asked.length || !trace || !path) return
+      const end = path.path.getPointAtLength(path.length).y
+      // (and a little more: the trail first rises, so its first marks sit above the end)
+      wait[run.name] = Math.max(0, trace.from + traceSpan(trace.bottom - trace.top) - end) + 24
+    })
+    asks.current = [...svg.current.querySelectorAll("text")].map(mark => ({ node: mark, y: Number(mark.getAttribute("y")) + (wait[mark.dataset.run] || 0) }))
     draw()
   }, [drawing, draw])
 
@@ -410,7 +422,7 @@ export const Thread = () => {
             <circle key={`${x}-${y}`} cx={x} cy={y} r="4" />
           ))}
           {run.asked.map(([x, y, size, turn], index) => (
-            <text key={index} x={x} y={y} fontSize={size} transform={turn ? `rotate(${turn} ${x} ${y})` : undefined}>
+            <text key={index} x={x} y={y} fontSize={size} data-run={run.name} transform={turn ? `rotate(${turn} ${x} ${y})` : undefined}>
               ?
             </text>
           ))}
