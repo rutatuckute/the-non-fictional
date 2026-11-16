@@ -37,6 +37,7 @@
   max-width: 20em;
   font-size: clamp(30px, 4.6vw, 56px); line-height: 1.08; letter-spacing: var(--tracking-display); text-wrap: balance;
 }
+.ch-text.ch-headline { font-size: clamp(30px, 3.4vw, 46px); line-height: 1.08; letter-spacing: var(--tracking-display); }
 .ch-text.ch-medium { font-size: clamp(22px, 2.6vw, 32px); line-height: 1.2; letter-spacing: var(--tracking-title); text-wrap: balance; }
 .ch-text.ch-cardText { font-size: 17px; line-height: 1.5; }
 .ch-missing {
@@ -79,9 +80,10 @@
 .ch-free { position: relative; padding: 6vh 0 12vh; }
 .ch-row { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
 
-.ch-memory { padding-top: 4vh; }
-.ch-device { grid-column: 2 / 6; }
-.ch-memory .ch-col { grid-column: 8 / 13; align-self: center; }
+.ch-memory { padding-top: 4vh; row-gap: 26px; }
+.ch-mine { grid-column: 2 / 7; grid-row: 1; }
+.ch-device { grid-column: 2 / 6; grid-row: 2; }
+.ch-memory .ch-col { grid-column: 8 / 13; grid-row: 2; align-self: center; }
 /* The years between: the thread as a timeline, the decades named behind it. */
 .ch-years { position: relative; height: 135vh; }
 .ch-decade {
@@ -203,6 +205,7 @@
   .ch-knot { left: var(--px); top: var(--py); }
   .ch-row { grid-template-columns: minmax(0, 1fr); row-gap: 5vh; }
   .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-holder, .ch-row > .ch-picture { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
+  .ch-memory { row-gap: 22px; }
   .ch-device, .ch-woodenBoard { width: 72%; }
   .ch-decade { left: 42%; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: 46px; }
   .ch-aside, .ch-aside.ch-left, .ch-aside.ch-right { left: 42%; right: 0; top: var(--pat); width: auto; }

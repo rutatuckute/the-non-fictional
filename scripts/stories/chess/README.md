@@ -39,7 +39,7 @@ the published site. The names, in reading order:
 | Part | Names |
 | --- | --- |
 | Opening | `opening` |
-| I | `memory`, `years`, `not-a-player`, `board`, `obsession`, `obsession-time`, `obsession-questions` |
+| I | `mine`, `memory`, `years`, `not-a-player`, `board`, `obsession`, `obsession-time`, `obsession-questions` |
 | II | `strangers`, `strangers-many`, `professor`, `professor-remark`, `professor-quote`, `boards`, `question`, `question-large` |
 | III | `data-intro` |
 | III, first question | `say-message`, `say-prediction`, `say-guess`, `say-answer`, `say-limits` |

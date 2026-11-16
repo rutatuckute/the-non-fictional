@@ -12,11 +12,17 @@ excerpt: Working draft.
 
 <!--step:opening-->
 
-Do you have that one memory your mind keeps wandering back to? Nothing major, and yet so surprisingly vivid.
+Do you have that one memory your mind keeps wandering back to?\
+Nothing major, and yet so surprisingly vivid.
+
+<!--step:mine-->
+
+This is mine
 
 <!--step:memory-->
 
-This is mine. 2000s, my father teaching me how to, and that feeling of genuine excitement mixed with curiosity.
+My father tought me how to.\
+And that feeling of genuine excitement mixed with curiosity.
 
 <!--step:years-->
 

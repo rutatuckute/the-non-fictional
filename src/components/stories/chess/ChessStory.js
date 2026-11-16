@@ -33,15 +33,15 @@ import { Knot, Knots, Thread } from "./thread"
 // thread turns from grey to its colour.
 const LINES = {
   open: {
-    a: [[58, 0, 40, 0], [74, 16, 108, 22], [87, 36, 108, 50], [88.5, 66, 108, 74], [70, 90, 64, 90, "from"]],
+    a: [[58, 0, 40, 0], [74, 16, 108, 22], [87, 36, 108, 50], [88.5, 66, 108, 74, "from"], [70, 90, 76, 92]],
     "other-1": [[12, 0, 8, 0], [50, 14, 70, 14], [82, 32, 108, 30], [84, 68, 108, 80], [58, 94, 84, 96]],
     "other-2": [[36, 0, 70, 0], [66, 12, 108, 12], [91, 34, 112, 34], [92.5, 70, 112, 70], [80, 96, 112, 96]],
     "other-4": [[106, 10, -10, 40], [96, 38, -10, 60], [97, 74, -10, 80]],
     "other-5": [[106, 46, 100, 0], [99, 62, 88, 12], [100.5, 86, 108, 24]],
   },
   memory: {
-    a: [[46, 20, 30, 4], [45.5, 45, -3, 64, "to"], [46, 96, -3, 99]],
-    "other-1": [[32, 6, 86, 12], [28, 50, 107, 36], [26, 100, 107, 99]],
+    a: [[47, 6, 82, 5, "to"], [45.5, 45, 40, 30], [46, 80, -3, 72], [46, 97, -3, 99]],
+    "other-1": [[38, 3, 96, 10], [30, 32, 107, 36], [26, 100, 107, 99]],
     "other-2": [[53, 28, 108, 30], [52, 60, 108, 50], [52.5, 96, 108, 80]],
     "other-4": [[101.5, 20, -10, 30], [102, 96, -10, 80]],
     "other-5": [[106, 8, 112, 8]],
@@ -111,8 +111,13 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
         </header>
 
         <section className={c("ch-free")} aria-label="One of the threads in a life">
-          {/* The memory. Beside it one thread takes its colour: this one. */}
+          {/* The memory, under its decade. One thread takes its colour as
+              it reaches the words: this one. */}
           <div className={c("ch-row", "ch-memory")}>
+            <span className={c("ch-decade")} data-reveal="" style={{ "--at": "0px", "--pat": "-14px" }}>
+              2000s
+            </span>
+            <Text name="mine" look="headline" className={c("ch-mine")} />
             <Picture
               className={c("ch-device")}
               name="device"
@@ -129,12 +134,12 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           {/* The years between. The thread runs bare for long stretches, with
               a bead where a game was played, among the others. */}
           <div className={c("ch-years")}>
-            {["2000s", "2010s", "2020s"].map((decade, index) => (
+            {["2010s", "2020s"].map((decade, index) => (
               <span
                 key={decade}
                 className={c("ch-decade")}
                 data-reveal=""
-                style={{ "--at": `${[10, 48, 96][index]}%`, "--pat": `${[6, 42, 95][index]}%` }}
+                style={{ "--at": `${[48, 96][index]}%`, "--pat": `${[42, 95][index]}%` }}
               >
                 {decade}
               </span>
