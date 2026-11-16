@@ -17,20 +17,20 @@ Nothing major, and yet so surprisingly vivid.
 
 <!--step:mine-->
 
-This is mine
+This is mine.
 
 <!--step:memory-->
 
-My father tought me how to.\
+My father taught me how to play (except for *en passant*, what is this rule anyway?).\
 And that feeling of genuine excitement mixed with curiosity.
-
-<!--step:years-->
-
-*[02 · The recurring thread. Years of not playing.]*
 
 <!--step:not-a-player-->
 
-*[I'm not a chess player. Chess isn't a defining part of who I am, just one of many threads.]*
+I'm not THE chess player, though.
+
+<!--step:not-defining-->
+
+It's far from being a defining part of who I am. I just like the strategic and analytical aspect of the game. That, and its endless possibilities.
 
 <!--step:board-->
 

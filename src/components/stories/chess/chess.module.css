@@ -35,9 +35,10 @@
 .ch-text > :last-child { margin-bottom: 0; }
 .ch-text.ch-large {
   max-width: 20em;
-  font-size: clamp(30px, 4.6vw, 56px); line-height: 1.08; letter-spacing: var(--tracking-display); text-wrap: balance;
+  font-size: clamp(30px, 3.9vw, 52px); line-height: 1.08; letter-spacing: var(--tracking-display); text-wrap: balance;
 }
 .ch-text.ch-headline { font-size: clamp(30px, 3.4vw, 46px); line-height: 1.08; letter-spacing: var(--tracking-display); }
+.ch-text.ch-lead { font-size: clamp(20px, 1.8vw, 25px); line-height: 1.45; }
 .ch-text.ch-medium { font-size: clamp(22px, 2.6vw, 32px); line-height: 1.2; letter-spacing: var(--tracking-title); text-wrap: balance; }
 .ch-text.ch-cardText { font-size: 17px; line-height: 1.5; }
 .ch-missing {
@@ -74,7 +75,8 @@
   margin: 0; color: var(--ink-2);
   font: 400 22px / 1.25 var(--font-title); letter-spacing: -0.006em; text-transform: none;
 }
-.ch-open .ch-text { margin-top: 14px; }
+/* The question keeps clear of the right of the screen, where the threads come down. */
+.ch-open .ch-text { margin-top: 14px; max-width: min(20em, 80%); }
 
 /* ── free scroll: text and pictures pass by ── */
 .ch-free { position: relative; padding: 6vh 0 12vh; }
@@ -205,6 +207,7 @@
   .ch-knot { left: var(--px); top: var(--py); }
   .ch-row { grid-template-columns: minmax(0, 1fr); row-gap: 5vh; }
   .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-holder, .ch-row > .ch-picture { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
+  .ch-open .ch-text { max-width: none; }
   .ch-memory { row-gap: 22px; }
   .ch-device, .ch-woodenBoard { width: 72%; }
   .ch-decade { left: 42%; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: 46px; }
