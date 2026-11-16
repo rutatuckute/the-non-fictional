@@ -39,7 +39,7 @@ the published site. The names, in reading order:
 | Part | Names |
 | --- | --- |
 | Opening | `opening` |
-| I | `memory`, `recurring`, `obsession`, `obsession-time`, `obsession-questions` |
+| I | `memory`, `years`, `not-a-player`, `board`, `obsession`, `obsession-time`, `obsession-questions` |
 | II | `strangers`, `strangers-many`, `professor`, `professor-remark`, `professor-quote`, `boards`, `question`, `question-large` |
 | III | `data-intro` |
 | III, first question | `say-message`, `say-prediction`, `say-guess`, `say-answer`, `say-limits` |
@@ -48,6 +48,20 @@ the published site. The names, in reading order:
 | III, the end of it | `unknown`, `unknown-showed`, `unknown-cannot` |
 | IV | `encounter`, `continuing`, `last-question` |
 | After the story | `method` |
+
+## The pictures
+
+The story's pictures are cut-outs in `public/images/stories/chess/`, trimmed of
+their transparent edge and saved as WebP with alpha by `make-images.cjs`, each
+in a large and a phone width:
+
+    node make-images.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess \
+      "device|input.png|800,480" "wooden-set|input.png|1000,600|64"
+
+- `device`: the Chess King Pocket Micro of the opening memory, supplied by the
+  author.
+- `wooden-set`: the wooden travel set of the 2020s, open, supplied by the
+  author. Made at `1000,600|64`.
 
 ## State of the build
 

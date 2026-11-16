@@ -15,13 +15,13 @@ export const Words = React.createContext({})
 
 // A named text. One that the body doesn't have yet says so while the story is
 // being built, and is simply absent on the published page.
-export const Text = ({ name, look = "", className = "" }) => {
+export const Text = ({ name, look = "", className = "", style }) => {
   const html = React.useContext(Words)[name]
   const classes = `${c("ch-text", look && `ch-${look}`)} ${className}`
-  if (html) return <div className={`${classes} ${prose.prose}`} dangerouslySetInnerHTML={{ __html: html }} />
+  if (html) return <div className={`${classes} ${prose.prose}`} style={style} dangerouslySetInnerHTML={{ __html: html }} />
   if (process.env.NODE_ENV === "production") return null
   return (
-    <div className={classes}>
+    <div className={classes} style={style}>
       <p className={c("ch-missing")}>No text named “{name}” in the body yet</p>
     </div>
   )
@@ -40,6 +40,23 @@ export const Holder = ({ label, ratio, open = false, className = "", children })
     <span className={c("ch-holderLabel")}>{label}</span>
     {children}
   </div>
+)
+
+// A picture made for the story: a cut-out on the page's own ground, in the
+// sizes scripts/stories/chess/make-images.cjs wrote. `sizes` says how wide it
+// is shown, so a phone takes the smaller file.
+export const Picture = ({ name, alt, width, height, small, sizes, lazy = false, className = "" }) => (
+  <img
+    className={`${c("ch-picture")} ${className}`}
+    src={`/images/stories/chess/${name}.webp`}
+    srcSet={`/images/stories/chess/${name}-${small}.webp ${small}w, /images/stories/chess/${name}.webp ${width}w`}
+    sizes={sizes}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={lazy ? "lazy" : undefined}
+    decoding="async"
+  />
 )
 
 // One thing on a pinned scene, there for some steps and gone for the rest.

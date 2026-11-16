@@ -16,11 +16,19 @@ Do you have that one memory your mind keeps wandering back to? Nothing major, an
 
 <!--step:memory-->
 
-*[01 · The memory. The device, your father, learning to play. Short and intimate.]*
+This is mine. 2000s, my father teaching me how to, and that feeling of genuine excitement mixed with curiosity.
 
-<!--step:recurring-->
+<!--step:years-->
 
-*[02 · The recurring thread. Years pass, the wooden board, occasional games with different people. One thread among many.]*
+*[02 · The recurring thread. Years of not playing.]*
+
+<!--step:not-a-player-->
+
+*[I'm not a chess player. Chess isn't a defining part of who I am, just one of many threads.]*
+
+<!--step:board-->
+
+*[The wooden chessboard. Occasional games with people in my life: different stages of life, same game.]*
 
 <!--step:obsession-->
 
