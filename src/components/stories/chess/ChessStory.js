@@ -160,16 +160,16 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
               front={{
                 name: "wooden-set",
                 width: 1000,
-                height: 829,
+                height: 838,
                 small: 600,
                 alt: "A wooden travel chess set lying open: the pieces rest in hollows of green felt, the light ones in the left half and the dark ones in the right.",
               }}
               back={{
                 name: "wooden-board",
-                width: 800,
-                height: 925,
-                small: 480,
-                alt: "The same set turned over: its outside is the chessboard, in light and dark wood, with a few pieces lying around it.",
+                width: 1000,
+                height: 838,
+                small: 600,
+                alt: "The same set turned over: its outside is the chessboard, sixty-four squares of light and dark wood across its two halves.",
               }}
               sizes="(max-width: 60rem) 72vw, 400px"
             />
