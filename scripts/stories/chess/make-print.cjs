@@ -14,7 +14,7 @@ const IVORY = [238, 232, 223]
 // CONTRAST stretches the softened tones away from the middle before the
 // threshold: above 1, shadows print denser and lights cleaner. Settings can be
 // overridden for a trial with PRINT=soften,cut,spread,contrast.
-const [SOFTEN, CUT, SPREAD, CONTRAST] = (process.env.PRINT || "2.5,185,120,1.5").split(",").map(Number)
+const [SOFTEN, CUT, SPREAD, CONTRAST] = (process.env.PRINT || "3,150,150,1").split(",").map(Number)
 ;(async () => {
   for (const spec of process.argv.slice(4)) {
     const [name, input, widths] = spec.split("|")
