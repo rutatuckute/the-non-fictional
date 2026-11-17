@@ -195,13 +195,20 @@
 .ch-boardwrap { position: relative; width: min(54vh, 78%); aspect-ratio: 1; }
 .ch-boardwrap > .ch-board { position: absolute; inset: 0; z-index: 2; transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1); }
 .ch-boardwrap > .ch-board[data-small="true"] { transform: scale(0.09); }
+/* While the club's own board is on the table, the plain one steps aside. */
+.ch-boardwrap > .ch-board { transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1), opacity 400ms ease; }
+.ch-boardwrap > .ch-board[data-away="true"] { opacity: 0; }
 .ch-boardSmall { width: min(40vh, 70%); aspect-ratio: 1; margin-inline: auto; }
 .ch-chip {
   z-index: 3; padding: 6px 12px; border: 1px solid var(--rule-strong); border-radius: 99px;
   background: var(--void); color: var(--ink-2); font: 500 11px / 1.3 var(--font-mono); letter-spacing: 0.04em; white-space: nowrap;
 }
-.ch-club { z-index: 1; left: -44%; top: -18%; width: 62%; }
-.ch-club .ch-holderLabel { bottom: auto; top: 8px; }
+/* The club: the board as an object on the table, the professor standing behind
+   its left edge, his front just behind the board's frame. */
+.ch-clubBoard { inset: -4% -6%; z-index: 3; display: grid; place-items: center; }
+.ch-clubBoard img { display: block; width: 100%; height: auto; }
+.ch-professor { z-index: 2; left: -40%; bottom: -10%; height: 132%; }
+.ch-professor img { display: block; width: auto; height: 100%; }
 .ch-said { z-index: 4; right: -12%; bottom: -8%; width: 74%; padding: 16px 18px; border: 1px solid var(--rule-strong); background: var(--void); }
 .ch-minis { inset: -22% -34%; z-index: 1; display: grid; grid-template-columns: repeat(18, 1fr); gap: 5px; align-content: center; }
 .ch-minis b { aspect-ratio: 1; border: 1px solid var(--rule); background: var(--raised); }
@@ -306,7 +313,7 @@
   .ch-card { width: 100%; padding: 14px 16px 16px; background: color-mix(in srgb, var(--raised) 94%, transparent); }
   .ch-text.ch-cardText { font-size: 16px; }
   .ch-boardwrap { width: min(34svh, 60%); }
-  .ch-club { left: -30%; top: -24%; width: 74%; }
+  .ch-professor { left: -30%; bottom: -8%; height: 120%; }
   .ch-said { right: -16%; width: 90%; }
   .ch-minis { inset: -14% -22%; grid-template-columns: repeat(12, 1fr); }
   .ch-pawnRow { grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr); gap: 10px; }

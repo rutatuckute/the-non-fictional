@@ -68,6 +68,14 @@ in a large and a phone width:
 
       node make-set-pair.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess inside.png outside.png
 
+- `professor`: the professor at the London chess club, an engraving made with
+  a GPT image model to the prompts in the data-stories repository
+  (`chess-story/visuals/PROMPTS.md`), faceless on purpose. Made by
+  `make-figures.cjs`, which cuts a figure out of the white around it, keeps the
+  paper inside it warmed to the site's ivory, and never inverts it:
+
+      node make-figures.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "professor|input.png|520,300"
+
 - `phone`: a phone with a Chess.com game about to begin, supplied by the
   author. Made at `800,480` from a copy in which the opponent's username and
   profile picture are hidden; the copy as supplied is kept out of the

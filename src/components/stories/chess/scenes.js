@@ -42,10 +42,32 @@ export const People = () => (
             <b key={index} />
           ))}
         </Show>
-        <Show on={during(step, 2, 3)} className={c("ch-club")}>
-          <Holder label="The chess club" ratio="4 / 3" />
+        {/* The club: a board on the table and the professor standing at its
+            left, watching. A first trial of the engraved people: the board is
+            the wooden one until the club's own arrives. */}
+        <Show on={during(step, 2, 3)} className={c("ch-professor")}>
+          <img
+            src="/images/stories/chess/professor.webp"
+            srcSet="/images/stories/chess/professor-300.webp 300w, /images/stories/chess/professor.webp 520w"
+            sizes="(max-width: 60rem) 30vw, 260px"
+            alt="An older man in a pale jacket stands at the side of the board, hands clasped behind his back, bowed over the game."
+            width={520}
+            height={1342}
+            decoding="async"
+          />
         </Show>
-        <div className={c("ch-board")} data-small={step >= 4 ? "true" : "false"} />
+        <Show on={during(step, 2, 3)} className={c("ch-clubBoard")}>
+          <img
+            src="/images/stories/chess/wooden-board.webp"
+            srcSet="/images/stories/chess/wooden-board-600.webp 600w, /images/stories/chess/wooden-board.webp 1000w"
+            sizes="(max-width: 60rem) 60vw, 540px"
+            alt=""
+            width={1000}
+            height={838}
+            decoding="async"
+          />
+        </Show>
+        <div className={c("ch-board")} data-small={step >= 4 ? "true" : "false"} data-away={during(step, 2, 3) ? "true" : "false"} />
         {CHIPS.map((place, index) => (
           <Show key={index} on={index === 0 ? step <= 1 : step === 1} className={c("ch-chip")} style={place}>
             username · rating · country
