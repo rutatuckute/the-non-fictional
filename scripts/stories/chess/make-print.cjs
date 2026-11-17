@@ -19,7 +19,8 @@ const [SOFTEN, CUT, SPREAD, CONTRAST] = (process.env.PRINT || "3,150,150,1").spl
   for (const spec of process.argv.slice(4)) {
     const [name, input, widths] = spec.split("|")
     const { data, info } = await sharp(input).greyscale().raw().toBuffer({ resolveWithObject: true })
-    const soft = await sharp(input).greyscale().blur(SOFTEN).raw().toBuffer()
+    // no softening at all keeps every engraved line, crisp
+    const soft = SOFTEN > 0 ? await sharp(input).greyscale().blur(SOFTEN).raw().toBuffer() : data
     const W = info.width
     const H = info.height
     const outside = new Uint8Array(W * H)
