@@ -73,11 +73,13 @@ in a large and a phone width:
   48) are dropped and it is trimmed; made at 1000 and 600 px wide.
 - `professor`: the professor at the London chess club, an engraving made with
   a GPT image model to the prompts in the data-stories repository
-  (`chess-story/visuals/PROMPTS.md`), faceless on purpose. Made by
-  `make-figures.cjs`, which cuts a figure out of the white around it, keeps the
-  paper inside it warmed to the site's ivory, and never inverts it:
+  (`chess-story/visuals/PROMPTS.md`), his face turned away on purpose. Printed
+  for the page by `make-print.cjs` in two inks as every.to prints its figures:
+  the fine hatching softened away, the shadows turned to stipple, and only the
+  site's ivory drawn, so the page shows through the dark. Every figure goes
+  through the same settings:
 
-      node make-figures.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "professor|input.png|520,300"
+      node make-print.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "professor|input.png|520,300"
 
 - `phone`: a phone with a Chess.com game about to begin, supplied by the
   author. Made at `800,480` from a copy in which the opponent's username and
