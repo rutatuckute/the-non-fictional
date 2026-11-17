@@ -42,9 +42,8 @@ export const People = () => (
             <b key={index} />
           ))}
         </Show>
-        {/* The club: a board on the table and the professor standing at its
-            left, watching. A first trial of the engraved people: the board is
-            the wooden one until the club's own arrives. */}
+        {/* The club: its own board, pink and white, and the professor
+            standing at its left, watching. */}
         <Show on={during(step, 2, 3)} className={c("ch-professor")}>
           <img
             src="/images/stories/chess/professor.webp"
@@ -58,12 +57,12 @@ export const People = () => (
         </Show>
         <Show on={during(step, 2, 3)} className={c("ch-clubBoard")}>
           <img
-            src="/images/stories/chess/wooden-board.webp"
-            srcSet="/images/stories/chess/wooden-board-600.webp 600w, /images/stories/chess/wooden-board.webp 1000w"
+            src="/images/stories/chess/club-board.webp"
+            srcSet="/images/stories/chess/club-board-600.webp 600w, /images/stories/chess/club-board.webp 1000w"
             sizes="(max-width: 60rem) 60vw, 540px"
-            alt=""
+            alt="The club's board: pink and white squares with letters and numbers along its edges, the black and white plastic pieces set up for a game."
             width={1000}
-            height={838}
+            height={824}
             decoding="async"
           />
         </Show>

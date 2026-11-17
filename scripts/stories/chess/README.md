@@ -68,6 +68,9 @@ in a large and a phone width:
 
       node make-set-pair.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess inside.png outside.png
 
+- `club-board`: the board at the London chess club, pink and white with its
+  plastic pieces set up, supplied by the author. Its faint specks (alpha under
+  48) are dropped and it is trimmed; made at 1000 and 600 px wide.
 - `professor`: the professor at the London chess club, an engraving made with
   a GPT image model to the prompts in the data-stories repository
   (`chess-story/visuals/PROMPTS.md`), faceless on purpose. Made by
