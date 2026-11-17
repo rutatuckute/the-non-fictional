@@ -55,6 +55,18 @@ export const People = () => (
             decoding="async"
           />
         </Show>
+        {/* You, in the foreground: we look over your shoulder at the game. */}
+        <Show on={during(step, 2, 3)} className={c("ch-me")}>
+          <img
+            src="/images/stories/chess/me-club.webp"
+            srcSet="/images/stories/chess/me-club-320.webp 320w, /images/stories/chess/me-club.webp 560w"
+            sizes="(max-width: 60rem) 50vw, 420px"
+            alt="The author, seen from behind, her long hair over her shoulders, bent over the board."
+            width={560}
+            height={840}
+            decoding="async"
+          />
+        </Show>
         <Show on={during(step, 2, 3)} className={c("ch-clubBoard")}>
           <img
             src="/images/stories/chess/club-board.webp"

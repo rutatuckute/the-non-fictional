@@ -80,6 +80,13 @@ in a large and a phone width:
 
       PRINT=0,140,40,1.1 node make-print.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "professor|input.png|520,300"
 
+- `me-club`: the author at the club, a half figure seen from behind, made and
+  printed the same way, in the foreground of the club scene. It stands in
+  front of the board, so its dark ink is printed in the page's own dark
+  (`FILL=1`) and hides what is behind it instead of letting it show through:
+
+      FILL=1 PRINT=0,140,40,1.1 node make-print.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "me-club|input.png|560,320"
+
 - `phone`: a phone with a Chess.com game about to begin, supplied by the
   author. Made at `800,480` from a copy in which the opponent's username and
   profile picture are hidden; the copy as supplied is kept out of the

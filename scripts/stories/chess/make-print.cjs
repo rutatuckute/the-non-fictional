@@ -15,6 +15,11 @@ const IVORY = [238, 232, 223]
 // threshold: above 1, shadows print denser and lights cleaner. Settings can be
 // overridden for a trial with PRINT=soften,cut,spread,contrast.
 const [SOFTEN, CUT, SPREAD, CONTRAST] = (process.env.PRINT || "3,150,150,1").split(",").map(Number)
+// FILL=1 paints the dark ink inside the figure in the page's own dark
+// (--surface) instead of leaving it transparent, so a figure that stands in
+// front of something (a board) hides it, as a body would.
+const FILL = process.env.FILL === "1"
+const PAGE = [17, 16, 15]
 ;(async () => {
   for (const spec of process.argv.slice(4)) {
     const [name, input, widths] = spec.split("|")
@@ -43,7 +48,14 @@ const [SOFTEN, CUT, SPREAD, CONTRAST] = (process.env.PRINT || "3,150,150,1").spl
     for (let k = 0; k < W * H; k++) {
       const tone = Math.max(0, Math.min(255, 128 + (soft[k] - 128) * CONTRAST))
       const dark = tone < CUT + wobble() * SPREAD
-      if (outside[k] || dark) continue
+      if (outside[k]) continue
+      if (dark && !FILL) continue
+      const ink = dark ? PAGE : IVORY
+      rgba[k * 4] = ink[0]
+      rgba[k * 4 + 1] = ink[1]
+      rgba[k * 4 + 2] = ink[2]
+      rgba[k * 4 + 3] = 255
+      continue
       rgba[k * 4] = IVORY[0]
       rgba[k * 4 + 1] = IVORY[1]
       rgba[k * 4 + 2] = IVORY[2]

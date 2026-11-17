@@ -214,6 +214,10 @@
    near corner. */
 .ch-professor { z-index: 4; left: -56%; bottom: 4%; height: 112%; }
 .ch-professor img { display: block; width: auto; height: 100%; }
+/* You, nearest to us, over the board's near left corner, cut off by the screen's bottom edge. */
+.ch-me { z-index: 5; left: -30%; top: 60%; height: 118%; }
+/* the figure is cut at the waist: fade that edge out where the screen doesn't cut it */
+.ch-me img { display: block; width: auto; height: 100%; mask-image: linear-gradient(to bottom, #000 78%, transparent 98%); }
 .ch-said { z-index: 4; right: -12%; bottom: -8%; width: 74%; padding: 16px 18px; border: 1px solid var(--rule-strong); background: var(--void); }
 .ch-minis { inset: -22% -34%; z-index: 1; display: grid; grid-template-columns: repeat(18, 1fr); gap: 5px; align-content: center; }
 .ch-minis b { aspect-ratio: 1; border: 1px solid var(--rule); background: var(--raised); }
@@ -321,6 +325,7 @@
   .ch-boardwrap { width: min(34svh, 60%); }
   .ch-boardwrap[data-club="true"] { width: min(34svh, 58%); transform: translateX(24%); }
   .ch-professor { left: -40%; bottom: 2%; height: 105%; }
+  .ch-me { left: -22%; top: 56%; height: 100%; }
   .ch-said { right: -16%; width: 90%; }
   .ch-minis { inset: -14% -22%; grid-template-columns: repeat(12, 1fr); }
   .ch-pawnRow { grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr); gap: 10px; }
