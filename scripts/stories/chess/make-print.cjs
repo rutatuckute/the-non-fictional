@@ -11,7 +11,10 @@
 const sharp = require(process.argv[2])
 const out = process.argv[3]
 const IVORY = [238, 232, 223]
-const [SOFTEN, CUT, SPREAD] = [3, 150, 150]
+// CONTRAST stretches the softened tones away from the middle before the
+// threshold: above 1, shadows print denser and lights cleaner. Settings can be
+// overridden for a trial with PRINT=soften,cut,spread,contrast.
+const [SOFTEN, CUT, SPREAD, CONTRAST] = (process.env.PRINT || "2.5,185,120,1.5").split(",").map(Number)
 ;(async () => {
   for (const spec of process.argv.slice(4)) {
     const [name, input, widths] = spec.split("|")
@@ -37,7 +40,8 @@ const [SOFTEN, CUT, SPREAD] = [3, 150, 150]
     const wobble = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff - 0.5
     const rgba = Buffer.alloc(W * H * 4)
     for (let k = 0; k < W * H; k++) {
-      const dark = soft[k] < CUT + wobble() * SPREAD
+      const tone = Math.max(0, Math.min(255, 128 + (soft[k] - 128) * CONTRAST))
+      const dark = tone < CUT + wobble() * SPREAD
       if (outside[k] || dark) continue
       rgba[k * 4] = IVORY[0]
       rgba[k * 4 + 1] = IVORY[1]
