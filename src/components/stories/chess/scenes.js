@@ -36,7 +36,7 @@ export const People = () => (
     ]}
   >
     {step => (
-      <div className={c("ch-boardwrap")}>
+      <div className={c("ch-boardwrap")} data-club={during(step, 2, 3) ? "true" : "false"}>
         <Show on={step >= 4} className={c("ch-minis")}>
           {Array.from({ length: 162 }, (_, index) => (
             <b key={index} />
@@ -48,10 +48,10 @@ export const People = () => (
           <img
             src="/images/stories/chess/professor.webp"
             srcSet="/images/stories/chess/professor-300.webp 300w, /images/stories/chess/professor.webp 520w"
-            sizes="(max-width: 60rem) 30vw, 260px"
-            alt="An older man in a pale jacket stands at the side of the board, hands clasped behind his back, bowed over the game."
+            sizes="(max-width: 60rem) 45vw, 380px"
+            alt="An older man in a dark jacket, seen from behind, bows over the board, his hands clasped behind his back."
             width={520}
-            height={1342}
+            height={780}
             decoding="async"
           />
         </Show>

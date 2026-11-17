@@ -71,15 +71,14 @@ in a large and a phone width:
 - `club-board`: the board at the London chess club, pink and white with its
   plastic pieces set up, supplied by the author. Its faint specks (alpha under
   48) are dropped and it is trimmed; made at 1000 and 600 px wide.
-- `professor`: the professor at the London chess club, an engraving made with
-  a GPT image model to the prompts in the data-stories repository
-  (`chess-story/visuals/PROMPTS.md`), his face turned away on purpose. Printed
-  for the page by `make-print.cjs` in two inks as every.to prints its figures:
-  the fine hatching softened away, the shadows turned to stipple, and only the
-  site's ivory drawn, so the page shows through the dark. Every figure goes
-  through the same settings:
+- `professor`: the professor at the London chess club, a half figure seen from
+  behind, engraved in the manner of every.to's figures and made with a GPT image
+  model to the prompts in the data-stories repository
+  (`chess-story/visuals/PROMPTS.md`, "PRINTED PEOPLE"). Printed for the page by
+  `make-print.cjs` in two inks, the page's dark and the site's ivory, in its crisp
+  setting so the engraved lines survive:
 
-      node make-print.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "professor|input.png|520,300"
+      PRINT=0,140,40,1.1 node make-print.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "professor|input.png|520,300"
 
 - `phone`: a phone with a Chess.com game about to begin, supplied by the
   author. Made at `800,480` from a copy in which the opponent's username and
