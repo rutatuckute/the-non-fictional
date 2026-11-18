@@ -2,10 +2,11 @@
 
 import * as React from "react"
 
-import { c, Holder, Picture, Text, Turn, Words } from "./parts"
+import { c, Holder, Picture, Text, Words } from "./parts"
 import { People, Reveal, Say, Wrong } from "./scenes"
 import { Knot, Knots, Thread } from "./thread"
 import { TimeChart } from "./time-chart"
+import { Wooden } from "./wooden"
 
 // The chess story is the whole piece: one continuous scroll in four parts,
 // with threads running through it.
@@ -32,6 +33,9 @@ import { TimeChart } from "./time-chart"
 // the words take the whole width and a thread passes them in the margin or
 // off the screen. "mark" shows a bead; "from" and "to" are where the story's
 // thread turns from grey to its colour.
+// Beyond the screen's edge, whatever the window's width: the column is centred in it.
+const OFF_LEFT = "calc(50% - 60vw)"
+const OFF_RIGHT = "calc(50% + 60vw)"
 const LINES = {
   open: {
     a: [[58, 0, 40, 0], [74, 16, 108, 22], [89.5, 36, 108, 50], [91, 66, 108, 74, "from"], [72, 90, 76, 92]],
@@ -54,11 +58,16 @@ const LINES = {
     "other-4": [[74, 12, -8, 5], [65, 30, 9, 12], [64, 56, 5.5, 50], [66, 80, 6, 78], [78, 95, -8, 99]],
     "other-6": [[-6, 28, -8, 56], [20, 33, 14, 64], [36, 41, 28, 74], [38.5, 58, 30, 84], [37, 80, 29, 92], [34, 97, 26, 99]],
   },
+  // The wooden set is pinned: its stretch is several screens long, and the
+  // board and the words stay on screen while the stretch passes behind them.
+  // So the other threads leave by the screen's edge in the first screen, above
+  // the words, and stay out until the last; only the story's thread is there
+  // for the game, coming down the screen and in behind the board.
   wooden: {
-    a: [[30, 4, 18, 2], [22, 50, 10, 30], [8, 98, -3, 60], [2, 104, -3, 100]],
-    "other-1": [[50, 20, 12, 8], [49.5, 80, -8, 40]],
-    "other-4": [[101.5, 15, -12, 20], [102, 70, -12, 60], [106, 96, -12, 90]],
-    "other-6": [[30, 10, 24, 6], [22, 55, 60, 30], [-6, 80, 110, 45]],
+    a: [[30, 1, 18, 1], [24, 30, 12, 30], [20, 70, 10, 70], [8, 97, -3, 90], [2, 100.5, -3, 100]],
+    "other-1": [[58, 1, 12, 0.5], [82, 3, OFF_LEFT, 4], [OFF_RIGHT, 5.5, OFF_LEFT, 50], [OFF_RIGHT, 97, OFF_LEFT, 97]],
+    "other-4": [[90, 1.5, OFF_LEFT, 2], [OFF_RIGHT, 4, OFF_LEFT, 50], [OFF_RIGHT, 97, OFF_LEFT, 97]],
+    "other-6": [[30, 1.5, 24, 0.5], [22, 6, OFF_LEFT, 5], [OFF_LEFT, 13, OFF_LEFT, 50]],
   },
   obsession: {
     a: [[-2.5, 16, -2.5, 14], [-2.5, 52, -2.5, 50]],
@@ -151,31 +160,11 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             <Knots of={LINES.years} />
           </div>
 
-          {/* The wooden set: different stages of life, the same game. It comes
-              in open, the pieces in their felt, and turns over to the board.
-              The story's thread passes behind it; the others pass it by. */}
-          <div className={c("ch-row", "ch-wooden")}>
-            <Turn
-              className={c("ch-woodenBoard")}
-              front={{
-                name: "wooden-set",
-                width: 1000,
-                height: 838,
-                small: 600,
-                alt: "A wooden travel chess set lying open: the pieces rest in hollows of green felt, the light ones in the left half and the dark ones in the right.",
-              }}
-              back={{
-                name: "wooden-board",
-                width: 1000,
-                height: 838,
-                small: 600,
-                alt: "The same set turned over: its outside is the chessboard, sixty-four squares of light and dark wood across its two halves.",
-              }}
-              sizes="(max-width: 60rem) 72vw, 400px"
-            />
-            <Text name="board" className={c("ch-col")} />
-            <Knots of={LINES.wooden} />
-          </div>
+          {/* The wooden set: different stages of life, the same game. It is
+              held on screen while it turns over to the board and a game is
+              played on it (wooden.js). The story's thread passes behind it;
+              the others pass it by. */}
+          <Wooden lines={LINES.wooden} />
 
           <div className={c("ch-row", "ch-obsession")}>
             <Knots of={LINES.obsession} />

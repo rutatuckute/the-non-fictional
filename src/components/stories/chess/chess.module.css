@@ -76,14 +76,8 @@
    of it: each is held to the width at which its height is 68% of the screen. */
 .ch-device { max-width: 44vh; max-width: 44svh; }
 .ch-phone { max-width: 41vh; max-width: 41svh; }
-.ch-woodenBoard { max-width: 80vh; max-width: 80svh; }
 
-/* A thing with two sides. Its frame is the larger side's; the sides lie back
-   to back and the pair turns as one. */
-.ch-twoSided {
-  position: relative; z-index: 2; display: block; width: 100%; padding: 0; border: 0; background: none;
-  cursor: pointer; perspective: 1500px; -webkit-tap-highlight-color: transparent;
-}
+/* A thing with two sides: they lie back to back and the pair turns as one. */
 .ch-sides {
   position: absolute; inset: 0; transform-style: preserve-3d;
   transition: transform 1100ms cubic-bezier(0.35, 0.05, 0.2, 1);
@@ -128,9 +122,29 @@
 .ch-aside.ch-left { left: 0; }
 .ch-aside.ch-right { right: 0; }
 
-.ch-wooden { padding-top: 6vh; }
-.ch-woodenBoard { grid-column: 2 / 6; }
-.ch-wooden .ch-col { grid-column: 8 / 13; align-self: center; }
+/* The wooden set, pinned (wooden.js): its stretch is as many screens long as
+   the scene takes, and the stage stays on screen for all of them. The stage
+   is clear, so the threads show around the board and are hidden behind it. */
+.ch-woodenPin { position: relative; height: calc((var(--screens) + 1) * 100vh); height: calc((var(--screens) + 1) * 100svh); }
+.ch-woodenStage {
+  position: sticky; top: 0; z-index: 2; height: 100vh; height: 100svh; overflow: hidden;
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center;
+}
+/* The board is held to two thirds of the screen's height, so a hand has room
+   to come in above it and below it. */
+.ch-woodenScene {
+  position: relative; grid-column: 1 / 7; justify-self: center; width: min(100%, 66vh); width: min(100%, 66svh);
+  aspect-ratio: 1000 / 838; perspective: 1500px;
+}
+/* The pieces and the hands, over the board: set up once it has turned over. */
+.ch-woodenPieces { position: absolute; inset: 0; opacity: 0; transition: opacity 300ms ease; }
+.ch-woodenPieces[data-on="true"] { opacity: 1; transition: opacity 400ms ease 1000ms; }
+.ch-woodenPieces img { position: absolute; height: auto; max-width: none; }
+/* An arm runs off the screen where it can; where it ends first, it fades. */
+.ch-woodenPieces .ch-woodenHand { z-index: 1000; pointer-events: none; }
+.ch-woodenHand[data-from="below"] { mask-image: linear-gradient(to bottom, #000 82%, transparent 99%); }
+.ch-woodenHand[data-from="above"] { mask-image: linear-gradient(to top, #000 82%, transparent 99%); }
+.ch-woodenText { grid-column: 8 / 13; }
 
 .ch-obsession { padding-top: 22vh; row-gap: 9vh; }
 .ch-c1 { grid-column: 2 / 7; grid-row: 1; align-self: center; }
@@ -304,7 +318,7 @@
   .ch-side, .ch-sideBack { transform: none; -webkit-backface-visibility: visible; backface-visibility: visible; }
   .ch-sides[data-turned="true"] .ch-sideFront, .ch-sides[data-turned="false"] .ch-sideBack { visibility: hidden; }
   .ch-boardwrap { transition: none; }
-  .ch-thread path, .ch-thread circle, .ch-thread text, .ch-card, .ch-layer, .ch-layer[data-on="true"], .ch-boardwrap > .ch-board, .ch-guess button { transition: none; }
+  .ch-thread path, .ch-thread circle, .ch-thread text, .ch-card, .ch-layer, .ch-layer[data-on="true"], .ch-boardwrap > .ch-board, .ch-guess button, .ch-woodenPieces, .ch-woodenPieces[data-on="true"], .ch-woodenText { transition: none; }
   .ch-panel[data-on="true"] { animation: none; }
 }
 
@@ -313,10 +327,16 @@
 @media (max-width: 60rem) {
   .ch-knot { left: var(--px); top: var(--py); }
   .ch-row { grid-template-columns: minmax(0, 1fr); row-gap: 5vh; }
-  .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-twoSided, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
+  .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
   .ch-open .ch-text { max-width: none; }
   .ch-memory { row-gap: 22px; }
-  .ch-device, .ch-woodenBoard, .ch-phone { width: 72%; }
+  .ch-device, .ch-phone { width: 72%; }
+  /* The pinned set takes the screen's width; its words stand above it, clear
+     of the threads' lane at the left, until the game begins. */
+  .ch-woodenStage { grid-template-columns: minmax(0, 1fr); margin-inline: calc(-1 * var(--page-margin)); padding-inline: var(--page-margin); }
+  .ch-woodenScene { grid-column: 1; width: min(100%, 60svh); }
+  .ch-woodenText { position: absolute; top: 9svh; left: calc(var(--page-margin) + 26%); right: var(--page-margin); transition: opacity 300ms ease; }
+  .ch-woodenText[data-quiet="true"] { opacity: 0; }
   .ch-phone { justify-self: end; }
   .ch-decade { left: 42%; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: 46px; }
   .ch-aside, .ch-aside.ch-left, .ch-aside.ch-right { left: 42%; right: 0; top: var(--pat); width: auto; }

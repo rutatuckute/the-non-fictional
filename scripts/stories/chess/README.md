@@ -13,6 +13,7 @@ The code is in `src/components/stories/chess/`:
   texts pass it.
 - `thread.js`: the thread, one line drawn through the story as far as the reader
   has scrolled. It passes through `Knot`s placed in the layout.
+- `wooden.js`: the wooden set of the 2020s, pinned, and the game played on it.
 - `parts.js`: what the others are built from.
 
 ## The words
@@ -64,9 +65,24 @@ in a large and a phone width:
   the 2020s, open (the pieces in green felt) and turned over (the board),
   supplied by the author. Made by `make-set-pair.cjs`, which scales the outside
   to the inside's height and puts both on one canvas, so they turn as one
-  object in `Turn`:
+  object:
 
       node make-set-pair.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess inside.png outside.png
+
+- `piece-wk` … `piece-bp`: the set's twelve pieces, cut from one sheet the
+  author made with a GPT image model (6 columns by 2 rows, light above dark,
+  king, queen, rook, bishop, knight, pawn; the prompt is W1 in the
+  data-stories repository's `chess-story/visuals/PROMPTS.md`). `make-pieces.cjs`
+  cuts each to its solid part, saves them at one scale and writes their sizes
+  to `src/components/stories/chess/pieces.json`:
+
+      node make-pieces.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess sheet.png <repo>/src/components/stories/chess/pieces.json
+
+- `hand-me`: the author's hand, seen from above, the arm coming from below:
+  the hand that moves White's pieces on the wooden board. Engraved and printed
+  like the people of the club scene (`FILL=1`, widths `440,260`), from the
+  original with 12 px cut off its left and right edges, where a faint column
+  of specks would otherwise print.
 
 - `club-board`: the board at the London chess club, pink and white with its
   plastic pieces set up, supplied by the author. Its faint specks (alpha under
@@ -92,6 +108,25 @@ in a large and a phone width:
   author. Made at `800,480` from a copy in which the opponent's username and
   profile picture are hidden; the copy as supplied is kept out of the
   repository.
+
+## The wooden set, pinned
+
+`wooden.js` holds the wooden set on screen for a few screens of scrolling. It
+comes in open, turns over to the board, the pieces are set up, and a short
+game is played (`PLIES`), each move carried by a hand. Nothing waits for a
+text: the scroll alone leads it, forwards and back, and with motion turned off
+each move is made in one step with no hand. The squares' edges in the board's
+picture are in `BOARD`; a piece is placed by its square, sized from
+`pieces.json`, and stands on its base. The author's hand comes from below.
+The hands that answer from above, one person's after another's, go in `THEIRS`
+when their pictures are made; until then Black's pieces move by themselves.
+
+On a phone the words above the board go when the game begins, for the hands
+need the room.
+
+The threads' stretch here is several screens long and passes behind the stage,
+so `LINES.wooden` keeps each thread to a lane: the story's thread behind the
+board, the others off the screen's edge from the first screen to the last.
 
 ## The data
 
