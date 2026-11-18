@@ -1,4 +1,4 @@
-// node make-print.cjs <sharp dir> <out dir> "name|input.png|width[,width…]" …
+// node make-print.cjs <sharp dir> <out dir> "name|input.png|width[,width…][|x,y;x,y…]" …
 // An engraved figure, dark on white, printed for the dark page in two inks, as
 // every.to prints its figures: the page itself and the site's ivory, nothing
 // in between. The fine hatching is softened away first (blur 3 px at the
@@ -7,6 +7,10 @@
 // threshold that wavers from pixel to pixel. The white around the figure
 // (white that touches the image's edge) and the dark ink inside it are
 // transparent, so the page shows through both; only the ivory is drawn.
+// White the figure encloses is paper too where we see through it (the gap
+// between a hand's fingers and thumb), but the script cannot tell that from a
+// highlight on skin or a watch's face: name a point inside each such gap, in
+// the input's pixels, after the widths, and it is cleared as the outside is.
 // The same settings for every figure, so they all match.
 const sharp = require(process.argv[2])
 const out = process.argv[3]
@@ -22,7 +26,7 @@ const FILL = process.env.FILL === "1"
 const PAGE = [17, 16, 15]
 ;(async () => {
   for (const spec of process.argv.slice(4)) {
-    const [name, input, widths] = spec.split("|")
+    const [name, input, widths, gaps = ""] = spec.split("|")
     const { data, info } = await sharp(input).greyscale().raw().toBuffer({ resolveWithObject: true })
     // no softening at all keeps every engraved line, crisp
     const soft = SOFTEN > 0 ? await sharp(input).greyscale().blur(SOFTEN).raw().toBuffer() : data
@@ -32,6 +36,10 @@ const PAGE = [17, 16, 15]
     const stack = []
     for (let x = 0; x < W; x++) stack.push(x, (H - 1) * W + x)
     for (let y = 0; y < H; y++) stack.push(y * W, y * W + W - 1)
+    for (const gap of gaps.split(";").filter(Boolean)) {
+      const [x, y] = gap.split(",").map(Number)
+      stack.push(y * W + x)
+    }
     while (stack.length) {
       const k = stack.pop()
       if (outside[k] || data[k] < 226) continue

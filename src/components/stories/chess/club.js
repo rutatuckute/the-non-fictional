@@ -8,9 +8,9 @@ import { c, PinSteps, stepLine } from "./parts"
 
 // The board at the London chess club, and the game on it: from the starting
 // position the London System is set up, move by move, as the reader scrolls
-// on from the card that names it. White is the author, seated in front of the
-// board with her back to us, so her pieces come out from behind her; Black's
-// are carried by the opponent's arm, reaching in from the far side.
+// on from the card that names it. Every move is carried by a hand, and the
+// players are nothing more: the author's hand comes in from the near side, the
+// opponent's arm reaches in from the far side.
 //
 // The scene follows the scroll (follow.js), as the wooden set's does.
 
@@ -59,9 +59,12 @@ const PLIES = [
   ["c2", "c3"],
 ]
 
-// The opponent's arm: how wide its picture is against the board, where in it
-// the fingers close, and how it is turned about that point.
-const ARM = { name: "opponent-arm", small: 360, width: 640, height: 423, wide: 0.88, grip: [0.15, 0.93], turn: -22 }
+// A hand: how wide its picture is against the board, where in it the fingers
+// close, how it is turned about that point, and the way it goes to wait
+// beyond its own edge of the board.
+const MINE = { name: "hand-me", from: "near", small: 260, width: 440, height: 1463, wide: 0.385, grip: [0.317, 0.11], turn: 0, away: [0, 330] }
+const THEIRS = { name: "opponent-arm", from: "far", small: 360, width: 640, height: 423, wide: 0.88, grip: [0.15, 0.93], turn: -22, away: [190, -230] }
+const HANDS = [MINE, THEIRS]
 
 // The scroll, in screens, since the card that names the London System reached
 // its line. A move takes LASTS and the next begins EVERY after it.
@@ -113,12 +116,13 @@ const boxOf = (piece, [x, y, size]) => {
 
 const sceneAt = (scrolled, still) => {
   const at = Object.fromEntries(PIECES.map(piece => [piece.id, square(piece.id)]))
+  const hands = {}
   let carried = null
-  let arm = null
   let played = 0
   PLIES.forEach(([from, to], index) => {
     let u = (scrolled - FIRST_AT - index * EVERY) / LASTS
     if (u <= 0) return
+    // With motion turned off a move is made in one step, and no hand passes.
     if (still) u = u < 0.5 ? 0 : 1
     if (u === 0) return
     const piece = MOVED[index]
@@ -127,25 +131,23 @@ const sceneAt = (scrolled, still) => {
     if (carry >= 1) played = index + 1
     if (u >= 1) return
     if (carry > 0 && carry < 1) carried = piece.id
-    // Black's moves are carried by the arm; White's pieces are moved from
-    // where we cannot see, by the figure seated in front of them.
-    if (piece.colour !== "b") return
+    const hand = piece.colour === "w" ? MINE : THEIRS
     const head = where => {
       const box = boxOf(piece, where)
-      return [where[0], box.top + FIT.b.head * box.h]
+      return [where[0], box.top + FIT[piece.colour].head * box.h]
     }
-    // It waits beyond the board's far edge, up its own line.
-    const away = ([x, y]) => [x + 190, y - 230]
+    const away = ([x, y]) => [x + hand.away[0], y + hand.away[1]]
     const place =
       u < TAKES
         ? mix(away(head(square(from))), head(square(from)), gently(within(u, 0, TAKES)))
         : u < LEAVES
           ? head(at[piece.id])
           : mix(head(square(to)), away(head(square(to))), gently(within(u, LEAVES, 1)))
-    // It is whole while its fingers are over the board, and fades beyond the far edge.
-    arm = { place, shown: 1 - within(BOARD.y[0] - 40 - place[1], 0, 110) }
+    // It is whole while its fingers are over the board, and fades beyond its own edge.
+    const beyond = hand === MINE ? place[1] - (BOARD.y[8] + 30) : BOARD.y[0] - 40 - place[1]
+    hands[hand.name] = { place, shown: 1 - within(beyond, 0, 110) }
   })
-  return { at, carried, arm, played }
+  return { at, carried, hands, played }
 }
 
 // `during` is the number of the pinned scene's step that names the London System.
@@ -153,7 +155,7 @@ export const ClubBoard = ({ during }) => {
   const steps = React.useContext(PinSteps)
   const table = React.useRef(null)
   const pieces = React.useRef({})
-  const armNode = React.useRef(null)
+  const handNodes = React.useRef({})
   const still = useStill()
   const [played, setPlayed] = React.useState(0)
 
@@ -173,13 +175,18 @@ export const ClubBoard = ({ during }) => {
       node.style.transform = `translate3d(${(box.left * k).toFixed(2)}px, ${(box.top * k).toFixed(2)}px, 0) scale(${box.scale.toFixed(4)})`
       node.style.zIndex = now.carried === piece.id ? 900 : Math.round(now.at[piece.id][1])
     }
-    if (armNode.current) {
-      if (now.arm) {
-        const w = ARM.wide * BOARD.width
-        const h = (w * ARM.height) / ARM.width
-        armNode.current.style.transform = `translate3d(${((now.arm.place[0] - ARM.grip[0] * w) * k).toFixed(2)}px, ${((now.arm.place[1] - ARM.grip[1] * h) * k).toFixed(2)}px, 0) rotate(${ARM.turn}deg)`
-        armNode.current.style.opacity = now.arm.shown.toFixed(3)
-      } else armNode.current.style.opacity = 0
+    for (const hand of HANDS) {
+      const node = handNodes.current[hand.name]
+      if (!node) continue
+      const here = now.hands[hand.name]
+      if (!here) {
+        node.style.opacity = 0
+        continue
+      }
+      const w = hand.wide * BOARD.width
+      const h = (w * hand.height) / hand.width
+      node.style.transform = `translate3d(${((here.place[0] - hand.grip[0] * w) * k).toFixed(2)}px, ${((here.place[1] - hand.grip[1] * h) * k).toFixed(2)}px, 0) rotate(${hand.turn}deg)`
+      node.style.opacity = here.shown.toFixed(3)
     }
     setPlayed(before => (before === now.played ? before : now.played))
   }
@@ -193,7 +200,7 @@ export const ClubBoard = ({ during }) => {
       role="img"
       aria-label={`The club's board: pink and white squares with letters and numbers along its edges, and black and white plastic pieces. ${
         played
-          ? `A game is being played: White sets up the London System, pawn to d4, bishop to f4, and Black answers, a hand reaching in from the far side. ${played} of ${PLIES.length} moves so far.`
+          ? `A game is being played, each move carried by a hand: from the near side White sets up the London System, pawn to d4, bishop to f4, and from the far side Black answers. ${played} of ${PLIES.length} moves so far.`
           : "The pieces are set up for a game."
       }`}
     >
@@ -220,18 +227,22 @@ export const ClubBoard = ({ during }) => {
           style={{ width: share((SIZES[piece.kind].w * PER_100(piece.colour)) / BOARD.width) }}
         />
       ))}
-      <img
-        ref={armNode}
-        className={c("ch-clubArm")}
-        src={`/images/stories/chess/${ARM.name}.webp`}
-        srcSet={`/images/stories/chess/${ARM.name}-${ARM.small}.webp ${ARM.small}w, /images/stories/chess/${ARM.name}.webp ${ARM.width}w`}
-        sizes="(max-width: 60rem) 40vw, 300px"
-        alt=""
-        width={ARM.width}
-        height={ARM.height}
-        decoding="async"
-        style={{ width: share(ARM.wide), transformOrigin: `${ARM.grip[0] * 100}% ${ARM.grip[1] * 100}%`, opacity: 0 }}
-      />
+      {HANDS.map(hand => (
+        <img
+          key={hand.name}
+          ref={node => (handNodes.current[hand.name] = node)}
+          className={c("ch-clubHand")}
+          data-from={hand.from}
+          src={`/images/stories/chess/${hand.name}.webp`}
+          srcSet={`/images/stories/chess/${hand.name}-${hand.small}.webp ${hand.small}w, /images/stories/chess/${hand.name}.webp ${hand.width}w`}
+          sizes="(max-width: 60rem) 40vw, 300px"
+          alt=""
+          width={hand.width}
+          height={hand.height}
+          decoding="async"
+          style={{ width: share(hand.wide), transformOrigin: `${hand.grip[0] * 100}% ${hand.grip[1] * 100}%`, opacity: 0 }}
+        />
+      ))}
     </div>
   )
 }

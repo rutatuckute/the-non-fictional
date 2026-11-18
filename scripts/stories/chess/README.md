@@ -83,7 +83,7 @@ in a large and a phone width:
       node make-pieces.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess <repo>/src/components/stories/chess/pieces.json piece "sheet.png|0|w" "sheet.png|1|b"
 
 - `hand-me`: the author's hand, seen from above, the arm coming from below:
-  the hand that moves White's pieces on the wooden board. Engraved and printed
+  the hand that moves White's pieces, on the wooden board and at the club. Engraved and printed
   like the people of the club scene (`FILL=1`, widths `440,260`), from the
   original with 12 px cut off its left and right edges, where a faint column
   of specks would otherwise print.
@@ -112,22 +112,28 @@ in a large and a phone width:
 
       node make-pieces.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess <repo>/src/components/stories/chess/club-pieces.json club "white.png|0|w" "first-sheet.png|1|b"
 
-- `professor` and `me-club`: the two people of the club scene, half figures
-  seen from behind: the professor standing at the board's left, bowed over it,
-  and the author in the foreground. Engraved in the manner of every.to's
-  figures and made with a GPT image model to the prompts in the data-stories
-  repository (`chess-story/visuals/PROMPTS.md`, "PRINTED PEOPLE"). Printed for
-  the page by `make-print.cjs` in two inks, the page's dark and the site's
-  ivory, in its crisp setting so the engraved lines survive. Both stand in
-  front of the board, so their dark ink is printed in the page's own dark
-  (`FILL=1`) and hides what is behind them instead of letting it show through:
+- `professor`: the professor at the London chess club, the club scene's one
+  figure: a half figure seen from behind, standing at the board's left and
+  bowed over it. Engraved in the manner of every.to's figures and made with a
+  GPT image model to the prompts in the data-stories repository
+  (`chess-story/visuals/PROMPTS.md`, "PRINTED PEOPLE"). Printed for the page by
+  `make-print.cjs` in two inks, the page's dark and the site's ivory, in its
+  crisp setting so the engraved lines survive. He stands in front of the
+  board, so his dark ink is printed in the page's own dark (`FILL=1`) and hides
+  what is behind him instead of letting it show through:
 
-      FILL=1 PRINT=0,140,40,1.1 node make-print.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "professor|input.png|520,300" "me-club|input.png|560,320"
+      FILL=1 PRINT=0,140,40,1.1 node make-print.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "professor|input.png|520,300"
 
 - `opponent-arm`: the opponent at the club, shown only as an arm reaching in
-  from the far side of the board. Made and printed like the two figures
-  (`FILL=1`, widths `640,360`). `club.js` turns it about its fingertips, fades
-  its far end, and has it carry Black's pieces.
+  from the far side of the board. Made and printed like the figure (`FILL=1`,
+  widths `640,360`), with the gap between its fingers and thumb named so that
+  it is cleared and the board shows through it (a point inside the gap, in the
+  original's pixels, after the widths):
+
+      FILL=1 PRINT=0,140,40,1.1 node make-print.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "opponent-arm|input.png|640,360|372,759"
+
+  `club.js` turns it about its fingertips, fades its far end, and has it carry
+  Black's pieces.
 
 - `phone`: a phone with a Chess.com game about to begin, supplied by the
   author. Made at `800,480` from a copy in which the opponent's username and
@@ -180,9 +186,10 @@ screens of scrolling, with no card in them, for the moves to be played (`rest`
 in `Pinned`, `parts.js`).
 
 The board is in perspective, so every rank has its own files' edges and its
-own scale (`BOARD`), and a piece grows as it comes nearer. Black's moves are
-carried by the opponent's arm. White's pieces move with no hand: the author is
-seated in front of them with her back to us, and they come out from behind her.
+own scale (`BOARD`), and a piece grows as it comes nearer. The players are
+their hands and nothing more: White's moves are carried by the author's hand
+(`hand-me`, the wooden board's), coming in from the near side, Black's by the
+opponent's arm from the far side.
 
 ## The data
 

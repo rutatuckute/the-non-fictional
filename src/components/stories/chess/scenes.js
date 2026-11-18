@@ -44,8 +44,9 @@ export const People = () => (
             <b key={index} />
           ))}
         </Show>
-        {/* The club: its own board, pink and white, the professor standing at
-            its left with his head over it, and you in front of it. */}
+        {/* The club: its own board, pink and white, and the professor standing
+            at its left with his head over it. He is the scene's one figure:
+            the two players are hands. */}
         <Show on={during(step, 2, 3)} className={c("ch-professor")}>
           <img
             src="/images/stories/chess/professor.webp"
@@ -57,20 +58,7 @@ export const People = () => (
             decoding="async"
           />
         </Show>
-        {/* You, in the foreground: we look over your shoulder at the game. */}
-        <Show on={during(step, 2, 3)} className={c("ch-me")}>
-          <img
-            src="/images/stories/chess/me-club.webp"
-            srcSet="/images/stories/chess/me-club-320.webp 320w, /images/stories/chess/me-club.webp 560w"
-            sizes="(max-width: 60rem) 50vw, 420px"
-            alt="The author, seen from behind, her long hair over her shoulders, bent over the board."
-            width={560}
-            height={951}
-            decoding="async"
-          />
-        </Show>
-        {/* The board, the game on it, and the opponent, who is only an arm
-            reaching in from the far side (club.js). */}
+        {/* The board, the game on it, and the two players' hands (club.js). */}
         <Show on={during(step, 2, 3)} className={c("ch-clubBoard")}>
           <ClubBoard during={2} />
         </Show>

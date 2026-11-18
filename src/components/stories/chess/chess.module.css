@@ -232,17 +232,16 @@
 .ch-clubTable img { position: absolute; left: 0; top: 0; height: auto; max-width: none; }
 .ch-clubGround { width: 100%; }
 .ch-clubPiece { transform-origin: 0 0; will-change: transform; }
-/* The arm's far end fades out. */
-.ch-clubArm { z-index: 1000; pointer-events: none; will-change: transform, opacity; mask-image: linear-gradient(to bottom left, transparent 6%, #000 30%); }
+/* A hand's far end fades out: the opponent's arm towards the upper right, the
+   author's towards the bottom. */
+.ch-clubHand { z-index: 1000; pointer-events: none; will-change: transform, opacity; }
+.ch-clubHand[data-from="far"] { mask-image: linear-gradient(to bottom left, transparent 6%, #000 30%); }
+.ch-clubHand[data-from="near"] { mask-image: linear-gradient(to bottom, #000 80%, transparent 99%); }
 /* A half figure standing at the board's left side and bowed over it: his head
    is over the board's far left squares, so what he looks down at is the game. */
 .ch-professor { z-index: 4; left: -20%; top: 17%; height: 104%; }
-/* You, nearest to us, at the left of the board's near edge: we look over your
-   shoulder at the game. */
-.ch-me { z-index: 5; left: 20%; top: 69%; height: 88%; }
-/* both figures are cut at the waist: fade that edge out where the screen doesn't cut it */
-.ch-professor img, .ch-me img { display: block; width: auto; height: 100%; mask-image: linear-gradient(to bottom, #000 78%, transparent 98%); }
-/* What he said stands above his head, clear of the figures and of the arm. */
+/* He is cut at the waist: that edge fades out. */
+.ch-professor img { display: block; width: auto; height: 100%; mask-image: linear-gradient(to bottom, #000 78%, transparent 98%); }
 .ch-said { z-index: 6; left: -22%; right: 36%; bottom: 87%; padding: 16px 18px; border: 1px solid var(--rule-strong); background: var(--void); }
 .ch-minis { inset: -22% -34%; z-index: 1; display: grid; grid-template-columns: repeat(18, 1fr); gap: 5px; align-content: center; }
 .ch-minis b { aspect-ratio: 1; border: 1px solid var(--rule); background: var(--raised); }
@@ -354,8 +353,9 @@
   .ch-card { width: 100%; padding: 14px 16px 16px; background: color-mix(in srgb, var(--raised) 94%, transparent); }
   .ch-text.ch-cardText { font-size: 16px; }
   .ch-boardwrap { width: min(34svh, 60%); }
-  .ch-boardwrap[data-club="true"] { width: min(36svh, 62%); transform: translate(10%, -10%); }
-  .ch-said { left: -34%; right: 34%; bottom: 90%; padding: 12px 14px; }
+  /* with only the professor beside it, the board can take more of a phone's width */
+  .ch-boardwrap[data-club="true"] { width: min(44svh, 80%); transform: translate(10%, -8%); }
+  .ch-said { left: -20%; right: 22%; bottom: 92%; padding: 12px 14px; }
   .ch-minis { inset: -14% -22%; grid-template-columns: repeat(12, 1fr); }
   .ch-pawnRow { grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr); gap: 10px; }
   .ch-pawnLabel b { font-size: 15px; }
