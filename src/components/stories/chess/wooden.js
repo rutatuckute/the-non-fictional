@@ -49,7 +49,10 @@ const PLIES = [
 const MINE = { name: "hand-me", small: 260, width: 440, height: 1463, wide: 0.27, grip: [0.317, 0.11] }
 // The hands that answer, one for each of Black's moves, in order: a different
 // person each time. A move whose hand is not made yet is played with no hand.
-const THEIRS = [{ name: "hand-opponent-1", small: 260, width: 440, height: 1473, wide: 0.27, grip: [0.74, 0.955] }]
+const THEIRS = [
+  { name: "hand-opponent-1", small: 260, width: 440, height: 1473, wide: 0.27, grip: [0.74, 0.955] },
+  { name: "hand-opponent-2", small: 260, width: 440, height: 1445, wide: 0.27, grip: [0.745, 0.955] },
+]
 
 // The scroll, in screens, since the scene was pinned.
 const TURN_AT = 0.3

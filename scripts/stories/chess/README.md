@@ -86,6 +86,8 @@ in a large and a phone width:
 - `hand-opponent-1`: the first hand that answers on the wooden board, a man's,
   with a rolled-up sleeve and a wristwatch, the arm coming from above. Made
   and printed exactly like `hand-me`.
+- `hand-opponent-2`: the second, an older man's: a tweed sleeve, a buttoned
+  shirt cuff, a plain ring. Made and printed the same way.
 
 - `club-board`: the board at the London chess club, pink and white with its
   plastic pieces set up, supplied by the author. Its faint specks (alpha under
