@@ -216,10 +216,15 @@
 /* You, nearest to us, at the left of the board's near edge: we look over your
    shoulder at the game. */
 .ch-me { z-index: 5; left: 20%; top: 69%; height: 88%; }
+/* The opponent's arm, from beyond the board's far right corner. Its fingertips
+   (15% across, 93% down the picture) are held over the knight on g8, and the
+   arm is turned about that point; its far end fades out. */
+.ch-arm { z-index: 4; left: 72.6%; top: -10.5%; width: 60%; }
+.ch-arm img { display: block; width: 100%; height: auto; transform-origin: 15% 93%; transform: rotate(-22deg); mask-image: linear-gradient(to bottom left, transparent 6%, #000 30%); }
 /* both figures are cut at the waist: fade that edge out where the screen doesn't cut it */
 .ch-professor img, .ch-me img { display: block; width: auto; height: 100%; mask-image: linear-gradient(to bottom, #000 78%, transparent 98%); }
-/* What he said stands above the board, beside his head, clear of both figures. */
-.ch-said { z-index: 6; left: 32%; right: -8%; bottom: 87%; padding: 16px 18px; border: 1px solid var(--rule-strong); background: var(--void); }
+/* What he said stands above his head, clear of the figures and of the arm. */
+.ch-said { z-index: 6; left: -22%; right: 36%; bottom: 87%; padding: 16px 18px; border: 1px solid var(--rule-strong); background: var(--void); }
 .ch-minis { inset: -22% -34%; z-index: 1; display: grid; grid-template-columns: repeat(18, 1fr); gap: 5px; align-content: center; }
 .ch-minis b { aspect-ratio: 1; border: 1px solid var(--rule); background: var(--raised); }
 .ch-ask { z-index: 5; inset: 28% -8% auto; padding: 22px 24px; border: 1px solid var(--rule-strong); background: color-mix(in srgb, var(--void) 93%, transparent); }
@@ -325,7 +330,7 @@
   .ch-text.ch-cardText { font-size: 16px; }
   .ch-boardwrap { width: min(34svh, 60%); }
   .ch-boardwrap[data-club="true"] { width: min(36svh, 62%); transform: translate(10%, -10%); }
-  .ch-said { left: -12%; right: -24%; bottom: 90%; padding: 12px 14px; }
+  .ch-said { left: -34%; right: 34%; bottom: 90%; padding: 12px 14px; }
   .ch-minis { inset: -14% -22%; grid-template-columns: repeat(12, 1fr); }
   .ch-pawnRow { grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr); gap: 10px; }
   .ch-pawnLabel b { font-size: 15px; }

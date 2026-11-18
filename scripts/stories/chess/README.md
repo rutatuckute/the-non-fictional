@@ -83,6 +83,11 @@ in a large and a phone width:
 
       FILL=1 PRINT=0,140,40,1.1 node make-print.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "professor|input.png|520,300" "me-club|input.png|560,320"
 
+- `opponent-arm`: the opponent at the club, shown only as an arm reaching in
+  from the far side of the board, its fingers closing on the knight on g8.
+  Made and printed like the two figures (`FILL=1`, widths `640,360`); the
+  page turns it about its fingertips and fades its far end.
+
 - `phone`: a phone with a Chess.com game about to begin, supplied by the
   author. Made at `800,480` from a copy in which the opponent's username and
   profile picture are hidden; the copy as supplied is kept out of the

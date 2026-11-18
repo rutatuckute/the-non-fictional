@@ -67,6 +67,19 @@ export const People = () => (
             decoding="async"
           />
         </Show>
+        {/* Your opponent is only a hand: it reaches in from the far side for
+            the knight on g8. */}
+        <Show on={during(step, 2, 3)} className={c("ch-arm")}>
+          <img
+            src="/images/stories/chess/opponent-arm.webp"
+            srcSet="/images/stories/chess/opponent-arm-360.webp 360w, /images/stories/chess/opponent-arm.webp 640w"
+            sizes="(max-width: 60rem) 40vw, 300px"
+            alt="From the far side of the board an arm in a dark sweater reaches in, the fingers closing on a black knight."
+            width={640}
+            height={423}
+            decoding="async"
+          />
+        </Show>
         <Show on={during(step, 2, 3)} className={c("ch-clubBoard")}>
           <img
             src="/images/stories/chess/club-board.webp"
