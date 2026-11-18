@@ -52,6 +52,8 @@ const MINE = { name: "hand-me", small: 260, width: 440, height: 1463, wide: 0.27
 const THEIRS = [
   { name: "hand-opponent-1", small: 260, width: 440, height: 1473, wide: 0.27, grip: [0.74, 0.955] },
   { name: "hand-opponent-2", small: 260, width: 440, height: 1445, wide: 0.27, grip: [0.745, 0.955] },
+  // its sleeve is the widest, so the picture is wider for the hand to be to the others' scale
+  { name: "hand-opponent-3", small: 300, width: 500, height: 1472, wide: 0.306, grip: [0.735, 0.955] },
 ]
 
 // The scroll, in screens, since the scene was pinned.

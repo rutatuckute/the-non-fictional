@@ -88,6 +88,8 @@ in a large and a phone width:
   and printed exactly like `hand-me`.
 - `hand-opponent-2`: the second, an older man's: a tweed sleeve, a buttoned
   shirt cuff, a plain ring. Made and printed the same way.
+- `hand-opponent-3`: the third, a young man's, half hidden in the sleeve of a
+  hooded sweatshirt. Made and printed the same way, at widths `500,300`.
 
 - `club-board`: the board at the London chess club, pink and white with its
   plastic pieces set up, supplied by the author. Its faint specks (alpha under
