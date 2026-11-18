@@ -42,8 +42,8 @@ export const People = () => (
             <b key={index} />
           ))}
         </Show>
-        {/* The club: its own board, pink and white, and the professor
-            standing at its left, watching. */}
+        {/* The club: its own board, pink and white, the professor standing at
+            its left with his head over it, and you in front of it. */}
         <Show on={during(step, 2, 3)} className={c("ch-professor")}>
           <img
             src="/images/stories/chess/professor.webp"
@@ -51,7 +51,7 @@ export const People = () => (
             sizes="(max-width: 60rem) 45vw, 380px"
             alt="An older man in a dark jacket, seen from behind, bows over the board, his hands clasped behind his back."
             width={520}
-            height={780}
+            height={778}
             decoding="async"
           />
         </Show>
@@ -63,7 +63,7 @@ export const People = () => (
             sizes="(max-width: 60rem) 50vw, 420px"
             alt="The author, seen from behind, her long hair over her shoulders, bent over the board."
             width={560}
-            height={840}
+            height={951}
             decoding="async"
           />
         </Show>

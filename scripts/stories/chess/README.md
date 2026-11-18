@@ -71,21 +71,17 @@ in a large and a phone width:
 - `club-board`: the board at the London chess club, pink and white with its
   plastic pieces set up, supplied by the author. Its faint specks (alpha under
   48) are dropped and it is trimmed; made at 1000 and 600 px wide.
-- `professor`: the professor at the London chess club, a half figure seen from
-  behind, engraved in the manner of every.to's figures and made with a GPT image
-  model to the prompts in the data-stories repository
-  (`chess-story/visuals/PROMPTS.md`, "PRINTED PEOPLE"). Printed for the page by
-  `make-print.cjs` in two inks, the page's dark and the site's ivory, in its crisp
-  setting so the engraved lines survive:
+- `professor` and `me-club`: the two people of the club scene, half figures
+  seen from behind: the professor standing at the board's left, bowed over it,
+  and the author in the foreground. Engraved in the manner of every.to's
+  figures and made with a GPT image model to the prompts in the data-stories
+  repository (`chess-story/visuals/PROMPTS.md`, "PRINTED PEOPLE"). Printed for
+  the page by `make-print.cjs` in two inks, the page's dark and the site's
+  ivory, in its crisp setting so the engraved lines survive. Both stand in
+  front of the board, so their dark ink is printed in the page's own dark
+  (`FILL=1`) and hides what is behind them instead of letting it show through:
 
-      PRINT=0,140,40,1.1 node make-print.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "professor|input.png|520,300"
-
-- `me-club`: the author at the club, a half figure seen from behind, made and
-  printed the same way, in the foreground of the club scene. It stands in
-  front of the board, so its dark ink is printed in the page's own dark
-  (`FILL=1`) and hides what is behind it instead of letting it show through:
-
-      FILL=1 PRINT=0,140,40,1.1 node make-print.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "me-club|input.png|560,320"
+      FILL=1 PRINT=0,140,40,1.1 node make-print.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "professor|input.png|520,300" "me-club|input.png|560,320"
 
 - `phone`: a phone with a Chess.com game about to begin, supplied by the
   author. Made at `800,480` from a copy in which the opponent's username and
