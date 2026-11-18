@@ -63,9 +63,11 @@ in a large and a phone width:
   author.
 - `wooden-set` and `wooden-board`: the two sides of the wooden travel set of
   the 2020s, open (the pieces in green felt) and turned over (the board),
-  supplied by the author. Made by `make-set-pair.cjs`, which scales the outside
-  to the inside's height and puts both on one canvas, so they turn as one
-  object:
+  supplied by the author with the hinge upright. `make-set-pair.cjs` puts both
+  on one canvas at one scale and lays them as the set lies between two
+  players, the hinge across: the inside turned a quarter (the light pieces
+  nearest), the outside turned and mirrored, so that its corners stay a
+  chessboard's (a dark square at the near left). 838 and 500 px wide:
 
       node make-set-pair.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess inside.png outside.png
 
@@ -119,16 +121,29 @@ in a large and a phone width:
 ## The wooden set, pinned
 
 `wooden.js` holds the wooden set on screen for a few screens of scrolling. It
-comes in open, turns over to the board, the pieces are set up, and a short
-game is played (`PLIES`), each move carried by a hand. Nothing waits for a
-text: the scroll alone leads it, forwards and back, and with motion turned off
-each move is made in one step with no hand. The squares' edges in the board's
-picture are in `BOARD`; a piece is placed by its square, sized from
-`pieces.json`, and stands on its base. The author's hand comes from below.
-The hands that answer from above, one person's after another's, are in `THEIRS`,
-in the order of Black's moves; a move whose hand is not made yet is played
-with no hand. A hand's `grip` is where its fingers close, as shares of its
-picture: the piece's head is put there.
+comes in open, turns over to the board about its hinge, the pieces are set up,
+and a short game is played (`PLIES`), each move carried by a hand. Nothing
+waits for a text: the scroll alone leads it, forwards and back.
+
+- The scene follows the scroll, it does not sit on it: in every frame it
+  closes a share of the distance to where the reader has scrolled (`FOLLOW`),
+  so a mouse wheel's steps and an uneven swipe are drawn as one glide. Pieces
+  and hands are moved by transforms written straight onto them, frame by
+  frame; only what changes in steps (turned, set up, moves played) is state.
+- A move takes `LASTS` screens of scrolling and the next begins `EVERY` after
+  it, so one hand is still leaving as the other comes in. Each stretch of a
+  move (the hand comes, carries, leaves) starts and ends at rest. A hand is
+  whole while any of it is over the board and fades only beyond its edge.
+- The squares' edges in the board's picture are in `BOARD`; a piece is placed
+  by its square, sized from `pieces.json`, and stands on its base.
+- The author's hand comes from below. The hands that answer from above, one
+  person's after another's, are in `THEIRS`, in the order of Black's moves; a
+  move whose hand is not made yet is played with no hand. A hand's `grip` is
+  where its fingers close, as shares of its picture: the piece's head is put
+  there. To give a new hand the others' scale: `wide = 0.32 x (width of its
+  ink in the original) / 421`.
+- With motion turned off each move is made in one step, with no hand, and the
+  scene sits on the scroll.
 
 On a phone the words above the board go when the game begins, for the hands
 need the room.

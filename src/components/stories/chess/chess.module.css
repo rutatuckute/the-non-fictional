@@ -77,17 +77,19 @@
 .ch-device { max-width: 44vh; max-width: 44svh; }
 .ch-phone { max-width: 41vh; max-width: 41svh; }
 
-/* A thing with two sides: they lie back to back and the pair turns as one. */
+/* A thing with two sides: they lie back to back and the pair turns as one,
+   about its hinge, which lies across: the two sides are the same width, so
+   the turn hides that one is a little taller. */
 .ch-sides {
   position: absolute; inset: 0; transform-style: preserve-3d;
   transition: transform 1100ms cubic-bezier(0.35, 0.05, 0.2, 1);
 }
-.ch-sides[data-turned="true"] { transform: rotateY(180deg); }
+.ch-sides[data-turned="true"] { transform: rotateX(180deg); }
 .ch-side {
   position: absolute; inset: 0; width: 100%; height: auto; margin: auto;
   -webkit-backface-visibility: hidden; backface-visibility: hidden;
 }
-.ch-sideBack { transform: rotateY(180deg); }
+.ch-sideBack { transform: rotateX(180deg); }
 
 /* ── the opening: one screen ── */
 .ch-open {
@@ -133,15 +135,16 @@
 /* The board is held to two thirds of the screen's height, so a hand has room
    to come in above it and below it. */
 .ch-woodenScene {
-  position: relative; grid-column: 1 / 7; justify-self: center; width: min(100%, 66vh); width: min(100%, 66svh);
-  aspect-ratio: 1000 / 838; perspective: 1500px;
+  position: relative; grid-column: 1 / 7; justify-self: center; width: min(100%, 55vh); width: min(100%, 55svh);
+  aspect-ratio: 838 / 1000; perspective: 1500px;
 }
-/* The pieces and the hands, over the board: set up once it has turned over. */
+/* The pieces and the hands, over the board: set up once it has turned over.
+   Each is moved by a transform written by wooden.js, frame by frame. */
 .ch-woodenPieces { position: absolute; inset: 0; opacity: 0; transition: opacity 300ms ease; }
 .ch-woodenPieces[data-on="true"] { opacity: 1; transition: opacity 400ms ease 1000ms; }
-.ch-woodenPieces img { position: absolute; height: auto; max-width: none; }
+.ch-woodenPieces img { position: absolute; left: 0; top: 0; height: auto; max-width: none; will-change: transform; }
 /* An arm runs off the screen where it can; where it ends first, it fades. */
-.ch-woodenPieces .ch-woodenHand { z-index: 1000; pointer-events: none; }
+.ch-woodenPieces .ch-woodenHand { z-index: 1000; pointer-events: none; will-change: transform, opacity; }
 .ch-woodenHand[data-from="below"] { mask-image: linear-gradient(to bottom, #000 82%, transparent 99%); }
 .ch-woodenHand[data-from="above"] { mask-image: linear-gradient(to top, #000 82%, transparent 99%); }
 .ch-woodenText { grid-column: 8 / 13; }
@@ -334,8 +337,8 @@
   /* The pinned set takes the screen's width; its words stand above it, clear
      of the threads' lane at the left, until the game begins. */
   .ch-woodenStage { grid-template-columns: minmax(0, 1fr); margin-inline: calc(-1 * var(--page-margin)); padding-inline: var(--page-margin); }
-  .ch-woodenScene { grid-column: 1; width: min(100%, 60svh); }
-  .ch-woodenText { position: absolute; top: 9svh; left: calc(var(--page-margin) + 26%); right: var(--page-margin); transition: opacity 300ms ease; }
+  .ch-woodenScene { grid-column: 1; width: min(100%, 42svh); top: 4svh; }
+  .ch-woodenText { position: absolute; top: 6svh; left: calc(var(--page-margin) + 26%); right: var(--page-margin); transition: opacity 300ms ease; }
   .ch-woodenText[data-quiet="true"] { opacity: 0; }
   .ch-phone { justify-self: end; }
   .ch-decade { left: 42%; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: 46px; }
