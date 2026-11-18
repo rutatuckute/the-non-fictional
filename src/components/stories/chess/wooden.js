@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { useFollow, useStill } from "./follow"
 import { c, Text } from "./parts"
 import SIZES from "./pieces.json"
 import { Knots } from "./thread"
@@ -16,9 +17,7 @@ import { Knots } from "./thread"
 // answers from above is a different person's each time (where one's picture
 // is not made yet, that move's piece goes by itself).
 //
-// The scene does not sit on the scroll position itself: it follows it, closing
-// a share of the distance in every frame, so a turn of a mouse wheel or an
-// uneven swipe is drawn as one glide and not as the steps it arrives in.
+// The scene follows the scroll (follow.js), it does not sit on it.
 
 // The board in wooden-board.webp, 838 x 1000: the edges of its squares, files
 // a to h from the left and ranks 8 to 1 from the top.
@@ -74,10 +73,6 @@ export const SCREENS = FIRST_AT + (PLIES.length - 1) * EVERY + LASTS + 0.15
 // Of a move: the hand comes to the piece, carries it, and leaves.
 const TAKES = 0.32
 const LEAVES = 0.72
-// How closely the scene follows the scroll: the time, in milliseconds, in
-// which it closes about two thirds of the distance.
-const FOLLOW = 150
-
 const centre = square => {
   const file = "abcdefgh".indexOf(square[0])
   const row = 8 - Number(square[1])
@@ -147,18 +142,6 @@ const sceneAt = (scrolled, still) => {
   return { at, hands, carried, played }
 }
 
-const useStill = () => {
-  const [still, setStill] = React.useState(false)
-  React.useEffect(() => {
-    const query = window.matchMedia("(prefers-reduced-motion: reduce)")
-    const update = () => setStill(query.matches)
-    update()
-    query.addEventListener("change", update)
-    return () => query.removeEventListener("change", update)
-  }, [])
-  return still
-}
-
 const SIDES = [
   {
     name: "wooden-set",
@@ -180,80 +163,42 @@ export const Wooden = ({ lines }) => {
   // written straight onto the pieces and the hands, frame by frame.
   const [stage, setStage] = React.useState({ turned: false, set: false, quiet: false, played: 0 })
 
-  React.useEffect(() => {
-    let frame = 0
-    let shown = null
-    let last = 0
-    const goal = () => {
-      const box = pin.current.getBoundingClientRect()
-      const screen = window.innerHeight
-      return Math.max(0, Math.min((box.height - screen) / screen, -box.top / screen))
+  const goal = () => {
+    const box = pin.current.getBoundingClientRect()
+    const screen = window.innerHeight
+    return Math.max(0, Math.min((box.height - screen) / screen, -box.top / screen))
+  }
+  const paint = scrolled => {
+    // one unit of the board's picture, in the screen's pixels
+    const k = scene.current.clientWidth / BOARD.width
+    const now = sceneAt(scrolled, still)
+    for (const piece of PIECES) {
+      const node = pieces.current[piece.id]
+      if (!node) continue
+      const w = SIZES[piece.kind].w * SCALE
+      const h = SIZES[piece.kind].h * SCALE
+      const [x, y] = now.at[piece.id]
+      node.style.transform = `translate3d(${((x - w / 2) * k).toFixed(2)}px, ${((y + FOOT * w - h) * k).toFixed(2)}px, 0)`
+      // nearer pieces stand in front; the one in a hand, in front of all
+      node.style.zIndex = now.carried === piece.id ? 900 : Math.round(y)
     }
-    const paint = scrolled => {
-      // one unit of the board's picture, in the screen's pixels
-      const k = scene.current.clientWidth / BOARD.width
-      const now = sceneAt(scrolled, still)
-      for (const piece of PIECES) {
-        const node = pieces.current[piece.id]
-        if (!node) continue
-        const w = SIZES[piece.kind].w * SCALE
-        const h = SIZES[piece.kind].h * SCALE
-        const [x, y] = now.at[piece.id]
-        node.style.transform = `translate3d(${((x - w / 2) * k).toFixed(2)}px, ${((y + FOOT * w - h) * k).toFixed(2)}px, 0)`
-        // nearer pieces stand in front; the one in a hand, in front of all
-        node.style.zIndex = now.carried === piece.id ? 900 : Math.round(y)
+    for (const picture of HANDS) {
+      const node = hands.current[picture.name]
+      if (!node) continue
+      const hand = now.hands[picture.name]
+      if (!hand) {
+        node.style.opacity = 0
+        continue
       }
-      for (const picture of HANDS) {
-        const node = hands.current[picture.name]
-        if (!node) continue
-        const hand = now.hands[picture.name]
-        if (!hand) {
-          node.style.opacity = 0
-          continue
-        }
-        const w = picture.wide * BOARD.width
-        const h = (w * picture.height) / picture.width
-        node.style.transform = `translate3d(${((hand.place[0] - picture.grip[0] * w) * k).toFixed(2)}px, ${((hand.place[1] - picture.grip[1] * h) * k).toFixed(2)}px, 0)`
-        node.style.opacity = hand.shown.toFixed(3)
-      }
-      const next = { turned: scrolled >= TURN_AT, set: scrolled >= SETUP_AT, quiet: scrolled >= FIRST_AT - 0.15, played: now.played }
-      setStage(before => (Object.keys(next).every(key => before[key] === next[key]) ? before : next))
+      const w = picture.wide * BOARD.width
+      const h = (w * picture.height) / picture.width
+      node.style.transform = `translate3d(${((hand.place[0] - picture.grip[0] * w) * k).toFixed(2)}px, ${((hand.place[1] - picture.grip[1] * h) * k).toFixed(2)}px, 0)`
+      node.style.opacity = hand.shown.toFixed(3)
     }
-    const tick = time => {
-      frame = 0
-      const to = goal()
-      // At first, with motion turned off, and after a jump down the page, it is simply there.
-      if (shown === null || still || Math.abs(to - shown) > 1.2) shown = to
-      else {
-        shown += (to - shown) * (1 - Math.exp(-Math.min(64, time - last) / FOLLOW))
-        if (Math.abs(to - shown) < 0.0004) shown = to
-      }
-      last = time
-      paint(shown)
-      if (shown !== to) frame = window.requestAnimationFrame(tick)
-    }
-    const wake = () => {
-      if (frame) return
-      last = window.performance.now()
-      frame = window.requestAnimationFrame(tick)
-    }
-    // the board's size changes what a square is in pixels
-    const resized = () => {
-      if (shown !== null) paint(shown)
-      wake()
-    }
-    wake()
-    const observer = new ResizeObserver(resized)
-    observer.observe(scene.current)
-    window.addEventListener("scroll", wake, { passive: true })
-    window.addEventListener("resize", resized)
-    return () => {
-      observer.disconnect()
-      window.removeEventListener("scroll", wake)
-      window.removeEventListener("resize", resized)
-      if (frame) window.cancelAnimationFrame(frame)
-    }
-  }, [still])
+    const next = { turned: scrolled >= TURN_AT, set: scrolled >= SETUP_AT, quiet: scrolled >= FIRST_AT - 0.15, played: now.played }
+    setStage(before => (Object.keys(next).every(key => before[key] === next[key]) ? before : next))
+  }
+  useFollow(goal, paint, { still, watch: scene })
 
   const share = (value, of) => `${((value / of) * 100).toFixed(3)}%`
   const label = !stage.turned

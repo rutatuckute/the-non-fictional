@@ -67,10 +67,17 @@ export const Show = ({ on, flow = false, className = "", children, style }) => (
   </div>
 )
 
-// The current step is the last one whose card has reached the line — half way
-// down beside the graphic, and near the bottom on a phone, where a card comes
-// up under the graphic and counts once it is fully in view — read from the
-// scroll position, so a jump lands on the right picture.
+// The line a card has to reach to count: half way down beside the graphic,
+// and near the bottom on a phone, where a card comes up under the graphic and
+// counts once it is fully in view.
+export const stepLine = () => window.innerHeight * (window.matchMedia("(max-width: 60rem)").matches ? 0.88 : 0.5)
+
+// The steps of the pinned scene a graphic stands in, by number: for a graphic
+// that follows the scroll within a step (club.js) to find that step's card.
+export const PinSteps = React.createContext(null)
+
+// The current step is the last one whose card has reached the line, read from
+// the scroll position, so a jump lands on the right picture.
 const useStep = count => {
   const refs = React.useRef([])
   const [step, setStep] = React.useState(0)
@@ -78,7 +85,7 @@ const useStep = count => {
     let frame = 0
     const update = () => {
       frame = 0
-      const line = window.innerHeight * (window.matchMedia("(max-width: 60rem)").matches ? 0.88 : 0.5)
+      const line = stepLine()
       const top = node => (node.firstElementChild || node).getBoundingClientRect().top
       const passed = refs.current.slice(0, count).filter(node => node && top(node) < line)
       setStep(passed.length ? Number(passed[passed.length - 1].dataset.step) : 0)
@@ -95,30 +102,34 @@ const useStep = count => {
       if (frame) window.cancelAnimationFrame(frame)
     }
   }, [count])
-  return [step, index => node => (refs.current[index] = node)]
+  return [step, index => node => (refs.current[index] = node), refs]
 }
 
 // A pinned scene: the graphic stays, and each card that passes sets its state.
-// `children` draws the graphic for the step it is given.
+// `children` draws the graphic for the step it is given. A step is a card, or
+// `{ card, rest }` for one whose graphic needs more scrolling than a card's
+// passing gives: `rest` screens of it follow the card, with nothing in them.
 export const Pinned = ({ label, steps, children }) => {
-  const [step, stepRef] = useStep(steps.length)
+  const [step, stepRef, refs] = useStep(steps.length)
   return (
     <section className={c("ch-pin")} aria-label={label}>
       <div className={c("ch-stage")}>
-        <div className={c("ch-scene")}>{children(step)}</div>
+        <div className={c("ch-scene")}>
+          <PinSteps.Provider value={refs}>{children(step)}</PinSteps.Provider>
+        </div>
       </div>
       <div className={c("ch-steps")}>
-        {steps.map((content, index) => (
-          <div
-            key={index}
-            className={c("ch-step")}
-            data-step={index}
-            data-on={step === index ? "true" : "false"}
-            ref={stepRef(index)}
-          >
-            <div className={c("ch-card")}>{content}</div>
-          </div>
-        ))}
+        {steps.map((item, index) => {
+          const long = item !== null && typeof item === "object" && "card" in item
+          return (
+            <React.Fragment key={index}>
+              <div className={c("ch-step")} data-step={index} data-on={step === index ? "true" : "false"} ref={stepRef(index)}>
+                <div className={c("ch-card")}>{long ? item.card : item}</div>
+              </div>
+              {long && item.rest ? <div style={{ height: `${item.rest * 100}vh` }} aria-hidden="true" /> : null}
+            </React.Fragment>
+          )
+        })}
       </div>
     </section>
   )

@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { CLUB_REST, ClubBoard } from "./club"
 import { c, Guess, Holder, Pinned, Show, Text } from "./parts"
 import { ABOVE_NOTE, Above, FastGap, Patterns } from "./say"
 
@@ -29,7 +30,8 @@ export const People = () => (
     steps={[
       <Text key="1" name="strangers" look="cardText" />,
       <Text key="2" name="strangers-many" look="cardText" />,
-      <Text key="3" name="professor" look="cardText" />,
+      // the London System is set up on the board while this card's stretch passes
+      { card: <Text key="3" name="professor" look="cardText" />, rest: CLUB_REST },
       <Text key="4" name="professor-remark" look="cardText" />,
       <Text key="5" name="boards" look="cardText" />,
       <Text key="6" name="question" look="cardText" />,
@@ -67,29 +69,10 @@ export const People = () => (
             decoding="async"
           />
         </Show>
-        {/* Your opponent is only a hand: it reaches in from the far side for
-            the knight on g8. */}
-        <Show on={during(step, 2, 3)} className={c("ch-arm")}>
-          <img
-            src="/images/stories/chess/opponent-arm.webp"
-            srcSet="/images/stories/chess/opponent-arm-360.webp 360w, /images/stories/chess/opponent-arm.webp 640w"
-            sizes="(max-width: 60rem) 40vw, 300px"
-            alt="From the far side of the board an arm in a dark sweater reaches in, the fingers closing on a black knight."
-            width={640}
-            height={423}
-            decoding="async"
-          />
-        </Show>
+        {/* The board, the game on it, and the opponent, who is only an arm
+            reaching in from the far side (club.js). */}
         <Show on={during(step, 2, 3)} className={c("ch-clubBoard")}>
-          <img
-            src="/images/stories/chess/club-board.webp"
-            srcSet="/images/stories/chess/club-board-600.webp 600w, /images/stories/chess/club-board.webp 1000w"
-            sizes="(max-width: 60rem) 60vw, 540px"
-            alt="The club's board: pink and white squares with letters and numbers along its edges, the black and white plastic pieces set up for a game."
-            width={1000}
-            height={824}
-            decoding="async"
-          />
+          <ClubBoard during={2} />
         </Show>
         <div className={c("ch-board")} data-small={step >= 4 ? "true" : "false"} data-away={during(step, 2, 3) ? "true" : "false"} />
         {CHIPS.map((place, index) => (

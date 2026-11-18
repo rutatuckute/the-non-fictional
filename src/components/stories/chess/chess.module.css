@@ -226,18 +226,20 @@
 /* The club: the board as an object on the table, small enough that the two
    people at it are larger than it is. */
 .ch-clubBoard { inset: 12% 2% 12% 30%; z-index: 3; display: grid; place-items: center; }
-.ch-clubBoard img { display: block; width: 100%; height: auto; }
+/* The board with nothing on it, and over it the pieces and the opponent's arm,
+   each moved by a transform written by club.js, frame by frame. */
+.ch-clubTable { position: relative; width: 100%; aspect-ratio: 1000 / 829; }
+.ch-clubTable img { position: absolute; left: 0; top: 0; height: auto; max-width: none; }
+.ch-clubGround { width: 100%; }
+.ch-clubPiece { transform-origin: 0 0; will-change: transform; }
+/* The arm's far end fades out. */
+.ch-clubArm { z-index: 1000; pointer-events: none; will-change: transform, opacity; mask-image: linear-gradient(to bottom left, transparent 6%, #000 30%); }
 /* A half figure standing at the board's left side and bowed over it: his head
    is over the board's far left squares, so what he looks down at is the game. */
 .ch-professor { z-index: 4; left: -20%; top: 17%; height: 104%; }
 /* You, nearest to us, at the left of the board's near edge: we look over your
    shoulder at the game. */
 .ch-me { z-index: 5; left: 20%; top: 69%; height: 88%; }
-/* The opponent's arm, from beyond the board's far right corner. Its fingertips
-   (15% across, 93% down the picture) are held over the knight on g8, and the
-   arm is turned about that point; its far end fades out. */
-.ch-arm { z-index: 4; left: 72.6%; top: -10.5%; width: 60%; }
-.ch-arm img { display: block; width: 100%; height: auto; transform-origin: 15% 93%; transform: rotate(-22deg); mask-image: linear-gradient(to bottom left, transparent 6%, #000 30%); }
 /* both figures are cut at the waist: fade that edge out where the screen doesn't cut it */
 .ch-professor img, .ch-me img { display: block; width: auto; height: 100%; mask-image: linear-gradient(to bottom, #000 78%, transparent 98%); }
 /* What he said stands above his head, clear of the figures and of the arm. */

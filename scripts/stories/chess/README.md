@@ -14,6 +14,8 @@ The code is in `src/components/stories/chess/`:
 - `thread.js`: the thread, one line drawn through the story as far as the reader
   has scrolled. It passes through `Knot`s placed in the layout.
 - `wooden.js`: the wooden set of the 2020s, pinned, and the game played on it.
+- `club.js`: the club's board in Part II, and the London System set up on it.
+- `follow.js`: how a scroll-led scene follows the scroll in a glide.
 - `parts.js`: what the others are built from.
 
 ## The words
@@ -71,14 +73,14 @@ in a large and a phone width:
 
       node make-set-pair.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess inside.png outside.png
 
-- `piece-wk` … `piece-bp`: the set's twelve pieces, cut from one sheet the
-  author made with a GPT image model (6 columns by 2 rows, light above dark,
-  king, queen, rook, bishop, knight, pawn; the prompt is W1 in the
-  data-stories repository's `chess-story/visuals/PROMPTS.md`). `make-pieces.cjs`
-  cuts each to its solid part, saves them at one scale and writes their sizes
-  to `src/components/stories/chess/pieces.json`:
+- `piece-wk` … `piece-bp`: the wooden set's twelve pieces, cut from one sheet
+  the author made with a GPT image model (6 columns by 2 rows of 500 x 600 px
+  cells, light above dark, king, queen, rook, bishop, knight, pawn; the prompt
+  is W1 in the data-stories repository's `chess-story/visuals/PROMPTS.md`).
+  `make-pieces.cjs` cuts each to its solid part, saves them at one scale and
+  writes their sizes to `src/components/stories/chess/pieces.json`:
 
-      node make-pieces.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess sheet.png <repo>/src/components/stories/chess/pieces.json
+      node make-pieces.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess <repo>/src/components/stories/chess/pieces.json piece "sheet.png|0|w" "sheet.png|1|b"
 
 - `hand-me`: the author's hand, seen from above, the arm coming from below:
   the hand that moves White's pieces on the wooden board. Engraved and printed
@@ -93,9 +95,23 @@ in a large and a phone width:
 - `hand-opponent-3`: the third, a young man's, half hidden in the sleeve of a
   hooded sweatshirt. Made and printed the same way, at widths `500,300`.
 
-- `club-board`: the board at the London chess club, pink and white with its
-  plastic pieces set up, supplied by the author. Its faint specks (alpha under
-  48) are dropped and it is trimmed; made at 1000 and 600 px wide.
+- `club-board-empty`: the board at the London chess club, pink and white, with
+  nothing on it. The author supplied the board with its plastic pieces set up;
+  the empty one is that picture with the pieces taken off by a GPT image model
+  (prompt B1). `make-club-board.cjs` cuts it to the box that holds both
+  pictures, so it sits where the original did, writes it at 1000 and 600 px
+  wide, and prints the squares' edges, which are `BOARD` in `club.js`:
+
+      node make-club-board.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess empty.png original.png
+
+- `club-wk` … `club-bp`: the club's pieces. The original picture has a strong
+  perspective: its far pieces are seen almost from the side, its near ones from
+  well above. So the two colours are two drawings, each as its side of the
+  board shows it: Black from the lower row of a first sheet (prompt B2), White
+  from a sheet of its own (prompt B2-white). Sizes in `club-pieces.json`:
+
+      node make-pieces.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess <repo>/src/components/stories/chess/club-pieces.json club "white.png|0|w" "first-sheet.png|1|b"
+
 - `professor` and `me-club`: the two people of the club scene, half figures
   seen from behind: the professor standing at the board's left, bowed over it,
   and the author in the foreground. Engraved in the manner of every.to's
@@ -109,9 +125,9 @@ in a large and a phone width:
       FILL=1 PRINT=0,140,40,1.1 node make-print.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "professor|input.png|520,300" "me-club|input.png|560,320"
 
 - `opponent-arm`: the opponent at the club, shown only as an arm reaching in
-  from the far side of the board, its fingers closing on the knight on g8.
-  Made and printed like the two figures (`FILL=1`, widths `640,360`); the
-  page turns it about its fingertips and fades its far end.
+  from the far side of the board. Made and printed like the two figures
+  (`FILL=1`, widths `640,360`). `club.js` turns it about its fingertips, fades
+  its far end, and has it carry Black's pieces.
 
 - `phone`: a phone with a Chess.com game about to begin, supplied by the
   author. Made at `800,480` from a copy in which the opponent's username and
@@ -151,6 +167,22 @@ need the room.
 The threads' stretch here is several screens long and passes behind the stage,
 so `LINES.wooden` keeps each thread to a lane: the story's thread behind the
 board, the others off the screen's edge from the first screen to the last.
+
+## The club's board, and the London System
+
+`club.js` draws the board of the club scene (Part II, the cards `professor` and
+`professor-remark`) and plays a game on it: 1.d4 d5 2.Bf4 Nf6 3.e3 e6 4.Nf3 c5
+5.c3, the London System set up (`PLIES`). It is led by the scroll like the
+wooden set and follows it the same way (`follow.js`), but it stands inside a
+pinned scene of cards: its clock is how far the reader has scrolled since the
+`professor` card reached its line, and that step is given `CLUB_REST` more
+screens of scrolling, with no card in them, for the moves to be played (`rest`
+in `Pinned`, `parts.js`).
+
+The board is in perspective, so every rank has its own files' edges and its
+own scale (`BOARD`), and a piece grows as it comes nearer. Black's moves are
+carried by the opponent's arm. White's pieces move with no hand: the author is
+seated in front of them with her back to us, and they come out from behind her.
 
 ## The data
 
