@@ -12,8 +12,8 @@ import { Knots } from "./thread"
 // board is led by the scroll alone, forwards and back.
 //
 // Every move is carried by a hand. Yours comes from below; the hand that
-// answers from above is to be a different person's each time (their pictures
-// are not made yet, so for now Black's pieces move by themselves).
+// answers from above is a different person's each time (where one's picture
+// is not made yet, that move's piece goes by itself).
 
 // The board in wooden-board.webp, 1000 x 838: the edges of its squares, files
 // a to h from the left and ranks 8 to 1 from the top.
@@ -47,9 +47,9 @@ const PLIES = [
 // A hand: its picture, how wide it is against the board, how tall against its
 // own width, and where in the picture its fingers close (shares of the picture).
 const MINE = { name: "hand-me", small: 260, width: 440, height: 1463, wide: 0.27, grip: [0.317, 0.11] }
-// The hands that answer, one for each of Black's moves, in order. Empty until
-// their pictures are made: { name, small, width, height, wide, grip }.
-const THEIRS = []
+// The hands that answer, one for each of Black's moves, in order: a different
+// person each time. A move whose hand is not made yet is played with no hand.
+const THEIRS = [{ name: "hand-opponent-1", small: 260, width: 440, height: 1473, wide: 0.27, grip: [0.74, 0.955] }]
 
 // The scroll, in screens, since the scene was pinned.
 const TURN_AT = 0.3

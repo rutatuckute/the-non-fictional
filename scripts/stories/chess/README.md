@@ -83,6 +83,9 @@ in a large and a phone width:
   like the people of the club scene (`FILL=1`, widths `440,260`), from the
   original with 12 px cut off its left and right edges, where a faint column
   of specks would otherwise print.
+- `hand-opponent-1`: the first hand that answers on the wooden board, a man's,
+  with a rolled-up sleeve and a wristwatch, the arm coming from above. Made
+  and printed exactly like `hand-me`.
 
 - `club-board`: the board at the London chess club, pink and white with its
   plastic pieces set up, supplied by the author. Its faint specks (alpha under
@@ -118,8 +121,10 @@ text: the scroll alone leads it, forwards and back, and with motion turned off
 each move is made in one step with no hand. The squares' edges in the board's
 picture are in `BOARD`; a piece is placed by its square, sized from
 `pieces.json`, and stands on its base. The author's hand comes from below.
-The hands that answer from above, one person's after another's, go in `THEIRS`
-when their pictures are made; until then Black's pieces move by themselves.
+The hands that answer from above, one person's after another's, are in `THEIRS`,
+in the order of Black's moves; a move whose hand is not made yet is played
+with no hand. A hand's `grip` is where its fingers close, as shares of its
+picture: the piece's head is put there.
 
 On a phone the words above the board go when the game begins, for the hands
 need the room.
