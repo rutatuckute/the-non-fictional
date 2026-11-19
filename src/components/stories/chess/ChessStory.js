@@ -36,6 +36,9 @@ import { Wooden } from "./wooden"
 // Beyond the screen's edge, whatever the window's width: the column is centred in it.
 const OFF_LEFT = "calc(50% - 60vw)"
 const OFF_RIGHT = "calc(50% + 60vw)"
+// The middle of the phone where it rests (wooden.js: 30% of the screen's
+// height tall on a wide screen, 26% on a narrow one, at the column's left).
+const PHONE_X = ["7.04svh", "6.1svh"]
 const LINES = {
   open: {
     a: [[58, 0, 40, 0], [74, 16, 108, 22], [89.5, 36, 108, 50], [91, 66, 108, 74, "from"], [72, 90, 76, 92]],
@@ -59,19 +62,21 @@ const LINES = {
     "other-6": [[-6, 28, -8, 56], [20, 33, 14, 64], [36, 41, 28, 74], [38.5, 58, 30, 84], [37, 80, 29, 92], [34, 97, 26, 99]],
   },
   // The wooden set is pinned: its stretch is several screens long, and the
-  // board and the words stay on screen while the stretch passes behind them.
-  // So the other threads leave by the screen's edge in the first screen, above
-  // the words, and stay out until the last; only the story's thread is there
-  // for the game, coming down the screen and in behind the board.
+  // board, the phone and the words stay on screen while the stretch passes
+  // behind them. So the other threads leave by the screen's edge in the first
+  // screen and stay out; only the story's thread is there, coming down the
+  // screen behind the board (on a phone, at the left, clear of the words above
+  // the board, and then further left, clear of the phone).
   wooden: {
-    a: [[30, 1, 18, 1], [24, 30, 12, 30], [20, 70, 10, 70], [8, 97, -3, 90], [2, 100.5, -3, 100]],
-    "other-1": [[58, 1, 12, 0.5], [82, 3, OFF_LEFT, 4], [OFF_RIGHT, 5.5, OFF_LEFT, 50], [OFF_RIGHT, 97, OFF_LEFT, 97]],
-    "other-4": [[90, 1.5, OFF_LEFT, 2], [OFF_RIGHT, 4, OFF_LEFT, 50], [OFF_RIGHT, 97, OFF_LEFT, 97]],
-    "other-6": [[30, 1.5, 24, 0.5], [22, 6, OFF_LEFT, 5], [OFF_LEFT, 13, OFF_LEFT, 50]],
+    a: [[30, 0.6, 18, 0.6], [24, 18, 12, 18], [22, 45, 12, 45], [24, 66, 7, 62], [20, 82, 7, 82]],
+    "other-1": [[58, 0.6, 12, 0.3], [82, 1.8, OFF_LEFT, 2.5], [OFF_RIGHT, 3.3, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
+    "other-4": [[90, 0.9, OFF_LEFT, 1.2], [OFF_RIGHT, 2.4, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
+    "other-6": [[30, 0.9, 24, 0.3], [22, 3.6, OFF_LEFT, 3], [OFF_LEFT, 8, OFF_LEFT, 30]],
   },
-  obsession: {
-    a: [[-2.5, 16, -2.5, 14], [-2.5, 52, -2.5, 50]],
-    "other-1": [[80, 3, -12, 0], [106, 8, -12, 4]],
+  // Its last screen: the phone has come to rest in the corner, and the thread
+  // goes in behind it and comes out below, on its way into the chart.
+  woodenAfter: {
+    a: [[PHONE_X[0], 8, PHONE_X[1], 5], [PHONE_X[0], 46, PHONE_X[1], 38]],
   },
   encounter: {
     b: [[3, 30, -3, 2], [6, 60, -3, 50], [8, 104, -3, 99]],
@@ -164,27 +169,12 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
               held on screen while it turns over to the board and a game is
               played on it (wooden.js). The story's thread passes behind it;
               the others pass it by. */}
-          <Wooden lines={LINES.wooden} />
+          <Wooden lines={LINES.wooden} after={LINES.woodenAfter} />
 
+          {/* The phone has gone small, to the corner; under it the thread is a
+              line of data, beside an estimate of the time it took over from
+              (time-chart.js). The chart comes up into the scene's last screen. */}
           <div className={c("ch-row", "ch-obsession")}>
-            <Knots of={LINES.obsession} />
-            <Text name="obsession" className={c("ch-c1")} />
-            {/* Chess.com arrives: the third object, after the device and the set.
-                On its screen, the first game played there. */}
-            <Picture
-              className={c("ch-phone")}
-              name="phone"
-              alt="A phone in a black case showing the author’s first game on Chess.com, already over after one move each, pawn to e4 and knight to f6: a resignation flag on the black king, a winner’s crown on the white one. The opponent, rated 635, has 29:28 left on the clock; the author, rated 921, has 29:36. Both players’ names and profile pictures are blurred."
-              width={800}
-              height={1704}
-              small={480}
-              sizes="(max-width: 60rem) 72vw, 400px"
-              lazy
-            />
-            <Holder open className={c("ch-games")} label="Your games, one mark each" ratio="16 / 5" />
-            <Text name="obsession-time" className={c("ch-c2")} />
-            {/* Here the thread is a line of data, beside an estimate of the
-                time it took over from (time-chart.js). */}
             <TimeChart />
             <Text name="obsession-questions" className={c("ch-c3")} />
             {/* On a phone the thread leaves the chart by the margin, past the words. */}
@@ -203,6 +193,11 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           </div>
         </section>
 
+        {/* Part II opens with its name, and with what is beautiful about it. */}
+        <section className={c("ch-part")}>
+          <Text name="people-title" look="partTitle" />
+          <Text name="people-intro" look="lead" />
+        </section>
         <People />
 
         <section className={c("ch-turn")} aria-label="Looking for answers in the data">

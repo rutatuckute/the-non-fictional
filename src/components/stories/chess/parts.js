@@ -105,14 +105,46 @@ const useStep = count => {
   return [step, index => node => (refs.current[index] = node), refs]
 }
 
+// How far the reader has scrolled since a step's card reached its line, in
+// whole parts of `every` screens, up to `most`: for a graphic that changes a
+// few times within one step.
+export const useSince = (step, every, most) => {
+  const steps = React.useContext(PinSteps)
+  const [part, setPart] = React.useState(0)
+  React.useEffect(() => {
+    let frame = 0
+    const update = () => {
+      frame = 0
+      const node = steps?.current?.[step]
+      if (!node) return
+      const top = (node.firstElementChild || node).getBoundingClientRect().top
+      setPart(Math.max(0, Math.min(most, Math.floor((stepLine() - top) / window.innerHeight / every))))
+    }
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update)
+    }
+    update()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll)
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
+  }, [steps, step, every, most])
+  return part
+}
+
 // A pinned scene: the graphic stays, and each card that passes sets its state.
 // `children` draws the graphic for the step it is given. A step is a card, or
-// `{ card, rest }` for one whose graphic needs more scrolling than a card's
-// passing gives: `rest` screens of it follow the card, with nothing in them.
-export const Pinned = ({ label, steps, children }) => {
+// an object: `{ card, rest }` for one whose graphic needs more scrolling than
+// a card's passing gives (`rest` screens of it follow the card, with nothing
+// in them), `{ bare: true }` for a stretch with no card at all, where the
+// graphic speaks alone. `open` leaves out the rule above the scene.
+export const Pinned = ({ label, steps, open = false, children }) => {
   const [step, stepRef, refs] = useStep(steps.length)
   return (
-    <section className={c("ch-pin")} aria-label={label}>
+    <section className={c("ch-pin")} data-open={open ? "true" : undefined} aria-label={label}>
       <div className={c("ch-stage")}>
         <div className={c("ch-scene")}>
           <PinSteps.Provider value={refs}>{children(step)}</PinSteps.Provider>
@@ -120,13 +152,19 @@ export const Pinned = ({ label, steps, children }) => {
       </div>
       <div className={c("ch-steps")}>
         {steps.map((item, index) => {
-          const long = item !== null && typeof item === "object" && "card" in item
+          const made = item !== null && typeof item === "object" && ("card" in item || "bare" in item)
           return (
             <React.Fragment key={index}>
-              <div className={c("ch-step")} data-step={index} data-on={step === index ? "true" : "false"} ref={stepRef(index)}>
-                <div className={c("ch-card")}>{long ? item.card : item}</div>
+              <div
+                className={c("ch-step")}
+                data-step={index}
+                data-bare={made && item.bare ? "true" : undefined}
+                data-on={step === index ? "true" : "false"}
+                ref={stepRef(index)}
+              >
+                <div className={c("ch-card")}>{made ? item.card : item}</div>
               </div>
-              {long && item.rest ? <div style={{ height: `${item.rest * 100}vh` }} aria-hidden="true" /> : null}
+              {made && item.rest ? <div style={{ height: `${item.rest * 100}vh` }} aria-hidden="true" /> : null}
             </React.Fragment>
           )
         })}

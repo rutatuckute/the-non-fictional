@@ -17,6 +17,12 @@ import { Knots } from "./thread"
 // answers from above is a different person's each time (where one's picture
 // is not made yet, that move's piece goes by itself).
 //
+// Then the same game goes on elsewhere. The pieces are put away, and the
+// board becomes the board on a phone's screen: the phone is laid over the set
+// with its squares on the set's squares, and the two draw back together until
+// the whole phone is in view. Last, the phone goes small and to the corner,
+// where the chart that follows the scene starts from it.
+//
 // The scene follows the scroll (follow.js), it does not sit on it.
 
 // The board in wooden-board.webp, 838 x 1000: the edges of its squares, files
@@ -61,6 +67,19 @@ const THEIRS = [
 ]
 const HANDS = [MINE, ...THEIRS]
 
+// The phone (phone.webp, 800 x 1704), in the board's picture's own units, laid
+// so that the board on its screen (its left 78.1 to 716.3 and top 563.2 to
+// 1202.2, from scripts/stories/chess/make-phone.cjs) lies on the set's squares.
+const FIELD = { x: (BOARD.x[0] + BOARD.x[8]) / 2, y: (BOARD.y[0] + BOARD.y[8]) / 2, width: BOARD.x[8] - BOARD.x[0] }
+const PHONE = (() => {
+  const unit = FIELD.width / (716.3 - 78.1)
+  return { left: FIELD.x - 397.2 * unit, top: FIELD.y - 882.7 * unit, width: 800 * unit, height: 1704 * unit }
+})()
+// How tall the phone is on the screen, and where: held in the middle, then at
+// rest in the corner. Shares of the screen's height; [wide screens, narrow ones].
+const HELD = { tall: [0.78, 0.66], middle: [0.5, 0.57] }
+const REST = { tall: [0.3, 0.26], top: [0.12, 0.08] }
+
 // The scroll, in screens, since the scene was pinned. A move takes LASTS of
 // scrolling and the next begins EVERY after it, so one hand is still leaving
 // as the other comes in: something is always on its way.
@@ -69,7 +88,13 @@ const SETUP_AT = 0.55
 const FIRST_AT = 0.85
 const EVERY = 0.4
 const LASTS = 0.6
-export const SCREENS = FIRST_AT + (PLIES.length - 1) * EVERY + LASTS + 0.15
+const GAME_OVER = FIRST_AT + (PLIES.length - 1) * EVERY + LASTS
+// The pieces are put away, the board becomes the phone's, and the phone goes to its corner.
+const AWAY_AT = GAME_OVER + 0.08
+const PHONE_AT = GAME_OVER + 0.2
+const CORNER_AT = PHONE_AT + 1.05
+const CHANGE = 0.6
+export const SCREENS = CORNER_AT + CHANGE + 0.2
 // Of a move: the hand comes to the piece, carries it, and leaves.
 const TAKES = 0.32
 const LEAVES = 0.72
@@ -153,15 +178,24 @@ const SIDES = [
   },
 ]
 
-export const Wooden = ({ lines }) => {
+const PHONE_ALT =
+  "A phone in a black case showing the author’s first game on Chess.com, already over after one move each, pawn to e4 and knight to f6: a resignation flag on the black king, a winner’s crown on the white one. The opponent, rated 635, has 29:28 left on the clock; the author, rated 921, has 29:36. Both players’ names and profile pictures are blurred."
+
+// `lines` are the threads' ways down the scene's stretch, `after` their ways
+// across its last screen, where the phone has come to rest.
+export const Wooden = ({ lines, after }) => {
   const pin = React.useRef(null)
+  const stand = React.useRef(null)
   const scene = React.useRef(null)
+  const lid = React.useRef(null)
+  const phone = React.useRef(null)
+  const back = React.useRef(null)
   const pieces = React.useRef({})
   const hands = React.useRef({})
   const still = useStill()
   // What changes in steps, for the page to say and to style: the rest is
   // written straight onto the pieces and the hands, frame by frame.
-  const [stage, setStage] = React.useState({ turned: false, set: false, quiet: false, played: 0 })
+  const [stage, setStage] = React.useState({ turned: false, set: false, quiet: false, played: 0, phone: false, words: "board" })
 
   const goal = () => {
     const box = pin.current.getBoundingClientRect()
@@ -195,13 +229,57 @@ export const Wooden = ({ lines }) => {
       node.style.transform = `translate3d(${((hand.place[0] - picture.grip[0] * w) * k).toFixed(2)}px, ${((hand.place[1] - picture.grip[1] * h) * k).toFixed(2)}px, 0)`
       node.style.opacity = hand.shown.toFixed(3)
     }
-    const next = { turned: scrolled >= TURN_AT, set: scrolled >= SETUP_AT, quiet: scrolled >= FIRST_AT - 0.15, played: now.played }
+    // The board becomes the phone's, and the phone goes to its corner. One
+    // change of size and place is applied to the set and to the phone alike,
+    // so the squares of the two stay on each other while one gives way.
+    const box = scene.current.getBoundingClientRect()
+    const screen = stand.current.getBoundingClientRect()
+    const narrow = window.matchMedia("(max-width: 60rem)").matches ? 1 : 0
+    const own = [PHONE.left * k, PHONE.top * k]
+    const tall = PHONE.height * k
+    const heldSize = (screen.height * HELD.tall[narrow]) / tall
+    const held = [box.width / 2 - (PHONE.width * k * heldSize) / 2, screen.top + screen.height * HELD.middle[narrow] - box.top - (tall * heldSize) / 2]
+    const restSize = (screen.height * REST.tall[narrow]) / tall
+    const inset = Number.parseFloat(window.getComputedStyle(stand.current).paddingLeft) || 0
+    const rest = [screen.left + inset - box.left, screen.top + screen.height * REST.top[narrow] - box.top]
+    const arrives = within(scrolled, PHONE_AT, PHONE_AT + CHANGE)
+    const leaves = gently(within(scrolled, CORNER_AT, CORNER_AT + CHANGE))
+    const size = leaves > 0 ? heldSize + (restSize - heldSize) * leaves : 1 + (heldSize - 1) * gently(arrives)
+    const place = leaves > 0 ? mix(held, rest, leaves) : mix(own, held, gently(arrives))
+    phone.current.style.transform = `translate3d(${(place[0] - own[0]).toFixed(2)}px, ${(place[1] - own[1]).toFixed(2)}px, 0) scale(${size.toFixed(4)})`
+    phone.current.style.opacity = gently(within(arrives, 0.1, 0.7)).toFixed(3)
+    // (the thread must not show through the phone while it is half there)
+    back.current.style.transform = phone.current.style.transform
+    back.current.style.opacity = within(arrives, 0.04, 0.22).toFixed(3)
+    lid.current.style.transform =
+      arrives > 0 ? `translate3d(${(place[0] - size * own[0]).toFixed(2)}px, ${(place[1] - size * own[1]).toFixed(2)}px, 0) scale(${size.toFixed(4)})` : "none"
+    lid.current.style.opacity = (1 - within(arrives, 0.7, 1)).toFixed(3)
+
+    const next = {
+      turned: scrolled >= TURN_AT,
+      set: scrolled >= SETUP_AT && scrolled < AWAY_AT,
+      quiet: scrolled >= FIRST_AT - 0.15,
+      played: now.played,
+      // (words wait while the phone is on its way: it passes over where they stand)
+      words:
+        scrolled < PHONE_AT + 0.15
+          ? "board"
+          : scrolled < PHONE_AT + CHANGE - 0.05
+            ? "none"
+            : scrolled < CORNER_AT + 0.1
+              ? "phone"
+              : scrolled < CORNER_AT + CHANGE - 0.08
+                ? "none"
+                : "after",
+    }
     setStage(before => (Object.keys(next).every(key => before[key] === next[key]) ? before : next))
   }
   useFollow(goal, paint, { still, watch: scene })
 
   const share = (value, of) => `${((value / of) * 100).toFixed(3)}%`
-  const label = !stage.turned
+  const label = stage.phone
+    ? PHONE_ALT
+    : !stage.turned
     ? SIDES[0].alt
     : !stage.set
       ? SIDES[1].alt
@@ -213,60 +291,99 @@ export const Wooden = ({ lines }) => {
 
   return (
     <div className={c("ch-woodenPin")} ref={pin} style={{ "--screens": SCREENS }}>
-      <div className={c("ch-woodenStage")}>
+      <div className={c("ch-woodenStage")} ref={stand}>
         <div className={c("ch-woodenScene")} ref={scene} role="img" aria-label={label}>
-          <span className={c("ch-sides")} data-turned={stage.turned ? "true" : "false"}>
-            {SIDES.map((side, index) => (
-              <img
-                key={side.name}
-                className={c("ch-side", index ? "ch-sideBack" : "ch-sideFront")}
-                src={`/images/stories/chess/${side.name}.webp`}
-                srcSet={`/images/stories/chess/${side.name}-500.webp 500w, /images/stories/chess/${side.name}.webp 838w`}
-                sizes="(max-width: 60rem) 92vw, 500px"
-                alt=""
-                width={BOARD.width}
-                height={BOARD.height}
-                decoding="async"
-              />
-            ))}
-          </span>
-          <div className={c("ch-woodenPieces")} data-on={stage.set ? "true" : "false"}>
-            {PIECES.map(piece => (
-              <img
-                key={piece.id}
-                ref={node => (pieces.current[piece.id] = node)}
-                src={`/images/stories/chess/piece-${piece.kind}.webp`}
-                alt=""
-                width={SIZES[piece.kind].w}
-                height={SIZES[piece.kind].h}
-                decoding="async"
-                style={{ width: share(SIZES[piece.kind].w * SCALE, BOARD.width) }}
-              />
-            ))}
-            {HANDS.map(picture => (
-              <img
-                key={picture.name}
-                ref={node => (hands.current[picture.name] = node)}
-                className={c("ch-woodenHand")}
-                data-from={picture === MINE ? "below" : "above"}
-                src={`/images/stories/chess/${picture.name}.webp`}
-                srcSet={`/images/stories/chess/${picture.name}-${picture.small}.webp ${picture.small}w, /images/stories/chess/${picture.name}.webp ${picture.width}w`}
-                sizes="(max-width: 60rem) 30vw, 170px"
-                alt=""
-                width={picture.width}
-                height={picture.height}
-                decoding="async"
-                style={{ width: share(picture.wide, 1), opacity: 0 }}
-              />
-            ))}
+          {/* Behind the set, in the page's own colour and the phone's shape:
+              it hides the thread there from the moment the phone begins to
+              appear, as the phone itself will. */}
+          <i
+            ref={back}
+            className={c("ch-woodenBack")}
+            style={{
+              left: share(PHONE.left, BOARD.width),
+              top: share(PHONE.top, BOARD.height),
+              width: share(PHONE.width, BOARD.width),
+              height: share(PHONE.height, BOARD.height),
+              opacity: 0,
+            }}
+          />
+          <div className={c("ch-woodenLid")} ref={lid}>
+            <span className={c("ch-sides")} data-turned={stage.turned ? "true" : "false"}>
+              {SIDES.map((side, index) => (
+                <img
+                  key={side.name}
+                  className={c("ch-side", index ? "ch-sideBack" : "ch-sideFront")}
+                  src={`/images/stories/chess/${side.name}.webp`}
+                  srcSet={`/images/stories/chess/${side.name}-500.webp 500w, /images/stories/chess/${side.name}.webp 838w`}
+                  sizes="(max-width: 60rem) 92vw, 500px"
+                  alt=""
+                  width={BOARD.width}
+                  height={BOARD.height}
+                  decoding="async"
+                />
+              ))}
+            </span>
+            <div className={c("ch-woodenPieces")} data-on={stage.set ? "true" : "false"}>
+              {PIECES.map(piece => (
+                <img
+                  key={piece.id}
+                  ref={node => (pieces.current[piece.id] = node)}
+                  src={`/images/stories/chess/piece-${piece.kind}.webp`}
+                  alt=""
+                  width={SIZES[piece.kind].w}
+                  height={SIZES[piece.kind].h}
+                  decoding="async"
+                  style={{ width: share(SIZES[piece.kind].w * SCALE, BOARD.width) }}
+                />
+              ))}
+              {HANDS.map(picture => (
+                <img
+                  key={picture.name}
+                  ref={node => (hands.current[picture.name] = node)}
+                  className={c("ch-woodenHand")}
+                  data-from={picture === MINE ? "below" : "above"}
+                  src={`/images/stories/chess/${picture.name}.webp`}
+                  srcSet={`/images/stories/chess/${picture.name}-${picture.small}.webp ${picture.small}w, /images/stories/chess/${picture.name}.webp ${picture.width}w`}
+                  sizes="(max-width: 60rem) 30vw, 170px"
+                  alt=""
+                  width={picture.width}
+                  height={picture.height}
+                  decoding="async"
+                  style={{ width: share(picture.wide, 1), opacity: 0 }}
+                />
+              ))}
+            </div>
           </div>
+          {/* Chess.com arrives: the third object, after the device and the set. */}
+          <img
+            ref={phone}
+            className={c("ch-woodenPhone")}
+            src="/images/stories/chess/phone.webp"
+            srcSet="/images/stories/chess/phone-480.webp 480w, /images/stories/chess/phone.webp 800w"
+            sizes="(max-width: 60rem) 72vw, 330px"
+            alt=""
+            width={800}
+            height={1704}
+            decoding="async"
+            style={{ left: share(PHONE.left, BOARD.width), top: share(PHONE.top, BOARD.height), width: share(PHONE.width, BOARD.width), opacity: 0 }}
+          />
         </div>
-        {/* On a phone the words give way to the game: the hands need the room. */}
-        <div className={c("ch-woodenText")} data-quiet={stage.quiet ? "true" : "false"}>
+        {/* The words beside the scene, each for its part of it. On a phone the
+            first give way to the game: the hands need the room. */}
+        <div className={c("ch-woodenText")} data-on={stage.words === "board" ? "true" : "false"} data-quiet={stage.quiet ? "true" : "false"}>
           <Text name="board" />
+        </div>
+        <div className={c("ch-woodenText")} data-on={stage.words === "phone" ? "true" : "false"}>
+          <Text name="first-game" />
+        </div>
+        <div className={c("ch-woodenAfter")} data-on={stage.words === "after" ? "true" : "false"}>
+          <Text name="obsession" />
         </div>
       </div>
       <Knots of={lines} />
+      <div className={c("ch-woodenTail")}>
+        <Knots of={after} />
+      </div>
     </div>
   )
 }

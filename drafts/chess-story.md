@@ -30,55 +30,59 @@ I'm not THE chess player, though.
 
 <!--step:not-defining-->
 
-It's far from being a defining part of who I am. I just like the strategic and analytical aspect of the game. That, and its endless possibilities.
+It's far from being a defining part of who I am.
 
 <!--step:board-->
 
-*[The wooden chessboard. Occasional games with people in my life: different stages of life, same game.]*
+I just like the strategic and analytical aspect of the game. That, and its endless possibilities.
+
+<!--step:first-game-->
+
+*[My first game on Chess.com, 29 April 2023. Over after one move each.]*
 
 <!--step:obsession-->
 
-*[03 · The (small) obsession. Chess.com enters, wanting to get better, games piling up.]*
-
-<!--step:obsession-time-->
-
-*[Chess overtakes social media time.]*
+Chess.com brought more fast dopamine, to the point of overtaking social media (winning trade-off strategy?).
 
 <!--step:obsession-questions-->
 
-*[Playing raised questions, not only the wish to win.]*
+And so gradually more games, more mistakes, and so more questions
+
+<!--step:people-title-->
+
+## The people behind the game
+
+<!--step:people-intro-->
+
+There's something intrinsically beautiful in playing against a randomly matched stranger from any part of the world.
 
 <!--step:strangers-->
 
-*[04 · Playing strangers. A username, a rating, a country, a sequence of moves.]*
+Who are they? Where are they now? In which random moment of their lives they find themselves in?
 
-<!--step:strangers-many-->
+<!--step:club-->
 
-*[Who are these people? Sharing a game with someone you know almost nothing about.]*
+I went to London chess club once. Played the safe opening for the whites I learnt.
 
 <!--step:professor-->
 
-*[05 · The professor. The London chess club, your cautious London System on the board.]*
-
-<!--step:professor-remark-->
-
-*[His observation, and feeling understood by someone you barely knew.]*
+The professor was observing from aside:
 
 <!--step:professor-quote-->
 
-*[What the professor said]*
+“Why are you playing the London system if aggressiveness is in your nature?”
+
+<!--step:professor-how-->
+
+How did he know?
 
 <!--step:boards-->
 
-*[06 · The question. You read people from their moves too. The board becomes one of thousands.]*
+The board of thousand games.
 
-<!--step:question-->
+<!--step:data-->
 
-*[How little we know about opponents, how much we guess. Let's look at real games.]*
-
-<!--step:question-large-->
-
-*[The question, in one line]*
+Chess.com provides the data.
 
 <!--step:data-intro-->
 

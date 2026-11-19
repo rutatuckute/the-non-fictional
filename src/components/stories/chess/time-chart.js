@@ -114,8 +114,9 @@ export const TimeChart = ({ className = "" }) => {
             <path d={smoothPath(SOCIAL, size.width, size.height)} />
           </svg>
         ) : null}
-        {/* The thread comes in from the page's margin, under the side's numbers,
-            and becomes the line of data. */}
+        {/* The thread comes down from the phone above, outside the side's
+            numbers, and at the foot of the chart becomes the line of data. */}
+        <Knot x="calc(-2rem - 10px)" y={-32} px="calc(-2rem - 10px)" py={-40} />
         <Knot x="calc(-2rem - 10px)" y={97} px="calc(-2rem - 10px)" py={97} />
         <Trace points={CHESS} then="questions" />
         {/* The data ends where it ends, and the thread goes on as questions:

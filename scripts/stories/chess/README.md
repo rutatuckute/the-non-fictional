@@ -42,8 +42,8 @@ the published site. The names, in reading order:
 | Part | Names |
 | --- | --- |
 | Opening | `opening` |
-| I | `mine`, `memory`, `not-a-player`, `not-defining`, `board`, `obsession`, `obsession-time`, `obsession-questions` |
-| II | `strangers`, `strangers-many`, `professor`, `professor-remark`, `professor-quote`, `boards`, `question`, `question-large` |
+| I | `mine`, `memory`, `not-a-player`, `not-defining`, `board`, `first-game`, `obsession`, `obsession-questions` |
+| II | `people-title` (a heading), `people-intro`, `strangers`, `club`, `professor`, `professor-quote`, `professor-how`, `boards`, `data` |
 | III | `data-intro` |
 | III, first question | `say-message`, `say-prediction`, `say-guess`, `say-answer`, `say-surprise`, `say-limits` |
 | III, second question | `wrong-observation`, `wrong-decide`, `wrong-outcome`, `wrong-crowd`, `wrong-you` |
@@ -135,31 +135,59 @@ in a large and a phone width:
   `club.js` turns it about its fingertips, fades its far end, and has it carry
   Black's pieces.
 
-- `phone`: the phone of the story, a Google Pixel in a rugged black case seen
-  from the front (a render made with a GPT image model, prompt O5, its screen
-  switched off), with the author's first Chess.com game on its screen: a real
-  screenshot, 29 April 2023, over after 1.e4 Nf6. `make-phone.cjs` lays the
-  screenshot on the screen, blurs both players' usernames and profile pictures
-  past reading, the author's own included, and takes out the phone's status
-  bar (its header says how, and what else it adjusts); `make-images.cjs` then
-  makes the page's sizes. The screenshot as supplied is kept out of the
+- `phone` and `phone-game`: the phone of the story, a Google Pixel in a rugged
+  black case seen from the front (a render made with a GPT image model, prompt
+  O5, its screen switched off), with a real screenshot of the author's first
+  Chess.com game laid on its screen (29 April 2023, over after 1.e4 Nf6).
+  `make-phone.cjs` blurs both players' usernames and profile pictures past
+  reading, the author's own included, and takes out the phone's status bar
+  (its header says how, and what else it adjusts). `phone` is that screen as
+  it was. `phone-game` (made with `new-game`) is the same screen before any
+  game: the board put back to the starting position from the screenshot's own
+  squares, and the move list, the opponent's bar and both clocks' digits
+  emptied, for the page to write in (Part II's strangers). `make-images.cjs`
+  then makes the page's sizes. The screenshot as supplied is kept out of the
   repository.
 
       node make-phone.cjs <repo>/node_modules/sharp phone.png screenshot.jpg phone-first-game.png
-      node make-images.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "phone|phone-first-game.png|800,480|82"
+      node make-phone.cjs <repo>/node_modules/sharp phone.png screenshot.jpg phone-new-game.png new-game
+      node make-images.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "phone|phone-first-game.png|800,480|82" "phone-game|phone-new-game.png|800,480|82"
 
-## The wooden set, pinned
+- `boards`: "the board of a thousand games": how the author's last 998 games
+  ended, each a tiny board, in a grid of 37 by 27 whose middle place is left
+  for the club's board. Her pieces are dots of the story's clay, her
+  opponents' ivory. `make-boards.cjs` draws it from final positions exported
+  in the data-stories repository (`chess-story/analysis/export_boards.py`:
+  the positions and the colour she played, nothing else):
 
-`wooden.js` holds the wooden set on screen for a few screens of scrolling. It
-comes in open, turns over to the board about its hinge, the pieces are set up,
-and a short game is played (`PLIES`), each move carried by a hand. Nothing
-waits for a text: the scroll alone leads it, forwards and back.
+      node make-boards.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess boards.json
 
-- The scene follows the scroll, it does not sit on it: in every frame it
-  closes a share of the distance to where the reader has scrolled (`FOLLOW`),
-  so a mouse wheel's steps and an uneven swipe are drawn as one glide. Pieces
-  and hands are moved by transforms written straight onto them, frame by
-  frame; only what changes in steps (turned, set up, moves played) is state.
+## The wooden set, pinned, and what it becomes
+
+`wooden.js` holds one scene on screen for several screens of scrolling, and it
+carries Part I from the wooden set to the chart:
+
+1. The set comes in open, turns over to the board about its hinge, the pieces
+   are set up, and a short game is played (`PLIES`), each move carried by a
+   hand.
+2. The pieces are put away and the board becomes the board on a phone's
+   screen: the phone (`phone`) is laid over the set with its squares on the
+   set's squares (`PHONE`), and the two draw back together, the set giving way,
+   until the whole phone is in view (`HELD`).
+3. The phone goes small and to the corner (`REST`). The chart's stretch begins
+   a little under half a screen before the scene's ends, so the chart comes up
+   under the phone, and the thread, which went in behind the phone, comes out
+   below it and into the chart as the line of data.
+
+Nothing waits for a text: the scroll alone leads it, forwards and back. Beside
+the scene stand, each for its part of it, the texts `board`, `first-game` and
+`obsession`.
+
+- The scene follows the scroll, it does not sit on it (`follow.js`): in every
+  frame it closes a share of the distance to where the reader has scrolled, so
+  a mouse wheel's steps and an uneven swipe are drawn as one glide. Pieces,
+  hands, the set and the phone are moved by transforms written straight onto
+  them, frame by frame; only what changes in steps is state.
 - A move takes `LASTS` screens of scrolling and the next begins `EVERY` after
   it, so one hand is still leaving as the other comes in. Each stretch of a
   move (the hand comes, carries, leaves) starts and ends at rest. A hand is
@@ -180,18 +208,43 @@ need the room.
 
 The threads' stretch here is several screens long and passes behind the stage,
 so `LINES.wooden` keeps each thread to a lane: the story's thread behind the
-board, the others off the screen's edge from the first screen to the last.
+board (on a phone, at the left, clear of the words above it), the others off
+the screen's edge. `LINES.woodenAfter` are the knots of the scene's last
+screen, where the phone rests: its middle is `PHONE_X`, which has to follow
+`REST` if that changes.
 
-## The club's board, and the London System
+## Part II: the people behind the game
 
-`club.js` draws the board of the club scene (Part II, the cards `professor` and
-`professor-remark`) and plays a game on it: 1.d4 d5 2.Bf4 Nf6 3.e3 e6 4.Nf3 c5
-5.c3, the London System set up (`PLIES`). It is led by the scroll like the
-wooden set and follows it the same way (`follow.js`), but it stands inside a
-pinned scene of cards: its clock is how far the reader has scrolled since the
-`professor` card reached its line, and that step is given `CLUB_REST` more
-screens of scrolling, with no card in them, for the moves to be played (`rest`
-in `Pinned`, `parts.js`).
+Part II opens with its name (`people-title`, a heading in the body) and a few
+words, and then is one pinned scene (`People` in `scenes.js`). What the scene
+shows at each step is in `VIEWS`:
+
+1. `strangers`: the phone again, before a game (`phone-game`). The opponent
+   changes as the reader scrolls, on the phone's screen and, large enough to
+   read, beside it: a username, a rating, a country (`STRANGERS`). The four are
+   invented, and were checked not to be anyone's username. A small picture of
+   each, `figure`, is still to be made.
+2. `club`: the phone goes and the club's board comes up out of its board;
+   "London, early 2026" stands beside it, and the opening is played (below).
+3. `professor`: he leans in, at the board's left.
+4. No card: his question (`professor-quote`) stands across the top of the scene.
+5. No card: `professor-how`, alone, the club far back behind it.
+6. `boards`, `data`: the board goes small, into the middle of the thousand
+   (`boards`, a picture four of the scene's squares wide).
+
+A step can be more than a card (`Pinned` in `parts.js`): `{ card, rest }` gives
+it more scrolling than a card's passing, `{ bare: true }` is a stretch with no
+card. `useSince` counts the parts of a step's scrolling, for the strangers.
+
+### The club's board, and the London System
+
+`club.js` draws the board of the club and plays a game on it: 1.d4 d5 2.Bf4 Nf6
+3.e3 e6 4.Nf3 c5 5.c3, the London System set up (`PLIES`). It is led by the
+scroll like the wooden set and follows it the same way (`follow.js`), but it
+stands inside a pinned scene of cards: its clock is how far the reader has
+scrolled since the `club` card reached its line, and that step is given
+`CLUB_REST` more screens of scrolling, with no card in them, for the moves to
+be played.
 
 The board is in perspective, so every rank has its own files' edges and its
 own scale (`BOARD`), and a piece grows as it comes nearer. The players are
@@ -244,7 +297,8 @@ the screen.
 
 ## State of the build
 
-This is the skeleton. The scroll, the pinned scenes, the reader's guesses and
-the thread work; every picture and chart is still a box that names what will
-stand there. The data and the scripts that make it will be described here as
-each part is built.
+Parts I and II are built, with their pictures; the texts placed in them are
+the author's first drafts, and two are still notes in brackets (`first-game`,
+and the four strangers' pictures are to come). Part III's first question is
+built from data; its other two, and Part IV, are still boxes that name what
+will stand there.

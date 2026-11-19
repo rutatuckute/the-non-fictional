@@ -3,78 +3,199 @@
 import * as React from "react"
 
 import { CLUB_REST, ClubBoard } from "./club"
-import { c, Guess, Holder, Pinned, Show, Text } from "./parts"
+import { c, Guess, Holder, Pinned, Show, Text, useSince } from "./parts"
 import { ABOVE_NOTE, Above, FastGap, Patterns } from "./say"
 
 // The pinned scenes of the chess story: the people behind the game, and the
-// three questions put to the data. For now every graphic is a box that says
+// three questions put to the data. Where a graphic is not made yet, a box says
 // what will stand there; each is replaced as its part is built.
 
 const during = (step, ...steps) => steps.includes(step)
 
-// Where the six opponents sit around the board, in percent of it.
-const CHIPS = [
-  { left: "-22%", top: "10%" },
-  { right: "-20%", top: "-5%" },
-  { right: "-26%", top: "44%" },
-  { left: "-28%", top: "62%" },
-  { left: "16%", bottom: "-7%" },
-  { left: "22%", top: "-9%" },
+// The strangers: an opponent is a username, a rating and a country, and then
+// the next one. These four are invented: none is anyone's username (checked
+// against Chess.com's public player pages on 19 November 2026, where each
+// was unknown). `figure` will name each one's picture, once it is made.
+const STRANGERS = [
+  { name: "torre_torta_07", rating: 743, country: "Brazil", flag: "br", tone: "#6f5a4a", figure: null },
+  { name: "pawn_wala_19", rating: 812, country: "India", flag: "in", tone: "#4f5f6b", figure: null },
+  { name: "oga_blunders_ng", rating: 688, country: "Nigeria", flag: "ng", tone: "#5c6650", figure: null },
+  { name: "krzywy_goniec", rating: 905, country: "Poland", flag: "pl", tone: "#6a5266", figure: null },
 ]
+// Each stays for this much scrolling, in screens; the step is given what the four need.
+const EACH = 0.5
+const STRANGERS_REST = EACH * STRANGERS.length - 0.88 + 0.15
 
-// Part II. One board stays on screen: first the strangers around it, then the
-// club and the professor's remark, then the board among thousands of others.
+// A country's flag, drawn: small enough that four simple ones are all it takes.
+const FLAGS = {
+  br: (
+    <>
+      <rect width="6" height="4" fill="#1f9a48" />
+      <polygon points="3,0.45 5.5,2 3,3.55 0.5,2" fill="#f7d117" />
+      <circle cx="3" cy="2" r="0.85" fill="#2a4b9b" />
+    </>
+  ),
+  in: (
+    <>
+      <rect width="6" height="4" fill="#ffffff" />
+      <rect width="6" height="1.34" fill="#f4a13a" />
+      <rect y="2.66" width="6" height="1.34" fill="#1c8a3a" />
+      <circle cx="3" cy="2" r="0.42" fill="none" stroke="#2a3f9b" strokeWidth="0.16" />
+    </>
+  ),
+  ng: (
+    <>
+      <rect width="6" height="4" fill="#ffffff" />
+      <rect width="2" height="4" fill="#1c8a4a" />
+      <rect x="4" width="2" height="4" fill="#1c8a4a" />
+    </>
+  ),
+  pl: (
+    <>
+      <rect width="6" height="4" fill="#ffffff" />
+      <rect y="2" width="6" height="2" fill="#d8323c" />
+    </>
+  ),
+}
+const Flag = ({ of }) => (
+  <svg className={c("ch-flag")} viewBox="0 0 6 4" aria-hidden="true">
+    {FLAGS[of]}
+  </svg>
+)
+
+// The phone of Part I again, before a game: the board set up, the clocks full.
+// Only the opponent changes, as the reader scrolls: on the phone's screen, and
+// beside it, large enough to read.
+const Strangers = ({ step }) => {
+  const now = useSince(step, EACH, STRANGERS.length - 1)
+  return (
+    <div
+      className={c("ch-phoneBox")}
+      role="img"
+      aria-label={`A phone with a game of chess about to begin. The opponent keeps changing: ${STRANGERS.map(
+        each => `${each.name}, rated ${each.rating}, ${each.country}`,
+      ).join("; ")}.`}
+    >
+      <img
+        src="/images/stories/chess/phone-game.webp"
+        srcSet="/images/stories/chess/phone-game-480.webp 480w, /images/stories/chess/phone-game.webp 800w"
+        sizes="(max-width: 60rem) 45vw, 260px"
+        alt=""
+        width={800}
+        height={1704}
+        decoding="async"
+      />
+      {/* What the page writes on the phone's screen: the opponent's bar, and both clocks. */}
+      <div className={c("ch-screen")} aria-hidden="true">
+        {STRANGERS.map((each, index) => (
+          <div key={each.name} className={c("ch-screenBar")} data-on={index === now ? "true" : "false"}>
+            <i style={{ background: each.tone }} />
+            <b>{each.name}</b>
+            <span>({each.rating})</span>
+            <Flag of={each.flag} />
+          </div>
+        ))}
+        <span className={c("ch-clock")} data-whose="theirs">
+          10:00
+        </span>
+        <span className={c("ch-clock")} data-whose="mine">
+          10:00
+        </span>
+      </div>
+      {STRANGERS.map((each, index) => (
+        <div key={each.name} className={c("ch-who")} data-on={index === now ? "true" : "false"} aria-hidden="true">
+          <b>{each.name}</b>
+          <span>
+            <Flag of={each.flag} />
+            {each.rating} · {each.country}
+          </span>
+          {each.figure ? (
+            <img
+              src={`/images/stories/chess/${each.figure}.webp`}
+              srcSet={`/images/stories/chess/${each.figure}-300.webp 300w, /images/stories/chess/${each.figure}.webp 520w`}
+              sizes="(max-width: 60rem) 34vw, 220px"
+              alt=""
+              decoding="async"
+            />
+          ) : null}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// What the scene shows at each step: the phone and its strangers; the club's
+// board; the remark, alone; the board among a thousand.
+const VIEWS = ["phone", "club", "club", "club", "how", "many", "many"]
+
+// Part II. One board stays on screen: on the phone, where strangers come and
+// go; then at the club in London, where the opening is played and the
+// professor leans in; then among the thousand games the data holds.
 export const People = () => (
   <Pinned
+    open
     label="The people behind the game"
     steps={[
-      <Text key="1" name="strangers" look="cardText" />,
-      <Text key="2" name="strangers-many" look="cardText" />,
+      { card: <Text name="strangers" look="cardText" />, rest: STRANGERS_REST },
       // the London System is set up on the board while this card's stretch passes
-      { card: <Text key="3" name="professor" look="cardText" />, rest: CLUB_REST },
-      <Text key="4" name="professor-remark" look="cardText" />,
-      <Text key="5" name="boards" look="cardText" />,
-      <Text key="6" name="question" look="cardText" />,
+      { card: <Text name="club" look="cardText" />, rest: CLUB_REST },
+      <Text key="professor" name="professor" look="cardText" />,
+      // his question, and then what it left behind, are in the scene itself
+      { bare: true },
+      { bare: true },
+      <Text key="boards" name="boards" look="cardText" />,
+      <Text key="data" name="data" look="cardText" />,
     ]}
   >
     {step => (
-      <div className={c("ch-boardwrap")} data-club={during(step, 2, 3) ? "true" : "false"}>
-        <Show on={step >= 4} className={c("ch-minis")}>
-          {Array.from({ length: 162 }, (_, index) => (
-            <b key={index} />
-          ))}
-        </Show>
-        {/* The club: its own board, pink and white, and the professor standing
-            at its left with his head over it. He is the scene's one figure:
-            the two players are hands. */}
-        <Show on={during(step, 2, 3)} className={c("ch-professor")}>
-          <img
-            src="/images/stories/chess/professor.webp"
-            srcSet="/images/stories/chess/professor-300.webp 300w, /images/stories/chess/professor.webp 520w"
-            sizes="(max-width: 60rem) 45vw, 380px"
-            alt="An older man in a dark jacket, seen from behind, bows over the board, his hands clasped behind his back."
-            width={520}
-            height={778}
-            decoding="async"
-          />
-        </Show>
-        {/* The board, the game on it, and the two players' hands (club.js). */}
-        <Show on={during(step, 2, 3)} className={c("ch-clubBoard")}>
-          <ClubBoard during={2} />
-        </Show>
-        <div className={c("ch-board")} data-small={step >= 4 ? "true" : "false"} data-away={during(step, 2, 3) ? "true" : "false"} />
-        {CHIPS.map((place, index) => (
-          <Show key={index} on={index === 0 ? step <= 1 : step === 1} className={c("ch-chip")} style={place}>
-            username · rating · country
+      <>
+        <div className={c("ch-boardwrap")} data-view={VIEWS[step]}>
+          {/* How the author's last 998 games ended, each a tiny board
+              (scripts/stories/chess/make-boards.cjs); the middle place is the club's. */}
+          <Show on={step >= 5} className={c("ch-minis")}>
+            <img
+              src="/images/stories/chess/boards.webp"
+              alt="Hundreds of tiny chessboards in a grid: how the author’s last thousand games ended, her pieces in clay, her opponents’ in ivory."
+              width={1776}
+              height={1296}
+              decoding="async"
+            />
           </Show>
-        ))}
-        <Show on={step === 3} className={c("ch-said")}>
-          <Text name="professor-quote" />
+          <Show on={step === 0} className={c("ch-phoneLayer")}>
+            <Strangers step={0} />
+          </Show>
+          {/* The club: its own board, pink and white. The two players are
+              hands (club.js); the professor, who leans in once the opening is
+              played, is the scene's one figure. */}
+          <Show on={during(step, 2, 3, 4)} className={c("ch-professor")}>
+            <img
+              src="/images/stories/chess/professor.webp"
+              srcSet="/images/stories/chess/professor-300.webp 300w, /images/stories/chess/professor.webp 520w"
+              sizes="(max-width: 60rem) 45vw, 380px"
+              alt="An older man in a dark jacket, seen from behind, bows over the board, his hands clasped behind his back."
+              width={520}
+              height={778}
+              decoding="async"
+            />
+          </Show>
+          <Show on={step >= 1} className={c("ch-clubBoard")}>
+            <ClubBoard during={1} />
+          </Show>
+          <Show on={step === 1} className={c("ch-place")}>
+            <svg viewBox="0 0 10 14" aria-hidden="true">
+              <path d="M5 0.6a4.2 4.2 0 0 0-4.2 4.2C0.8 8 5 13.4 5 13.4S9.2 8 9.2 4.8A4.2 4.2 0 0 0 5 0.6Zm0 5.9a1.7 1.7 0 1 1 0-3.4 1.7 1.7 0 0 1 0 3.4Z" />
+            </svg>
+            London
+            <span>early 2026</span>
+          </Show>
+        </div>
+        <Show on={step === 3} className={c("ch-quote")}>
+          <Text name="professor-quote" look="medium" />
         </Show>
-        <Show on={step === 5} className={c("ch-ask")}>
-          <Text name="question-large" look="medium" />
+        <Show on={step === 4} className={c("ch-how")}>
+          <Text name="professor-how" look="large" />
         </Show>
-      </div>
+      </>
     )}
   </Pinned>
 )
