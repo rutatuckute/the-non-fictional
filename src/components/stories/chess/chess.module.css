@@ -75,7 +75,7 @@
 /* However wide the window, an object is never taller than about two thirds
    of it: each is held to the width at which its height is 68% of the screen. */
 .ch-device { max-width: 44vh; max-width: 44svh; }
-.ch-phone { max-width: 41vh; max-width: 41svh; }
+.ch-phone { max-width: 32vh; max-width: 32svh; }
 
 /* A thing with two sides: they lie back to back and the pair turns as one,
    about its hinge, which lies across: the two sides are the same width, so

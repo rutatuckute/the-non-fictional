@@ -169,13 +169,14 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           <div className={c("ch-row", "ch-obsession")}>
             <Knots of={LINES.obsession} />
             <Text name="obsession" className={c("ch-c1")} />
-            {/* Chess.com arrives: the third object, after the device and the set. */}
+            {/* Chess.com arrives: the third object, after the device and the set.
+                On its screen, the first game played there. */}
             <Picture
               className={c("ch-phone")}
               name="phone"
-              alt="A phone showing a Chess.com game about to begin: an opponent rated 635 at the top of the board, the-non-fictional rated 921 at the bottom, thirty minutes on each clock."
+              alt="A phone in a black case showing the author’s first game on Chess.com, already over after one move each, pawn to e4 and knight to f6: a resignation flag on the black king, a winner’s crown on the white one. The opponent, rated 635, has 29:28 left on the clock; the author, rated 921, has 29:36. Both players’ names and profile pictures are blurred."
               width={800}
-              height={1310}
+              height={1704}
               small={480}
               sizes="(max-width: 60rem) 72vw, 400px"
               lazy

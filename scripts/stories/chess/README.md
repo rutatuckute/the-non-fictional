@@ -135,10 +135,18 @@ in a large and a phone width:
   `club.js` turns it about its fingertips, fades its far end, and has it carry
   Black's pieces.
 
-- `phone`: a phone with a Chess.com game about to begin, supplied by the
-  author. Made at `800,480` from a copy in which the opponent's username and
-  profile picture are hidden; the copy as supplied is kept out of the
+- `phone`: the phone of the story, a Google Pixel in a rugged black case seen
+  from the front (a render made with a GPT image model, prompt O5, its screen
+  switched off), with the author's first Chess.com game on its screen: a real
+  screenshot, 29 April 2023, over after 1.e4 Nf6. `make-phone.cjs` lays the
+  screenshot on the screen, blurs both players' usernames and profile pictures
+  past reading, the author's own included, and takes out the phone's status
+  bar (its header says how, and what else it adjusts); `make-images.cjs` then
+  makes the page's sizes. The screenshot as supplied is kept out of the
   repository.
+
+      node make-phone.cjs <repo>/node_modules/sharp phone.png screenshot.jpg phone-first-game.png
+      node make-images.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "phone|phone-first-game.png|800,480|82"
 
 ## The wooden set, pinned
 
