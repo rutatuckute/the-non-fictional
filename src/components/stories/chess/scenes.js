@@ -17,7 +17,7 @@ const during = (step, ...steps) => steps.includes(step)
 // against Chess.com's public player pages on 19 November 2026, where each
 // was unknown). `figure` will name each one's picture, once it is made.
 const STRANGERS = [
-  { name: "torre_torta_07", rating: 743, country: "Brazil", flag: "br", tone: "#6f5a4a", figure: null },
+  { name: "torre_torta_07", rating: 743, country: "Brazil", flag: "br", tone: "#6f5a4a", figure: "stranger-1" },
   { name: "pawn_wala_19", rating: 812, country: "India", flag: "in", tone: "#4f5f6b", figure: null },
   { name: "oga_blunders_ng", rating: 688, country: "Nigeria", flag: "ng", tone: "#5c6650", figure: null },
   { name: "krzywy_goniec", rating: 905, country: "Poland", flag: "pl", tone: "#6a5266", figure: null },
