@@ -299,7 +299,7 @@
    cut from a larger drawing, so it fades out all round, as a vignette does. */
 .ch-who img {
   display: block; width: clamp(120px, 26vh, 250px); height: auto; margin-top: 18px;
-  mask-image: radial-gradient(ellipse 62% 62% at 42% 46%, #000 52%, transparent 100%);
+  mask-image: radial-gradient(ellipse 62% 62% at var(--at, 50% 50%), #000 52%, transparent 100%);
 }
 
 /* The club: the board as an object on the table, and the game played on it.

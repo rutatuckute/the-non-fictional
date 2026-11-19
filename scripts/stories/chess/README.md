@@ -153,12 +153,15 @@ in a large and a phone width:
       node make-phone.cjs <repo>/node_modules/sharp phone.png screenshot.jpg phone-new-game.png new-game
       node make-images.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "phone|phone-first-game.png|800,480|82" "phone-game|phone-new-game.png|800,480|82"
 
-- `stranger-1` (and, to come, `stranger-2` to `stranger-4`): a glimpse of each
+- `stranger-1`, `stranger-2` (and, to come, `stranger-3` and `stranger-4`): a glimpse of each
   of Part II's strangers, beside the phone: hands, a phone, one thing of where
   they are, never a face. Engraved and printed like the professor (`FILL=1`,
   widths `520,300`). The first is a close-up cut from a larger drawing (700 px
   square from left 10, top 740 of the original); the page fades it out all
-  round. Prompts: "The strangers" in the data-stories `PROMPTS.md`.
+  round, about the point named as the stranger's `focus`. The second is drawn
+  as a close-up, with the gap between his arms and the pole named so that it
+  is cleared (`"stranger-2|input.png|520,300|500,560"`). Prompts: "The
+  strangers" in the data-stories `PROMPTS.md`.
 - `boards`: "the board of a thousand games": how the author's last 998 games
   ended, each a tiny board, in a grid of 37 by 27 whose middle place is left
   for the club's board. Her pieces are dots of the story's clay, her
@@ -229,7 +232,7 @@ shows at each step is in `VIEWS`:
    changes as the reader scrolls, on the phone's screen and, large enough to
    read, beside it: a username, a rating, a country (`STRANGERS`). The four are
    invented, and were checked not to be anyone's username. Each has a small
-   picture, `figure` (the first is made; three are to come).
+   picture, `figure` (two are made; two are to come).
 2. `club`: the phone goes and the club's board comes up out of its board;
    "London, early 2026" stands beside it, and the opening is played (below).
 3. `professor`: he leans in, at the board's left.
