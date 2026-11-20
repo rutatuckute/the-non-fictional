@@ -4,7 +4,6 @@ import * as React from "react"
 
 import { c } from "./parts"
 import social from "./social.json"
-import { Knot, Trace } from "./thread"
 import time from "./time.json"
 
 // Where Chess.com arrives, the story's thread becomes a line of data: the
@@ -13,9 +12,15 @@ import time from "./time.json"
 // (social.json): there is no data for it, so it is drawn through a few
 // guessed points, smoothly and without any wiggle that would pass for data.
 //
-// The axes are kept to what makes the lines readable: minutes up the side,
-// years along the bottom, and a legend that says which line is which. The
-// estimate draws in step with the thread, from left to right.
+// The chart stands still in a pinned scene (wooden.js), which says how much of
+// it shows by two numbers written on it: --drawn, how far across the two
+// lines are drawn (0 to 1), and --asked, how many of the question marks
+// around the climb have appeared (0 to 1). Without either, all of it shows.
+//
+// The line of data comes up out of the phone that rests under the chart's
+// near corner, where the time axis begins: DROP is how far under the axis the
+// phone's top is, in pixels.
+export const DROP = 30
 
 // The scale: minutes up to a little above the highest of either line.
 const TOP = 135
@@ -39,7 +44,8 @@ const LABEL =
   `Solid line: time in live games on Chess.com, from the author's own games, smoothed. It stays close to zero until early 2026, ` +
   `rises to about ${Math.round(time.max)} minutes a day in March 2026 and is about ${Math.round(time.points[time.points.length - 1][1])} at the end. ` +
   `Dashed line: time on social media, an estimate and not a measurement, about ${social.points[0][1]} minutes a day ` +
-  `until early 2026, falling to about ${social.points[social.points.length - 1][1]}.`
+  `until early 2026, falling to about ${social.points[social.points.length - 1][1]}. ` +
+  `Question marks gather around the solid line where it climbs.`
 
 // A smooth line through points that never overshoots them (monotone cubic,
 // after Fritsch and Carlson), in the box's own pixels.
@@ -80,8 +86,25 @@ const useSize = () => {
   return [ref, size]
 }
 
+// The questions the games raised, where the line climbs: [how far across, at
+// how many minutes, size, turn]. Few and small at first, then larger.
+const ASKS = [
+  [0.615, 14, 12, -8],
+  [0.66, 27, 13, 6],
+  [0.7, 19, 14, -4],
+  [0.728, 45, 15, 10],
+  [0.752, 68, 17, -6],
+  [0.8, 119, 20, 8],
+  [0.86, 100, 22, -10],
+  [0.915, 85, 24, 6],
+  [0.965, 90, 26, -4],
+]
+
 export const TimeChart = ({ className = "" }) => {
   const [plot, size] = useSize()
+  const line = size
+    ? `M0,${(size.height + DROP).toFixed(1)} ` + CHESS.map(([x, y]) => `L${(x * size.width).toFixed(1)},${(y * size.height).toFixed(1)}`).join(" ")
+    : ""
   return (
     <figure className={`${c("ch-chart")} ${className}`} role="img" aria-label={LABEL}>
       <div className={c("ch-legend")} aria-hidden="true">
@@ -91,10 +114,10 @@ export const TimeChart = ({ className = "" }) => {
         </span>
         <span>
           <i className={c("ch-key")} data-line="social" />
-          Time on social media, estimated
+          Time on social media, positive approx estimate
         </span>
       </div>
-      <div className={c("ch-plot")} ref={plot} aria-hidden="true">
+      <div className={c("ch-plot")} ref={plot} data-plot="" aria-hidden="true">
         {TICKS.map(minutes => (
           <React.Fragment key={minutes}>
             <i className={c("ch-grid")} style={{ top: `${yOf(minutes) * 100}%` }} />
@@ -110,19 +133,21 @@ export const TimeChart = ({ className = "" }) => {
           </span>
         ))}
         {size ? (
-          <svg className={c("ch-estimate")} width={size.width} height={size.height}>
-            <path d={smoothPath(SOCIAL, size.width, size.height)} />
+          <svg className={c("ch-lines")} width={size.width} height={size.height}>
+            <path className={c("ch-estimate")} d={smoothPath(SOCIAL, size.width, size.height)} />
+            {/* every point of the data as given, after the short way up from the phone */}
+            <path className={c("ch-measured")} d={line} />
           </svg>
         ) : null}
-        {/* The thread comes down from the phone above, outside the side's
-            numbers, and at the foot of the chart becomes the line of data. */}
-        <Knot x="calc(-2rem - 10px)" y={-32} px="calc(-2rem - 10px)" py={-40} />
-        <Knot x="calc(-2rem - 10px)" y={97} px="calc(-2rem - 10px)" py={97} />
-        <Trace points={CHESS} then="questions" />
-        {/* The data ends where it ends, and the thread goes on as questions:
-            to the side first, not down, which would read as time falling away. */}
-        <Knot x={106} y={END - 4} px="calc(100% + 6px)" py={END - 3} />
-        <Knot x={113} y={END + 8} px="calc(100% + 7px)" py={END + 12} />
+        {ASKS.map(([x, minutes, big, turn], index) => (
+          <span
+            key={index}
+            className={c("ch-ask")}
+            style={{ left: `${x * 100}%`, top: `${yOf(minutes) * 100}%`, "--size": big, "--turn": `${turn}deg`, "--from": (index / ASKS.length).toFixed(3) }}
+          >
+            ?
+          </span>
+        ))}
       </div>
     </figure>
   )

@@ -40,10 +40,6 @@ I just like the strategic and analytical aspect of the game.
 
 That, and its endless possibilities.
 
-<!--step:first-game-->
-
-*[My first game on Chess.com, 29 April 2023. Over after one move each.]*
-
 <!--step:obsession-->
 
 Chess.com brought more fast dopamine, to the point of overtaking social media (winning trade-off strategy?).

@@ -42,7 +42,7 @@ the published site. The names, in reading order:
 | Part | Names |
 | --- | --- |
 | Opening | `opening` |
-| I | `mine`, `memory`, `not-a-player`, `not-defining`, `board`, `possibilities`, `first-game`, `obsession`, `obsession-questions` |
+| I | `mine`, `memory`, `not-a-player`, `not-defining`, `board`, `possibilities`, `obsession`, `obsession-questions` |
 | II | `people-title` (a heading), `people-intro`, `strangers`, `club`, `professor`, `professor-quote`, `professor-how`, `boards`, `data` |
 | III | `data-intro` |
 | III, first question | `say-message`, `say-prediction`, `say-guess`, `say-answer`, `say-surprise`, `say-limits` |
@@ -183,16 +183,22 @@ carries Part I from the wooden set to the chart:
    screen: the phone (`phone`) is laid over the set with its squares on the
    set's squares (`PHONE`), and the two draw back together, the set giving way,
    until the whole phone is in view (`HELD`).
-3. The phone goes small and to the corner (`REST`). The chart's stretch begins
-   a little under half a screen before the scene's ends, so the chart comes up
-   under the phone, and the thread, which went in behind the phone, comes out
-   below it and into the chart as the line of data.
+3. At once the phone goes small and comes to rest under the near corner of a
+   chart, where its time axis begins (`REST`; its place is read from the
+   chart's own box). The chart (`time-chart.js`) stands still in the scene
+   while its two lines are drawn across it, the line of data coming up out of
+   the phone, and while question marks gather where that line climbs.
 
 Nothing waits for a text: the scroll alone leads it, forwards and back. Beside
 the set, four sentences change with the scroll while it stays (`SAID`:
 `not-a-player`, `not-defining`, `board`, `possibilities`; when each takes over
-is in `SAID_AT`); then `first-game` stands beside the phone, and `obsession`
-beside it at rest.
+is in `SAID_AT`); beside the chart, two more (`obsession`, then
+`obsession-questions` as the questions come).
+
+From the moment the phone appears the scene has a ground of the page's own
+colour under it (`.ch-woodenVeil`). The story's thread, which came down the
+page into the board, ends under it: what comes out of the phone is that
+thread, as data.
 
 - The scene follows the scroll, it does not sit on it (`follow.js`): in every
   frame it closes a share of the distance to where the reader has scrolled, so
@@ -220,42 +226,47 @@ the first move is answered, for the hands that answer come in there.
 The threads' stretch here is several screens long and passes behind the stage,
 so `LINES.wooden` keeps each thread to a lane: the story's thread behind the
 board (on a phone, at the left, clear of the words above it), the others off
-the screen's edge. `LINES.woodenAfter` are the knots of the scene's last
-screen, where the phone rests: its middle is `PHONE_X`, which has to follow
-`REST` if that changes.
+the screen's edge. The story's thread has to reach far enough down the stretch
+to be under the ground before its end comes into view.
 
 ## Part II: the people behind the game
 
-Part II opens with its name (`people-title`, a heading in the body) and a few
-words, and then is one pinned scene (`People` in `scenes.js`). What the scene
-shows at each step is in `VIEWS`:
+Part II's name (`people-title`, a heading in the body) is set on one line and
+stays at the top of the screen for the whole part: it sticks there, over the
+scene. The part is one pinned scene (`People` in `scenes.js`) with no cards:
+its words stand in one place beside the scene (under the name, on a phone) and
+change as the reader scrolls, as the sentences beside the wooden set do.
+What the scene shows at each step is in `VIEWS`:
 
-1. `strangers`: the phone again, before a game (`phone-game`). The opponent
-   changes as the reader scrolls, on the phone's screen and, large enough to
-   read, beside it: a username, a rating, a country (`STRANGERS`). The four are
-   invented, and were checked not to be anyone's username. Each has a small
-   picture, `figure`.
-2. `club`: the phone goes and the club's board comes up out of its board;
+1. `people-intro`: the phone again, before a game (`phone-game`), with nobody
+   on the other side yet.
+2. `strangers`: the opponent changes as the reader scrolls, on the phone's
+   screen and, large enough to read, beside it: a username, a rating, a
+   country (`STRANGERS`). The four are invented, and were checked not to be
+   anyone's username. Each has a small picture, `figure`.
+3. `club`: the phone goes and the club's board comes up out of its board;
    "London, early 2026" stands beside it, and the opening is played (below).
-3. `professor`: he leans in, at the board's left.
-4. No card: his question (`professor-quote`) stands across the top of the scene.
-5. No card: `professor-how`, alone, the club far back behind it.
-6. `boards`, `data`: the board goes small, into the middle of the thousand
-   (`boards`, a picture four of the scene's squares wide).
+4. `professor`: he leans in, at the board's left.
+5. No words: his question (`professor-quote`) stands across the scene.
+6. No words: `professor-how`, alone, the club far back behind it.
+7. `boards`, `data`: the board goes small, into the middle of the thousand
+   (`boards`, a picture four of the scene's squares wide, kept to the scene's
+   box so the words stay clear of it).
 
-A step can be more than a card (`Pinned` in `parts.js`): `{ card, rest }` gives
-it more scrolling than a card's passing, `{ bare: true }` is a stretch with no
-card. `useSince` counts the parts of a step's scrolling, for the strangers.
+`Pinned` in `parts.js` has two ways of telling. With cards (Part III) a step
+is a card that scrolls past the graphic. `plain` (Part II): a step is
+`{ text, rest }`, its text standing in one place; `rest` gives the step more
+scrolling, and a step with no text leaves the graphic alone. `useSince`
+counts the parts of a step's scrolling, for the strangers.
 
 ### The club's board, and the London System
 
 `club.js` draws the board of the club and plays a game on it: 1.d4 d5 2.Bf4 Nf6
 3.e3 e6 4.Nf3 c5 5.c3, the London System set up (`PLIES`). It is led by the
 scroll like the wooden set and follows it the same way (`follow.js`), but it
-stands inside a pinned scene of cards: its clock is how far the reader has
-scrolled since the `club` card reached its line, and that step is given
-`CLUB_REST` more screens of scrolling, with no card in them, for the moves to
-be played.
+stands inside a pinned scene of steps: its clock is how far the reader has
+scrolled since the `club` step began, and that step is given `CLUB_REST` more
+screens of scrolling for the moves to be played.
 
 The board is in perspective, so every rank has its own files' edges and its
 own scale (`BOARD`), and a piece grows as it comes nearer. The players are
@@ -284,18 +295,14 @@ opponent's arm from the far side.
   is usage data to replace them. The chart draws it dashed, smooth and without
   wiggles, and calls it estimated in its legend and in its description.
 
-  `time-chart.js` draws the two: `Trace` in `thread.js` carries the thread
-  through every point of `time.json` as given, and the estimate draws in step
-  with it. The axes are minutes up the side (in hours) and years along the
-  bottom, with a legend; the figure's accessible name says in words what both
-  lines show and that one is an estimate.
-
-Where the data ends, the thread stops being a line and goes on as a trail of
-question marks (`Trace … then="questions"`, `questions()` in `thread.js`):
-sparse at first, then closer, larger and further from the way, some in pairs,
-each appearing as the reader reaches it, down to the edge of Part II. The
-trail is seeded, so it is the same on every visit, and every mark stays inside
-the screen.
+  `time-chart.js` draws the two, each point of `time.json` as given and the
+  estimate smooth beside it, from left to right as far as `--drawn` says. The
+  axes are minutes up the side (in hours) and years along the bottom, with a
+  legend; the figure's accessible name says in words what both lines show and
+  that one is an estimate. Around the climb of the line of data stand question
+  marks (`ASKS`: where, and how large), few and small at first, then larger;
+  `--asked` says how many have appeared. Both numbers are written on the chart
+  by the scene it stands in (`wooden.js`).
 
 - `src/components/stories/chess/say.json`: the numbers of the first question,
   made by `chess-story/analysis/export_say.py` (from `names_vs_rating.py`).
@@ -309,6 +316,6 @@ the screen.
 ## State of the build
 
 Parts I and II are built, with their pictures; the texts placed in them are
-the author's first drafts, and one is still a note in brackets (`first-game`). Part III's first question is
+the author's first drafts. Part III's first question is
 built from data; its other two, and Part IV, are still boxes that name what
 will stand there.

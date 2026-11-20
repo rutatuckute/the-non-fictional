@@ -135,34 +135,52 @@ export const useSince = (step, every, most) => {
   return part
 }
 
-// A pinned scene: the graphic stays, and each card that passes sets its state.
-// `children` draws the graphic for the step it is given. A step is a card, or
-// an object: `{ card, rest }` for one whose graphic needs more scrolling than
+// A pinned scene: the graphic stays, and the reader's scrolling takes it from
+// step to step. `children` draws the graphic for the step it is given.
+//
+// With cards (Part III), each step is a card that scrolls past the graphic:
+// a card, or `{ card, rest }` for one whose graphic needs more scrolling than
 // a card's passing gives (`rest` screens of it follow the card, with nothing
-// in them), `{ bare: true }` for a stretch with no card at all, where the
-// graphic speaks alone. `open` leaves out the rule above the scene.
-export const Pinned = ({ label, steps, open = false, children }) => {
+// in them), or `{ bare: true }` for a stretch with no card at all.
+//
+// `plain` (Part II): no cards. Each step is `{ text, rest }`, and its text
+// stands in one place beside the graphic, giving way to the next step's as the
+// reader scrolls, as the sentences beside the wooden set do; a step with no
+// text leaves the graphic to speak alone. `open` leaves out the rule above.
+export const Pinned = ({ label, steps, open = false, plain = false, children }) => {
   const [step, stepRef, refs] = useStep(steps.length)
   return (
-    <section className={c("ch-pin")} data-open={open ? "true" : undefined} aria-label={label}>
+    <section className={c("ch-pin")} data-open={open ? "true" : undefined} data-plain={plain ? "true" : undefined} aria-label={label}>
       <div className={c("ch-stage")}>
+        {plain ? (
+          <div className={c("ch-told")}>
+            {steps.map((item, index) =>
+              item.text ? (
+                <div key={index} data-on={step === index ? "true" : "false"}>
+                  {item.text}
+                </div>
+              ) : null,
+            )}
+          </div>
+        ) : null}
         <div className={c("ch-scene")}>
           <PinSteps.Provider value={refs}>{children(step)}</PinSteps.Provider>
         </div>
       </div>
       <div className={c("ch-steps")}>
         {steps.map((item, index) => {
-          const made = item !== null && typeof item === "object" && ("card" in item || "bare" in item)
+          const made = plain || (item !== null && typeof item === "object" && ("card" in item || "bare" in item))
+          const bare = plain || (made && item.bare)
           return (
             <React.Fragment key={index}>
               <div
                 className={c("ch-step")}
                 data-step={index}
-                data-bare={made && item.bare ? "true" : undefined}
+                data-bare={bare ? "true" : undefined}
                 data-on={step === index ? "true" : "false"}
                 ref={stepRef(index)}
               >
-                <div className={c("ch-card")}>{made ? item.card : item}</div>
+                <div className={c("ch-card")}>{plain ? null : made ? item.card : item}</div>
               </div>
               {made && item.rest ? <div style={{ height: `${item.rest * 100}vh` }} aria-hidden="true" /> : null}
             </React.Fragment>

@@ -71,9 +71,9 @@ const HANDS = [MINE, THEIRS]
 const FIRST_AT = 0.2
 const EVERY = 0.28
 const LASTS = 0.42
-// How much longer than a card's own stretch this takes: the scene's step is
-// given this much more scrolling (see `rest` in Pinned).
-export const CLUB_REST = FIRST_AT + (PLIES.length - 1) * EVERY + LASTS + 0.1 - 0.88
+// How much longer than a step's own stretch (0.72 of a screen) this takes: the
+// scene's step is given this much more scrolling (see `rest` in Pinned).
+export const CLUB_REST = FIRST_AT + (PLIES.length - 1) * EVERY + LASTS + 0.1 - 0.72
 const TAKES = 0.32
 const LEAVES = 0.72
 

@@ -49,11 +49,11 @@
 .ch-text.ch-lead { font-size: clamp(20px, 1.8vw, 25px); line-height: 1.45; }
 .ch-text.ch-medium { font-size: clamp(22px, 2.6vw, 32px); line-height: 1.2; letter-spacing: var(--tracking-title); text-wrap: balance; }
 .ch-text.ch-cardText { font-size: 17px; line-height: 1.5; }
-/* A part's name: a heading in the body, set as the story's headlines are. */
-.ch-text.ch-partTitle { max-width: 22em; }
+/* A part's name: a heading in the body, on one line whatever the screen's width. */
+.ch-text.ch-partTitle { max-width: none; }
 .ch-story .ch-partTitle :is(h1, h2, h3) {
-  margin: 0; padding: 0; border: 0; color: var(--ink);
-  font: 400 clamp(30px, 3.4vw, 46px) / 1.08 var(--font-title); letter-spacing: var(--tracking-display); text-transform: none;
+  margin: 0; padding: 0; border: 0; color: var(--ink); white-space: nowrap;
+  font: 400 clamp(20px, 5.8vw, 34px) / 1.15 var(--font-title); letter-spacing: var(--tracking-display); text-transform: none;
 }
 .ch-missing {
   padding: 8px 10px; border: 1px dashed var(--rule-strong);
@@ -154,40 +154,35 @@
 .ch-woodenHand[data-from="above"] { mask-image: linear-gradient(to top, #000 82%, transparent 99%); }
 /* The phone, laid over the set with its board on the set's squares; wooden.js
    moves it too. It is taller than the scene's box and is cut by the screen. */
-.ch-woodenBack {
-  position: absolute; transform-origin: 0 0; border-radius: 13% / 6.2%; background: var(--void);
-  clip-path: inset(1.2% 2.4% round 11% / 5.4%); pointer-events: none; will-change: transform, opacity;
-}
 .ch-woodenPhone { position: absolute; z-index: 3; height: auto; max-width: none; transform-origin: 0 0; pointer-events: none; will-change: transform, opacity; }
 /* The words beside the scene share one place, each there for its part of it. */
 .ch-woodenText { grid-column: 8 / 13; grid-row: 1; opacity: 0; transition: opacity 400ms ease; }
 .ch-woodenText[data-on="true"] { opacity: 1; }
-/* … and the words beside the phone at rest: as tall as it is, to its right. */
+/* The scene's own ground, in the page's colour: it comes when the phone does,
+   and the thread that came down the page is taken in under it. */
+.ch-woodenVeil { position: absolute; inset: 0 -50vw; background: var(--void); pointer-events: none; }
+/* The chart the phone comes to rest under. It stands still; wooden.js writes
+   on it how much of it shows. Room is left under it for the phone. */
+.ch-woodenChart { position: absolute; left: 0; width: 62%; top: 44%; transform: translateY(-50%); pointer-events: none; }
+.ch-woodenChart .ch-plot { aspect-ratio: 2 / 1; max-height: 42vh; max-height: 42svh; }
+/* … and the words beside the chart, one after the other in one place. */
 .ch-woodenAfter {
-  position: absolute; left: calc(30svh * 0.4695 + 32px); top: 12svh; width: min(28rem, 60%); height: 30svh;
-  display: grid; align-content: center; opacity: 0; transition: opacity 400ms ease;
+  position: absolute; left: 68%; right: 0; top: 44%; transform: translateY(-50%);
+  opacity: 0; transition: opacity 400ms ease;
 }
 .ch-woodenAfter[data-on="true"] { opacity: 1; }
-/* The scene's last screen, as a box for the threads' knots: where the stage
-   is when it lets go. */
-.ch-woodenTail { position: absolute; left: 0; right: 0; bottom: 0; height: 100vh; height: 100svh; pointer-events: none; }
 
-/* The chart comes up into that last screen, under the phone at rest: its
-   stretch begins a little under half a screen before the scene's ends. */
-.ch-obsession { z-index: 3; margin-top: -46vh; margin-top: -46svh; row-gap: 7vh; }
-/* The line of data: the thread, an estimate beside it, and just enough of
-   an axis to read them. Text is in ink; only the lines and their keys carry colour. */
-.ch-chart { position: relative; grid-column: 2 / 11; margin: 0; }
+/* The line of data, an estimate beside it, and just enough of an axis to read
+   them. Text is in ink; only the lines, their keys and the questions carry colour. */
+.ch-chart { position: relative; margin: 0; }
 .ch-legend {
   display: flex; flex-wrap: wrap; gap: 6px 24px; margin: 0 0 18px 2rem;
   color: var(--ink-2); font: 500 12px / 1.4 var(--font-mono);
 }
 .ch-legend span { display: inline-flex; align-items: center; gap: 9px; }
-.ch-key { display: inline-block; width: 24px; height: 0; border-top: 2px solid var(--thread); }
+.ch-key { display: inline-block; flex: none; width: 24px; height: 0; border-top: 2px solid var(--thread); }
 .ch-key[data-line="social"] { border-top: 2px dashed var(--social); }
 .ch-plot { position: relative; aspect-ratio: 8 / 3; margin: 0 0 1.9rem 2rem; }
-/* Until the thread reaches it, the estimate waits too. */
-.ch-story[data-live="true"] .ch-plot { --drawn: 0; }
 .ch-grid, .ch-base { position: absolute; left: 0; right: 0; height: 0; border-top: 1px solid var(--rule); }
 .ch-base { bottom: 0; border-top-color: var(--rule-strong); }
 .ch-tick, .ch-year {
@@ -196,15 +191,21 @@
 }
 .ch-tick { right: calc(100% + 10px); transform: translateY(-50%); }
 .ch-year { top: calc(100% + 9px); transform: translateX(-50%); }
-.ch-estimate {
+/* Both lines are drawn from left to right, as far across as --drawn says. The
+   way up from the phone, at the very left, is there from the start. */
+.ch-lines {
   position: absolute; inset: 0; overflow: visible;
-  clip-path: inset(-6px calc((1 - var(--drawn, 1)) * 100%) -6px -6px);
+  clip-path: inset(-8px calc((1 - var(--drawn, 1)) * 100% - 2px) -60px -8px);
 }
-.ch-estimate path { fill: none; stroke: var(--social); stroke-width: 1.3; stroke-dasharray: 5 4; stroke-linecap: round; }
-.ch-c3 { grid-column: 5 / 11; }
-.ch-enter { height: 62vh; }
-/* A part opens: its name, and a few words under it. */
-.ch-part { position: relative; z-index: 2; display: grid; align-content: center; gap: 24px; min-height: 78vh; padding: 6vh 0 10vh; }
+.ch-lines path { fill: none; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.ch-measured { stroke: var(--thread); }
+.ch-estimate { stroke: var(--social); stroke-dasharray: 5 4; }
+/* The questions, around the climb: each appears when --asked has reached it. */
+.ch-ask {
+  position: absolute; transform: translate(-50%, -50%) rotate(var(--turn)); color: var(--thread);
+  font: 400 calc(var(--size) * 1.2px) / 1 var(--font-title);
+  opacity: clamp(0, (var(--asked, 1) - var(--from)) * 12, 1);
+}
 
 /* ── pinned scenes: the graphic stays, the cards pass ── */
 .ch-pin { position: relative; z-index: 3; border-top: 1px solid var(--rule); background: var(--void); }
@@ -220,11 +221,11 @@
 .ch-step[data-on="true"] .ch-card { opacity: 1; }
 /* A scene that follows on from the page above it has no rule over it. */
 .ch-pin[data-open="true"] { border-top: 0; }
-/* … and on a wide screen, where its stage is the column and not the screen, what
-   runs off the stage's sides (the thousand boards) fades out and is not cut. */
-@media (min-width: 60.01rem) {
-  .ch-pin[data-open="true"] .ch-stage { mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent); }
-}
+/* Part II's words: no cards. They stand in one place beside the scene, each
+   giving way to the next as the reader scrolls. */
+.ch-told { position: absolute; left: 0; top: 50%; width: 36%; z-index: 5; }
+.ch-told > div { position: absolute; left: 0; right: 0; top: 0; transform: translateY(-50%); opacity: 0; transition: opacity 400ms ease; }
+.ch-told > div[data-on="true"] { opacity: 1; transition: opacity 400ms ease 150ms; }
 /* A stretch with no card: the scene speaks alone. */
 .ch-step[data-bare="true"] { min-height: 72vh; }
 .ch-step[data-bare="true"] .ch-card { visibility: hidden; height: 1px; padding: 0; border: 0; }
@@ -243,6 +244,11 @@
   background: conic-gradient(var(--raised) 25%, var(--void) 0 50%, var(--raised) 0 75%, var(--void) 0) 0 0 / 25% 25%;
 }
 .ch-boardSmall { width: min(40vh, 70%); aspect-ratio: 1; margin-inline: auto; }
+
+/* Part II. Its name stays at the top of the screen for the whole of it: it
+   sticks there, over the pinned scene, until the part ends. */
+.ch-people { position: relative; z-index: 3; padding-top: 10vh; background: var(--void); }
+.ch-peopleTitle { position: sticky; top: 5vh; top: 5svh; z-index: 6; padding-bottom: 3vh; pointer-events: none; }
 
 /* Part II: one board, and what gathers around it. The scene's things are laid
    out in a square, which is sized and placed for what it shows (data-view). */
@@ -341,15 +347,18 @@
 /* He is cut at the waist: that edge fades out. */
 .ch-professor img { display: block; width: auto; height: 100%; mask-image: linear-gradient(to bottom, #000 78%, transparent 98%); }
 /* What he asked, across the top of the scene; and what it left behind, alone. */
-.ch-layer.ch-quote { z-index: 6; left: 3%; right: 3%; top: 5%; }
+.ch-layer.ch-quote { z-index: 6; left: 3%; right: 3%; top: 13%; }
 .ch-quote .ch-text { max-width: 24em; }
 .ch-layer.ch-how { z-index: 6; inset: 0; display: grid; place-items: center; text-align: center; }
-/* The thousand: one picture, four squares wide and centred on the square, so
-   it runs off every edge of the screen. */
-.ch-layer.ch-minis { z-index: 1; left: 50%; top: 50%; width: 400%; transform: translate(-50%, -50%); }
+/* The thousand: one picture, four of the scene's squares wide and centred in
+   the scene, kept to the scene's box so the words beside it stay clear; it
+   fades out at the box's sides. */
+.ch-layer.ch-minis {
+  z-index: 1; inset: 0; overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 9%, #000 94%, transparent);
+}
 .ch-layer.ch-minis[data-on="true"] { transition: opacity 700ms ease 350ms, visibility 0s; }
-/* (where the picture ends before the screen does, it fades out) */
-.ch-minis img { display: block; width: 100%; height: auto; mask-image: linear-gradient(to bottom, transparent, #000 9%, #000 91%, transparent); }
+.ch-minis img { position: absolute; left: 50%; top: 50%; width: calc(4 * min(54vh, 78%)); max-width: none; height: auto; transform: translate(-50%, -50%); }
 
 /* Part III: the investigation. */
 .ch-turn {
@@ -425,7 +434,7 @@
   .ch-sides, .ch-sides[data-turned="true"] { transform: none; transition: none; }
   .ch-side, .ch-sideBack { transform: none; -webkit-backface-visibility: visible; backface-visibility: visible; }
   .ch-sides[data-turned="true"] .ch-sideFront, .ch-sides[data-turned="false"] .ch-sideBack { visibility: hidden; }
-  .ch-boardwrap, .ch-woodenAfter, .ch-screenBar, .ch-who, .ch-who[data-on="true"] { transition: none; }
+  .ch-boardwrap, .ch-woodenAfter, .ch-screenBar, .ch-who, .ch-who[data-on="true"], .ch-told > div, .ch-told > div[data-on="true"] { transition: none; }
   .ch-layer.ch-phoneLayer, .ch-layer.ch-clubBoard, .ch-layer.ch-professor, .ch-layer.ch-minis,
   .ch-layer.ch-phoneLayer[data-on="true"], .ch-layer.ch-clubBoard[data-on="true"], .ch-layer.ch-professor[data-on="true"], .ch-layer.ch-minis[data-on="true"] { transition: none; }
   .ch-thread path, .ch-thread circle, .ch-thread text, .ch-card, .ch-layer, .ch-layer[data-on="true"], .ch-guess button, .ch-woodenPieces, .ch-woodenPieces[data-on="true"], .ch-woodenText { transition: none; }
@@ -447,10 +456,18 @@
   .ch-woodenScene { grid-column: 1; width: min(100%, 42svh); top: 4svh; }
   .ch-woodenText { position: absolute; top: 6svh; left: calc(var(--page-margin) + 26%); right: var(--page-margin); transition: opacity 300ms ease; }
   .ch-woodenText[data-quiet="true"] { opacity: 0; }
-  .ch-woodenAfter { left: calc(var(--page-margin) + 26svh * 0.4695 + 18px); right: var(--page-margin); top: 8svh; width: auto; height: 26svh; }
+  /* the chart takes the width, its words above it, the phone under its corner */
+  .ch-woodenChart { left: var(--page-margin); right: var(--page-margin); width: auto; top: 31svh; transform: none; }
+  .ch-woodenChart .ch-plot { aspect-ratio: 2 / 1; max-height: 36svh; }
+  .ch-woodenAfter { left: var(--page-margin); right: var(--page-margin); top: 7svh; transform: none; }
   .ch-decade { left: 42%; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: 46px; }
   .ch-plot { aspect-ratio: 2 / 1; }
-  .ch-part { min-height: 70vh; }
+  .ch-people { padding-top: 8vh; }
+  .ch-peopleTitle { top: 3.5svh; }
+  /* Part II's words stand under its name, the scene under them */
+  .ch-told { left: var(--page-margin); right: var(--page-margin); top: 10svh; width: auto; }
+  .ch-told > div { transform: none; }
+  .ch-pin[data-plain="true"] .ch-scene { inset: 28svh var(--page-margin) auto; height: 54svh; }
 
   .ch-stage { margin-inline: calc(-1 * var(--page-margin)); }
   .ch-scene { inset: 7svh var(--page-margin) auto; height: 54svh; }
@@ -469,8 +486,10 @@
   .ch-layer.ch-place { right: 74%; top: 30%; }
   .ch-layer.ch-quote { left: 0; right: 0; top: 0; }
   .ch-step[data-bare="true"] { min-height: 80vh; }
-  /* fewer, larger boards: here a tiny board is 14% of the square */
-  .ch-layer.ch-minis { width: 620%; }
+  /* fewer, larger boards: here a tiny board is 14% of the square; the grid
+     fades out at the top and bottom of the scene's box, under the words */
+  .ch-layer.ch-minis { mask-image: linear-gradient(to bottom, transparent, #000 9%, #000 91%, transparent); }
+  .ch-minis img { width: calc(6.2 * min(34svh, 60%)); }
   .ch-boardwrap[data-view="many"] .ch-layer.ch-clubBoard { transform: translate(-20.6%, 0) scale(0.205); }
   .ch-pawnRow { grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr); gap: 10px; }
   .ch-pawnLabel b { font-size: 15px; }
@@ -482,5 +501,5 @@
 
 /* A phone: the chart can be taller than it is wide-ish, for its lines to read. */
 @media (max-width: 40rem) {
-  .ch-plot { aspect-ratio: 4 / 3; }
+  .ch-plot, .ch-woodenChart .ch-plot { aspect-ratio: 4 / 3; }
 }

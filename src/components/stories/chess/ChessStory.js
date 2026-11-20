@@ -4,8 +4,7 @@ import * as React from "react"
 
 import { c, Holder, Picture, Text, Words } from "./parts"
 import { People, Reveal, Say, Wrong } from "./scenes"
-import { Knot, Knots, Thread } from "./thread"
-import { TimeChart } from "./time-chart"
+import { Knots, Thread } from "./thread"
 import { Wooden } from "./wooden"
 
 // The chess story is the whole piece: one continuous scroll in four parts,
@@ -36,9 +35,6 @@ import { Wooden } from "./wooden"
 // Beyond the screen's edge, whatever the window's width: the column is centred in it.
 const OFF_LEFT = "calc(50% - 60vw)"
 const OFF_RIGHT = "calc(50% + 60vw)"
-// The middle of the phone where it rests (wooden.js: 30% of the screen's
-// height tall on a wide screen, 26% on a narrow one, at the column's left).
-const PHONE_X = ["7.04svh", "6.1svh"]
 const LINES = {
   open: {
     a: [[58, 0, 40, 0], [74, 16, 108, 22], [89.5, 36, 108, 50], [91, 66, 108, 74, "from"], [72, 90, 76, 92]],
@@ -63,21 +59,17 @@ const LINES = {
     "other-6": [[-6, 28, -8, 56], [20, 33, 14, 64], [36, 41, 28, 74], [38.5, 58, 30, 84], [37, 80, 29, 92], [34, 97, 26, 99]],
   },
   // The wooden set is pinned: its stretch is several screens long, and the
-  // board, the phone and the words stay on screen while the stretch passes
-  // behind them. So the other threads leave by the screen's edge in the first
-  // screen and stay out; only the story's thread is there, coming down the
-  // screen behind the board (on a phone, at the left, clear of the words above
-  // the board, and then further left, clear of the phone).
+  // board and the words stay on screen while the stretch passes behind them.
+  // So the other threads leave by the screen's edge in the first screen and
+  // stay out; only the story's thread is there, coming down the screen and in
+  // behind the board (on a phone, at the left, clear of the words above the
+  // board). It ends under the scene's own ground, which comes when the phone
+  // does: from there the thread is the line that comes out of the phone.
   wooden: {
-    a: [[30, 0.5, 18, 0.5], [24, 27, 12, 27], [22, 51, 12, 51], [24, 69.5, 7, 66], [20, 84, 7, 84]],
-    "other-1": [[58, 0.6, 12, 0.3], [82, 1.8, OFF_LEFT, 2.5], [OFF_RIGHT, 3.3, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
-    "other-4": [[90, 0.9, OFF_LEFT, 1.2], [OFF_RIGHT, 2.4, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
-    "other-6": [[30, 0.9, 24, 0.3], [22, 3.6, OFF_LEFT, 3], [OFF_LEFT, 8, OFF_LEFT, 30]],
-  },
-  // Its last screen: the phone has come to rest in the corner, and the thread
-  // goes in behind it and comes out below, on its way into the chart.
-  woodenAfter: {
-    a: [[PHONE_X[0], 8, PHONE_X[1], 5], [PHONE_X[0], 46, PHONE_X[1], 38]],
+    a: [[30, 0.4, 18, 0.4], [24, 23.5, 12, 23.5], [22, 44, 12, 44], [23, 58, 12, 58], [22, 70, 12, 70]],
+    "other-1": [[58, 0.5, 12, 0.3], [82, 1.6, OFF_LEFT, 2.2], [OFF_RIGHT, 2.9, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
+    "other-4": [[90, 0.8, OFF_LEFT, 1], [OFF_RIGHT, 2.1, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
+    "other-6": [[30, 0.8, 24, 0.3], [22, 3.1, OFF_LEFT, 2.6], [OFF_LEFT, 7, OFF_LEFT, 30]],
   },
   encounter: {
     b: [[3, 30, -3, 2], [6, 60, -3, 50], [8, 104, -3, 99]],
@@ -160,36 +152,14 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
               held on screen while it turns over to the board and a game is
               played on it (wooden.js). The story's thread passes behind it;
               the others pass it by. */}
-          <Wooden lines={LINES.wooden} after={LINES.woodenAfter} />
-
-          {/* The phone has gone small, to the corner; under it the thread is a
-              line of data, beside an estimate of the time it took over from
-              (time-chart.js). The chart comes up into the scene's last screen. */}
-          <div className={c("ch-row", "ch-obsession")}>
-            <TimeChart />
-            <Text name="obsession-questions" className={c("ch-c3")} />
-            {/* On a phone the thread leaves the chart by the margin, past the words. */}
-            <Knot x={97} y={97} px="calc(100% + 7px)" py={92} />
-          </div>
-
-          {/* More games, more questions: the trail of question marks widens
-              across the page and stops at the edge of the next part. */}
-          <div className={c("ch-row", "ch-enter")}>
-            <Knot x={97} y={2} px="calc(100% + 7px)" py={2} />
-            <Knot x={88} y={26} px={84} py={24} />
-            <Knot x={62} y={50} px={52} py={48} />
-            <Knot x={46} y={76} px={30} py={74} />
-            <Knot x={58} y={90} px={42} py={90} />
-            <Knot x={64} y={97} px={48} py={97} />
-          </div>
+          <Wooden lines={LINES.wooden} />
         </section>
 
-        {/* Part II opens with its name, and with what is beautiful about it. */}
-        <section className={c("ch-part")}>
-          <Text name="people-title" look="partTitle" />
-          <Text name="people-intro" look="lead" />
+        {/* Part II: its name stays at the top of the screen for the whole of it. */}
+        <section className={c("ch-people")}>
+          <Text name="people-title" look="partTitle" className={c("ch-peopleTitle")} />
+          <People />
         </section>
-        <People />
 
         <section className={c("ch-turn")} aria-label="Looking for answers in the data">
           <Text name="data-intro" />
