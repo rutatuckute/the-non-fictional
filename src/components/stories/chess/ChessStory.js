@@ -54,8 +54,9 @@ const LINES = {
     "other-4": [[101.5, 20, -10, 30], [102, 96, -10, 80]],
     "other-5": [[106, 8, 112, 8]],
   },
+  // The years between are a short stretch: two beads, and the 2020s come.
   years: {
-    a: [[50, 5, 18, 5], [51, 22, 19, 22, "mark"], [49, 45, 17.5, 45], [50.5, 63, 18.5, 63, "mark"], [49.5, 69, 18, 69, "mark"], [50.5, 87, 19, 87, "mark"], [50, 99, 18, 99]],
+    a: [[50, 5, 18, 5], [51, 26, 19, 26, "mark"], [49, 48, 17.5, 48], [50.5, 70, 18.5, 70, "mark"], [50, 99, 18, 99]],
     "other-1": [[36, 6, 70, 3], [43.5, 20, 36, 8], [45, 38, 26, 20], [50, 50, 18, 50], [55.5, 62, 10.5, 62], [57, 80, 11, 80], [60.5, 96, 9, 96]],
     "other-2": [[55, 6, 108, 2], [57, 22, 40, 9], [56, 40, 31.5, 20], [57.5, 58, 34, 28], [66, 68, 70, 33], [88, 74, 100, 35], [106, 77, 110, 36]],
     "other-4": [[74, 12, -8, 5], [65, 30, 9, 12], [64, 56, 5.5, 50], [66, 80, 6, 78], [78, 95, -8, 99]],
@@ -68,7 +69,7 @@ const LINES = {
   // screen behind the board (on a phone, at the left, clear of the words above
   // the board, and then further left, clear of the phone).
   wooden: {
-    a: [[30, 0.6, 18, 0.6], [24, 18, 12, 18], [22, 45, 12, 45], [24, 66, 7, 62], [20, 82, 7, 82]],
+    a: [[30, 0.5, 18, 0.5], [24, 27, 12, 27], [22, 51, 12, 51], [24, 69.5, 7, 66], [20, 84, 7, 84]],
     "other-1": [[58, 0.6, 12, 0.3], [82, 1.8, OFF_LEFT, 2.5], [OFF_RIGHT, 3.3, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
     "other-4": [[90, 0.9, OFF_LEFT, 1.2], [OFF_RIGHT, 2.4, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
     "other-6": [[30, 0.9, 24, 0.3], [22, 3.6, OFF_LEFT, 3], [OFF_LEFT, 8, OFF_LEFT, 30]],
@@ -146,22 +147,12 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             <Knots of={LINES.memory} />
           </div>
 
-          {/* The years between. The thread runs bare for long stretches, with
-              a bead where a game was played, among the others. */}
+          {/* The years between, in brief: the thread runs bare, with a bead
+              where a game was played, among the others, and the 2020s come. */}
           <div className={c("ch-years")}>
-            {["2010s", "2020s"].map((decade, index) => (
-              <span
-                key={decade}
-                className={c("ch-decade")}
-                data-reveal=""
-                style={{ "--at": `${[48, 96][index]}%`, "--pat": `${[42, 95][index]}%` }}
-              >
-                {decade}
-              </span>
-            ))}
-            {/* Either side of the 2010s: what chess is not, and what it is. */}
-            <Text name="not-a-player" className={c("ch-aside", "ch-left")} style={{ "--at": "46%", "--pat": "47%" }} />
-            <Text name="not-defining" className={c("ch-aside", "ch-right")} style={{ "--at": "44%", "--pat": "54%" }} />
+            <span className={c("ch-decade")} data-reveal="" style={{ "--at": "74%", "--pat": "72%" }}>
+              2020s
+            </span>
             <Knots of={LINES.years} />
           </div>
 

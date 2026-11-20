@@ -118,16 +118,13 @@
 .ch-device { grid-column: 2 / 6; grid-row: 2; }
 .ch-memory .ch-col { grid-column: 8 / 13; grid-row: 2; align-self: center; }
 /* The years between: the thread as a timeline, the decades named behind it. */
-.ch-years { position: relative; height: 135vh; }
+.ch-years { position: relative; height: 64vh; }
 .ch-decade {
   --shown: 1;
   position: absolute; left: 50%; top: var(--at); z-index: 0; transform: translate(-50%, -50%);
   color: var(--rule); font: 300 clamp(72px, 12vw, 164px) / 1 var(--font-title); letter-spacing: var(--tracking-display);
   pointer-events: none; user-select: none;
 }
-.ch-aside { position: absolute; top: var(--at); width: 30%; }
-.ch-aside.ch-left { left: 0; }
-.ch-aside.ch-right { right: 0; }
 
 /* The wooden set, pinned (wooden.js): its stretch is as many screens long as
    the scene takes, and the stage stays on screen for all of them. The stage
@@ -452,7 +449,6 @@
   .ch-woodenText[data-quiet="true"] { opacity: 0; }
   .ch-woodenAfter { left: calc(var(--page-margin) + 26svh * 0.4695 + 18px); right: var(--page-margin); top: 8svh; width: auto; height: 26svh; }
   .ch-decade { left: 42%; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: 46px; }
-  .ch-aside, .ch-aside.ch-left, .ch-aside.ch-right { left: 42%; right: 0; top: var(--pat); width: auto; }
   .ch-plot { aspect-ratio: 2 / 1; }
   .ch-part { min-height: 70vh; }
 

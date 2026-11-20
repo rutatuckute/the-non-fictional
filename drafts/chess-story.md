@@ -34,7 +34,11 @@ It's far from being a defining part of who I am.
 
 <!--step:board-->
 
-I just like the strategic and analytical aspect of the game. That, and its endless possibilities.
+I just like the strategic and analytical aspect of the game.
+
+<!--step:possibilities-->
+
+That, and its endless possibilities.
 
 <!--step:first-game-->
 

@@ -15,13 +15,13 @@ const during = (step, ...steps) => steps.includes(step)
 // The strangers: an opponent is a username, a rating and a country, and then
 // the next one. These four are invented: none is anyone's username (checked
 // against Chess.com's public player pages on 19 November 2026, where each
-// was unknown). `figure` names each one's picture, once it is made, and
-// `focus` the point in it (its hands) that the picture fades out around.
+// was unknown). `figure` names each one's picture, and `focus` the point in
+// it (its hands) that the picture fades out around.
 const STRANGERS = [
   { name: "torre_torta_07", rating: 743, country: "Brazil", flag: "br", tone: "#6f5a4a", figure: "stranger-1", focus: "42% 46%" },
   { name: "pawn_wala_19", rating: 812, country: "India", flag: "in", tone: "#4f5f6b", figure: "stranger-2", focus: "68% 42%" },
-  { name: "oga_blunders_ng", rating: 688, country: "Nigeria", flag: "ng", tone: "#5c6650", figure: null },
-  { name: "krzywy_goniec", rating: 905, country: "Poland", flag: "pl", tone: "#6a5266", figure: null },
+  { name: "oga_blunders_ng", rating: 688, country: "Nigeria", flag: "ng", tone: "#5c6650", figure: "stranger-3", focus: "50% 52%" },
+  { name: "krzywy_goniec", rating: 905, country: "Poland", flag: "pl", tone: "#6a5266", figure: "stranger-4", focus: "36% 40%" },
 ]
 // Each stays for this much scrolling, in screens; the step is given what the four need.
 const EACH = 0.5

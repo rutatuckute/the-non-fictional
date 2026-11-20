@@ -83,9 +83,15 @@ const REST = { tall: [0.3, 0.26], top: [0.12, 0.08] }
 // The scroll, in screens, since the scene was pinned. A move takes LASTS of
 // scrolling and the next begins EVERY after it, so one hand is still leaving
 // as the other comes in: something is always on its way.
-const TURN_AT = 0.3
-const SETUP_AT = 0.55
-const FIRST_AT = 0.85
+const TURN_AT = 0.4
+const SETUP_AT = 0.9
+const FIRST_AT = 1.65
+// Beside the set, four sentences, one after another: when each of the last
+// three takes over. The first is there as the set comes in, lying open; the
+// second as it turns over; the third as the pieces are set up; the last as
+// the game begins.
+const SAID = ["not-a-player", "not-defining", "board", "possibilities"]
+const SAID_AT = [0.5, 1, 1.5]
 const EVERY = 0.4
 const LASTS = 0.6
 const GAME_OVER = FIRST_AT + (PLIES.length - 1) * EVERY + LASTS
@@ -195,7 +201,7 @@ export const Wooden = ({ lines, after }) => {
   const still = useStill()
   // What changes in steps, for the page to say and to style: the rest is
   // written straight onto the pieces and the hands, frame by frame.
-  const [stage, setStage] = React.useState({ turned: false, set: false, quiet: false, played: 0, phone: false, words: "board" })
+  const [stage, setStage] = React.useState({ turned: false, set: false, quiet: false, played: 0, phone: false, words: SAID[0] })
 
   const goal = () => {
     const box = pin.current.getBoundingClientRect()
@@ -258,12 +264,13 @@ export const Wooden = ({ lines, after }) => {
     const next = {
       turned: scrolled >= TURN_AT,
       set: scrolled >= SETUP_AT && scrolled < AWAY_AT,
-      quiet: scrolled >= FIRST_AT - 0.15,
+      // (on a phone the words stand above the board, where the first hand to answer comes in)
+      quiet: scrolled >= FIRST_AT + EVERY - 0.12,
       played: now.played,
       // (words wait while the phone is on its way: it passes over where they stand)
       words:
         scrolled < PHONE_AT + 0.15
-          ? "board"
+          ? SAID[SAID_AT.filter(at => scrolled >= at).length]
           : scrolled < PHONE_AT + CHANGE - 0.05
             ? "none"
             : scrolled < CORNER_AT + 0.1
@@ -368,11 +375,14 @@ export const Wooden = ({ lines, after }) => {
             style={{ left: share(PHONE.left, BOARD.width), top: share(PHONE.top, BOARD.height), width: share(PHONE.width, BOARD.width), opacity: 0 }}
           />
         </div>
-        {/* The words beside the scene, each for its part of it. On a phone the
-            first give way to the game: the hands need the room. */}
-        <div className={c("ch-woodenText")} data-on={stage.words === "board" ? "true" : "false"} data-quiet={stage.quiet ? "true" : "false"}>
-          <Text name="board" />
-        </div>
+        {/* The words beside the scene, each for its part of it: four
+            sentences change with the scroll while the set stays. On a phone
+            the last gives way when the game is answered: the hands need the room. */}
+        {SAID.map(name => (
+          <div key={name} className={c("ch-woodenText")} data-on={stage.words === name ? "true" : "false"} data-quiet={stage.quiet ? "true" : "false"}>
+            <Text name={name} look="lead" />
+          </div>
+        ))}
         <div className={c("ch-woodenText")} data-on={stage.words === "phone" ? "true" : "false"}>
           <Text name="first-game" />
         </div>

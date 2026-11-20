@@ -42,7 +42,7 @@ the published site. The names, in reading order:
 | Part | Names |
 | --- | --- |
 | Opening | `opening` |
-| I | `mine`, `memory`, `not-a-player`, `not-defining`, `board`, `first-game`, `obsession`, `obsession-questions` |
+| I | `mine`, `memory`, `not-a-player`, `not-defining`, `board`, `possibilities`, `first-game`, `obsession`, `obsession-questions` |
 | II | `people-title` (a heading), `people-intro`, `strangers`, `club`, `professor`, `professor-quote`, `professor-how`, `boards`, `data` |
 | III | `data-intro` |
 | III, first question | `say-message`, `say-prediction`, `say-guess`, `say-answer`, `say-surprise`, `say-limits` |
@@ -153,7 +153,7 @@ in a large and a phone width:
       node make-phone.cjs <repo>/node_modules/sharp phone.png screenshot.jpg phone-new-game.png new-game
       node make-images.cjs <repo>/node_modules/sharp <repo>/public/images/stories/chess "phone|phone-first-game.png|800,480|82" "phone-game|phone-new-game.png|800,480|82"
 
-- `stranger-1`, `stranger-2` (and, to come, `stranger-3` and `stranger-4`): a glimpse of each
+- `stranger-1` to `stranger-4`: a glimpse of each
   of Part II's strangers, beside the phone: hands, a phone, one thing of where
   they are, never a face. Engraved and printed like the professor (`FILL=1`,
   widths `520,300`). The first is a close-up cut from a larger drawing (700 px
@@ -189,8 +189,10 @@ carries Part I from the wooden set to the chart:
    below it and into the chart as the line of data.
 
 Nothing waits for a text: the scroll alone leads it, forwards and back. Beside
-the scene stand, each for its part of it, the texts `board`, `first-game` and
-`obsession`.
+the set, four sentences change with the scroll while it stays (`SAID`:
+`not-a-player`, `not-defining`, `board`, `possibilities`; when each takes over
+is in `SAID_AT`); then `first-game` stands beside the phone, and `obsession`
+beside it at rest.
 
 - The scene follows the scroll, it does not sit on it (`follow.js`): in every
   frame it closes a share of the distance to where the reader has scrolled, so
@@ -212,8 +214,8 @@ the scene stand, each for its part of it, the texts `board`, `first-game` and
 - With motion turned off each move is made in one step, with no hand, and the
   scene sits on the scroll.
 
-On a phone the words above the board go when the game begins, for the hands
-need the room.
+On a phone the words stand above the board, and the last sentence goes when
+the first move is answered, for the hands that answer come in there.
 
 The threads' stretch here is several screens long and passes behind the stage,
 so `LINES.wooden` keeps each thread to a lane: the story's thread behind the
@@ -232,7 +234,7 @@ shows at each step is in `VIEWS`:
    changes as the reader scrolls, on the phone's screen and, large enough to
    read, beside it: a username, a rating, a country (`STRANGERS`). The four are
    invented, and were checked not to be anyone's username. Each has a small
-   picture, `figure` (two are made; two are to come).
+   picture, `figure`.
 2. `club`: the phone goes and the club's board comes up out of its board;
    "London, early 2026" stands beside it, and the opening is played (below).
 3. `professor`: he leans in, at the board's left.
@@ -307,7 +309,6 @@ the screen.
 ## State of the build
 
 Parts I and II are built, with their pictures; the texts placed in them are
-the author's first drafts, and two are still notes in brackets (`first-game`,
-and the four strangers' pictures are to come). Part III's first question is
+the author's first drafts, and one is still a note in brackets (`first-game`). Part III's first question is
 built from data; its other two, and Part IV, are still boxes that name what
 will stand there.
