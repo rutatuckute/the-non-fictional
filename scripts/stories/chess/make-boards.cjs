@@ -2,8 +2,8 @@
 // "The board of a thousand games": how the author's games ended, each as a
 // tiny board, laid out in a grid of 37 by 27. The middle place is left empty:
 // on the page the club's board shrinks into it. A board's squares are two
-// greys of the page; the pieces are dots of the site's green for data, the
-// author's bright, her opponent's darker. The games come from the data-stories repository
+// greys of the page; the author's pieces are dots of the site's green for
+// data, her opponent's are ivory. The games come from the data-stories repository
 // (chess-story/analysis/export_boards.py): final positions and the colour she
 // played, nothing else. Written lossless, as it is all flat colour.
 const sharp = require(process.argv[2])
@@ -15,9 +15,9 @@ const SQUARE = 5
 const EDGE = (CELL - 8 * SQUARE) / 2
 const LIGHT = [44, 42, 39]
 const DARK = [28, 27, 25]
-// the site's green for data (--form-data), and the same at half strength on the page's dark
+// the site's green for data (--form-data), and the site's ivory
 const MINE = [110, 203, 120]
-const THEIRS = [66, 112, 72]
+const THEIRS = [226, 220, 211]
 ;(async () => {
   const { boards } = JSON.parse(require("fs").readFileSync(file, "utf8"))
   const places = COLS * ROWS - 1

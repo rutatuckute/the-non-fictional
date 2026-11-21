@@ -164,8 +164,8 @@ in a large and a phone width:
   strangers" in the data-stories `PROMPTS.md`.
 - `boards`: "the board of a thousand games": how the author's last 998 games
   ended, each a tiny board, in a grid of 37 by 27 whose middle place is left
-  for the club's board. The pieces are dots of the site's green for data, hers
-  bright, her opponents' darker. `make-boards.cjs` draws it from final positions exported
+  for the club's board. Her pieces are dots of the site's green for data, her
+  opponents' ivory. `make-boards.cjs` draws it from final positions exported
   in the data-stories repository (`chess-story/analysis/export_boards.py`:
   the positions and the colour she played, nothing else):
 
@@ -244,8 +244,8 @@ What the scene shows at each step is in `VIEWS`:
    on the other side yet.
 2. `strangers`, `strangers-where`, `strangers-moment`: three short questions,
    one scroll each. Meanwhile the opponent changes, on the phone's screen and,
-   large enough to read, beside it: a username, a rating, a country
-   (`STRANGERS`). The four are invented, and were checked not to be anyone's
+   large enough to read, beside it: a username, a rating, and a country by
+   its flag alone (`STRANGERS`). The four are invented, and were checked not to be anyone's
    username. Each has a small picture, `figure`.
 3. `club`: the phone goes and the club's board comes up out of its board;
    "London, early 2026" stands beside it, and the opening is played (below).

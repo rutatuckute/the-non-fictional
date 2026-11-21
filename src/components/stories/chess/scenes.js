@@ -65,7 +65,8 @@ const Flag = ({ of }) => (
 
 // The phone of Part I again, before a game: the board set up, the clocks full.
 // Only the opponent changes, as the reader scrolls: on the phone's screen, and
-// beside it, large enough to read.
+// beside it, large enough to read. The country is shown by its flag alone;
+// its name is in the scene's description, for those who cannot see the flag.
 // Until one is `matched`, there is nobody on the other side yet.
 const Strangers = ({ step, matched }) => {
   const since = useSince(step, EACH, STRANGERS.length - 1)
@@ -109,7 +110,7 @@ const Strangers = ({ step, matched }) => {
           <b>{each.name}</b>
           <span>
             <Flag of={each.flag} />
-            {each.rating} · {each.country}
+            {each.rating}
           </span>
           {each.figure ? (
             <img
@@ -164,7 +165,7 @@ export const People = () => (
         <Show on={step >= 8} className={c("ch-minis")}>
           <img
             src="/images/stories/chess/boards.webp"
-            alt="Hundreds of tiny chessboards in a grid: how the author’s last thousand games ended, her pieces in bright green, her opponents’ in a darker green."
+            alt="Hundreds of tiny chessboards in a grid: how the author’s last thousand games ended, her pieces in green, her opponents’ in ivory."
             width={1776}
             height={1296}
             decoding="async"
