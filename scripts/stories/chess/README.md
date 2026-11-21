@@ -16,7 +16,35 @@ The code is in `src/components/stories/chess/`:
 - `wooden.js`: the wooden set of the 2020s, pinned, and the game played on it.
 - `club.js`: the club's board in Part II, and the London System set up on it.
 - `follow.js`: how a scroll-led scene follows the scroll in a glide.
+- `chapters.js`: the chapters' navigation, always at hand beside the story.
 - `parts.js`: what the others are built from.
+
+## The chapters
+
+`chapters.js` keeps the story's chapters at hand for as long as the story is on
+screen (`CHAPTERS` in `ChessStory.js`: five chapters, and three parts of the
+investigation). On a screen 75rem wide or more it is a rail in the right
+margin, centred, with the parts shown while their chapter is being read or the
+keyboard is in it. Below that it is a bar across the top of the screen, naming
+the chapter being read, whose button opens the same list.
+
+- A chapter's link is a plain link to a mark: an empty element with the
+  chapter's id (`Mark`, or `mark` on a `Pinned` scene), set where that chapter
+  is to be opened, which for a pinned scene is its top, as it is pinned. So a
+  jump is the browser's own: at once, working from a pasted link too, and the
+  next Tab goes on from inside the chapter. What the scroll draws finds its
+  place from where the page then stands. The last chapter may be shorter than
+  the screen, so its mark stands a screen above the story's end.
+- The chapter being read is the last whose section has come up past two fifths
+  of the screen, or whose mark the page has reached. A thin line in the story's
+  clay fills from each chapter's mark to the next; there are no numbers.
+- Keys: Tab through the links; up, down, Home and End move within the list;
+  Escape closes the list on a narrow screen and gives the button back its focus.
+- The rail is never over the story: the story's column gives way on the right
+  for as much as the margin lacks (212 px in all), and that margin has the
+  page's own ground, fading in at its edge, so no thread runs under the labels.
+- Under the bar, what a pinned scene holds at its top stands lower by the
+  bar's height (`--bar`, 44 px on those screens and nothing on wider ones).
 
 ## The words
 

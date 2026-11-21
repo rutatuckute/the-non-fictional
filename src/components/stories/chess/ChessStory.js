@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { Chapters, Mark } from "./chapters"
 import { c, Holder, Picture, Text, Words } from "./parts"
 import { People, Reveal, Say, Wrong } from "./scenes"
 import { Knots, Thread } from "./thread"
@@ -32,6 +33,24 @@ import { Wooden } from "./wooden"
 // the words take the whole width and a thread passes them in the margin or
 // off the screen. "mark" shows a bead; "from" and "to" are where the story's
 // thread turns from grey to its colour.
+// The chapters, for the navigation beside the story (chapters.js). Each `id`
+// is a mark in the page, set where that chapter is to be opened.
+const CHAPTERS = [
+  { id: "the-thread", label: "The thread" },
+  { id: "the-people", label: "The people" },
+  {
+    id: "the-investigation",
+    label: "The investigation",
+    parts: [
+      { id: "what-we-say", label: "What we say" },
+      { id: "when-things-go-wrong", label: "When things go wrong" },
+      { id: "what-we-choose", label: "What we choose" },
+    ],
+  },
+  { id: "the-ending", label: "The ending" },
+  { id: "method-and-data", label: "Method & data" },
+]
+
 // Beyond the screen's edge, whatever the window's width: the column is centred in it.
 const OFF_LEFT = "calc(50% - 60vw)"
 const OFF_RIGHT = "calc(50% + 60vw)"
@@ -103,9 +122,11 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
   return (
     <Words.Provider value={words}>
       <div className={c("ch-story")}>
+        <Chapters chapters={CHAPTERS} />
         <Thread />
 
         <header className={c("ch-open")}>
+          <Mark id="the-thread" />
           <p className={c("ch-kicker")}>
             <time dateTime={date || undefined} itemProp="datePublished">
               {dateLabel}
@@ -171,6 +192,7 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
         </section>
 
         <section className={c("ch-turn")} aria-label="Looking for answers in the data">
+          <Mark id="the-investigation" />
           <Text name="data-intro" />
         </section>
         <Say guess={guess("names")} />
@@ -185,6 +207,7 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
         </section>
 
         <section className={c("ch-free", "ch-back")} aria-label="Back to the threads of life">
+          <Mark id="the-ending" />
           <div className={c("ch-row", "ch-encounter")}>
             <Holder className={c("ch-chat")} label="The message" ratio="4 / 3" />
             <Text name="encounter" className={c("ch-col")} />
@@ -205,6 +228,7 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
         </section>
 
         <section className={c("ch-method")} aria-label="Method and data">
+          <Mark id="method-and-data" />
           <Text name="method" />
         </section>
       </div>

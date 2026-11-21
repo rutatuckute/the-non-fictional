@@ -38,6 +38,86 @@
 .ch-story[data-live="true"] [data-reveal] { opacity: 0; transition: opacity 600ms ease 150ms; }
 .ch-story[data-live="true"] [data-reveal][data-reached="true"] { opacity: var(--shown, 1); }
 
+/* ── chapters (chapters.js) ──
+   Always at hand while the story is on screen: the navigation keeps to a box
+   as tall as the screen that sticks to its top and takes no room in the page.
+   On a wide screen it is a rail in the right margin; on a narrower one, a bar
+   across the top, whose button opens the list. */
+.ch-story { --bar: 0px; }
+/* Where a chapter is opened: a point in the page, at the top of its section. */
+.ch-mark { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; }
+/* The last chapter may be shorter than the screen: it is opened with the
+   story's end at the screen's foot, so the navigation is still there. */
+.ch-method > .ch-mark { top: min(0px, calc(100% - 100vh)); top: min(0px, calc(100% - 100svh)); }
+.ch-nav {
+  position: sticky; top: 0; z-index: 20; height: 100vh; height: 100svh; margin-bottom: -100vh; margin-bottom: -100svh;
+  pointer-events: none; font-family: var(--font-mono);
+}
+.ch-navHidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.ch-story .ch-navHead { margin: 0; color: var(--ink-3); font: 500 10.5px / 1.4 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; }
+.ch-story :is(.ch-navList, .ch-navParts) { margin: 0; padding: 0; list-style: none; }
+.ch-story .ch-nav a { position: relative; color: var(--ink-3); text-decoration: none; transition: color 150ms ease; }
+.ch-story .ch-nav a:hover { color: var(--ink-2); }
+.ch-story .ch-nav a[aria-current="true"] { color: var(--ink); }
+/* a chapter's dot, on the line */
+.ch-navList > li > a::before {
+  content: ""; position: absolute; left: 0; top: 50%; z-index: 1; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%;
+  background: var(--ink-3); box-shadow: 0 0 0 4px var(--void); transition: background-color 150ms ease, transform 150ms ease;
+}
+.ch-navList > li[data-on="true"] > a::before { background: var(--thread); transform: scale(1.3); }
+
+/* A wide screen: the rail. The story's column gives way on the right for as
+   much as the margin lacks, so the rail is never over the story; and the
+   margin it stands in has the page's own ground, so no thread runs under it. */
+@media (min-width: 75rem) {
+  .ch-story { margin-right: max(0px, 212px - max(var(--page-margin), (100vw - var(--page-max)) / 2)); }
+  .ch-nav::before {
+    content: ""; position: absolute; left: calc(100% + 22px); top: 0; bottom: 0; width: 100vw;
+    background: linear-gradient(to right, transparent, var(--void) 14px);
+  }
+  .ch-navBar { display: none; }
+  .ch-navPanel { position: absolute; left: calc(100% + 40px); top: 50%; width: 160px; transform: translateY(-50%); pointer-events: auto; }
+  .ch-story .ch-navHead { margin-bottom: 22px; }
+  .ch-navList { position: relative; display: grid; gap: 18px; }
+  /* the line through the dots, and how much of it the reader has come */
+  .ch-navList::before, .ch-navList::after { content: ""; position: absolute; left: 3px; top: var(--line-top, 0px); width: 1px; }
+  .ch-navList::before { height: var(--line-long, 0px); background: var(--rule-strong); }
+  .ch-navList::after { height: var(--line-done, 0px); background: var(--thread); }
+  .ch-navList > li > a { display: block; padding-left: 24px; font: 400 13px / 1.35 var(--font-mono); }
+  /* the parts of a chapter show while it is being read, or while the keyboard is in it */
+  .ch-story .ch-navParts { display: none; gap: 9px; padding: 11px 0 2px 24px; }
+  .ch-story .ch-navList > li[data-on="true"] > .ch-navParts, .ch-story .ch-navList > li:focus-within > .ch-navParts { display: grid; }
+  .ch-navParts a { display: block; font: 400 12px / 1.35 var(--font-mono); }
+}
+
+/* A narrower screen: the bar. What a pinned scene holds at its top stands
+   under it (--bar). */
+@media (max-width: 74.99rem) {
+  .ch-story { --bar: 44px; }
+  .ch-navBar {
+    position: absolute; top: 0; left: calc(-1 * var(--page-margin)); right: calc(-1 * var(--page-margin)); height: var(--bar);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 var(--page-margin);
+    border: 0; border-bottom: 1px solid var(--rule); border-radius: 0; background: var(--void); color: var(--ink);
+    font: 500 13px / 1 var(--font-mono); text-align: left; cursor: pointer; pointer-events: auto; -webkit-tap-highlight-color: transparent;
+  }
+  .ch-navNow { display: inline-flex; align-items: center; gap: 10px; min-width: 0; white-space: nowrap; }
+  .ch-navNow::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--thread); }
+  .ch-navAsk { display: inline-flex; flex: none; align-items: center; gap: 9px; color: var(--ink-2); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; }
+  .ch-navAsk svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; }
+  /* how far through the chapters the reader is, along the bar's foot */
+  .ch-navDone { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--thread); transform-origin: 0 50%; transform: scaleX(var(--done, 0)); }
+  .ch-navPanel {
+    position: absolute; top: var(--bar); left: calc(-1 * var(--page-margin)); right: calc(-1 * var(--page-margin)); display: none;
+    max-height: calc(100vh - var(--bar)); max-height: calc(100svh - var(--bar)); overflow-y: auto; padding: 18px var(--page-margin) 14px;
+    border-bottom: 1px solid var(--rule-strong); background: var(--void); pointer-events: auto;
+  }
+  .ch-nav[data-open="true"] .ch-navPanel { display: block; }
+  .ch-story .ch-navHead { margin-bottom: 6px; }
+  .ch-navList > li > a { display: flex; align-items: center; min-height: 44px; padding-left: 22px; font: 400 16px / 1.3 var(--font-mono); }
+  .ch-story .ch-navParts { padding-left: 22px; }
+  .ch-navParts a { display: flex; align-items: center; min-height: 40px; font: 400 14px / 1.3 var(--font-mono); }
+}
+
 /* ── words ── */
 .ch-text { position: relative; z-index: 2; min-width: 0; max-width: 34rem; }
 .ch-text > :last-child { margin-bottom: 0; }
@@ -255,7 +335,7 @@
 /* Part II. Its name stays at the top of the screen for the whole of it: it
    sticks there, over the pinned scene, until the part ends. */
 .ch-people { position: relative; z-index: 3; padding-top: 10vh; background: var(--void); }
-.ch-peopleTitle { position: sticky; top: 5vh; top: 5svh; z-index: 6; padding-bottom: 3vh; pointer-events: none; }
+.ch-peopleTitle { position: sticky; top: calc(var(--bar) + 5vh); top: calc(var(--bar) + 5svh); z-index: 6; padding-bottom: 3vh; pointer-events: none; }
 
 /* Part II: one board, and what gathers around it. The scene's things are laid
    out in a square, which is sized and placed for what it shows (data-view). */
@@ -473,24 +553,24 @@
   /* The pinned set takes the screen's width; its words stand above it, clear
      of the threads' lane at the left, and give way when the game begins. */
   .ch-woodenStage { grid-template-columns: minmax(0, 1fr); margin-inline: calc(-1 * var(--page-margin)); padding-inline: var(--page-margin); }
-  .ch-woodenScene { grid-column: 1; width: min(100%, 42svh); top: 6svh; }
-  .ch-woodenText { position: absolute; top: 5svh; left: calc(var(--page-margin) + 14%); right: var(--page-margin); transition: opacity 300ms ease; }
+  .ch-woodenScene { grid-column: 1; width: min(100%, 42svh); top: 9svh; }
+  .ch-woodenText { position: absolute; top: calc(var(--bar) + 1.5svh); left: calc(var(--page-margin) + 14%); right: var(--page-margin); transition: opacity 300ms ease; }
   .ch-woodenText[data-quiet="true"] { opacity: 0; }
   /* the chart takes the width, its words above it, the phone under its corner */
   .ch-woodenChart { left: var(--page-margin); right: var(--page-margin); width: auto; top: 31svh; transform: none; }
   .ch-woodenChart .ch-plot { aspect-ratio: 2 / 1; max-height: 36svh; }
-  .ch-woodenAfter { left: var(--page-margin); right: var(--page-margin); top: 7svh; transform: none; }
+  .ch-woodenAfter { left: var(--page-margin); right: var(--page-margin); top: calc(var(--bar) + 2svh); transform: none; }
   .ch-decade { left: 42%; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: 46px; }
   .ch-plot { aspect-ratio: 2 / 1; }
   .ch-people { padding-top: 8vh; }
-  .ch-peopleTitle { top: 3.5svh; }
+  .ch-peopleTitle { top: calc(var(--bar) + 1.2svh); }
   /* Part II's words stand under its name, the scene under them */
-  .ch-told { left: var(--page-margin); right: var(--page-margin); top: 10svh; width: auto; }
+  .ch-told { left: var(--page-margin); right: var(--page-margin); top: calc(var(--bar) + 7svh); width: auto; }
   .ch-told > div { transform: none; }
   .ch-pin[data-plain="true"] .ch-scene { inset: 28svh var(--page-margin) auto; height: 54svh; }
 
   .ch-stage { margin-inline: calc(-1 * var(--page-margin)); }
-  .ch-scene { inset: 7svh var(--page-margin) auto; height: 54svh; }
+  .ch-scene { inset: max(7svh, calc(var(--bar) + 10px)) var(--page-margin) auto; height: 54svh; }
   .ch-step { align-items: flex-end; min-height: 100vh; padding-bottom: 5vh; }
   .ch-card { width: 100%; padding: 14px 16px 16px; background: color-mix(in srgb, var(--raised) 94%, transparent); }
   .ch-text.ch-cardText { font-size: 16px; }
@@ -522,6 +602,6 @@
 /* A phone: the chart can be taller than it is wide-ish, for its lines to read. */
 @media (max-width: 40rem) {
   .ch-plot, .ch-woodenChart .ch-plot { aspect-ratio: 4 / 3; }
-  /* the longer of the set's two texts has to fit above the board */
-  .ch-woodenText .ch-text.ch-lead { font-size: 17px; line-height: 1.42; }
+  /* the longer texts have to fit above the board, and above Part II's scene */
+  .ch-woodenText .ch-text.ch-lead, .ch-told .ch-text.ch-lead { font-size: 17px; line-height: 1.42; }
 }

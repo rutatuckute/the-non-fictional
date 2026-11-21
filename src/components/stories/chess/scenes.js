@@ -140,6 +140,7 @@ export const People = () => (
   <Pinned
     open
     plain
+    mark="the-people"
     label="The people behind the game"
     steps={[
       { text: <Text name="people-intro" look="lead" /> },
@@ -230,6 +231,7 @@ const Rows = ({ rows, you = false }) => (
 // opponents you meet (say.js, from real games).
 export const Say = ({ guess }) => (
   <Pinned
+    mark="what-we-say"
     label="What we say about ourselves"
     steps={[
       <Text key="1" name="say-message" look="cardText" />,
@@ -273,6 +275,7 @@ export const Say = ({ guess }) => (
 // Second question: what we do when things go wrong.
 export const Wrong = ({ guess }) => (
   <Pinned
+    mark="when-things-go-wrong"
     label="What we do when things go wrong"
     steps={[
       <Text key="1" name="wrong-observation" look="cardText" />,
@@ -310,6 +313,7 @@ export const Wrong = ({ guess }) => (
 // Third question: what our choices reveal. It stays only if the games bear it out.
 export const Reveal = () => (
   <Pinned
+    mark="what-we-choose"
     label="What our choices reveal"
     steps={[
       <Text key="1" name="reveal-professor" look="cardText" />,

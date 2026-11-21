@@ -147,10 +147,13 @@ export const useSince = (step, every, most) => {
 // stands in one place beside the graphic, giving way to the next step's as the
 // reader scrolls, as the sentences beside the wooden set do; a step with no
 // text leaves the graphic to speak alone. `open` leaves out the rule above.
-export const Pinned = ({ label, steps, open = false, plain = false, children }) => {
+// `mark` names the scene for the chapters' navigation (chapters.js).
+export const Pinned = ({ label, steps, open = false, plain = false, mark, children }) => {
   const [step, stepRef, refs] = useStep(steps.length)
   return (
     <section className={c("ch-pin")} data-open={open ? "true" : undefined} data-plain={plain ? "true" : undefined} aria-label={label}>
+      {/* where the chapters' navigation opens this scene: at its top, as it is pinned */}
+      {mark ? <span id={mark} className={c("ch-mark")} /> : null}
       <div className={c("ch-stage")}>
         {plain ? (
           <div className={c("ch-told")}>
