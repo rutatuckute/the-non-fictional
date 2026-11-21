@@ -1,0 +1,13 @@
+{
+  "what": "Minutes a day on social media: an estimate, not a measurement",
+  "estimate": true,
+  "note": "Placeholder guesses, to be replaced by the author's own. No usage data exists for this line yet; it is drawn through these few points and nothing else.",
+  "points": [
+    ["2023-04-29", 105],
+    ["2026-01-15", 105],
+    ["2026-03-15", 55],
+    ["2026-04-20", 32],
+    ["2026-06-01", 20],
+    ["2026-11-15", 20]
+  ]
+}

@@ -45,9 +45,11 @@ const nextConfig = {
   },
 
   // The OG card reads its font files by path at render time, so nothing in the
-  // bundle references them and tracing cannot infer them.
+  // bundle references them and tracing cannot infer them. The same goes for
+  // the pieces still being written, which are files until they are published
+  // (src/lib/drafts.ts).
   outputFileTracingIncludes: {
-    "/**": ["./src/app/_og/*.ttf"],
+    "/**": ["./src/app/_og/*.ttf", "./drafts/*.md"],
   },
 
   async redirects() {

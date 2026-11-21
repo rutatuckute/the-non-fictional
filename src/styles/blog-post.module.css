@@ -753,6 +753,18 @@
   padding: 0;
 }
 
+/* A story that is the whole piece: what it draws on and its actions follow
+   it, across the page. */
+.wholeEnd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  justify-content: space-between;
+  gap: 32px 48px;
+  padding: 40px 0 8px;
+  border-top: 1px solid var(--rule);
+}
+
 /* ── previous and next: small, a thumbnail beside the title ── */
 
 .more {
