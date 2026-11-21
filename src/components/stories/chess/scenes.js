@@ -4,7 +4,8 @@ import * as React from "react"
 
 import { CLUB_REST, ClubBoard } from "./club"
 import { c, Guess, Holder, Pinned, Show, Text, useSince } from "./parts"
-import { ABOVE_NOTE, Above, FastGap, Patterns } from "./say"
+import { RatingStory } from "./ratings"
+import { Usernames } from "./say"
 
 // The pinned scenes of the chess story: the people behind the game, and the
 // three questions put to the data. Where a graphic is not made yet, a box says
@@ -229,47 +230,33 @@ const Rows = ({ rows, you = false }) => (
 // Part III, first question: what we say about ourselves. Her own prediction
 // against her games, then what usernames say against the ratings of the
 // opponents you meet (say.js, from real games).
-export const Say = ({ guess }) => (
-  <Pinned
-    mark="what-we-say"
-    label="What we say about ourselves"
-    steps={[
-      <Text key="1" name="say-message" look="cardText" />,
-      <Text key="2" name="say-prediction" look="cardText" />,
-      <React.Fragment key="3">
-        <Text name="say-guess" look="cardText" />
-        <Guess label="Your guess" options={["Rated higher", "About the same", "Rated lower"]} {...guess} />
-      </React.Fragment>,
-      <Text key="4" name="say-answer" look="cardText" />,
-      <Text key="5" name="say-surprise" look="cardText" />,
-      <Text key="6" name="say-limits" look="cardText" />,
-    ]}
-  >
-    {step => (
-      <div className={c("ch-stack")}>
-        <Show flow on={step === 0}>
-          <Holder label="The message" ratio="5 / 2" />
-        </Show>
-        <Show flow on={step === 1}>
-          <FastGap />
-        </Show>
-        <Show flow on={step === 2}>
-          <Patterns of="bad" />
-        </Show>
-        <Show flow on={step === 3}>
-          <Above keys={["bad"]} />
-          <p className={c("ch-note")}>
-            {ABOVE_NOTE}
-            {guess.value ? ` · your guess: ${guess.value.toLowerCase()}` : ""}
-          </p>
-        </Show>
-        <Show flow on={step >= 4}>
-          <Above keys={["bad", "good", "jokes", "aims"]} />
-          <p className={c("ch-note")}>{ABOVE_NOTE}</p>
-        </Show>
-      </div>
-    )}
-  </Pinned>
+export const Say = () => (
+  <section className={c("ch-saySection")} aria-label="Claims and evidence">
+    <span id="what-we-say" className={c("ch-mark")} />
+    <Pinned
+      label="What we say about ourselves"
+      steps={[
+        <Text key="1" name="say-message" look="cardText" className={c("ch-messageCopy")} />,
+        <Text key="timeline" name="say-isolation" look="cardText" />,
+        { card: <Text name="say-prediction" look="cardText" />, rest: 0.45 },
+        <Text key="widen" name="say-widen" look="cardText" />,
+        <Text key="crowd" name="say-crowd" look="cardText" />,
+        <Text key="perspective" name="say-perspective" look="cardText" />,
+      ]}
+    >
+      {step => (
+        <div className={c("ch-stack")}>
+          <Show flow on={step === 0}>
+            <img className={c("ch-messagePhone")} src="/images/stories/chess/message-07.webp" width={600} height={1298} alt="My message: Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀" />
+          </Show>
+          <div hidden={step < 1 || step > 5}>
+            <RatingStory step={step} />
+          </div>
+        </div>
+      )}
+    </Pinned>
+    <Usernames />
+  </section>
 )
 
 // Second question: what we do when things go wrong.

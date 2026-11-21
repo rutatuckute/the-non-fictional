@@ -195,7 +195,7 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           <Mark id="the-investigation" />
           <Text name="data-intro" />
         </section>
-        <Say guess={guess("names")} />
+        <Say />
         <Wrong guess={guess("resign")} />
         <Reveal />
         <section className={c("ch-free", "ch-unknown")} aria-label="What we cannot know">

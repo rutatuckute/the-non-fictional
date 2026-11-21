@@ -109,27 +109,59 @@ Chess.com provides the data.
 
 <!--step:say-message-->
 
-*[The blitz message: "I would be soooo bad at blitz". Placeholder until the message and its date are settled.]*
+### What we say about ourselves
+
+“I would be soooo bad at blitz.”
+
+I wrote “blitz”; I would end up playing bullet.
+
+<!--step:say-isolation-->
+
+If I only looked at my own ratings, the verdict seemed obvious.
+
+Here was rapid: the game I knew. And here, around 19 May, was the claim.
 
 <!--step:say-prediction-->
 
-*[What my games say: three blitz games, then 309 bullet games. In July to September my bullet rating sat 253 points below my rapid; for players at my level the drop is 256. Exactly typical.]*
+Seven weeks later, I tried bullet. 309 games later, its rating had settled in the 400s, while rapid kept climbing.
+
+I said I would be bad. From where I stood, it looked as though I was right.
+
+<!--step:say-widen-->
+
+But lower than what? Lower than whom?
+
+So I stopped comparing me to me, and started comparing me to everyone else.
+
+<!--step:say-crowd-->
+
+Each dot is a player who plays both. Rapid rating across; bullet rating up.
+
+Under the diagonal, bullet is lower than rapid. That is where **87%** of these players sit.
+
+<!--step:say-perspective-->
+
+And there I am, close to the typical line.
+
+The gap I had taken so personally was ordinary.
+
+Maybe this was less about me, and more about how bullet works.
 
 <!--step:say-guess-->
 
-*[The reader's turn: an opponent whose name says they are bad at chess. Rated higher, about the same or lower than a typical opponent?]*
+I had made a claim about myself. Plenty of players put theirs in their usernames.
 
-<!--step:say-answer-->
-
-*[The answer: lower, but only a little. 4.2 in 10 are rated above a typical opponent, where any opponent would be 5.]*
+Before looking at their ratings, what would you expect? Make a guess for each kind of name.
 
 <!--step:say-surprise-->
 
-*[The surprises: names that boast are below too (4.5); names that joke about blunders are above (6.4); names with a goal, above again (7.5).]*
+The apologisers and the boasters both sit a little below a typical opponent. The players joking about blunders are above, and those aiming high are higher still.
 
 <!--step:say-limits-->
 
-*[What it does and doesn't show. A bridge to the next question.]*
+A name is a claim, not a reliable guide to the person across the board. These are patterns across groups; any one player can be the exception.
+
+But what about what we do when things go wrong?
 
 <!--step:wrong-observation-->
 
