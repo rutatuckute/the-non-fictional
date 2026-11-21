@@ -49,6 +49,10 @@
 .ch-text.ch-lead { font-size: clamp(20px, 1.8vw, 25px); line-height: 1.45; }
 .ch-text.ch-medium { font-size: clamp(22px, 2.6vw, 32px); line-height: 1.2; letter-spacing: var(--tracking-title); text-wrap: balance; }
 .ch-text.ch-cardText { font-size: 17px; line-height: 1.5; }
+/* Said in passing: smaller and quieter than the text it follows. */
+.ch-text.ch-quiet { font-size: clamp(16px, 1.3vw, 18px); line-height: 1.5; color: var(--ink-2); }
+/* Said aloud, in a speech balloon. */
+.ch-text.ch-said { font-size: clamp(19px, 2.1vw, 27px); line-height: 1.2; letter-spacing: var(--tracking-title); text-wrap: balance; }
 /* A part's name: a heading in the body, on one line whatever the screen's width. */
 .ch-text.ch-partTitle { max-width: none; }
 .ch-story .ch-partTitle :is(h1, h2, h3) {
@@ -114,11 +118,14 @@
 .ch-row { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
 
 .ch-memory { padding-top: 4vh; row-gap: 26px; }
-.ch-mine { grid-column: 2 / 7; grid-row: 1; }
+.ch-mine { position: relative; z-index: 2; grid-column: 2 / 7; grid-row: 1; display: grid; gap: 8px; }
+/* the memory's own words: one line, and a quieter one under it */
+.ch-told2 { display: grid; gap: 12px; }
 .ch-device { grid-column: 2 / 6; grid-row: 2; }
 .ch-memory .ch-col { grid-column: 8 / 13; grid-row: 2; align-self: center; }
 /* The years between: the thread as a timeline, the decades named behind it. */
 .ch-years { position: relative; height: 64vh; }
+.ch-yearsText { position: absolute; left: 56%; top: 30%; width: 26%; }
 .ch-decade {
   --shown: 1;
   position: absolute; left: 50%; top: var(--at); z-index: 0; transform: translate(-50%, -50%);
@@ -347,8 +354,20 @@
 /* He is cut at the waist: that edge fades out. */
 .ch-professor img { display: block; width: auto; height: 100%; mask-image: linear-gradient(to bottom, #000 78%, transparent 98%); }
 /* What he asked, across the top of the scene; and what it left behind, alone. */
-.ch-layer.ch-quote { z-index: 6; left: 3%; right: 3%; top: 13%; }
-.ch-quote .ch-text { max-width: 24em; }
+/* A speech balloon over his head, its tail towards him; it comes up from there. */
+.ch-layer.ch-bubble {
+  z-index: 6; left: 2%; right: 0; bottom: 84%; padding: 15px 20px 17px;
+  border: 1px solid var(--ink-2); border-radius: 20px; background: var(--void); transform-origin: 34% 100%;
+  transition: opacity 400ms ease, transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s linear 400ms;
+}
+.ch-layer.ch-bubble[data-on="false"] { transform: translateY(10px) scale(0.86); }
+.ch-layer.ch-bubble[data-on="true"] { transition: opacity 400ms ease, transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s; }
+.ch-bubble::after {
+  content: ""; position: absolute; left: 32%; bottom: -8px; width: 14px; height: 14px;
+  border-right: 1px solid var(--ink-2); border-bottom: 1px solid var(--ink-2); background: var(--void);
+  transform: rotate(45deg) skew(12deg, 12deg);
+}
+.ch-bubble .ch-text { max-width: none; }
 .ch-layer.ch-how { z-index: 6; inset: 0; display: grid; place-items: center; text-align: center; }
 /* The thousand: one picture, four of the scene's squares wide and centred in
    the scene, kept to the scene's box so the words beside it stay clear; it
@@ -435,7 +454,7 @@
   .ch-side, .ch-sideBack { transform: none; -webkit-backface-visibility: visible; backface-visibility: visible; }
   .ch-sides[data-turned="true"] .ch-sideFront, .ch-sides[data-turned="false"] .ch-sideBack { visibility: hidden; }
   .ch-boardwrap, .ch-woodenAfter, .ch-screenBar, .ch-who, .ch-who[data-on="true"], .ch-told > div, .ch-told > div[data-on="true"] { transition: none; }
-  .ch-layer.ch-phoneLayer, .ch-layer.ch-clubBoard, .ch-layer.ch-professor, .ch-layer.ch-minis,
+  .ch-layer.ch-phoneLayer, .ch-layer.ch-clubBoard, .ch-layer.ch-professor, .ch-layer.ch-minis, .ch-layer.ch-bubble, .ch-layer.ch-bubble[data-on="true"],
   .ch-layer.ch-phoneLayer[data-on="true"], .ch-layer.ch-clubBoard[data-on="true"], .ch-layer.ch-professor[data-on="true"], .ch-layer.ch-minis[data-on="true"] { transition: none; }
   .ch-thread path, .ch-thread circle, .ch-thread text, .ch-card, .ch-layer, .ch-layer[data-on="true"], .ch-guess button, .ch-woodenPieces, .ch-woodenPieces[data-on="true"], .ch-woodenText { transition: none; }
   .ch-panel[data-on="true"] { animation: none; }
@@ -446,15 +465,16 @@
 @media (max-width: 60rem) {
   .ch-knot { left: var(--px); top: var(--py); }
   .ch-row { grid-template-columns: minmax(0, 1fr); row-gap: 5vh; }
-  .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
+  .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-mine, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
+  .ch-yearsText { left: 32%; right: 0; top: 38%; width: auto; }
   .ch-open .ch-text { max-width: none; }
-  .ch-memory { row-gap: 22px; }
+  .ch-memory { row-gap: 22px; padding-bottom: 5vh; }
   .ch-device { width: 72%; }
   /* The pinned set takes the screen's width; its words stand above it, clear
      of the threads' lane at the left, and give way when the game begins. */
   .ch-woodenStage { grid-template-columns: minmax(0, 1fr); margin-inline: calc(-1 * var(--page-margin)); padding-inline: var(--page-margin); }
-  .ch-woodenScene { grid-column: 1; width: min(100%, 42svh); top: 4svh; }
-  .ch-woodenText { position: absolute; top: 6svh; left: calc(var(--page-margin) + 26%); right: var(--page-margin); transition: opacity 300ms ease; }
+  .ch-woodenScene { grid-column: 1; width: min(100%, 42svh); top: 6svh; }
+  .ch-woodenText { position: absolute; top: 5svh; left: calc(var(--page-margin) + 14%); right: var(--page-margin); transition: opacity 300ms ease; }
   .ch-woodenText[data-quiet="true"] { opacity: 0; }
   /* the chart takes the width, its words above it, the phone under its corner */
   .ch-woodenChart { left: var(--page-margin); right: var(--page-margin); width: auto; top: 31svh; transform: none; }
@@ -484,7 +504,7 @@
   /* with only the professor beside it, the board can take more of a phone's width */
   .ch-boardwrap[data-view="club"], .ch-boardwrap[data-view="how"] { width: min(44svh, 80%); transform: translate(10%, -4%); }
   .ch-layer.ch-place { right: 74%; top: 30%; }
-  .ch-layer.ch-quote { left: 0; right: 0; top: 0; }
+  .ch-layer.ch-bubble { left: -6%; right: -4%; bottom: 86%; padding: 12px 16px 14px; }
   .ch-step[data-bare="true"] { min-height: 80vh; }
   /* fewer, larger boards: here a tiny board is 14% of the square; the grid
      fades out at the top and bottom of the scene's box, under the words */
@@ -502,4 +522,6 @@
 /* A phone: the chart can be taller than it is wide-ish, for its lines to read. */
 @media (max-width: 40rem) {
   .ch-plot, .ch-woodenChart .ch-plot { aspect-ratio: 4 / 3; }
+  /* the longer of the set's two texts has to fit above the board */
+  .ch-woodenText .ch-text.ch-lead { font-size: 17px; line-height: 1.42; }
 }

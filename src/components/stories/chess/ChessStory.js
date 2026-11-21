@@ -50,26 +50,28 @@ const LINES = {
     "other-4": [[101.5, 20, -10, 30], [102, 96, -10, 80]],
     "other-5": [[106, 8, 112, 8]],
   },
-  // The years between are a short stretch: two beads, and the 2020s come.
+  // The years between are a short stretch, with no bead on the story's thread:
+  // no chess. The others keep clear of the few words there (right of the
+  // thread from 28% to 40% down; on a phone, right of it from 38% to 54%).
   years: {
-    a: [[50, 5, 18, 5], [51, 26, 19, 26, "mark"], [49, 48, 17.5, 48], [50.5, 70, 18.5, 70, "mark"], [50, 99, 18, 99]],
+    a: [[50, 5, 18, 5], [51, 26, 19, 26], [49, 48, 17.5, 48], [50.5, 70, 16, 68], [50, 99, 5, 97]],
     "other-1": [[36, 6, 70, 3], [43.5, 20, 36, 8], [45, 38, 26, 20], [50, 50, 18, 50], [55.5, 62, 10.5, 62], [57, 80, 11, 80], [60.5, 96, 9, 96]],
-    "other-2": [[55, 6, 108, 2], [57, 22, 40, 9], [56, 40, 31.5, 20], [57.5, 58, 34, 28], [66, 68, 70, 33], [88, 74, 100, 35], [106, 77, 110, 36]],
-    "other-4": [[74, 12, -8, 5], [65, 30, 9, 12], [64, 56, 5.5, 50], [66, 80, 6, 78], [78, 95, -8, 99]],
-    "other-6": [[-6, 28, -8, 56], [20, 33, 14, 64], [36, 41, 28, 74], [38.5, 58, 30, 84], [37, 80, 29, 92], [34, 97, 26, 99]],
+    "other-2": [[55, 6, 108, 2], [64, 13, 40, 9], [86, 19, 31.5, 20], [106, 22, 34, 28], [108, 30, 70, 33], [108, 40, 100, 35], [108, 50, 110, 36]],
+    "other-4": [[74, 3, -8, 5], [90, 16, 9, 12], [92, 44, 5.5, 50], [86, 76, 6, 78], [78, 95, -8, 99]],
+    "other-6": [[-6, 28, -8, 60], [20, 33, 12, 68], [36, 41, 24, 78], [38.5, 58, 22, 86], [37, 80, 14, 93], [34, 97, 9, 99]],
   },
   // The wooden set is pinned: its stretch is several screens long, and the
   // board and the words stay on screen while the stretch passes behind them.
   // So the other threads leave by the screen's edge in the first screen and
   // stay out; only the story's thread is there, coming down the screen and in
-  // behind the board (on a phone, at the left, clear of the words above the
-  // board). It ends under the scene's own ground, which comes when the phone
+  // behind the board (on a phone, at the far left, clear of the words above
+  // the board). It ends under the scene's own ground, which comes when the phone
   // does: from there the thread is the line that comes out of the phone.
   wooden: {
-    a: [[30, 0.4, 18, 0.4], [24, 23.5, 12, 23.5], [22, 44, 12, 44], [23, 58, 12, 58], [22, 70, 12, 70]],
+    a: [[30, 0.4, 5, 0.4], [24, 23.5, 5, 23.5], [22, 44, 5, 44], [23, 58, 5, 58], [22, 70, 5, 70]],
     "other-1": [[58, 0.5, 12, 0.3], [82, 1.6, OFF_LEFT, 2.2], [OFF_RIGHT, 2.9, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
     "other-4": [[90, 0.8, OFF_LEFT, 1], [OFF_RIGHT, 2.1, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
-    "other-6": [[30, 0.8, 24, 0.3], [22, 3.1, OFF_LEFT, 2.6], [OFF_LEFT, 7, OFF_LEFT, 30]],
+    "other-6": [[30, 0.8, 8, 0.2], [22, 3.1, OFF_LEFT, 2], [OFF_LEFT, 7, OFF_LEFT, 30]],
   },
   encounter: {
     b: [[3, 30, -3, 2], [6, 60, -3, 50], [8, 104, -3, 99]],
@@ -125,7 +127,10 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             <span className={c("ch-decade")} data-reveal="" style={{ "--at": "0px", "--pat": "-14px" }}>
               2000s
             </span>
-            <Text name="mine" look="headline" className={c("ch-mine")} />
+            <div className={c("ch-mine")}>
+              <Text name="mine" look="headline" />
+              <Text name="mine-one" look="quiet" />
+            </div>
             <Picture
               className={c("ch-device")}
               name="device"
@@ -135,16 +140,20 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
               small={480}
               sizes="(max-width: 60rem) 72vw, 400px"
             />
-            <Text name="memory" look="lead" className={c("ch-col")} />
+            <div className={c("ch-col", "ch-told2")}>
+              <Text name="memory" look="medium" />
+              <Text name="memory-aside" look="quiet" />
+            </div>
             <Knots of={LINES.memory} />
           </div>
 
-          {/* The years between, in brief: the thread runs bare, with a bead
-              where a game was played, among the others, and the 2020s come. */}
+          {/* The years between, in brief: the thread runs bare among the
+              others, and the 2020s come. */}
           <div className={c("ch-years")}>
-            <span className={c("ch-decade")} data-reveal="" style={{ "--at": "74%", "--pat": "72%" }}>
+            <span className={c("ch-decade")} data-reveal="" style={{ "--at": "74%", "--pat": "76%" }}>
               2020s
             </span>
+            <Text name="years" look="lead" className={c("ch-yearsText")} />
             <Knots of={LINES.years} />
           </div>
 

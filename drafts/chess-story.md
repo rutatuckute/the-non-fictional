@@ -19,34 +19,41 @@ Nothing major, and yet so surprisingly vivid.
 
 This is mine.
 
+<!--step:mine-one-->
+
+One of them.
+
 <!--step:memory-->
 
-My father taught me how to play (except for *en passant*, what is this rule anyway?).\
-And that feeling of genuine excitement mixed with curiosity.
+My father taught me how to play.
 
-<!--step:not-a-player-->
+<!--step:memory-aside-->
 
-I'm not THE chess player, though.
+Except for *en passant*, what is this rule anyway?
 
-<!--step:not-defining-->
+<!--step:years-->
 
-It's far from being a defining part of who I am.
+Years went by. No chess.
 
 <!--step:board-->
 
-I just like the strategic and analytical aspect of the game.
+Until I bought a compact chessboard. Different people across different stages of life, yet same game.
 
-<!--step:possibilities-->
+<!--step:not-a-player-->
 
-That, and its endless possibilities.
+I'm not THE chess player, though. It's far from being a defining part of who I am. I just like the strategic and analytical side of the game. That, and its endless possibilities.
+
+<!--step:chess-com-->
+
+Then came Chess.com
 
 <!--step:obsession-->
 
-Chess.com brought more fast dopamine, to the point of overtaking social media (winning trade-off strategy?).
+It brought faster dopamine, to the point of overtaking social media in screen time. A winning trade-off?
 
 <!--step:obsession-questions-->
 
-And so gradually more games, more mistakes, and so more questions
+And so, gradually, more games, more mistakes, and with them, more questions.
 
 <!--step:people-title-->
 
@@ -58,7 +65,15 @@ There's something intrinsically beautiful in playing against a randomly matched 
 
 <!--step:strangers-->
 
-Who are they? Where are they now? In which random moment of their lives they find themselves in?
+Who are they?
+
+<!--step:strangers-where-->
+
+Where are they now?
+
+<!--step:strangers-moment-->
+
+In which random moment of their lives they find themselves in?
 
 <!--step:club-->
 
@@ -66,11 +81,11 @@ I went to London chess club once. Played the safe opening for the whites I learn
 
 <!--step:professor-->
 
-The professor was observing from aside:
+A professor stood nearby, watching.
 
 <!--step:professor-quote-->
 
-“Why are you playing the London system if aggressiveness is in your nature?”
+Why are you playing the London system if aggressiveness is in your nature?
 
 <!--step:professor-how-->
 

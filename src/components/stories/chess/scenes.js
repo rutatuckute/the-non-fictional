@@ -23,9 +23,8 @@ const STRANGERS = [
   { name: "oga_blunders_ng", rating: 688, country: "Nigeria", flag: "ng", tone: "#5c6650", figure: "stranger-3", focus: "50% 52%" },
   { name: "krzywy_goniec", rating: 905, country: "Poland", flag: "pl", tone: "#6a5266", figure: "stranger-4", focus: "36% 40%" },
 ]
-// Each stays for this much scrolling, in screens; the step is given what the four need.
-const EACH = 0.5
-const STRANGERS_REST = EACH * STRANGERS.length - 0.72 + 0.15
+// Each stays for this much scrolling, in screens: the four pass while three short questions do.
+const EACH = 0.55
 
 // A country's flag, drawn: small enough that four simple ones are all it takes.
 const FLAGS = {
@@ -130,7 +129,7 @@ const Strangers = ({ step, matched }) => {
 
 // What the scene shows at each step: the phone, and then its strangers; the
 // club's board; the remark, alone; the board among a thousand.
-const VIEWS = ["phone", "phone", "club", "club", "club", "how", "many", "many"]
+const VIEWS = ["phone", "phone", "phone", "phone", "club", "club", "club", "how", "many", "many"]
 
 // Part II. One board stays on screen: on the phone, where strangers come and
 // go; then at the club in London, where the opening is played and the
@@ -143,7 +142,10 @@ export const People = () => (
     label="The people behind the game"
     steps={[
       { text: <Text name="people-intro" look="lead" /> },
-      { text: <Text name="strangers" look="lead" />, rest: STRANGERS_REST },
+      // three questions, one scroll each, while the strangers come and go
+      { text: <Text name="strangers" look="lead" /> },
+      { text: <Text name="strangers-where" look="lead" /> },
+      { text: <Text name="strangers-moment" look="lead" /> },
       // the London System is set up on the board while this step's stretch passes
       { text: <Text name="club" look="lead" />, rest: CLUB_REST },
       { text: <Text name="professor" look="lead" /> },
@@ -159,23 +161,23 @@ export const People = () => (
         {/* How the author's last 998 games ended, each a tiny board
             (scripts/stories/chess/make-boards.cjs); the middle place is the
             club's. The grid keeps to the scene, clear of the words. */}
-        <Show on={step >= 6} className={c("ch-minis")}>
+        <Show on={step >= 8} className={c("ch-minis")}>
           <img
             src="/images/stories/chess/boards.webp"
-            alt="Hundreds of tiny chessboards in a grid: how the author’s last thousand games ended, her pieces in clay, her opponents’ in ivory."
+            alt="Hundreds of tiny chessboards in a grid: how the author’s last thousand games ended, her pieces in bright green, her opponents’ in a darker green."
             width={1776}
             height={1296}
             decoding="async"
           />
         </Show>
         <div className={c("ch-boardwrap")} data-view={VIEWS[step]}>
-          <Show on={step <= 1} className={c("ch-phoneLayer")}>
+          <Show on={step <= 3} className={c("ch-phoneLayer")}>
             <Strangers step={1} matched={step >= 1} />
           </Show>
           {/* The club: its own board, pink and white. The two players are
               hands (club.js); the professor, who leans in once the opening is
               played, is the scene's one figure. */}
-          <Show on={during(step, 3, 4, 5)} className={c("ch-professor")}>
+          <Show on={during(step, 5, 6, 7)} className={c("ch-professor")}>
             <img
               src="/images/stories/chess/professor.webp"
               srcSet="/images/stories/chess/professor-300.webp 300w, /images/stories/chess/professor.webp 520w"
@@ -186,21 +188,23 @@ export const People = () => (
               decoding="async"
             />
           </Show>
-          <Show on={step >= 2} className={c("ch-clubBoard")}>
-            <ClubBoard during={2} />
+          <Show on={step >= 4} className={c("ch-clubBoard")}>
+            <ClubBoard during={4} />
           </Show>
-          <Show on={step === 2} className={c("ch-place")}>
+          <Show on={step === 4} className={c("ch-place")}>
             <svg viewBox="0 0 10 14" aria-hidden="true">
               <path d="M5 0.6a4.2 4.2 0 0 0-4.2 4.2C0.8 8 5 13.4 5 13.4S9.2 8 9.2 4.8A4.2 4.2 0 0 0 5 0.6Zm0 5.9a1.7 1.7 0 1 1 0-3.4 1.7 1.7 0 0 1 0 3.4Z" />
             </svg>
             London
             <span>early 2026</span>
           </Show>
+          {/* What he asked, as he asks it: it comes up from him, in a
+              speech balloon over his head. */}
+          <Show on={step === 6} className={c("ch-bubble")}>
+            <Text name="professor-quote" look="said" />
+          </Show>
         </div>
-        <Show on={step === 4} className={c("ch-quote")}>
-          <Text name="professor-quote" look="medium" />
-        </Show>
-        <Show on={step === 5} className={c("ch-how")}>
+        <Show on={step === 7} className={c("ch-how")}>
           <Text name="professor-how" look="large" />
         </Show>
       </>

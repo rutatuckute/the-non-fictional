@@ -42,8 +42,8 @@ the published site. The names, in reading order:
 | Part | Names |
 | --- | --- |
 | Opening | `opening` |
-| I | `mine`, `memory`, `not-a-player`, `not-defining`, `board`, `possibilities`, `obsession`, `obsession-questions` |
-| II | `people-title` (a heading), `people-intro`, `strangers`, `club`, `professor`, `professor-quote`, `professor-how`, `boards`, `data` |
+| I | `mine`, `mine-one`, `memory`, `memory-aside`, `years`, `board`, `not-a-player`, `chess-com`, `obsession`, `obsession-questions` |
+| II | `people-title` (a heading), `people-intro`, `strangers`, `strangers-where`, `strangers-moment`, `club`, `professor`, `professor-quote`, `professor-how`, `boards`, `data` |
 | III | `data-intro` |
 | III, first question | `say-message`, `say-prediction`, `say-guess`, `say-answer`, `say-surprise`, `say-limits` |
 | III, second question | `wrong-observation`, `wrong-decide`, `wrong-outcome`, `wrong-crowd`, `wrong-you` |
@@ -164,8 +164,8 @@ in a large and a phone width:
   strangers" in the data-stories `PROMPTS.md`.
 - `boards`: "the board of a thousand games": how the author's last 998 games
   ended, each a tiny board, in a grid of 37 by 27 whose middle place is left
-  for the club's board. Her pieces are dots of the story's clay, her
-  opponents' ivory. `make-boards.cjs` draws it from final positions exported
+  for the club's board. The pieces are dots of the site's green for data, hers
+  bright, her opponents' darker. `make-boards.cjs` draws it from final positions exported
   in the data-stories repository (`chess-story/analysis/export_boards.py`:
   the positions and the colour she played, nothing else):
 
@@ -190,9 +190,9 @@ carries Part I from the wooden set to the chart:
    the phone, and while question marks gather where that line climbs.
 
 Nothing waits for a text: the scroll alone leads it, forwards and back. Beside
-the set, four sentences change with the scroll while it stays (`SAID`:
-`not-a-player`, `not-defining`, `board`, `possibilities`; when each takes over
-is in `SAID_AT`); beside the chart, two more (`obsession`, then
+the set stand two texts, one after the other (`SAID`: `board` as it comes in
+and turns over, `not-a-player` from when the pieces are set up; `SAID_AT`);
+beside the phone, `chess-com`; beside the chart, two more (`obsession`, then
 `obsession-questions` as the questions come).
 
 From the moment the phone appears the scene has a ground of the page's own
@@ -220,13 +220,15 @@ thread, as data.
 - With motion turned off each move is made in one step, with no hand, and the
   scene sits on the scroll.
 
-On a phone the words stand above the board, and the last sentence goes when
-the first move is answered, for the hands that answer come in there.
+On a phone the words stand above the board, set a size smaller so the longer
+text fits there, and they go when the first move is answered, for the hands
+that answer come in there.
 
 The threads' stretch here is several screens long and passes behind the stage,
 so `LINES.wooden` keeps each thread to a lane: the story's thread behind the
-board (on a phone, at the left, clear of the words above it), the others off
-the screen's edge. The story's thread has to reach far enough down the stretch
+board (on a phone, at the far left, clear of the words above it: it moves
+there at the end of the years' stretch, before those words come into view),
+the others off the screen's edge. The story's thread has to reach far enough down the stretch
 to be under the ground before its end comes into view.
 
 ## Part II: the people behind the game
@@ -240,14 +242,17 @@ What the scene shows at each step is in `VIEWS`:
 
 1. `people-intro`: the phone again, before a game (`phone-game`), with nobody
    on the other side yet.
-2. `strangers`: the opponent changes as the reader scrolls, on the phone's
-   screen and, large enough to read, beside it: a username, a rating, a
-   country (`STRANGERS`). The four are invented, and were checked not to be
-   anyone's username. Each has a small picture, `figure`.
+2. `strangers`, `strangers-where`, `strangers-moment`: three short questions,
+   one scroll each. Meanwhile the opponent changes, on the phone's screen and,
+   large enough to read, beside it: a username, a rating, a country
+   (`STRANGERS`). The four are invented, and were checked not to be anyone's
+   username. Each has a small picture, `figure`.
 3. `club`: the phone goes and the club's board comes up out of its board;
    "London, early 2026" stands beside it, and the opening is played (below).
 4. `professor`: he leans in, at the board's left.
-5. No words: his question (`professor-quote`) stands across the scene.
+5. No words beside the scene: his question (`professor-quote`) comes up from
+   him, in a speech balloon over his head. The balloon says it is said, so the
+   text has no quotation marks.
 6. No words: `professor-how`, alone, the club far back behind it.
 7. `boards`, `data`: the board goes small, into the middle of the thousand
    (`boards`, a picture four of the scene's squares wide, kept to the scene's

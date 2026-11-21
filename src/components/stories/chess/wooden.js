@@ -94,12 +94,10 @@ const REST = { tall: [0.2, 0.19] }
 const TURN_AT = 0.4
 const SETUP_AT = 0.9
 const FIRST_AT = 1.65
-// Beside the set, four sentences, one after another: when each of the last
-// three takes over. The first is there as the set comes in, lying open; the
-// second as it turns over; the third as the pieces are set up; the last as
-// the game begins.
-const SAID = ["not-a-player", "not-defining", "board", "possibilities"]
-const SAID_AT = [0.5, 1, 1.5]
+// Beside the set, two texts: the first as the set comes in, lies open and
+// turns over, the second from when the pieces are set up.
+const SAID = ["board", "not-a-player"]
+const SAID_AT = [1]
 const EVERY = 0.4
 const LASTS = 0.6
 const GAME_OVER = FIRST_AT + (PLIES.length - 1) * EVERY + LASTS
@@ -290,13 +288,15 @@ export const Wooden = ({ lines }) => {
       // (on a phone the words stand above the board, where the first hand to answer comes in)
       quiet: scrolled >= FIRST_AT + EVERY - 0.12,
       played: now.played,
-      // (no words while the phone is on its way: it passes over where they stand)
+      // (no words for a moment as the board becomes the phone)
       words:
         scrolled < PHONE_AT + 0.15
           ? SAID[SAID_AT.filter(at => scrolled >= at).length]
-          : scrolled < REST_AT + CHANGE - 0.12
+          : scrolled < PHONE_AT + 0.3
             ? "none"
-            : scrolled < ASK_AT
+            : scrolled < REST_AT + CHANGE - 0.12
+              ? "chess-com"
+              : scrolled < ASK_AT
               ? "obsession"
               : "obsession-questions",
       phone: scrolled >= PHONE_AT + CHANGE / 2,
@@ -387,15 +387,17 @@ export const Wooden = ({ lines }) => {
             style={{ left: share(PHONE.left, BOARD.width), top: share(PHONE.top, BOARD.height), width: share(PHONE.width, BOARD.width), opacity: 0 }}
           />
         </div>
-        {/* The words beside the scene, each for its part of it: four
-            sentences change with the scroll while the set stays. On a phone
-            the last gives way when the game is answered: the hands need the
-            room. Then two more, beside the chart. */}
+        {/* The words beside the scene, each for its part of it. On a phone
+            the set's give way when the game is answered: the hands need the
+            room. Then a few for the phone, and two beside the chart. */}
         {SAID.map(name => (
           <div key={name} className={c("ch-woodenText")} data-on={stage.words === name ? "true" : "false"} data-quiet={stage.quiet ? "true" : "false"}>
             <Text name={name} look="lead" />
           </div>
         ))}
+        <div className={c("ch-woodenText")} data-on={stage.words === "chess-com" ? "true" : "false"}>
+          <Text name="chess-com" look="lead" />
+        </div>
         {["obsession", "obsession-questions"].map(name => (
           <div key={name} className={c("ch-woodenAfter")} data-on={stage.words === name ? "true" : "false"}>
             <Text name={name} look="lead" />
