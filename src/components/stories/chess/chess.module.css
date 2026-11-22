@@ -180,122 +180,78 @@
 }
 .ch-sideBack { transform: rotateX(180deg); }
 
-/* ── the opening: one screen ── */
-.ch-open {
-  position: relative; display: grid; align-content: center; gap: 22px;
-  min-height: calc(100vh - 76px); min-height: calc(100svh - 76px); padding: 8vh 0 14vh;
-}
-.ch-kicker { color: var(--ink-3); font: 500 11px / 1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
-.ch-story .ch-title {
-  margin: 0; color: var(--ink-2);
-  font: 400 22px / 1.25 var(--font-title); letter-spacing: -0.006em; text-transform: none;
-}
-/* The question keeps clear of the right of the screen, where the threads come down. */
-.ch-open .ch-text { margin-top: 14px; max-width: min(20em, 80%); }
+/* ── a glimpse, a memory, and the device closing ── */
+.ch-origin { position: relative; }
+.ch-pocketTrack { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.ch-pocketStage { z-index: 2; position: sticky; top: 0; height: 100svh; overflow: clip; pointer-events: none; }
+.ch-pocket { --peek: 1; --fold: 0deg; position: absolute; z-index: 2; left: 62%; top: 17svh; width: min(38%, 42svh); aspect-ratio: 800 / 1231; perspective: 1200px; transform: translateX(calc(var(--peek) * 65%)); }
+.ch-pocketRight, .ch-pocketFlap, .ch-pocketFront, .ch-pocketBack { position: absolute; top: 0; width: 50%; height: 100%; }
+.ch-pocketRight { left: 50%; overflow: hidden; }
+.ch-pocketRight .ch-picture { width: 200%; max-width: none; left: -100%; }
+.ch-pocketFlap { z-index: 3; left: 0; transform-origin: 100% 50%; transform-style: preserve-3d; transform: rotateY(var(--fold)); }
+.ch-pocketFront, .ch-pocketBack { inset: 0; width: 100%; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.ch-pocketFront .ch-picture { width: 200%; max-width: none; }
+.ch-pocketBack { transform: rotateY(180deg); }
+.ch-pocketBack .ch-picture { width: 200%; max-width: none; height: 100%; left: -100%; }
+.ch-open { position: relative; display: grid; align-content: center; gap: 28px; min-height: calc(100svh - 76px); padding: calc(var(--bar) + 7svh) 0 14svh; }
+.ch-story .ch-title { position: relative; z-index: 2; max-width: 56%; margin: 0; color: var(--ink); font: 400 clamp(25px, 2.6vw, 34px) / 1.15 var(--font-title); letter-spacing: var(--tracking-title); text-transform: none; }
+.ch-open .ch-text { max-width: 56%; margin: 0; font-size: clamp(30px, 3.3vw, 46px); line-height: 1.13; text-wrap: pretty; }
+.ch-open .ch-text p { margin: 0; }
+.ch-memory { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; gap: 36px; padding: 5svh 0 18svh; }
+.ch-mine, .ch-told2 { position: relative; z-index: 2; width: 42%; display: grid; gap: 10px; }
+.ch-told2 { gap: 16px; }
 
-/* ── free scroll: text and pictures pass by ── */
+/* A pause in the same reading column, with the next object's edge in sight. */
+.ch-firstChapter { position: relative; }
+.ch-years { position: relative; min-height: 52svh; padding: 8svh 0 12svh; }
+.ch-text.ch-yearsText { max-width: none; font-size: clamp(64px, 8vw, 110px); line-height: 0.98; letter-spacing: -0.045em; }
+.ch-yearsText p { margin: 0; }
+.ch-woodenReading { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr); gap: 9%; align-items: start; padding: 0 0 6svh; }
+.ch-woodenStill { position: sticky; top: calc(var(--bar) + 10svh); width: min(100%, 52svh); justify-self: center; }
+.ch-woodenPassages { padding: 12svh 0 5svh; display: grid; gap: 18svh; }
+.ch-woodenPassages .ch-text { min-height: 30svh; }
 .ch-free { position: relative; padding: 6vh 0 12vh; }
 .ch-row { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
+.ch-storyMeta { margin-bottom: 24px; color: var(--ink-3); font: 400 12px / 1.5 var(--font-mono); }
 
-.ch-memory { padding-top: 4vh; row-gap: 26px; }
-.ch-mine { position: relative; z-index: 2; grid-column: 2 / 7; grid-row: 1; display: grid; gap: 8px; }
-/* the memory's own words: one line, and a quieter one under it */
-.ch-told2 { display: grid; gap: 12px; }
-.ch-device { grid-column: 2 / 6; grid-row: 2; }
-.ch-memory .ch-col { grid-column: 8 / 13; grid-row: 2; align-self: center; }
-/* The years between: the thread as a timeline, the decades named behind it. */
-.ch-years { position: relative; height: 64vh; }
-.ch-yearsText { position: absolute; left: 56%; top: 30%; width: 26%; }
-.ch-decade {
-  --shown: 1;
-  position: absolute; left: 50%; top: var(--at); z-index: 0; transform: translate(-50%, -50%);
-  color: var(--rule); font: 300 clamp(72px, 12vw, 164px) / 1 var(--font-title); letter-spacing: var(--tracking-display);
-  pointer-events: none; user-select: none;
-}
+/* ── one phone: first game → time in games → the next opponent ── */
+.ch-online.ch-pin[data-plain="true"] .ch-scene { inset: 0; }
+.ch-onlineGraphic { position: relative; width: 100%; height: 100%; }
+.ch-onlineArt { position: absolute; inset: 0 0 0 42%; display: grid; place-items: center; }
+.ch-onlineLink { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.ch-onlineLink path { fill: none; stroke: var(--thread); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.ch-online .ch-phoneLayer { transform-origin: 0 0; transition: opacity 300ms ease, visibility 0s linear 300ms; }
+.ch-firstGamePhone { position: absolute; inset: 0; display: block; width: 100%; height: auto; }
+.ch-nextGamePhone { position: absolute; inset: 0; opacity: 0; }
+.ch-onlineChart { position: absolute; left: 0; right: 0; top: 49%; transform: translateY(-50%); }
+.ch-onlineKnots { position: absolute; left: 0; right: 0; top: 0; height: 300svh; pointer-events: none; }
+.ch-online[data-reading="true"] .ch-steps { padding-bottom: 22svh; }
+.ch-online[data-reading="true"] .ch-step { position: relative; min-height: 72svh; align-items: center; padding: 0; }
+.ch-online[data-reading="true"] .ch-step .ch-card { width: 35%; padding: 24px 0; border: 0; background: none; opacity: 1; visibility: visible; height: auto; }
+.ch-online[data-reading="true"] .ch-card .ch-text + .ch-text { margin-top: 24px; }
+.ch-online .ch-partTitle :is(h1,h2,h3) { white-space: normal; font-size: clamp(28px, 3vw, 40px); }
+.ch-online .ch-step:nth-child(4) { scroll-margin-top: var(--bar); }
 
-/* The wooden set, pinned (wooden.js): its stretch is as many screens long as
-   the scene takes, and the stage stays on screen for all of them. The stage
-   is clear, so the threads show around the board and are hidden behind it. */
-.ch-woodenPin { position: relative; height: calc((var(--screens) + 1) * 100vh); height: calc((var(--screens) + 1) * 100svh); }
-.ch-woodenStage {
-  position: sticky; top: 0; z-index: 2; height: 100vh; height: 100svh; overflow: hidden;
-  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center;
-}
-/* The board is held to two thirds of the screen's height, so a hand has room
-   to come in above it and below it. */
-.ch-woodenScene {
-  position: relative; grid-column: 1 / 7; grid-row: 1; justify-self: center; width: min(100%, 55vh); width: min(100%, 55svh);
-  aspect-ratio: 838 / 1000;
-}
-/* The set itself: its two sides, and the pieces and hands over them. wooden.js
-   draws it back, frame by frame, as the board becomes the phone's. */
-.ch-woodenLid { position: absolute; inset: 0; perspective: 1500px; transform-origin: 0 0; will-change: transform, opacity; }
-/* The pieces and the hands, over the board: set up once it has turned over.
-   Each is moved by a transform written by wooden.js, frame by frame. */
-.ch-woodenPieces { position: absolute; inset: 0; opacity: 0; transition: opacity 300ms ease; }
-.ch-woodenPieces[data-on="true"] { opacity: 1; transition: opacity 400ms ease 1000ms; }
-.ch-woodenPieces img { position: absolute; left: 0; top: 0; height: auto; max-width: none; will-change: transform; }
-/* An arm runs off the screen where it can; where it ends first, it fades. */
-.ch-woodenPieces .ch-woodenHand { z-index: 1000; pointer-events: none; will-change: transform, opacity; }
-.ch-woodenHand[data-from="below"] { mask-image: linear-gradient(to bottom, #000 82%, transparent 99%); }
-.ch-woodenHand[data-from="above"] { mask-image: linear-gradient(to top, #000 82%, transparent 99%); }
-/* The phone, laid over the set with its board on the set's squares; wooden.js
-   moves it too. It is taller than the scene's box and is cut by the screen. */
-.ch-woodenPhone { position: absolute; z-index: 3; height: auto; max-width: none; transform-origin: 0 0; pointer-events: none; will-change: transform, opacity; }
-/* The words beside the scene share one place, each there for its part of it. */
-.ch-woodenText { grid-column: 8 / 13; grid-row: 1; opacity: 0; transition: opacity 400ms ease; }
-.ch-woodenText[data-on="true"] { opacity: 1; }
-/* The scene's own ground, in the page's colour: it comes when the phone does,
-   and the thread that came down the page is taken in under it. */
-.ch-woodenLink { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-.ch-woodenLink path { fill: none; stroke: var(--thread); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
-.ch-woodenVeil { position: absolute; inset: 0 -50vw; background: var(--void); pointer-events: none; }
-/* The chart the phone comes to rest under. It stands still; wooden.js writes
-   on it how much of it shows. Room is left under it for the phone. */
-.ch-woodenChart { position: absolute; left: 0; width: 62%; top: 44%; transform: translateY(-50%); pointer-events: none; }
-.ch-woodenChart .ch-plot { aspect-ratio: 2 / 1; max-height: 42vh; max-height: 42svh; }
-/* … and the words beside the chart, one after the other in one place. */
-.ch-woodenAfter {
-  position: absolute; left: 68%; right: 0; top: 44%; transform: translateY(-50%);
-  opacity: 0; transition: opacity 400ms ease;
-}
-.ch-woodenAfter[data-on="true"] { opacity: 1; }
-
-/* The line of data, an estimate beside it, and just enough of an axis to read
-   them. Text is in ink; only the lines, their keys and the questions carry colour. */
+/* The complete line is visible as soon as the chart arrives. Only the small
+   annotation at the rise waits for the habit sentence. */
 .ch-chart { position: relative; margin: 0; }
-.ch-legend {
-  display: flex; flex-wrap: wrap; gap: 6px 24px; margin: 0 0 18px 2rem;
-  color: var(--ink-2); font: 500 12px / 1.4 var(--font-mono);
-}
-.ch-legend span { display: inline-flex; align-items: center; gap: 9px; }
-.ch-chart { --social: var(--ink-2); }
-.ch-key { display: inline-block; flex: none; width: 24px; height: 0; border-top: 2px solid var(--thread); }
-.ch-key[data-line="social"] { border-top: 2px dashed var(--social); }
-.ch-plot { position: relative; aspect-ratio: 8 / 3; margin: 0 0 1.9rem 2rem; }
+.ch-story .ch-timeTitle { margin: 0 0 82px 2rem; color: var(--ink); font: 400 clamp(23px, 2.1vw, 29px) / 1.1 var(--font-title); letter-spacing: var(--tracking-title); text-transform: none; }
+.ch-plot { position: relative; aspect-ratio: 1.8; max-height: 32svh; margin: 0 0 2.2rem 2rem; }
 .ch-grid, .ch-base { position: absolute; left: 0; right: 0; height: 0; border-top: 1px solid var(--rule); }
 .ch-base { bottom: 0; border-top-color: var(--rule-strong); }
-.ch-tick, .ch-year {
-  position: absolute; color: var(--ink-3); white-space: nowrap;
-  font: 400 11.5px / 1 var(--font-mono); font-variant-numeric: tabular-nums;
-}
+.ch-tick, .ch-year, .ch-timeUnit { position: absolute; color: var(--ink-2); white-space: nowrap; font: 400 11px / 1 var(--font-mono); font-variant-numeric: tabular-nums; }
 .ch-tick { right: calc(100% + 10px); transform: translateY(-50%); }
-.ch-year { top: calc(100% + 9px); transform: translateX(-50%); }
-/* Both lines are drawn from left to right, as far across as --drawn says. The
-   way up from the phone, at the very left, is there from the start. */
-.ch-lines {
-  position: absolute; inset: 0; overflow: visible;
-  clip-path: inset(-8px calc((1 - var(--drawn, 1)) * 100% - 2px) -60px -8px);
-}
-.ch-lines path { fill: none; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.ch-year { top: calc(100% + 10px); transform: translateX(-50%); }
+.ch-timeUnit { left: 0; bottom: calc(100% + 12px); font-size: 10px; }
+.ch-lines { position: absolute; inset: 0; overflow: visible; }
+.ch-lines path { fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .ch-measured { stroke: var(--thread); }
-.ch-estimate { stroke: var(--social); stroke-dasharray: 5 4; }
-/* The questions, around the climb: each appears when --asked has reached it. */
-.ch-ask {
-  position: absolute; transform: translate(-50%, -50%) rotate(var(--turn)); color: var(--thread);
-  font: 400 calc(var(--size) * 1.2px) / 1 var(--font-title);
-  opacity: clamp(0, (var(--asked, 1) - var(--from)) * 12, 1);
-}
+.ch-timePeak { position: absolute; right: 0; bottom: calc(100% + 12px); opacity: var(--peak, 1); color: var(--ink); font: 400 12px / 1.4 var(--font-mono); text-align: right; }
+.ch-timePeak small { display: block; color: var(--ink-2); font-size: 10px; }
+.ch-peakPointer { position: absolute; inset: 0; overflow: visible; opacity: var(--peak, 1); pointer-events: none; }
+.ch-peakPointer path { fill: none; stroke: var(--thread); stroke-width: 1; }
+.ch-peakPointer circle { fill: var(--thread); }
+.ch-timeCaption { margin-left: 4rem; color: var(--ink-2); font: 400 11px / 1.5 var(--font-mono); }
 
 /* ── pinned scenes: the graphic stays, the cards pass ── */
 .ch-pin { position: relative; z-index: 3; border-top: 1px solid var(--rule); background: var(--void); }
@@ -628,22 +584,33 @@
   .ch-knot { left: var(--px); top: var(--py); }
   .ch-row { grid-template-columns: minmax(0, 1fr); row-gap: 5vh; }
   .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-mine, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
-  .ch-yearsText { left: 32%; right: 0; top: 38%; width: auto; }
-  .ch-open .ch-text { max-width: none; }
-  .ch-memory { row-gap: 22px; padding-bottom: 5vh; }
-  .ch-device { width: 72%; }
-  /* The pinned set takes the screen's width; its words stand above it, clear
-     of the threads' lane at the left, and give way when the game begins. */
-  .ch-woodenStage { grid-template-columns: minmax(0, 1fr); margin-inline: calc(-1 * var(--page-margin)); padding-inline: var(--page-margin); }
-  .ch-woodenScene { grid-column: 1; width: min(100%, 42svh); top: 9svh; }
-  .ch-woodenText { position: absolute; top: calc(var(--bar) + 1.5svh); left: calc(var(--page-margin) + 14%); right: var(--page-margin); transition: opacity 300ms ease; }
-  .ch-woodenText[data-quiet="true"] { opacity: 0; }
-  /* the chart takes the width, its words above it, the phone under its corner */
-  .ch-woodenChart { left: var(--page-margin); right: var(--page-margin); width: auto; top: 31svh; transform: none; }
-  .ch-woodenChart .ch-plot { aspect-ratio: 2 / 1; max-height: 36svh; }
-  .ch-woodenAfter { left: var(--page-margin); right: var(--page-margin); top: calc(var(--bar) + 2svh); transform: none; }
-  .ch-decade { left: 42%; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: 46px; }
-  .ch-plot { aspect-ratio: 2 / 1; }
+  .ch-origin { display: flex; flex-direction: column; }
+  .ch-open { order: 1; min-height: auto; gap: 26px; padding: calc(var(--bar) + 28px) 0 34px; }
+  .ch-story .ch-title { max-width: none; font-size: 26px; }
+  .ch-open .ch-text { max-width: none; font-size: clamp(28px, 6.5vw, 36px); }
+  .ch-pocketTrack { display: contents; }
+  .ch-pocketStage { order: 2; position: relative; top: auto; height: auto; margin: 0; overflow: visible; }
+  .ch-pocket { position: relative; left: auto; top: auto; width: min(72%, 44svh); margin: 0 auto; transform: none; }
+  .ch-memory { order: 3; min-height: auto; padding: 44px 0 36px; gap: 28px; }
+  .ch-mine, .ch-told2 { width: 100%; }
+  .ch-years { min-height: auto; padding: 64px 0 52px; }
+  .ch-text.ch-yearsText { font-size: clamp(54px, 11vw, 82px); }
+  .ch-woodenReading { display: block; padding-bottom: 24px; }
+  .ch-woodenStill { position: relative; top: auto; width: min(90%, 48svh); margin: 0 auto; }
+  .ch-woodenPassages { display: grid; padding: 32px 0 28px; gap: 28px; }
+  .ch-woodenPassages .ch-text { min-height: 0; }
+  .ch-online.ch-pin[data-plain="true"] .ch-scene { inset: 0; height: 100svh; }
+  .ch-onlineArt { inset: 28svh var(--page-margin) auto; height: 54svh; }
+  .ch-online .ch-onlineChart { top: 43%; }
+  .ch-online .ch-plot { aspect-ratio: 1.8; max-height: 27svh; }
+  .ch-online[data-reading="true"] .ch-step { align-items: flex-start; padding: calc(var(--bar) + 22px) 0 0; }
+  .ch-online[data-reading="true"] .ch-step .ch-card { width: 100%; padding: 0; }
+  .ch-online[data-reading="true"] .ch-card .ch-text + .ch-text { margin-top: 14px; }
+  .ch-online .ch-partTitle :is(h1,h2,h3) { font-size: clamp(26px, 5.5vw, 34px); }
+  .ch-online .ch-timeTitle { font-size: 22px; margin-bottom: 66px; }
+  .ch-online .ch-timeCaption { margin-left: 3.5rem; font-size: 10px; }
+  .ch-timePeak { font-size: 11px; }
+  .ch-timePeak small { font-size: 9px; }
   .ch-people { padding-top: 8vh; }
   .ch-peopleTitle { top: calc(var(--bar) + 1.2svh); }
   /* Part II's words stand under its name, the scene under them */
@@ -682,7 +649,40 @@
 
 /* A phone: the chart can be taller than it is wide-ish, for its lines to read. */
 @media (max-width: 40rem) {
-  .ch-plot, .ch-woodenChart .ch-plot { aspect-ratio: 4 / 3; }
+  .ch-online .ch-plot { aspect-ratio: 1.55; }
   /* the longer texts have to fit above the board, and above Part II's scene */
   .ch-woodenText .ch-text.ch-lead, .ch-told .ch-text.ch-lead { font-size: 17px; line-height: 1.42; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ch-pocket { transform: none; }
+  .ch-pocketFlap, .ch-pocketBack { transform: none; }
+  .ch-pocketBack { left: 100%; visibility: hidden; }
+  .ch-pocket[data-closed="true"] .ch-pocketFront { visibility: hidden; }
+  .ch-pocket[data-closed="true"] .ch-pocketBack { visibility: visible; }
+  .ch-online .ch-phoneLayer { transition: none; }
+}
+
+/* Scroll sets the phone transform directly; a CSS transform transition would
+   restart on every measured frame and leave the phone behind the chart. */
+.ch-online .ch-layer.ch-phoneLayer, .ch-online .ch-layer.ch-phoneLayer[data-on="true"] { transform-origin: 0 0; transition: opacity 300ms ease, visibility 0s linear 300ms; }
+.ch-online .ch-layer.ch-phoneLayer[data-on="true"] { transition-delay: 0s; }
+@media (prefers-reduced-motion: reduce) {
+  .ch-online .ch-layer.ch-phoneLayer, .ch-online .ch-layer.ch-phoneLayer[data-on="true"] { transition: none; }
+}
+
+.ch-pocket[data-folded="true"] .ch-pocketRight { visibility: hidden; }
+
+@media (max-width: 60rem) {
+  /* The stationary graphic covers incoming copy until it reaches the reading
+     band above it. Paragraphs retain their own physical places in the page. */
+  .ch-online.ch-pin[data-plain="true"] .ch-scene { z-index: 3; pointer-events: none; }
+  .ch-onlineArt { background: var(--void); }
+  .ch-onlineArt { top: calc(28svh + var(--intro-space, 0) * 16svh); height: calc(54svh - var(--intro-space, 0) * 4svh); isolation: isolate; }
+  .ch-onlineArt::before { content: ""; position: absolute; inset: 0 0 -100svh; z-index: -1; background: var(--void); }
+  .ch-online .ch-stage { z-index: 3; }
+  .ch-online .ch-step[data-step="3"] .ch-lead { font-size: 18px; line-height: 1.35; }
+}
+@media (max-width: 360px) {
+  .ch-onlineArt { top: calc(28svh + var(--intro-space, 0) * 22svh); height: calc(54svh - var(--intro-space, 0) * 10svh); }
 }

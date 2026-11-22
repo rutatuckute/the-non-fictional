@@ -12,7 +12,7 @@ excerpt: Working draft.
 
 <!--step:opening-->
 
-Do you have that one memory your mind keeps wandering back to?\
+Do you have a memory your mind keeps wandering back to?\
 Nothing major, and yet so surprisingly vivid.
 
 <!--step:mine-->
@@ -33,27 +33,30 @@ Except for *en passant*, what is this rule anyway?
 
 <!--step:years-->
 
-Years went by. No chess.
+Years went by.\
+No chess.
 
 <!--step:board-->
 
-Until I bought a compact chessboard. Different people across different stages of life, yet same game.
+Then I bought a little wooden chess set. I played every now and then, with different people.
 
 <!--step:not-a-player-->
 
-I'm not THE chess player, though. It's far from being a defining part of who I am. I just like the strategic and analytical side of the game. That, and its endless possibilities.
+I’m not THE chess player.\
+I just like the strategic and analytical side of the game.\
+That, and its endless possibilities.
 
 <!--step:chess-com-->
 
-Then came Chess.com
+My first game on Chess.com lasted one move each.
 
 <!--step:obsession-->
 
-It brought faster dopamine, to the point of overtaking social media in screen time. A winning trade-off?
+By early 2026, I was opening Chess.com when I would usually have opened social media.
 
 <!--step:obsession-questions-->
 
-And so, gradually, more games, more mistakes, and with them, more questions.
+More games, more mistakes, and with them, more questions.
 
 <!--step:people-title-->
 
@@ -61,7 +64,7 @@ And so, gradually, more games, more mistakes, and with them, more questions.
 
 <!--step:people-intro-->
 
-There's something intrinsically beautiful in playing against a randomly matched stranger from any part of the world.
+I could see their username, their rating, and how much time they had left. I kept wondering what they’d been doing five minutes before we played.
 
 <!--step:strangers-->
 
