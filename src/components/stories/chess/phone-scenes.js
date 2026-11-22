@@ -133,6 +133,8 @@ export const Message = () => {
         alt="A phone, with my message lifting out of its screen."
         decoding="async"
       />
+      {/* when it was sent, as the screenshot shows it */}
+      <p className={c("ch-messageTime")}>18 May 2026, 23:52</p>
       <p className={c("ch-messagePop")} ref={bubble}>
         Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz
         😀

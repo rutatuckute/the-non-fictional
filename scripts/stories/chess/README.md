@@ -73,7 +73,7 @@ the published site. The names, in reading order:
 | Opening | `opening`, `opening-aside` (the smaller second line), `hold` (then the reader may keep a thread of their own) |
 | I | `mine`, `mine-one`, `memory`, `memory-aside` (with the en passant demo on the device), `years`, `years-none` ("No chess.", placed apart), `board`, `same-game`, `possibilities`, `not-a-player` (beside the chart), `chess-com` (its **Chess.com** is shown in the data green), `obsession`, `obsession-questions` |
 | II | `people-bridge` (before the title), `people-title` (a heading), `people-intro`, `people-plain`, `people-picture`, `strangers`, `strangers-where`, `strangers-moment`, `people-many`, `club`, `professor`, `professor-quote`, `professor-how`, `professor-maybe`, `central`, `self`, `boards` |
-| III | `data-intro` |
+| III | `investigation-title` (a heading), `data-intro`, `say-message` … `say-limits`, `wrong-observation`, `wrong-decide`, `wrong-outcome`, `wrong-crowd`, `wrong-right`, `wrong-you`, `wrong-stalemate`, `reveal-…` |
 | III, first question | `say-message`, `say-prediction`, `say-guess`, `say-answer`, `say-surprise`, `say-limits` |
 | III, second question | `wrong-observation`, `wrong-decide`, `wrong-outcome`, `wrong-crowd`, `wrong-you` |
 | III, third question | `reveal-professor`, `reveal-games`, `reveal-style` |
@@ -359,3 +359,5 @@ will stand there.
       node make-phone-pieces.cjs <repo>/node_modules/sharp <data-stories>/chess-story/assets/phone-new-game.png <repo>/public/images/stories/chess
 
 - `board-notes.json` (public): what each of the thousand boards was, for its note on hover; from `chess-story/analysis/export_board_notes.py` in the data-stories repository.
+
+- `wrong.json` (investigation 2): from `chess-story/analysis/export_wrong.py` in the data-stories repository (`.venv/bin/python -I chess-story/analysis/export_wrong.py <repo>/src/components/stories/chess/wrong.json`).

@@ -451,6 +451,9 @@
 .ch-told { position: absolute; left: 0; top: 50%; width: 36%; z-index: 5; }
 .ch-told > div { position: absolute; left: 0; right: 0; top: 0; transform: translateY(-50%); opacity: 0; transition: opacity 400ms ease; }
 .ch-told > div[data-on="true"] { opacity: 1; transition: opacity 400ms ease 150ms; }
+/* only the words in view take a tap (the reader's choice lives in them) */
+.ch-told > div { pointer-events: none; }
+.ch-told > div[data-on="true"] { pointer-events: auto; }
 /* Reading (Part II's club, wide screens): no cards, the words scroll past in
    the right-hand column, as beside the wooden set; the scene is at the left. */
 .ch-pin[data-reading="true"] .ch-scene { inset: 0 36% 0 0; }
@@ -630,6 +633,89 @@
   border: 1px solid var(--rule-strong); background: var(--void); color: var(--ink); font: 400 11.5px / 1.3 var(--font-mono);
 }
 
+/* Part III: the investigation. Down the rabbit hole (dive.js): the thousand
+   boards, where Part II left them, are dived into; three boards come up, one for
+   each question, each a way into its part. */
+.ch-dive { position: relative; z-index: 3; height: 240vh; height: 240svh; background: var(--void); }
+.ch-diveMark { position: absolute; left: 0; top: 87vh; top: 87svh; }
+.ch-diveStage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.ch-diveDeep {
+  position: absolute; left: 32%; top: 50%; width: calc(4 * min(54vh, 49.9%));
+  transform: translate(-50%, -50%) scale(calc(1 + var(--dive, 0) * 7)); opacity: calc(1 - var(--boards, 0)); will-change: transform;
+}
+.ch-diveDeep img { display: block; width: 100%; height: auto; }
+/* the club's board, back in its place at the grid's middle: the way down */
+.ch-diveDeep img.ch-diveClub { position: absolute; left: 50%; top: 50%; width: 2.3%; transform: translate(-50%, -50%); }
+.ch-diveThree {
+  position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; gap: 5svh; padding: calc(var(--bar) + 12svh) 0 6svh;
+  opacity: var(--boards, 0); transform: translateY(calc((1 - var(--boards, 0)) * 4svh)); pointer-events: none;
+}
+.ch-diveStage[data-boards="true"] .ch-diveThree { pointer-events: auto; }
+.ch-text.ch-diveWords { max-width: 30em; text-align: center; }
+.ch-diveWords p { text-align: center; }
+.ch-diveBoards { display: grid; grid-template-columns: repeat(3, minmax(0, 210px)); gap: clamp(20px, 4vw, 60px); justify-content: center; width: 100%; margin: 0; padding: 0; list-style: none; }
+.ch-diveBoards a { display: grid; gap: 14px; color: var(--ink-2); text-align: center; text-decoration: none; font: 400 13px / 1.35 var(--font-mono); transition: color 200ms ease; }
+.ch-diveBoards a:hover, .ch-diveBoards a:focus-visible { color: var(--ink); }
+.ch-diveBoards a:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px; }
+.ch-diveBoards b { display: block; margin-bottom: 4px; color: var(--ink-3); font-weight: 400; }
+.ch-diveBoards svg { display: block; width: 100%; height: auto; }
+.ch-diveBoards svg text { fill: #fff8ef; font: 600 8px / 1 var(--font-mono); }
+.ch-diveBoards svg text.ch-diveSmall { fill: var(--ink-2); font-size: 7px; font-weight: 400; }
+.ch-diveClay { fill: var(--thread); }
+.ch-diveLine { fill: none; stroke: var(--thread); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.ch-diveGrey { fill: none; stroke: var(--ink-3); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+/* the part's name stays over its scenes: they give it room at their top */
+.ch-part3 .ch-pin[data-reading="true"] .ch-scene { top: 9svh; }
+/* What we do when things go wrong (wrong.js): the phone, the hundred, hers. */
+.ch-wrong { --scene: wrong; }
+.ch-wrongScene { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
+.ch-layer.ch-wrongLayer { inset: 0; display: grid; place-items: center; }
+.ch-wrongPhone { position: relative; height: min(76svh, 680px); aspect-ratio: 800 / 1704; }
+.ch-wrongPhone .ch-phoneBox { height: auto; }
+.ch-story .ch-wrongSay {
+  position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); padding: 0.55em 1em; border-radius: 999px; white-space: nowrap;
+  background: rgb(38 36 33 / 0.92); color: #f4f1ea; font: 600 13px / 1.2 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; box-shadow: 0 8px 22px rgb(0 0 0 / 0.4);
+}
+.ch-crowd, .ch-hers { width: min(100%, 30rem); margin: 0; }
+.ch-crowdTitle { margin-bottom: 18px; color: var(--ink); font: 400 clamp(21px, 2.2vw, 29px) / 1.15 var(--font-title); letter-spacing: -0.02em; }
+.ch-crowdTitle small { display: block; margin-top: 6px; color: var(--ink-3); font: 400 11px / 1.4 var(--font-mono); letter-spacing: 0; }
+.ch-crowdPawns { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 7px 4px; }
+.ch-hers .ch-crowdPawns { grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 7px 4px; }
+.ch-crowdPawns svg { display: block; width: 100%; height: auto; transition: opacity var(--ch-fade) ease; }
+.ch-crowdPawns svg path { fill: var(--rule-strong); transition: fill var(--ch-fade) ease; }
+.ch-crowdPawns svg[data-kind="resigned"] path { fill: var(--ink-3); }
+.ch-crowdPawns svg[data-kind="left"] path { fill: var(--rule-strong); }
+.ch-crowdPawns svg[data-kind="lost"] path { fill: var(--ink-2); }
+.ch-crowdPawns svg[data-kind="saved"] path { fill: var(--ink); }
+.ch-crowd[data-focus="saved"] .ch-crowdPawns svg:not([data-kind="saved"]):not([data-kind="lost"]) { opacity: 0.25; }
+.ch-crowdPawns svg[data-kind="mine"] path { fill: var(--thread); }
+.ch-crowdPawns svg[data-kind="minelost"] path { fill: color-mix(in srgb, var(--thread) 28%, var(--void)); }
+.ch-crowdKey { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 18px; margin: 18px 0 0; padding: 0; list-style: none; color: var(--ink-2); font: 400 11.5px / 1.3 var(--font-mono); }
+.ch-crowdKey li { display: flex; align-items: center; gap: 8px; }
+.ch-crowdKey li::before { content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--rule-strong); }
+.ch-crowdKey li[data-kind="resigned"]::before { background: var(--ink-3); }
+.ch-crowdKey li[data-kind="lost"]::before { background: var(--ink-2); }
+.ch-crowdKey li[data-kind="saved"]::before { background: var(--ink); }
+.ch-crowdKey b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+.ch-story .ch-crowdOn { margin-top: 14px; color: var(--ink); font: 400 12px / 1.4 var(--font-mono); }
+.ch-crowdBands { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; pointer-events: auto; }
+.ch-crowdBands .ch-ask { min-height: 34px; padding: 5px 11px; font-size: 12px; }
+.ch-crowdBands .ch-ask i { display: none; }
+@media (max-width: 60rem) {
+  .ch-dive { height: 220svh; }
+  .ch-diveDeep { left: 50%; top: 55svh; width: calc(6.2 * min(34svh, 60%)); }
+  .ch-diveThree { padding: calc(var(--bar) + 10svh) var(--page-margin) 4svh; gap: 4svh; }
+  .ch-diveBoards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .ch-diveBoards a { font-size: 11px; gap: 10px; }
+  .ch-wrongPhone { height: 46svh; }
+  /* Part III's sentences run longer: its pictures start lower, the words on their own ground */
+  .ch-part3 .ch-pin[data-plain="true"] .ch-scene { top: 35svh; height: 62svh; }
+  .ch-part3 .ch-told > div { padding-bottom: 14px; background: linear-gradient(var(--void) 82%, transparent); }
+  .ch-crowd, .ch-hers { width: 100%; }
+  .ch-crowdTitle { font-size: 19px; margin-bottom: 10px; }
+  .ch-crowdKey { margin-top: 10px; }
+  .ch-crowdBands .ch-ask { min-height: 30px; padding: 3px 8px; font-size: 11px; }
+}
 /* Part III: the investigation. */
 .ch-turn {
   position: relative; z-index: 3; display: grid; align-content: center;
@@ -640,22 +726,33 @@
 /* The message opens the inquiry. The same green point survives the change of axes. */
 .ch-messagePhone { position: relative; width: auto; aspect-ratio: 800 / 1704; height: min(73svh, 650px); max-width: 100%; margin-inline: auto; }
 .ch-messagePhone > img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.ch-story .ch-messagePop { position: absolute; z-index: 2; left: 50%; top: 48%; width: clamp(260px, 145%, 440px); box-sizing: border-box; padding: 18px 22px; border-radius: 22px 22px 6px 22px; background: var(--form-data); color: var(--void); font: 400 clamp(15px, 1.4vw, 20px) / 1.42 var(--font-mono, sans-serif); box-shadow: 0 18px 40px rgba(17, 16, 15, 0.45); transform-origin: 50% 50%; transform: translate(-50%, -50%) scale(0.55); }
-.ch-ratings { --thread: var(--form-data); position: relative; margin: 0; width: 100%; color: var(--ink); }
+.ch-story .ch-messageTime { position: absolute; z-index: 2; left: 50%; top: 31%; transform: translateX(-50%); color: var(--ink-3); font: 400 11px / 1 var(--font-mono); letter-spacing: 0.06em; white-space: nowrap; }
+.ch-story .ch-messagePop { position: absolute; z-index: 2; left: 50%; top: 48%; width: clamp(260px, 145%, 440px); box-sizing: border-box; padding: 18px 22px; border-radius: 22px 22px 6px 22px; background: var(--thread); color: #fff8ef; font: 400 clamp(15px, 1.4vw, 20px) / 1.42 var(--font-mono, sans-serif); box-shadow: 0 18px 40px rgba(17, 16, 15, 0.45); transform-origin: 50% 50%; transform: translate(-50%, -50%) scale(0.55); }
+.ch-ratings { position: relative; margin: 0; width: 100%; color: var(--ink); }
 .ch-ratingTitle { font: 400 clamp(21px, 2.2vw, 29px) / 1.15 var(--font-title); letter-spacing: -0.02em; }
 .ch-ratingKey { display: flex; flex-wrap: wrap; gap: 5px 16px; margin-block: 12px 5px; color: var(--ink-2); font: 400 11px / 1.4 var(--font-mono); min-height: 16px; }
 .ch-ratingKey span { display: inline-flex; align-items: center; gap: 6px; }
 .ch-ratingKey span[data-kind]::before { content: ""; width: 14px; height: 2px; background: var(--ink-2); }
 .ch-ratingKey span[data-kind="me"]::before { background: var(--thread); }
 .ch-ratings[data-wide="true"] .ch-ratingKey span[data-kind="me"]::before { width: 6px; height: 6px; border-radius: 50%; }
-.ch-ratingKey span[data-kind="typical"]::before { background: var(--ink); }
+.ch-ratingKey span[data-kind="typical"]::before { background: var(--ink-2); }
+.ch-ratingKey span[data-kind="rapid"]::before { background: color-mix(in srgb, var(--thread) 50%, var(--ink-3)); }
 .ch-ratings svg { display: block; overflow: visible; max-width: 100%; touch-action: pan-y; }
 .ch-ratings svg text { fill: var(--ink-2); font: 400 10px / 1 var(--font-mono); }
 .ch-ratingGrid { stroke: var(--rule); stroke-width: 1; }
 .ch-ratingRef { stroke: var(--ink-3); stroke-dasharray: 3 5; opacity: 0.7; }
 .ch-ratingRapid, .ch-ratingBullet, .ch-ratingTypical { fill: none; stroke: var(--ink-2); stroke-width: 1.7; stroke-linejoin: round; }
 .ch-ratingBullet { stroke: var(--thread); stroke-width: 2; }
-.ch-ratingTypical { stroke: var(--ink); transition: opacity 240ms ease; }
+.ch-ratingRapid { stroke: color-mix(in srgb, var(--thread) 50%, var(--ink-3)); }
+.ch-ratingTypical { stroke: var(--ink-2); transition: opacity 240ms ease; }
+/* the reader's guess, in their own light */
+.ch-ratingGuess line { stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 2 4; }
+.ch-ratingGuess circle { fill: var(--ink); stroke: var(--void); stroke-width: 2; }
+.ch-ratings .ch-ratingGuess text { fill: var(--ink); }
+.ch-ratingAsk { margin-top: 12px; color: var(--ink); font-size: 11px; }
+.ch-ratingAsk input { accent-color: var(--ink); }
+.ch-ratingAsk b { min-width: 3.2em; color: var(--ink); font: 500 15px / 1 var(--font-mono); font-variant-numeric: tabular-nums; }
+.ch-story .ch-ratingAnswer { margin-top: 10px; color: var(--ink); font: 400 12px / 1.4 var(--font-mono); }
 .ch-ratingPeers { fill: var(--ink-3); opacity: 0.48; }
 .ch-ratingLayer { transition: opacity 240ms ease; }
 .ch-ratingMe { transition: transform 650ms cubic-bezier(0.645, 0.045, 0.355, 1), opacity 180ms ease; }
@@ -689,12 +786,7 @@
 .ch-story .ch-nameExamples { display: flex; flex-wrap: wrap; gap: 5px 14px; margin-bottom: 20px; color: var(--ink-2); font: 400 12px / 1.5 var(--font-mono); overflow-wrap: anywhere; }
 .ch-nameExamples i { font-style: normal; color: var(--ink-3); }
 .ch-story .ch-namePrompt { color: var(--ink-2); font: 400 11px / 1.5 var(--font-mono); margin-bottom: 10px; }
-.ch-nameChoices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
-.ch-nameChoices button { min-width: 0; min-height: 44px; padding: 8px 6px; border: 1px solid var(--rule-strong); border-radius: 6px; background: transparent; color: var(--ink-2); cursor: pointer; font: 500 11px / 1.3 var(--font-mono); }
-.ch-nameChoices button[aria-pressed="true"] { color: var(--void); background: var(--ink); border-color: var(--ink); }
-.ch-nameChoices button:focus-visible { outline: 2px solid var(--name-tone); outline-offset: 3px; }
-.ch-nameChoices button:active { border-color: var(--ink); }
-@media (hover: hover) and (pointer: fine) { .ch-nameChoices button:hover { border-color: var(--ink-2); color: var(--ink); } .ch-nameChoices button[aria-pressed="true"]:hover { color: var(--void); } }
+.ch-nameChoices { display: flex; flex-wrap: wrap; gap: 8px; }
 .ch-nameEvidence { position: sticky; top: max(30px, calc(var(--bar) + 22px)); min-width: 0; }
 .ch-nameEvidenceTop { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
 .ch-nameEvidenceTop h4 { margin: 0; color: var(--ink); font: 400 27px / 1.15 var(--font-title); letter-spacing: -0.02em; }
@@ -707,7 +799,8 @@
 .ch-pawns { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 5px; max-width: 20rem; }
 .ch-pawns svg { display: block; width: 100%; height: auto; max-height: 33px; overflow: visible; }
 .ch-pawnOff { fill: var(--rule-strong); }
-.ch-pawnOn { fill: var(--name-tone, var(--ink-2)); }
+.ch-pawnOn { fill: var(--ink); }
+.ch-nameBaseline .ch-pawnOn { fill: var(--ink-3); }
 .ch-nameResult[data-active="true"] .ch-nameResultHead > span { color: var(--name-tone); }
 .ch-story .ch-nameVerdict { margin-top: 8px; color: var(--ink-2); font: 400 11px / 1.4 var(--font-mono); }
 .ch-nameVerdict strong { color: var(--ink); font-weight: 500; }
@@ -719,7 +812,16 @@
 .ch-story .ch-nameMethod { margin-top: 16px; color: var(--ink-3); font: 400 11px / 1.55 var(--font-mono); }
 .ch-nameInline { display: none; }
 .ch-story .ch-nameInlineLabel { margin-bottom: 10px; color: var(--ink-2); font: 400 11px / 1.45 var(--font-mono); }
-.ch-namesAfter { max-width: 38rem; margin-top: 40px; }
+.ch-namesAfter { max-width: 38rem; margin-top: 40px; padding-bottom: 8vh; }
+.ch-nameRow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 6vw, 90px); align-items: center; min-height: 64vh; padding: 6vh 0; border-top: 1px solid var(--rule); }
+.ch-story .ch-nameCount { margin-bottom: 8px; color: var(--ink-3); font: 400 11px / 1 var(--font-mono); letter-spacing: 0.1em; }
+.ch-nameAsk h4 { margin: 0 0 14px; color: var(--ink); font: 400 var(--t-second) / 1.1 var(--font-title); letter-spacing: var(--tracking-display); }
+.ch-nameShow { opacity: 0.32; transition: opacity var(--ch-fade) ease; }
+.ch-nameRow[data-answered="true"] .ch-nameShow { opacity: 1; }
+.ch-nameShow .ch-nameResult { min-height: 0; border-top: 0; }
+.ch-nameVerdict span { display: block; margin-top: 4px; color: var(--ink-3); }
+.ch-nameVerdict[data-waiting="true"] { color: var(--ink-3); }
+.ch-story .ch-nameBridge { margin-top: 5vh; }
 .ch-namesAfter > .ch-text { margin-top: 24px; }
 .ch-nameFinding { margin-bottom: 24px; }
 .ch-story .ch-nameScore { margin-bottom: 14px; color: var(--ink-2); font: 400 12px / 1.4 var(--font-mono); }
@@ -738,6 +840,7 @@
   .ch-nameInline .ch-nameBaseline .ch-pawns { max-width: 14rem; }
   .ch-nameInline .ch-nameBaseline svg { max-height: 23px; }
   .ch-nameInline .ch-nameBaseline .ch-nameResultHead { font-size: 11px; }
+  .ch-nameRow { grid-template-columns: minmax(0, 1fr); min-height: 0; gap: 22px; padding: 5vh 0; }
   .ch-nameInline .ch-nameBaseline b { font-size: 16px; }
   .ch-nameBlock { padding: 16px; }
   .ch-nameChoices button { font-size: 10.5px; }

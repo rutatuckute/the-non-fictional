@@ -3,7 +3,7 @@
 import * as React from "react"
 
 import { CLUB_REST, ClubBoard } from "./club"
-import { c, Guess, Holder, Pinned, Show, Text } from "./parts"
+import { c, Holder, Pinned, Show, Text } from "./parts"
 import { Message } from "./phone-scenes"
 import { RatingStory } from "./ratings"
 import { Usernames } from "./say"
@@ -136,38 +136,23 @@ export const People = () => (
   </Pinned>
 )
 
-const Rows = ({ rows, you = false }) => (
-  <div className={c("ch-rows")} data-you={you ? "true" : "false"}>
-    {rows.map((parts, index) => (
-      <div key={index}>
-        {parts.map((width, part) => (
-          <i key={part} style={{ width: `${width}%` }} />
-        ))}
-      </div>
-    ))}
-  </div>
-)
-
 // Part III, first question: what we say about ourselves. Her own prediction
 // against her games, then what usernames say against the ratings of the
-// opponents you meet (say.js, from real games).
+// opponents you meet (say.js, from real games). Its words scroll beside the
+// graphic, as everywhere since Part I.
 export const Say = () => (
   <section className={c("ch-saySection")} aria-label="Claims and evidence">
     <span id="what-we-say" className={c("ch-mark")} />
     <Pinned
+      reading
       label="What we say about ourselves"
       steps={[
-        <Text
-          key="1"
-          name="say-message"
-          look="cardText"
-          className={c("ch-messageCopy")}
-        />,
-        <Text key="timeline" name="say-isolation" look="cardText" />,
-        { card: <Text name="say-prediction" look="cardText" />, rest: 0.45 },
-        <Text key="widen" name="say-widen" look="cardText" />,
-        <Text key="crowd" name="say-crowd" look="cardText" />,
-        <Text key="perspective" name="say-perspective" look="cardText" />,
+        { text: <Text name="say-message" look="lead" className={c("ch-messageCopy")} /> },
+        { text: <Text name="say-isolation" look="lead" /> },
+        { text: <Text name="say-prediction" look="lead" />, rest: 0.45 },
+        { text: <Text name="say-widen" look="lead" /> },
+        { text: <Text name="say-crowd" look="lead" /> },
+        { text: <Text name="say-perspective" look="lead" /> },
       ]}
     >
       {step => (
@@ -185,68 +170,16 @@ export const Say = () => (
   </section>
 )
 
-// Second question: what we do when things go wrong.
-export const Wrong = ({ guess }) => (
-  <Pinned
-    mark="when-things-go-wrong"
-    label="What we do when things go wrong"
-    steps={[
-      <Text key="1" name="wrong-observation" look="cardText" />,
-      <React.Fragment key="2">
-        <Text name="wrong-decide" look="cardText" />
-        <Guess
-          label="Your decision"
-          options={["Resign", "Play on"]}
-          {...guess}
-        />
-      </React.Fragment>,
-      <Text key="3" name="wrong-outcome" look="cardText" />,
-      <Text key="4" name="wrong-crowd" look="cardText" />,
-      <Text key="5" name="wrong-you" look="cardText" />,
-    ]}
-  >
-    {step => (
-      <div className={c("ch-stack")}>
-        <Show flow on={step <= 2}>
-          <div className={c("ch-board", "ch-boardSmall")} />
-          <p className={c("ch-note")}>
-            A real position: the queen has just been lost
-            {step === 2 && guess.value
-              ? ` · you chose to ${guess.value.toLowerCase()}`
-              : ""}
-          </p>
-        </Show>
-        <Show flow on={step >= 3}>
-          <Rows
-            rows={[
-              [36, 14, 50],
-              [46, 12, 42],
-              [55, 9, 36],
-              [65, 6, 29],
-            ]}
-          />
-          <p className={c("ch-note")}>
-            After losing the queen: resign, abandon, play on, by rating
-          </p>
-        </Show>
-        <Show flow on={step === 4}>
-          <Rows you rows={[[18, 2, 80]]} />
-          <p className={c("ch-note")}>You</p>
-        </Show>
-      </div>
-    )}
-  </Pinned>
-)
-
 // Third question: what our choices reveal. It stays only if the games bear it out.
 export const Reveal = () => (
   <Pinned
+    reading
     mark="what-we-choose"
     label="What our choices reveal"
     steps={[
-      <Text key="1" name="reveal-professor" look="cardText" />,
-      <Text key="2" name="reveal-games" look="cardText" />,
-      <Text key="3" name="reveal-style" look="cardText" />,
+      { text: <Text name="reveal-professor" look="lead" /> },
+      { text: <Text name="reveal-games" look="lead" /> },
+      { text: <Text name="reveal-style" look="lead" /> },
     ]}
   >
     {step => (
@@ -256,17 +189,10 @@ export const Reveal = () => (
           <p className={c("ch-note")}>The professor’s board again</p>
         </Show>
         <Show flow on={step >= 1}>
-          <Holder
-            open
-            label="Your games over time, the London System months marked"
-            ratio="16 / 7"
-          />
+          <Holder open label="Your games over time, the London System months marked" ratio="16 / 7" />
         </Show>
         <Show flow on={step === 2}>
-          <Rows rows={[[34], [58]]} />
-          <p className={c("ch-note")}>
-            A measure of playing style, before and after
-          </p>
+          <p className={c("ch-note")}>A measure of playing style, before and after</p>
         </Show>
       </div>
     )}

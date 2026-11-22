@@ -159,13 +159,13 @@ I do it too. And sometimes I catch something about myself: after a loss, I rush 
 Chess.com keeps every game.\
 So I went down the rabbit hole.
 
+<!--step:investigation-title-->
+
+## Looking for answers in the data
+
 <!--step:data-intro-->
 
-*[Part III · A short hand-over into the investigation]*
-
-1. What we say about ourselves
-2. What we do when things go wrong
-3. What our choices reveal
+Each of these questions started at the board, not in a spreadsheet.
 
 <!--step:say-message-->
 
@@ -173,13 +173,11 @@ So I went down the rabbit hole.
 
 “I would be soooo bad at blitz.”
 
-I wrote “blitz”; I would end up playing bullet.
-
 <!--step:say-isolation-->
 
 If I only looked at my own ratings, the verdict seemed obvious.
 
-Here was rapid: the game I knew. And here, around 19 May, was the claim.
+Here was rapid: the game I knew. And here, on 18 May, the claim.
 
 <!--step:say-prediction-->
 
@@ -198,6 +196,8 @@ So I stopped comparing me to me, and started comparing me to everyone else.
 Each dot is a player who plays both. Rapid rating across; bullet rating up.
 
 Under the diagonal, bullet is lower than rapid. That is where **87%** of these players sit.
+
+How much lower, typically? Make your guess under the chart.
 
 <!--step:say-perspective-->
 
@@ -221,27 +221,49 @@ The apologisers and the boasters both sit a little below a typical opponent. The
 
 A name is a claim, not a reliable guide to the person across the board. These are patterns across groups; any one player can be the exception.
 
-But what about what we do when things go wrong?
+People who call themselves bad aren't worse than those who call themselves good. But they do give up more often.
 
 <!--step:wrong-observation-->
 
-*[08 · What we do when things go wrong. Resignations after a queen blunder.]*
+### When things go wrong
+
+Over the board, I kept noticing the same thing: an opponent loses their queen, and a few seconds later, they resign.
+
+Of 107 opponents who lost their queen against me, 62 resigned. 38 of them straight away.
 
 <!--step:wrong-decide-->
 
-*[The reader's turn: would you resign here?]*
+Now it's you. Move 9, playing White. Your queen is gone, and the engine agrees: you are lost.
+
+Would you resign?
 
 <!--step:wrong-outcome-->
 
-*[What happened next in that game.]*
+I didn't.
+
+Thirty-seven moves later, it was my opponent who resigned.
 
 <!--step:wrong-crowd-->
 
-*[What players actually do: who gives up, who plays on.]*
+Across 6,625 rapid games where someone lost their queen in a position the engine calls lost, this is what players did.
+
+<!--step:wrong-right-->
+
+The higher the rating, the more players resign, and the more often they are right. Above 1500, only 1 in 10 of those who play on is saved.
+
+Down where I play, it's about 1 in 5.
 
 <!--step:wrong-you-->
 
-*[Your own view on not resigning, and your own numbers.]*
+I never resign. Not out of overconfidence (if anything, I'm the opposite), but because I believe in uncertainty, and in the beauty of it.
+
+A queen down, I played on in 119 games. I saved 15.
+
+<!--step:wrong-stalemate-->
+
+A game can always end in a stalemate, and that is a better outcome than losing. 58 of mine did.
+
+This is one of them: my lone king against three queens.
 
 <!--step:reveal-professor-->
 

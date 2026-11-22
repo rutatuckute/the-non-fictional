@@ -5,7 +5,9 @@ import * as React from "react"
 import { Chapters, Mark } from "./chapters"
 import { c, Holder, Picture, Text, Words } from "./parts"
 import { Device } from "./origin"
-import { People, Reveal, Say, Wrong } from "./scenes"
+import { People, Reveal, Say } from "./scenes"
+import { Wrong } from "./wrong"
+import { Dive } from "./dive"
 import { Knots, Thread } from "./thread"
 import { Wooden } from "./wooden"
 
@@ -244,20 +246,24 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           <People />
         </div>
 
-        <section className={c("ch-turn")} aria-label="Looking for answers in the data">
-          <Mark id="the-investigation" />
-          <Text name="data-intro" />
-        </section>
-        <Say />
-        <Wrong guess={guess("resign")} />
-        <Reveal />
-        <section className={c("ch-free", "ch-unknown")} aria-label="What we cannot know">
-          <Text name="unknown" />
-          <div className={c("ch-two")}>
-            <Text name="unknown-showed" />
-            <Text name="unknown-cannot" />
+        {/* Part III: down the rabbit hole into three questions (dive.js), then
+            each in turn. Its name stays at the top from the three boards on. */}
+        <div className={c("ch-people", "ch-part3")} data-part="investigation" data-titled="false">
+          <div className={c("ch-peopleTitle")}>
+            <Text name="investigation-title" look="partTitle" />
           </div>
-        </section>
+          <Dive />
+          <Say />
+          <Wrong guess={guess("resign")} />
+          <Reveal />
+          <section className={c("ch-free", "ch-unknown")} aria-label="What we cannot know">
+            <Text name="unknown" />
+            <div className={c("ch-two")}>
+              <Text name="unknown-showed" />
+              <Text name="unknown-cannot" />
+            </div>
+          </section>
+        </div>
 
         <section className={c("ch-free", "ch-back")} aria-label="Back to the threads of life">
           <Mark id="the-ending" />

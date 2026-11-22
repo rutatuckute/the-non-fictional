@@ -35,27 +35,27 @@ const Pawns = ({ share }) => (
   </span>
 )
 
-const Result = ({ group, choice, active = false }) => (
-  <div
-    className={c("ch-nameResult")}
-    data-active={active}
-    style={{ "--name-tone": "var(--form-data)" }}
-  >
+// One group's answer, as pawns: out of ten opponents with such a name, how
+// many are rated above a typical opponent. Other people are drawn in ivory.
+const Result = ({ group, choice }) => (
+  <div className={c("ch-nameResult")}>
     <div className={c("ch-nameResultHead")}>
       <span>{group.label}</span>
       <b>
-        {number(group.above)} <small>in 10</small>
+        {choice ? number(group.above) : "?"} <small>in 10</small>
       </b>
     </div>
-    <Pawns share={group.above} />
-    <p className={c("ch-nameVerdict")}>
-      {choice === truth(group) ? "You called it." : "A different story."}{" "}
-      <strong>{truth(group)}.</strong>
-    </p>
-    <p className={c("ch-nameRange")}>
-      Likely range: {number(group.low)}–{number(group.high)} in 10 ·{" "}
-      {group.people.toLocaleString("en-GB")} people
-    </p>
+    <Pawns share={choice ? group.above : 0} />
+    {choice ? (
+      <p className={c("ch-nameVerdict")}>
+        {choice === truth(group) ? "You called it." : "A different story."} <strong>{truth(group)}.</strong>{" "}
+        <span>
+          Likely {number(group.low)}–{number(group.high)} in 10 · {group.people.toLocaleString("en-GB")} people
+        </span>
+      </p>
+    ) : (
+      <p className={c("ch-nameVerdict")} data-waiting="true">Make a guess to see.</p>
+    )}
   </div>
 )
 
@@ -73,135 +73,66 @@ const Baseline = () => (
 
 export const Usernames = () => {
   const [guesses, setGuesses] = React.useState({})
-  const [active, setActive] = React.useState(null)
   const [announcement, setAnnouncement] = React.useState("")
   const answered = GROUPS.filter(g => guesses[g.key])
   const correct = answered.filter(g => guesses[g.key] === truth(g)).length
   const complete = answered.length === GROUPS.length
   const select = (g, choice) => {
     setGuesses(before => ({ ...before, [g.key]: choice }))
-    setActive(g.key)
     setAnnouncement(
       `${g.label}: ${choice === truth(g) ? "you called it" : "a different story"}. ${number(g.above)} in ten rated above a typical opponent; ${truth(g).toLowerCase()}.`,
     )
   }
 
+  // One group at a time, as the reader scrolls: its names and a guess at
+  // the left, its pawns against any opponent's at the right, shown once guessed.
   return (
-    <section
-      className={c("ch-usernames")}
-      id="what-names-say"
-      aria-labelledby="names-title"
-    >
+    <section className={c("ch-usernames")} id="what-names-say" aria-labelledby="names-title">
       <header className={c("ch-namesIntro")}>
         <h3 id="names-title">And what about everyone else?</h3>
         <Text name="say-guess" look="lead" />
       </header>
-      <div className={c("ch-namesLayout")}>
-        <div>
-          <div className={c("ch-nameBlocks")}>
-            {GROUPS.map(g => (
-              <div
-                key={g.key}
-                className={c("ch-nameBlock")}
-                data-answered={Boolean(guesses[g.key])}
-                style={{ "--name-tone": "var(--form-data)" }}
-              >
-                <h4>
-                  <i aria-hidden="true" />
-                  {g.label}
-                </h4>
-                <p className={c("ch-nameExamples")}>
-                  {g.examples.map(name => (
-                    <span key={name}>
-                      {name}
-                      <i aria-hidden="true">…</i>
-                    </span>
-                  ))}
-                </p>
-                <p className={c("ch-namePrompt")}>
-                  Compared with a typical opponent, they are…
-                </p>
-                <div
-                  className={c("ch-nameChoices")}
-                  role="group"
-                  aria-label={`Your guess: ${g.label.toLowerCase()}`}
-                >
-                  {OPTIONS.map(option => (
-                    <button
-                      key={option}
-                      type="button"
-                      aria-pressed={guesses[g.key] === option}
-                      onClick={() => select(g, option)}
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
-                {guesses[g.key] && (
-                  <div className={c("ch-nameInline")}>
-                    <p className={c("ch-nameInlineLabel")}>
-                      Out of ten, rated above a typical opponent
-                    </p>
-                    <Result group={g} choice={guesses[g.key]} active />
-                    <Baseline />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-          <div className={c("ch-namesAfter")}>
-            {complete && (
-              <div className={c("ch-nameFinding")}>
-                <p className={c("ch-nameScore")}>You called {correct} of 4.</p>
-                <Text name="say-surprise" look="lead" />
-              </div>
-            )}
-            <p className={c("ch-nameMethod")}>
-              Rapid games · July–September 2026 · each opponent counted once per
-              game met. Names above are patterns, not individual players. Ranges
-              show the uncertainty from resampling people within each group (95%
-              interval).
+      {GROUPS.map((g, index) => (
+        <div key={g.key} className={c("ch-nameRow")} data-answered={Boolean(guesses[g.key])}>
+          <div className={c("ch-nameAsk")}>
+            <p className={c("ch-nameCount")}>{index + 1} of {GROUPS.length}</p>
+            <h4>{g.label}</h4>
+            <p className={c("ch-nameExamples")}>
+              {g.examples.map(name => (
+                <span key={name}>
+                  {name}
+                  <i aria-hidden="true">…</i>
+                </span>
+              ))}
             </p>
-            <Text name="say-limits" look="quiet" />
+            <p className={c("ch-namePrompt")}>Compared with a typical opponent, they are…</p>
+            <div className={c("ch-nameChoices")} role="group" aria-label={`Your guess: ${g.label.toLowerCase()}`}>
+              {OPTIONS.map(option => (
+                <button key={option} type="button" className={c("ch-ask")} aria-pressed={guesses[g.key] === option} onClick={() => select(g, option)}>
+                  <i aria-hidden="true" />
+                  {option}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className={c("ch-nameShow")} aria-hidden={guesses[g.key] ? undefined : "true"}>
+            <Result group={g} choice={guesses[g.key]} />
+            <Baseline />
           </div>
         </div>
-        <aside
-          className={c("ch-nameEvidence")}
-          aria-label="What the ratings show"
-        >
-          <div className={c("ch-nameEvidenceTop")}>
-            <h4>Out of ten opponents</h4>
-            <span>{answered.length} of 4 revealed</span>
+      ))}
+      <div className={c("ch-namesAfter")}>
+        {complete ? (
+          <div className={c("ch-nameFinding")}>
+            <p className={c("ch-nameScore")}>You called {correct} of 4.</p>
+            <Text name="say-surprise" look="lead" />
           </div>
-          <p className={c("ch-nameExplain")}>
-            How many are rated above a typical opponent? For any ten opponents,
-            the answer is five.
-          </p>
-          <div className={c("ch-nameResults")}>
-            {GROUPS.map(g =>
-              guesses[g.key] ? (
-                <Result
-                  key={g.key}
-                  group={g}
-                  choice={guesses[g.key]}
-                  active={active === g.key}
-                />
-              ) : (
-                <div key={g.key} className={c("ch-nameWaiting")}>
-                  <span style={{ "--name-tone": "var(--form-data)" }}>
-                    {g.label}
-                  </span>
-                  <span>Make a guess to reveal</span>
-                </div>
-              ),
-            )}
-          </div>
-          <Baseline />
-          <p className={c("ch-nameMethod")}>
-            A typical opponent is rated {say.names.typical}: half are above,
-            half below.
-          </p>
-        </aside>
+        ) : null}
+        <p className={c("ch-nameMethod")}>
+          Rapid games · July–September 2026 · each opponent counted once per game met. A typical opponent is rated {say.names.typical}: half are above,
+          half below. Names above are patterns, not individual players. Ranges show the uncertainty from resampling people within each group (95% interval).
+        </p>
+        <Text name="say-limits" look="lead" className={c("ch-nameBridge")} />
       </div>
       <p className={c("ch-navHidden")} role="status">
         {announcement}

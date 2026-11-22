@@ -13,6 +13,17 @@ const path = points => points.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)
 const dateLabel = day => new Date(time(day)).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" })
 const days = [...new Set([...T.rapid, ...T.bullet].map(d => d[0]))].sort()
 const atDay = (series, date) => series.filter(d => d[0] <= date).at(-1)
+// The typical bullet rating at a rapid rating, from the medians' line.
+const typicalAt = r => {
+  const c = S.curve
+  if (r <= c[0].rapid) return c[0].bullet
+  for (let i = 1; i < c.length; i++)
+    if (r <= c[i].rapid) return c[i - 1].bullet + ((r - c[i - 1].rapid) / (c[i].rapid - c[i - 1].rapid)) * (c[i].bullet - c[i - 1].bullet)
+  return c.at(-1).bullet
+}
+// The reader's guess is for a player at about my own rapid rating.
+const ASK_AT = Math.round(S.me[0] / 50) * 50
+const CLAIMED = dateLabel(T.claim)
 
 // One persistent stage. Scroll opens the diary, then the two last ratings become
 // one green dot on a different pair of axes. The captions name the measure change.
@@ -23,6 +34,8 @@ export const RatingStory = ({ step }) => {
   const [picked, setPicked] = React.useState(null)
   const [hover, setHover] = React.useState(null)
   const [summary, setSummary] = React.useState(false)
+  // where the reader thinks a typical player sits, before the line is shown
+  const [guess, setGuess] = React.useState(null)
   const still = useStill()
   const id = React.useId().replace(/:/g, "")
   React.useLayoutEffect(() => {
@@ -77,14 +90,14 @@ export const RatingStory = ({ step }) => {
       <div className={c("ch-ratingKey")}>
         {wide ? <><span>One dot, one player</span><span data-kind="me">Me</span>{typical && <span data-kind="typical">Typical bullet rating</span>}</> : <><span data-kind="rapid">My rapid rating</span><span data-kind="me">My bullet rating</span></>}
       </div>
-      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={wide ? `Rapid and bullet median ratings for ${S.players} sampled players, July to September 2026. ${Math.round(S.shareLower * 100)}% rated lower in bullet. My rapid ${S.me[0]}, bullet ${S.me[1]}, close to the typical line.` : `My daily last ratings through 2026. Claim around 19 May. Bullet began on 6 July, seven weeks later; 309 games through 24 September.`} onPointerMove={inspect} onPointerDown={inspect} onPointerLeave={() => setHover(null)}>
+      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={wide ? `Rapid and bullet median ratings for ${S.players} sampled players, July to September 2026. ${Math.round(S.shareLower * 100)}% rated lower in bullet. My rapid ${S.me[0]}, bullet ${S.me[1]}, close to the typical line.` : `My daily last ratings through 2026. Claim on ${CLAIMED}. Bullet began on 6 July, seven weeks later; 309 games through 24 September.`} onPointerMove={inspect} onPointerDown={inspect} onPointerLeave={() => setHover(null)}>
         <defs><clipPath id={id}><rect x={left - 3} y={top - 15} width={Math.max(0, scale(shown, start, end, left, right) - left + 4)} height={bottom - top + 25} /></clipPath></defs>
         <g className={c("ch-ratingLayer")} opacity={wide ? 0 : 1} aria-hidden="true">
           {[200, 400, 600, 800, 1000].map(t => <g key={t}><line className={c("ch-ratingGrid")} x1={left} x2={right} y1={ty(t)} y2={ty(t)} /><text x={left - 8} y={ty(t) + 4} textAnchor="end">{t}</text></g>)}
           {[0, 2, 4, 6, 8, 10].map(m => <text key={m} x={tx(`2026-${String(m + 1).padStart(2, "0")}-01`)} y={bottom + 22} textAnchor="middle">{["Jan", "Mar", "May", "Jul", "Sep", "Nov"][m / 2]}</text>)}
           <text x={left} y={16}>My rating · 2026</text>
           <line className={c("ch-ratingRef")} x1={tx(T.claim)} x2={tx(T.claim)} y1={top} y2={bottom} />
-          <text x={tx(T.claim) + 7} y={top + 12}>19 May</text>
+          <text x={tx(T.claim) + 7} y={top + 12}>{CLAIMED}</text>
           <text x={tx(T.claim) + 7} y={top + 27}>“soooo bad”</text>
           <g clipPath={`url(#${id})`}>
             <path className={c("ch-ratingRapid")} d={path(T.rapid.map(([d, v]) => [tx(d), ty(v)]))} />
@@ -100,6 +113,13 @@ export const RatingStory = ({ step }) => {
           <g className={c("ch-ratingPeers")}>{peers}</g>
           <path className={c("ch-ratingTypical")} opacity={typical ? 1 : 0} d={path(S.curve.map(q => [sx(q.rapid), sy(q.bullet)]))} />
           {selected && <circle cx={sx(selected[0])} cy={sy(selected[1])} r={5} fill="none" stroke="var(--ink)" />}
+          {guess !== null && (
+            <g className={c("ch-ratingGuess")}>
+              <line x1={sx(ASK_AT)} x2={sx(ASK_AT)} y1={sy(0)} y2={sy(guess)} />
+              <circle cx={sx(ASK_AT)} cy={sy(guess)} r={5} />
+              <text x={sx(ASK_AT) - 9} y={sy(guess) + 4} textAnchor="end">You</text>
+            </g>
+          )}
         </g>
         <g className={c("ch-ratingMe")} style={{ transform: `translate(${meX}px, ${meY}px)`, opacity: wide || bullet ? 1 : 0 }} aria-hidden="true">
           <circle r={wide ? 6 : 4} /><text x={10} y={-10}>{wide ? "Me" : "Bullet"}</text>
@@ -108,10 +128,20 @@ export const RatingStory = ({ step }) => {
       <div className={c("ch-ratingReadout")} aria-live="polite">
         {wide ? (selected ? `One player · rapid ${selected[0]} · bullet ${selected[1]}` : `Me · rapid ${S.me[0]} · bullet ${S.me[1]}`) : `${dateLabel(date)} · rapid ${rapid?.[1] ?? "—"} · bullet ${bullet?.[1] ?? "not yet played"}`}
       </div>
+      {wide && !typical && (
+        <label className={c("ch-ratingScrub", "ch-ratingAsk")}>
+          {`A player rated ${ASK_AT} in rapid: in bullet, about`}
+          <input type="range" min={100} max={1400} step={10} value={guess ?? ASK_AT} onChange={e => setGuess(Number(e.target.value))} aria-valuetext={`${guess ?? ASK_AT} in bullet`} />
+          <b>{guess ?? "?"}</b>
+        </label>
+      )}
+      {wide && typical && guess !== null && (
+        <p className={c("ch-ratingAnswer")}>{`You guessed ${guess}. Typically, ${Math.round(typicalAt(ASK_AT) / 10) * 10}.`}</p>
+      )}
       {!wide && <label className={c("ch-ratingScrub")}>Explore my ratings<input type="range" min={0} max={days.length - 1} value={picked ?? Math.max(0, days.findLastIndex(d => d <= date))} onChange={e => setPicked(Number(e.target.value))} aria-valuetext={`${dateLabel(date)}: rapid ${rapid?.[1] ?? "not played"}, bullet ${bullet?.[1] ?? "not played"}`} /></label>}
       <div className={c("ch-ratingFooter")}><p className={c("ch-ratingFoot")}>{wide ? `${S.players.toLocaleString("en-GB")} sampled players · July–September medians · ≥20 games in each format. Ratings are separate pools.` : "Last rating each day played. A new rating settles quickly; the early bullet drop is not a loss of skill."}</p>
       <button className={c("ch-ratingDetails")} type="button" aria-expanded={summary} aria-controls={`${id}-notes`} onClick={() => setSummary(v => !v)}>How to read this</button></div>
-      {summary && <p id={`${id}-notes`} className={c("ch-ratingHelp")}>{wide ? `The diagonal means equal ratings. ${Math.round(S.shareLower * 100)}% sit below it. The typical line is the median bullet rating in each 100-point rapid band (at least 10 players). My dot uses the same July–September medians as everyone else.` : "Scroll to unfold the two lines, or use the slider. Around 19 May I predicted I would be bad. I first played bullet on 6 July. Lines connect days played; they do not imply games on every day."}</p>}
+      {summary && <p id={`${id}-notes`} className={c("ch-ratingHelp")}>{wide ? `The diagonal means equal ratings. ${Math.round(S.shareLower * 100)}% sit below it. The typical line is the median bullet rating in each 100-point rapid band (at least 10 players). My dot uses the same July–September medians as everyone else.` : `Scroll to unfold the two lines, or use the slider. On ${CLAIMED} I predicted I would be bad. I first played bullet on 6 July. Lines connect days played; they do not imply games on every day.`}</p>}
     </figure>
   )
 }
