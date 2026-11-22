@@ -21,8 +21,8 @@
   fill: none; stroke: var(--thread); stroke-width: 1.3; stroke-linecap: round;
   transition: stroke-dashoffset 500ms ease-out;
 }
-.ch-thread path[data-other] { stroke: var(--ink-3); opacity: 0.5; }
-.ch-tintFrom { stop-color: var(--ink-3); stop-opacity: 0.5; }
+.ch-thread path[data-other] { stroke: var(--ink-3); opacity: 0.68; }
+.ch-tintFrom { stop-color: var(--ink-3); stop-opacity: 0.68; }
 .ch-tintTo { stop-color: var(--thread); }
 /* Where the data ends, the thread goes on as questions. */
 .ch-thread text {
@@ -183,7 +183,7 @@
 /* ── the title and the cover: the first screen ──
    The title and a short text at the left, the cover, smaller, at the right. */
 .ch-hero {
-  position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
   align-items: center; column-gap: clamp(32px, 4vw, 64px);
   min-height: calc(100svh - 76px - var(--bar)); padding: calc(var(--bar) + 4svh) 0 6svh;
 }
@@ -193,36 +193,29 @@
   font: 400 clamp(38px, 5vw, 72px) / 1 var(--font-title); letter-spacing: var(--tracking-display); text-transform: none;
 }
 .ch-text.ch-intro { max-width: 24em; color: var(--ink-2); }
-.ch-cover { width: 100%; max-height: calc(100svh - 76px - var(--bar) - 12svh); object-fit: contain; object-position: right center; }
+.ch-coverWrap { position: relative; }
+.ch-cover { width: 100%; max-height: calc(100svh - 76px - var(--bar) - 10svh); object-fit: contain; object-position: right center; }
 
 /* ── the opening: one screen ── */
 .ch-open {
-  position: relative; display: grid; align-content: center; gap: 18px;
-  min-height: calc(100vh - 76px); min-height: calc(100svh - 76px); padding: 8vh 0 14vh;
+  position: relative; display: grid; align-content: start; gap: 18px;
+  padding: calc(var(--bar) + 16svh) 0 4svh;
 }
 /* The question keeps clear of the right of the screen, where the device and
    the threads come down; its second line a little smaller. */
 .ch-open .ch-text { max-width: min(20em, 56%); }
 .ch-text.ch-aside { max-width: min(22em, 56%); font-size: clamp(24px, 3vw, 40px); line-height: 1.12; letter-spacing: var(--tracking-display); text-wrap: balance; }
 
-/* The Pocket Micro (origin.js). On a wide screen it is held in a track that
-   runs from the opening down to its place in the memory: sticky, so the
-   browser itself keeps it still on screen, and it comes to rest exactly in
-   its place. Its moves across are short transitions, never tied to the
-   scroll frame by frame. Its place in the memory keeps the room, empty. */
+/* The Pocket Micro (origin.js). It lies in its place in the memory; while
+   the opening question is read it is moved (--dx, --dy) to peek in at the
+   column's right edge, mostly hidden, and glides home as the reader scrolls
+   on. The memory's row clips it at the column's edge, not above or below. */
 .ch-memory { overflow-x: clip; }
-.ch-memory :is(.ch-mine, .ch-told2) { transition: opacity 350ms ease 200ms; }
+.ch-memory :is(.ch-mine, .ch-told2) { transition: opacity 400ms ease 250ms; }
 .ch-memory[data-arrived="false"] :is(.ch-mine, .ch-told2) { opacity: 0; transition: opacity 200ms ease; }
 .ch-device { position: relative; z-index: 3; }
-.ch-pocketTrack { position: absolute; left: 0; right: 0; z-index: 3; pointer-events: none; }
-.ch-device .ch-pocket { visibility: hidden; }
-.ch-pocketHeld {
-  position: sticky; top: 17svh; margin-top: 17svh;
-  transform: translate3d(var(--right, 62%), 0, 0);
-  transition: transform 650ms cubic-bezier(0.22, 0.8, 0.24, 1);
-}
-.ch-pocketHeld[data-in="false"] { transform: translate3d(calc(var(--right, 62%) + 65%), 0, 0); }
-.ch-pocketHeld[data-side="left"] { transform: translate3d(var(--left, 0px), 0, 0); }
+.ch-device .ch-pocket { transform: none; transition: transform 750ms cubic-bezier(0.22, 0.8, 0.24, 1); }
+.ch-device .ch-pocket[data-side="peek"] { transform: translate3d(var(--dx, 0px), var(--dy, 0px), 0); }
 .ch-pocket { position: relative; width: 100%; aspect-ratio: 800 / 1231; perspective: 1200px; }
 .ch-pocketRight, .ch-pocketFlap { position: absolute; top: 0; width: 50%; height: 100%; }
 .ch-pocketRight { left: 50%; overflow: hidden; }
@@ -239,7 +232,7 @@
 /* once shut, the half beneath is gone (it would show past the cover's edge) */
 .ch-pocket[data-closed="true"] .ch-pocketRight { visibility: hidden; transition: visibility 0s linear 900ms; }
 @media (prefers-reduced-motion: reduce) {
-  .ch-pocketHeld, .ch-pocketFlap, .ch-memory :is(.ch-mine, .ch-told2) { transition: none !important; }
+  .ch-device .ch-pocket, .ch-pocketFlap, .ch-memory :is(.ch-mine, .ch-told2) { transition: none !important; }
   .ch-pocketFlap, .ch-pocketBack, .ch-pocket[data-closed="true"] .ch-pocketFlap { transform: none; }
   .ch-pocketBack { left: 100%; visibility: hidden; }
   .ch-pocket[data-closed="true"] .ch-pocketFront { visibility: hidden; }
@@ -266,6 +259,8 @@
   position: absolute; left: 0; top: 18%; max-width: none;
   font-size: clamp(64px, 7.6vw, 112px); line-height: 0.98; letter-spacing: -0.04em;
 }
+/* "No chess.": apart from it, at the lower right */
+.ch-text.ch-yearsNone { left: auto; right: 0; top: 58%; text-align: right; }
 .ch-decade {
   --shown: 1;
   position: absolute; left: 50%; top: var(--at); z-index: 0; transform: translate(-50%, -50%);
@@ -677,13 +672,13 @@
   .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-mine, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-device, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
   .ch-years { height: 64vh; height: 64svh; }
   .ch-text.ch-yearsText { top: 26%; font-size: clamp(42px, 12.5vw, 84px); }
+  .ch-text.ch-yearsNone { top: 50%; }
   .ch-open .ch-text, .ch-text.ch-aside { max-width: none; }
   .ch-hero { grid-template-columns: minmax(0, 1fr); row-gap: 28px; min-height: 0; padding: calc(var(--bar) + 4svh) 0 4svh; }
   .ch-cover { max-height: none; }
   .ch-memory { row-gap: 22px; padding-bottom: 5vh; }
   .ch-device { width: 72%; }
-  .ch-pocketTrack { display: none; }
-  .ch-device .ch-pocket { visibility: visible; }
+  .ch-device .ch-pocket[data-side] { transform: none; }
   /* The pinned set takes the screen's width; its words stand above it, clear
      of the threads' lane at the left, and give way when the game begins. */
   .ch-woodenStage { grid-template-columns: minmax(0, 1fr); margin-inline: calc(-1 * var(--page-margin)); padding-inline: var(--page-margin); }

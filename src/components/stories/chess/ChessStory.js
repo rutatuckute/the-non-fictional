@@ -56,6 +56,13 @@ const CHAPTERS = [
 const OFF_LEFT = "calc(50% - 60vw)"
 const OFF_RIGHT = "calc(50% + 60vw)"
 const LINES = {
+  // Out from under the cover's lower edge (points in percent of the picture),
+  // so the threads are drawn out of it as the reader starts to scroll.
+  cover: {
+    a: [[46, 94, 46, 94]],
+    "other-1": [[22, 94, 20, 94]],
+    "other-2": [[70, 94, 72, 94]],
+  },
   open: {
     a: [[58, 0, 40, 0], [74, 16, 108, 22], [89.5, 36, 108, 50], [91, 66, 108, 74, "from"], [72, 90, 76, 92]],
     "other-1": [[12, 0, 8, 0], [50, 14, 70, 14], [85, 32, 108, 30], [86.5, 68, 108, 80], [60, 94, 84, 96]],
@@ -71,18 +78,16 @@ const LINES = {
     "other-5": [[106, 8, 112, 8]],
   },
   // The years between are a short stretch, with no bead on the story's thread:
-  // no chess. The others keep clear of the few words there (right of the
-  // thread from 28% to 40% down; on a phone, right of it from 38% to 54%).
-  // The years between are a short stretch, with no bead on the story's thread:
-  // no chess. Its two lines are the chapter's largest words, at the left from
-  // about 18% to 48% down (on a phone, the whole width from 26% to 46%); the
-  // threads keep to the right of them, and on a phone to the margins.
+  // no chess. "Years went by." stands large at the upper left (about 18% to
+  // 33% down), "No chess." at the lower right (about 58% to 73%, from 60%
+  // across); the threads weave between the two. On a phone the first is at
+  // 26% to 34% down across the width, the second from 50% to 58%, from 42%.
   years: {
-    a: [[50, 3, 18, 4], [66, 12, 60, 14], [72, 30, 102, 26], [70, 50, 102, 46], [54, 70, 40, 62], [50, 99, 5, 97]],
-    "other-1": [[36, 4, 70, 3], [58, 10, 30, 7], [78, 22, -6, 13], [82, 40, -6, 30], [66, 60, -6, 52], [57, 80, 11, 80], [60.5, 96, 9, 96]],
+    a: [[50, 3, 18, 4], [70, 12, 60, 12], [72, 30, 102, 20], [60, 42, 103, 41], [40, 50, 38, 47], [28, 60, 12, 58], [30, 80, 20, 80], [36, 99, 5, 97]],
+    "other-1": [[36, 4, 70, 3], [62, 9, 30, 7], [80, 22, -6, 13], [84, 40, -6, 30], [60, 48, -6, 52], [42, 64, 11, 80], [60.5, 96, 9, 96]],
     "other-2": [[55, 6, 108, 2], [64, 12, 40, 9], [86, 17, 31.5, 16], [106, 22, 60, 20], [108, 30, 100, 22], [108, 40, 110, 24], [108, 50, 110, 36]],
-    "other-4": [[74, 3, -8, 5], [90, 16, -6, 20], [94, 44, -6, 50], [86, 76, 6, 78], [78, 95, -8, 99]],
-    "other-6": [[-6, 56, -8, 60], [16, 60, 12, 68], [30, 66, 24, 78], [36, 76, 22, 86], [37, 86, 14, 93], [34, 97, 9, 99]],
+    "other-4": [[74, 3, -8, 5], [92, 14, -6, 20], [96, 34, -6, 50], [107, 50, 6, 78], [108, 95, -8, 99]],
+    "other-6": [[-6, 60, -8, 60], [10, 66, 12, 68], [18, 74, 24, 78], [24, 84, 22, 86], [30, 92, 14, 93], [34, 97, 9, 99]],
   },
   // The wooden set is pinned: its stretch is several screens long, and the
   // board and the words stay on screen while the stretch passes behind them.
@@ -141,15 +146,19 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             </h1>
             <Text name="intro" look="lead" className={c("ch-intro")} />
           </div>
-          <Picture
-            className={c("ch-cover")}
-            name="cover"
-            alt="Two hands over a pink and white chessboard, seen from above: an older man's in a tweed sleeve reaching for a black piece, a woman's with a signet ring at the near side. Behind them, a dark grid of tiny green and grey boards."
-            width={1600}
-            height={1067}
-            small={800}
-            sizes="(max-width: 60rem) 92vw, 640px"
-          />
+          {/* the threads come out from under the cover's lower edge */}
+          <div className={c("ch-coverWrap")}>
+            <Picture
+              className={c("ch-cover")}
+              name="cover"
+              alt="Two hands over a pink and white chessboard, seen from above: an older man's in a tweed sleeve reaching for a black piece, a woman's with a signet ring at the near side. Behind them, a dark grid of tiny green and grey boards."
+              width={1600}
+              height={1067}
+              small={800}
+              sizes="(max-width: 60rem) 92vw, 680px"
+            />
+            <Knots of={LINES.cover} />
+          </div>
         </header>
 
         <div className={c("ch-open")} ref={opening}>
@@ -181,10 +190,11 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           {/* The years between, in brief: the thread runs bare among the
               others, and the 2020s come. */}
           <div className={c("ch-years")}>
-            <span className={c("ch-decade")} data-reveal="" style={{ "--at": "74%", "--pat": "76%" }}>
+            <span className={c("ch-decade")} data-reveal="" style={{ "--at": "90%", "--pat": "80%" }}>
               2020s
             </span>
             <Text name="years" className={c("ch-yearsText")} />
+            <Text name="years-none" className={c("ch-yearsText", "ch-yearsNone")} />
             <Knots of={LINES.years} />
           </div>
 

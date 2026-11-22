@@ -71,7 +71,7 @@ the published site. The names, in reading order:
 | --- | --- |
 | Title screen | `intro` (the short text under the title, beside the cover) |
 | Opening | `opening`, `opening-aside` (the smaller second line) |
-| I | `mine`, `mine-one`, `memory`, `memory-aside`, `years`, `board`, `not-a-player`, `chess-com`, `obsession`, `obsession-questions` |
+| I | `mine`, `mine-one`, `memory`, `memory-aside`, `years`, `years-none` ("No chess.", placed apart), `board`, `not-a-player`, `chess-com`, `obsession`, `obsession-questions` |
 | II | `people-title` (a heading), `people-intro`, `strangers`, `strangers-where`, `strangers-moment`, `club`, `professor`, `professor-quote`, `professor-how`, `boards`, `data` |
 | III | `data-intro` |
 | III, first question | `say-message`, `say-prediction`, `say-guess`, `say-answer`, `say-surprise`, `say-limits` |

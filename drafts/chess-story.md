@@ -41,7 +41,10 @@ Except for *en passant*, what is this rule anyway?
 
 <!--step:years-->
 
-Years went by.\
+Years went by.
+
+<!--step:years-none-->
+
 No chess.
 
 <!--step:board-->

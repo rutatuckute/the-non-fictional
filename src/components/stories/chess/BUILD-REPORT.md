@@ -49,3 +49,7 @@ Checked on the local site with headless Chromium: `chess-story/checks/again.cjs`
 ## 22 November — first screen in two columns, a steady device, large years
 
 Title and a placeholder short text (`intro`) at the left, the cover smaller at the right. The device is now held by `position: sticky` with its moves as CSS transitions, instead of a transform written on every scroll frame: `chess-story/checks/device-steady.cjs` scrolls by mouse wheel and finds its screen position identical in every frame while held (153 px over 840 px of scroll), then one quick crossing. "Years went by. / No chess." at up to 112 px, threads re-routed; `cross.cjs` clean at 16 sizes plus 375 and 414 wide.
+
+## 22 November — threads out of the cover, the device peeks, the years apart
+
+Threads begin inside the cover's lower edge; grey threads at 0.68 opacity. Cover column 3/5 of the width. The device peeks at the right while the question is read and glides to its place (a transition, in the page's flow) as the reader scrolls on, the memory's words appearing with it. "No chess." is its own step, placed at the lower right. `cross.cjs` clean at all 16 sizes; typecheck and production build passed.
