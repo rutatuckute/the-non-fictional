@@ -91,15 +91,16 @@ const REST = { tall: [0.2, 0.19] }
 // The scroll, in screens, since the scene was pinned. A move takes LASTS of
 // scrolling and the next begins EVERY after it, so one hand is still leaving
 // as the other comes in: something is always on its way.
+// The set comes in open with its first words; it turns over, the pieces are
+// at once in place, and only then do the hands begin, with "Different
+// people…"; half way through the game, the last two lines.
 const TURN_AT = 0.3
-const SETUP_AT = 0.7
-const FIRST_AT = 1.2
-// Beside the set, two texts: the first as the set comes in, lies open and
-// turns over, the second from when the pieces are set up.
-const SAID = ["board", "possibilities"]
-const SAID_AT = [0.85]
+const SETUP_AT = 0.62
+const FIRST_AT = 0.82
+const SAID = ["board", "same-game", "possibilities"]
 const EVERY = 0.3
 const LASTS = 0.5
+const SAID_AT = [FIRST_AT, FIRST_AT + 3 * EVERY]
 const GAME_OVER = FIRST_AT + (PLIES.length - 1) * EVERY + LASTS
 // The pieces are put away and the board becomes the phone's; at once the
 // phone goes to its place under the chart, which comes in as it does.
@@ -213,12 +214,13 @@ export const Wooden = ({ lines }) => {
   const link = React.useRef(null)
   const incoming = React.useRef(null)
   const plot = React.useRef(null)
+  const title = React.useRef(null)
   const pieces = React.useRef({})
   const hands = React.useRef({})
   const still = useStill()
   // What changes in steps, for the page to say and to style: the rest is
   // written straight onto the pieces and the hands, frame by frame.
-  const [stage, setStage] = React.useState({ turned: false, set: false, quiet: false, played: 0, phone: false, first: false, words: SAID[0] })
+  const [stage, setStage] = React.useState({ turned: false, set: false, social: false, played: 0, phone: false, first: false, words: SAID[0] })
 
   const goal = () => {
     const box = pin.current.getBoundingClientRect()
@@ -295,7 +297,8 @@ export const Wooden = ({ lines }) => {
       const lane = startX + ((narrow ? 4 : 1) - startX) * intoGutter
       const endX = box.left + place[0] + PHONE.width * k * size / 2 - screen.left
       const endY = box.top + place[1] + tall * size * 0.58 - screen.top
-      const bendY = narrow ? 32 : Math.max(24, Math.min(endY * 0.45, origin.top - screen.top - 34))
+      const head = (title.current ||= chart.current.querySelector("h3")).getBoundingClientRect()
+      const bendY = narrow ? 32 : Math.max(24, Math.min(endY * 0.45, head.top - screen.top - 18))
       const turnY = Math.max(bendY, endY - 45)
       link.current.setAttribute("d", `M${startX.toFixed(2)},0 C${startX.toFixed(2)},${(bendY * 0.45).toFixed(2)} ${lane.toFixed(2)},${(bendY * 0.55).toFixed(2)} ${lane.toFixed(2)},${bendY.toFixed(2)} L${lane.toFixed(2)},${turnY.toFixed(2)} Q${lane.toFixed(2)},${endY.toFixed(2)} ${endX.toFixed(2)},${endY.toFixed(2)}`)
       link.current.parentElement.style.opacity = within(arrives, 0.04, 0.3).toFixed(3)
@@ -312,7 +315,8 @@ export const Wooden = ({ lines }) => {
       turned: scrolled >= TURN_AT,
       set: scrolled >= SETUP_AT && scrolled < AWAY_AT,
       // (on a phone the words stand above the board, where the first hand to answer comes in)
-      quiet: scrolled >= FIRST_AT + EVERY - 0.12,
+      // the social media estimate joins the chart with "A winning trade-off?"
+      social: scrolled >= DRAW_AT,
       played: now.played,
       // (no words for a moment as the board becomes the phone)
       words:
@@ -356,7 +360,7 @@ export const Wooden = ({ lines }) => {
           <path ref={link} />
         </svg>
         <div className={c("ch-woodenChart")} ref={chart} style={{ opacity: 0 }}>
-          <TimeChart />
+          <TimeChart social={stage.social} />
         </div>
         <div className={c("ch-woodenScene")} ref={scene} role="img" aria-label={label}>
           <div className={c("ch-woodenLid")} ref={lid}>
@@ -429,7 +433,7 @@ export const Wooden = ({ lines }) => {
             the set's give way when the game is answered: the hands need the
             room. Then a few for the phone, and two beside the chart. */}
         {SAID.map(name => (
-          <div key={name} className={c("ch-woodenText")} data-on={stage.words === name ? "true" : "false"} data-quiet={stage.quiet ? "true" : "false"}>
+          <div key={name} className={c("ch-woodenText")} data-on={stage.words === name ? "true" : "false"}>
             <Text name={name} look="lead" />
           </div>
         ))}

@@ -53,27 +53,38 @@ No chess.
 
 <!--step:board-->
 
-Until I bought a little wooden chessboard. Different people, different stages of life, the same game.
+Until I bought this little wooden chessboard.
+
+<!--step:same-game-->
+
+Different people.\
+Different stages of life.\
+Same game.
 
 <!--step:possibilities-->
 
-I just like the strategic and analytical side of the game. That, and its endless possibilities.
+I just like the strategic and analytical side of the game.\
+That, and its endless possibilities.
 
 <!--step:not-a-player-->
 
-I'm not THE chess player, though. It's far from being a defining part of who I am.
+I'm not THE chess player, though.\
+It's far from being a defining part of who I am.
 
 <!--step:chess-com-->
 
-Then came Chess.com. My first game there lasted one move each, then my opponent resigned.
+Then came **Chess.com**.\
+My first game there lasted one move each, then my opponent resigned.
 
 <!--step:obsession-->
 
-It brought faster dopamine, to the point of overtaking social media in screen time. A winning trade-off?
+It brought faster dopamine, to the point of overtaking social media in screen time.\
+A winning trade-off?
 
 <!--step:obsession-questions-->
 
-More games, more mistakes, more determination. And with them, more questions.
+More games, more mistakes, more determination.\
+And thus, more questions.
 
 <!--step:people-title-->
 
