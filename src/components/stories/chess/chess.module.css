@@ -180,14 +180,20 @@
 }
 .ch-sideBack { transform: rotateX(180deg); }
 
-/* ── the title and the cover: the first screen ── */
-.ch-hero { position: relative; z-index: 2; display: grid; gap: clamp(20px, 3svh, 32px); padding: calc(var(--bar) + 5svh) 0 4svh; }
+/* ── the title and the cover: the first screen ──
+   The title and a short text at the left, the cover, smaller, at the right. */
+.ch-hero {
+  position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  align-items: center; column-gap: clamp(32px, 4vw, 64px);
+  min-height: calc(100svh - 76px - var(--bar)); padding: calc(var(--bar) + 4svh) 0 6svh;
+}
+.ch-heroWords { display: grid; gap: clamp(18px, 2.4svh, 28px); align-content: center; }
 .ch-story .ch-title {
   margin: 0; color: var(--ink);
-  font: 400 clamp(38px, 5.4vw, 76px) / 1 var(--font-title); letter-spacing: var(--tracking-display); text-transform: none;
+  font: 400 clamp(38px, 5vw, 72px) / 1 var(--font-title); letter-spacing: var(--tracking-display); text-transform: none;
 }
-/* the whole picture in the first screen, under the title */
-.ch-cover { width: min(100%, calc((100svh - 76px - var(--bar) - 10svh - clamp(38px, 5.4vw, 76px) - 32px) * 1.5)); }
+.ch-text.ch-intro { max-width: 24em; color: var(--ink-2); }
+.ch-cover { width: 100%; max-height: calc(100svh - 76px - var(--bar) - 12svh); object-fit: contain; object-position: right center; }
 
 /* ── the opening: one screen ── */
 .ch-open {
@@ -199,27 +205,46 @@
 .ch-open .ch-text { max-width: min(20em, 56%); }
 .ch-text.ch-aside { max-width: min(22em, 56%); font-size: clamp(24px, 3vw, 40px); line-height: 1.12; letter-spacing: var(--tracking-display); text-wrap: balance; }
 
-/* The Pocket Micro (origin.js): glimpsed at the opening's right, then in its
-   place in the memory; its left half folds shut on the outer cover. */
+/* The Pocket Micro (origin.js). On a wide screen it is held in a track that
+   runs from the opening down to its place in the memory: sticky, so the
+   browser itself keeps it still on screen, and it comes to rest exactly in
+   its place. Its moves across are short transitions, never tied to the
+   scroll frame by frame. Its place in the memory keeps the room, empty. */
 .ch-memory { overflow-x: clip; }
-.ch-memory :is(.ch-mine, .ch-told2) { transition: opacity 450ms ease; }
-.ch-memory[data-arrived="false"] :is(.ch-mine, .ch-told2) { opacity: 0; }
+.ch-memory :is(.ch-mine, .ch-told2) { transition: opacity 350ms ease 200ms; }
+.ch-memory[data-arrived="false"] :is(.ch-mine, .ch-told2) { opacity: 0; transition: opacity 200ms ease; }
 .ch-device { position: relative; z-index: 3; }
-.ch-pocket { --fold: 0deg; position: relative; width: 100%; aspect-ratio: 800 / 1231; perspective: 1200px; transform-origin: 0 0; will-change: transform; }
+.ch-pocketTrack { position: absolute; left: 0; right: 0; z-index: 3; pointer-events: none; }
+.ch-device .ch-pocket { visibility: hidden; }
+.ch-pocketHeld {
+  position: sticky; top: 17svh; margin-top: 17svh;
+  transform: translate3d(var(--right, 62%), 0, 0);
+  transition: transform 650ms cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+.ch-pocketHeld[data-in="false"] { transform: translate3d(calc(var(--right, 62%) + 65%), 0, 0); }
+.ch-pocketHeld[data-side="left"] { transform: translate3d(var(--left, 0px), 0, 0); }
+.ch-pocket { position: relative; width: 100%; aspect-ratio: 800 / 1231; perspective: 1200px; }
 .ch-pocketRight, .ch-pocketFlap { position: absolute; top: 0; width: 50%; height: 100%; }
 .ch-pocketRight { left: 50%; overflow: hidden; }
 .ch-pocketRight .ch-picture { width: 200%; max-width: none; left: -100%; }
-.ch-pocketFlap { z-index: 3; left: 0; transform-origin: 100% 50%; transform-style: preserve-3d; transform: rotateY(var(--fold)); }
+.ch-pocketFlap {
+  z-index: 3; left: 0; transform-origin: 100% 50%; transform-style: preserve-3d; transform: rotateY(0deg);
+  transition: transform 900ms cubic-bezier(0.45, 0, 0.2, 1);
+}
+.ch-pocket[data-closed="true"] .ch-pocketFlap { transform: rotateY(180deg); }
 .ch-pocketFront, .ch-pocketBack { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .ch-pocketFront .ch-picture { width: 200%; max-width: none; }
 .ch-pocketBack { transform: rotateY(180deg); }
 .ch-pocketBack .ch-picture { width: 200%; max-width: none; height: 100%; left: -100%; }
-.ch-pocket[data-folded="true"] .ch-pocketRight { visibility: hidden; }
+/* once shut, the half beneath is gone (it would show past the cover's edge) */
+.ch-pocket[data-closed="true"] .ch-pocketRight { visibility: hidden; transition: visibility 0s linear 900ms; }
 @media (prefers-reduced-motion: reduce) {
-  .ch-pocketFlap, .ch-pocketBack { transform: none; }
+  .ch-pocketHeld, .ch-pocketFlap, .ch-memory :is(.ch-mine, .ch-told2) { transition: none !important; }
+  .ch-pocketFlap, .ch-pocketBack, .ch-pocket[data-closed="true"] .ch-pocketFlap { transform: none; }
   .ch-pocketBack { left: 100%; visibility: hidden; }
   .ch-pocket[data-closed="true"] .ch-pocketFront { visibility: hidden; }
   .ch-pocket[data-closed="true"] .ch-pocketBack { visibility: visible; }
+  .ch-pocket[data-closed="true"] .ch-pocketRight { transition: none; }
 }
 
 .ch-storyMeta { margin-bottom: 24px; color: var(--ink-3); font: 400 12px / 1.5 var(--font-mono); }
@@ -235,8 +260,12 @@
 .ch-device { grid-column: 2 / 6; grid-row: 2; }
 .ch-memory .ch-col { grid-column: 8 / 13; grid-row: 2; align-self: center; }
 /* The years between: the thread as a timeline, the decades named behind it. */
-.ch-years { position: relative; height: 64vh; }
-.ch-yearsText { position: absolute; left: 56%; top: 30%; width: 26%; }
+.ch-years { position: relative; height: 80vh; height: 80svh; }
+/* the chapter's largest words, at the left as the opening's are */
+.ch-text.ch-yearsText {
+  position: absolute; left: 0; top: 18%; max-width: none;
+  font-size: clamp(64px, 7.6vw, 112px); line-height: 0.98; letter-spacing: -0.04em;
+}
 .ch-decade {
   --shown: 1;
   position: absolute; left: 50%; top: var(--at); z-index: 0; transform: translate(-50%, -50%);
@@ -646,11 +675,15 @@
   .ch-knot { left: var(--px); top: var(--py); }
   .ch-row { grid-template-columns: minmax(0, 1fr); row-gap: 5vh; }
   .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-mine, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-device, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
-  .ch-yearsText { left: 32%; right: 0; top: 38%; width: auto; }
+  .ch-years { height: 64vh; height: 64svh; }
+  .ch-text.ch-yearsText { top: 26%; font-size: clamp(42px, 12.5vw, 84px); }
   .ch-open .ch-text, .ch-text.ch-aside { max-width: none; }
-  .ch-cover { width: 100%; }
+  .ch-hero { grid-template-columns: minmax(0, 1fr); row-gap: 28px; min-height: 0; padding: calc(var(--bar) + 4svh) 0 4svh; }
+  .ch-cover { max-height: none; }
   .ch-memory { row-gap: 22px; padding-bottom: 5vh; }
   .ch-device { width: 72%; }
+  .ch-pocketTrack { display: none; }
+  .ch-device .ch-pocket { visibility: visible; }
   /* The pinned set takes the screen's width; its words stand above it, clear
      of the threads' lane at the left, and give way when the game begins. */
   .ch-woodenStage { grid-template-columns: minmax(0, 1fr); margin-inline: calc(-1 * var(--page-margin)); padding-inline: var(--page-margin); }

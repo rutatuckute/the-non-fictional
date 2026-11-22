@@ -2,96 +2,122 @@
 
 import * as React from "react"
 
-import { useFollow, useStill } from "./follow"
+import { useStill } from "./follow"
 import { c, Picture } from "./parts"
 
 // The Pocket Micro of the first memory. Its place is in the memory, at the
-// left under "This is mine", with the father's words to its right. But it is
-// first glimpsed beside the opening question: it slides in from the right edge
-// as the question comes up, waits there while the reader scrolls, then crosses
-// to the left and settles into its place; the memory's words come in as it
-// lands. Once read, its left half folds shut on the outer cover as it scrolls
-// away.
+// left under "This is mine", with the father's words to its right. On a wide
+// screen it is first glimpsed beside the opening question: it slides in from
+// the right edge, stays there while the question goes up, and as its place in
+// the memory arrives it crosses to the left, quickly, and the memory's words
+// come in. Once read, its left half folds shut on the outer cover.
 //
-// On a phone it simply stands in its place in the memory; it only folds.
-// With motion turned off it never travels, and folds in one step.
+// Nothing here is moved frame by frame against the scroll, which shakes: the
+// browser holds the device on screen itself (position: sticky, in a track
+// that runs from the opening down to its place, so it comes to rest exactly
+// there), and each move is a short transition, set off as the reader passes
+// a point and undone on the way back.
 //
-// `opening` is a ref to the opening's box, which the glimpse is set against.
-
-const within = (t, from, to) => Math.max(0, Math.min(1, (t - from) / (to - from)))
-const gently = t => t * t * (3 - 2 * t)
-
-// Where the glimpse is: this far across the opening and down the screen, and
-// how wide (a share of the column, at most a share of the screen's height).
-const AT = { x: 0.62, y: 0.17, wide: 0.38, tall: 0.42 }
-// Before it slides in, this much of it is beyond the right edge.
-const OUT = 0.65
-// The memory is reached when the device's place is this far down the screen.
-const SETTLED = 0.16
+// On a phone it simply stands in its place; it only folds. With motion
+// turned off, each change happens at once.
+//
+// `opening` is a ref to the opening's box: the track starts at its top.
 
 const ALT = {
   open: "A Chess King Pocket Micro, a pocket chess computer: a small board with flat round pieces, set up after the moves e4 and e5, above a keypad and a tiny display.",
   closed: "The Pocket Micro folded shut, its dark outer cover facing us.",
 }
 
-export const Device = ({ opening }) => {
-  const slot = React.useRef(null)
-  const device = React.useRef(null)
-  const still = useStill()
+// Where the device is held, as a share of the screen's height from its top
+// (the same as `top` of .ch-pocketHeld).
+const HELD = 0.17
 
-  const goal = () => -opening.current.getBoundingClientRect().top / window.innerHeight
-  const paint = at => {
-    const screen = window.innerHeight
-    const narrow = window.matchMedia("(max-width: 60rem)").matches
-    const home = slot.current.getBoundingClientRect()
-    const open = opening.current.getBoundingClientRect()
-    const t = at
-
-    let move = "none"
-    let arrived = true
-    if (!narrow && !still) {
-      // The glimpse: at the opening's right, kept on screen once the opening
-      // reaches the top, coming in from beyond the edge as the question does.
-      const wide = Math.min(open.width * AT.wide, screen * AT.tall)
-      const shown = gently(within(t, -0.35, 0.2))
-      const glimpse = [open.left + open.width * AT.x + (1 - shown) * OUT * wide, Math.max(open.top, 0) + screen * AT.y]
-      // The crossing: once the question has gone up past it, from the glimpse
-      // to its own place, ending as that place comes to SETTLED down the screen.
-      // The memory's words wait for it (any way in would pass over them).
-      const settled = (home.top - open.top) / screen - SETTLED
-      const across = gently(within(t, Math.min(settled - 0.05, Math.max(0.5, settled - 0.45)), settled))
-      arrived = across > 0.97
-      const scale = wide / home.width + (1 - wide / home.width) * across
-      const x = (glimpse[0] - home.left) * (1 - across)
-      const y = (glimpse[1] - home.top) * (1 - across)
-      if (across < 1) move = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${scale.toFixed(4)})`
-    }
-    device.current.style.transform = move
-    slot.current.parentElement.dataset.arrived = arrived ? "true" : "false"
-
-    // Folded as its place leaves the top of the screen.
-    const fold = narrow ? within(home.top / screen, 0.05, -0.25) : within(home.top / screen, 0, -0.3)
-    const turned = still ? (fold >= 0.5 ? 180 : 0) : fold * 180
-    device.current.style.setProperty("--fold", `${turned}deg`)
-    device.current.dataset.closed = fold >= 0.5 ? "true" : "false"
-    device.current.dataset.folded = fold >= 0.99 ? "true" : "false"
-    device.current.dataset.still = still ? "true" : "false"
-    device.current.setAttribute("aria-label", fold >= 0.5 ? ALT.closed : ALT.open)
-  }
-  useFollow(goal, paint, { still, watch: slot })
-
+const Pocket = React.forwardRef(function Pocket(_, ref) {
   const picture = { width: 800, height: 1231, small: 480, sizes: "(max-width: 60rem) 72vw, 400px" }
   return (
-    <div className={c("ch-device")} ref={slot}>
-      <div className={c("ch-pocket")} ref={device} role="img" aria-label={ALT.open}>
-        <div className={c("ch-pocketRight")}><Picture name="device" alt="" {...picture} /></div>
-        <div className={c("ch-pocketFlap")}>
-          <div className={c("ch-pocketFront")}><Picture name="device" alt="" {...picture} /></div>
-          <div className={c("ch-pocketBack")}>
-            <Picture name="device-closed" alt="" width={900} height={1277} small={480} sizes="(max-width: 60rem) 72vw, 400px" />
-          </div>
+    <div className={c("ch-pocket")} ref={ref} role="img" aria-label={ALT.open}>
+      <div className={c("ch-pocketRight")}><Picture name="device" alt="" {...picture} /></div>
+      <div className={c("ch-pocketFlap")}>
+        <div className={c("ch-pocketFront")}><Picture name="device" alt="" {...picture} /></div>
+        <div className={c("ch-pocketBack")}>
+          <Picture name="device-closed" alt="" width={900} height={1277} small={480} sizes="(max-width: 60rem) 72vw, 400px" />
         </div>
       </div>
     </div>
+  )
+})
+
+export const Device = ({ opening }) => {
+  const slot = React.useRef(null)
+  const track = React.useRef(null)
+  const held = React.useRef(null)
+  const wide = React.useRef(null)
+  const narrow = React.useRef(null)
+  const still = useStill()
+
+  React.useEffect(() => {
+    const row = slot.current.parentElement
+    let frame = 0
+    // Which state each part is in, for where the reader is.
+    const look = () => {
+      frame = 0
+      const screen = window.innerHeight
+      const open = opening.current.getBoundingClientRect()
+      const home = slot.current.getBoundingClientRect()
+      const small = window.matchMedia("(max-width: 60rem)").matches
+      // across once its place has nearly come up to where it is held
+      const across = home.top < screen * (HELD + 0.05)
+      const closed = home.top < screen * (small ? -0.12 : -0.18)
+      held.current.dataset.in = open.top < screen * 0.6 ? "true" : "false"
+      held.current.dataset.side = across ? "left" : "right"
+      row.dataset.arrived = small || across ? "true" : "false"
+      for (const node of [wide.current, narrow.current]) {
+        node.dataset.closed = closed ? "true" : "false"
+        node.setAttribute("aria-label", closed ? ALT.closed : ALT.open)
+      }
+    }
+    // The track's length and the two places across it, whenever sizes change.
+    const measure = () => {
+      const open = opening.current.getBoundingClientRect()
+      const home = slot.current.getBoundingClientRect()
+      const lane = track.current.getBoundingClientRect()
+      track.current.style.top = `${(open.top - row.getBoundingClientRect().top).toFixed(1)}px`
+      track.current.style.height = `${(home.bottom - open.top).toFixed(1)}px`
+      held.current.style.width = `${home.width.toFixed(1)}px`
+      held.current.style.setProperty("--right", `${(lane.width * 0.62).toFixed(1)}px`)
+      held.current.style.setProperty("--left", `${(home.left - lane.left).toFixed(1)}px`)
+      look()
+    }
+    const wake = () => {
+      if (!frame) frame = window.requestAnimationFrame(look)
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(opening.current)
+    observer.observe(row)
+    window.addEventListener("scroll", wake, { passive: true })
+    window.addEventListener("resize", measure)
+    document.fonts?.ready.then(measure)
+    return () => {
+      observer.disconnect()
+      window.removeEventListener("scroll", wake)
+      window.removeEventListener("resize", measure)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
+  }, [opening])
+
+  return (
+    <>
+      {/* wide screens: held in a track from the opening down to its place */}
+      <div className={c("ch-pocketTrack")} ref={track} data-still={still ? "true" : "false"}>
+        <div className={c("ch-pocketHeld")} ref={held} data-in="false" data-side="right">
+          <Pocket ref={wide} />
+        </div>
+      </div>
+      {/* its place in the memory; on a phone, the device itself */}
+      <div className={c("ch-device")} ref={slot}>
+        <Pocket ref={narrow} />
+      </div>
+    </>
   )
 }

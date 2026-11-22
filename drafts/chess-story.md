@@ -11,6 +11,10 @@ cover: /images/uploads/chess-again-cover.jpg
 ---
 <!--story:chess-->
 
+<!--step:intro-->
+
+[A short text under the title, to come.]
+
 <!--step:opening-->
 
 Do you have that one memory your mind keeps wandering back to?

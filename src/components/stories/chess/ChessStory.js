@@ -73,12 +73,16 @@ const LINES = {
   // The years between are a short stretch, with no bead on the story's thread:
   // no chess. The others keep clear of the few words there (right of the
   // thread from 28% to 40% down; on a phone, right of it from 38% to 54%).
+  // The years between are a short stretch, with no bead on the story's thread:
+  // no chess. Its two lines are the chapter's largest words, at the left from
+  // about 18% to 48% down (on a phone, the whole width from 26% to 46%); the
+  // threads keep to the right of them, and on a phone to the margins.
   years: {
-    a: [[50, 5, 18, 5], [51, 26, 19, 26], [49, 48, 17.5, 48], [50.5, 70, 16, 68], [50, 99, 5, 97]],
-    "other-1": [[36, 6, 70, 3], [43.5, 20, 36, 8], [45, 38, 26, 20], [50, 50, 18, 50], [55.5, 62, 10.5, 62], [57, 80, 11, 80], [60.5, 96, 9, 96]],
-    "other-2": [[55, 6, 108, 2], [64, 13, 40, 9], [86, 19, 31.5, 20], [106, 22, 34, 28], [108, 30, 70, 33], [108, 40, 100, 35], [108, 50, 110, 36]],
-    "other-4": [[74, 3, -8, 5], [90, 16, 9, 12], [92, 44, 5.5, 50], [86, 76, 6, 78], [78, 95, -8, 99]],
-    "other-6": [[-6, 28, -8, 60], [20, 33, 12, 68], [36, 41, 24, 78], [38.5, 58, 22, 86], [37, 80, 14, 93], [34, 97, 9, 99]],
+    a: [[50, 3, 18, 4], [66, 12, 60, 14], [72, 30, 102, 26], [70, 50, 102, 46], [54, 70, 40, 62], [50, 99, 5, 97]],
+    "other-1": [[36, 4, 70, 3], [58, 10, 30, 7], [78, 22, -6, 13], [82, 40, -6, 30], [66, 60, -6, 52], [57, 80, 11, 80], [60.5, 96, 9, 96]],
+    "other-2": [[55, 6, 108, 2], [64, 12, 40, 9], [86, 17, 31.5, 16], [106, 22, 60, 20], [108, 30, 100, 22], [108, 40, 110, 24], [108, 50, 110, 36]],
+    "other-4": [[74, 3, -8, 5], [90, 16, -6, 20], [94, 44, -6, 50], [86, 76, 6, 78], [78, 95, -8, 99]],
+    "other-6": [[-6, 56, -8, 60], [16, 60, 12, 68], [30, 66, 24, 78], [36, 76, 22, 86], [37, 86, 14, 93], [34, 97, 9, 99]],
   },
   // The wooden set is pinned: its stretch is several screens long, and the
   // board and the words stay on screen while the stretch passes behind them.
@@ -127,12 +131,16 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
         <Chapters chapters={CHAPTERS} />
         <Thread />
 
-        {/* The title and the cover, then the story begins. */}
+        {/* The title and a short text at the left, the cover at the right;
+            then the story begins. */}
         <header className={c("ch-hero")}>
           <Mark id="the-thread" />
-          <h1 className={c("ch-title")} itemProp="headline">
-            {title}
-          </h1>
+          <div className={c("ch-heroWords")}>
+            <h1 className={c("ch-title")} itemProp="headline">
+              {title}
+            </h1>
+            <Text name="intro" look="lead" className={c("ch-intro")} />
+          </div>
           <Picture
             className={c("ch-cover")}
             name="cover"
@@ -140,7 +148,7 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             width={1600}
             height={1067}
             small={800}
-            sizes="(max-width: 60rem) 92vw, 1100px"
+            sizes="(max-width: 60rem) 92vw, 640px"
           />
         </header>
 
@@ -176,7 +184,7 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             <span className={c("ch-decade")} data-reveal="" style={{ "--at": "74%", "--pat": "76%" }}>
               2020s
             </span>
-            <Text name="years" look="lead" className={c("ch-yearsText")} />
+            <Text name="years" className={c("ch-yearsText")} />
             <Knots of={LINES.years} />
           </div>
 
