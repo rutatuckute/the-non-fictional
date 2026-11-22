@@ -25,7 +25,9 @@ const at = value => (typeof value === "string" ? value : `${value}%`)
 
 // A knot. `px` and `py` place it on a phone, where the page is one column.
 // With `mark` it shows on the thread as a bead: a game, once in a while.
-// `tint` names the two knots between which the story's thread takes its colour.
+// `tint` says what colour the story's thread is at this knot: "clay" where
+// chess is in the life, "grey" where it is not; between two such knots it
+// turns from one to the other. ("from" and "to" are the old grey and clay.)
 export const Knot = ({ run = "a", x, y, px = x, py = y, mark = false, tint }) => (
   <i
     className={c("ch-knot")}
@@ -64,7 +66,7 @@ export const Knots = ({ of }) =>
         px={px}
         py={py}
         mark={what === "mark"}
-        tint={what === "from" || what === "to" ? what : undefined}
+        tint={what === "from" ? "grey" : what === "to" ? "clay" : what === "grey" || what === "clay" ? what : undefined}
       />
     )),
   )
@@ -210,6 +212,8 @@ const questions = (way, narrow, width) => {
 // How much of the screen's height the threads have reached: they are drawn
 // down to this line, so their ends are always in view, ahead of the reading.
 const REACH = 0.7
+// How far below the cover the threads show from the start, in pixels.
+const FLOOR = 34
 
 // How much scrolling a trace takes to draw: short enough to finish while the
 // whole of it is on screen, with a little air above.
@@ -229,7 +233,11 @@ export const Thread = () => {
     const node = svg.current?.parentElement
     if (!node) return
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    const line = window.innerHeight * REACH - node.getBoundingClientRect().top
+    let line = window.innerHeight * REACH - node.getBoundingClientRect().top
+    // On the first screen the threads' tips already show a little under the
+    // cover, so the eye follows them down.
+    const floor = node.querySelector("[data-thread-floor]")
+    if (floor) line = Math.max(line, floor.getBoundingClientRect().bottom - node.getBoundingClientRect().top + FLOOR)
     drawn.current.forEach(run => {
       let length = run.length
       if (!still) {
@@ -273,7 +281,7 @@ export const Thread = () => {
       const box = node.getBoundingClientRect()
       const width = document.documentElement.clientWidth
       const groups = new Map()
-      const tint = {}
+      const tint = []
       node.querySelectorAll("[data-thread]").forEach(knot => {
         const at = knot.getBoundingClientRect()
         const group = groups.get(knot.dataset.thread) || { points: [], exact: [], marks: [], traces: [], breakAt: null }
@@ -294,7 +302,7 @@ export const Thread = () => {
         group.points.push(point)
         group.exact.push(false)
         if (knot.dataset.mark !== undefined) group.marks.push(point)
-        if (knot.dataset.tint) tint[knot.dataset.tint] = point[1]
+        if (knot.dataset.tint && knot.dataset.thread === "a") tint.push([point[1], knot.dataset.tint])
       })
       reveals.current = [...node.querySelectorAll("[data-reveal]")].map(item => ({
         node: item,
@@ -309,9 +317,10 @@ export const Thread = () => {
 
       const narrow = window.matchMedia("(max-width: 60rem)").matches
       const runs = [...groups].map(([name, { points, exact, marks, traces, breakAt }]) => {
-        const other = name.startsWith("other")
+        // the reader's own thread is one of the others until it is chosen
+        const other = name.startsWith("other") || name.startsWith("you")
         const sampled = along(points, exact)
-        const whole = wander(sampled.way, sampled.firm, name, other ? 7 : 4)
+        const whole = wander(sampled.way, sampled.firm, name, other ? 4.5 : 2.5)
         // Past the break the thread is drawn as questions, not as a line.
         const cut = breakAt === null ? whole.length - 1 : sampled.knotAt[breakAt]
         const way = whole.slice(0, cut + 1)
@@ -321,7 +330,8 @@ export const Thread = () => {
           way.reduce((best, p) => (Math.hypot(p[0] - mark[0], p[1] - mark[1]) < Math.hypot(best[0] - mark[0], best[1] - mark[1]) ? p : best))
         return { name, other, traces, d: pathOf(way), asked, beads: marks.map(nearest).map(p => [Math.round(p[0]), Math.round(p[1])]) }
       })
-      const next = { runs, tint: tint.from !== undefined && tint.to !== undefined ? [tint.from, tint.to] : null }
+      tint.sort((p, q) => p[0] - q[0])
+      const next = { runs, tint: tint.length > 1 ? tint : null }
       setDrawing(before => (JSON.stringify(before) === JSON.stringify(next) ? before : next))
       draw()
     }
@@ -402,12 +412,17 @@ export const Thread = () => {
   const { runs, tint } = drawing
   return (
     <svg className={c("ch-thread")} ref={svg} aria-hidden="true">
-      {/* The story's thread is one of the grey ones until the memory begins. */}
+      {/* The story's thread is clay where chess is in the life, grey where it is not. */}
       {tint ? (
         <defs>
-          <linearGradient id={tintId} gradientUnits="userSpaceOnUse" x1="0" x2="0" y1={tint[0]} y2={tint[1]}>
-            <stop offset="0" className={c("ch-tintFrom")} />
-            <stop offset="1" className={c("ch-tintTo")} />
+          <linearGradient id={tintId} gradientUnits="userSpaceOnUse" x1="0" x2="0" y1={tint[0][0]} y2={tint[tint.length - 1][0]}>
+            {tint.map(([y, colour], index) => (
+              <stop
+                key={index}
+                offset={((y - tint[0][0]) / (tint[tint.length - 1][0] - tint[0][0] || 1)).toFixed(5)}
+                className={c(colour === "clay" ? "ch-tintTo" : "ch-tintFrom")}
+              />
+            ))}
           </linearGradient>
         </defs>
       ) : null}

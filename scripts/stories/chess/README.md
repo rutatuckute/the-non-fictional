@@ -70,15 +70,15 @@ the published site. The names, in reading order:
 | Part | Names |
 | --- | --- |
 | Title screen | `intro` (the short text under the title, beside the cover) |
-| Opening | `opening`, `opening-aside` (the smaller second line) |
-| I | `mine`, `mine-one`, `memory`, `memory-aside`, `years`, `years-none` ("No chess.", placed apart), `board`, `not-a-player`, `chess-com`, `obsession`, `obsession-questions` |
+| Opening | `opening`, `opening-aside` (the smaller second line), `hold` (then the reader may keep a thread of their own) |
+| I | `mine`, `mine-one`, `memory`, `memory-aside` (with the en passant demo on the device), `years`, `years-none` ("No chess.", placed apart), `board`, `possibilities`, `not-a-player` (beside the chart), `chess-com`, `obsession`, `obsession-questions` |
 | II | `people-title` (a heading), `people-intro`, `strangers`, `strangers-where`, `strangers-moment`, `club`, `professor`, `professor-quote`, `professor-how`, `boards`, `data` |
 | III | `data-intro` |
 | III, first question | `say-message`, `say-prediction`, `say-guess`, `say-answer`, `say-surprise`, `say-limits` |
 | III, second question | `wrong-observation`, `wrong-decide`, `wrong-outcome`, `wrong-crowd`, `wrong-you` |
 | III, third question | `reveal-professor`, `reveal-games`, `reveal-style` |
 | III, the end of it | `unknown`, `unknown-showed`, `unknown-cannot` |
-| IV | `encounter`, `continuing`, `last-question` |
+| IV | `encounter`, `continuing`, `last-question`, `yours` ("Is yours still there?") |
 | After the story | `method` |
 
 ## The pictures

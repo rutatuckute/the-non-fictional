@@ -55,39 +55,52 @@ const CHAPTERS = [
 // Beyond the screen's edge, whatever the window's width: the column is centred in it.
 const OFF_LEFT = "calc(50% - 60vw)"
 const OFF_RIGHT = "calc(50% + 60vw)"
+// Part I's threads, as one family. They come out from under the cover
+// together and run down the right of the opening as a loose bundle, clear of
+// the question. "a" is the story's thread: clay wherever chess is in the life,
+// grey where it is not (the knots marked "clay" and "grey" set its colour). It
+// is grey through the opening, takes its colour as it goes in behind the
+// device in its place, goes grey again through the years with no chess, and
+// is clay again as it reaches the wooden set. "you" is the reader's own: one
+// of the grey ones until they keep it (see the opening). The others leave in
+// their own time, one in the memory, the rest by the screen's edges at the set.
 const LINES = {
-  // Out from under the cover's lower edge (points in percent of the picture),
-  // so the threads are drawn out of it as the reader starts to scroll.
+  // percent of the cover picture: a leaves from the author's sleeve
   cover: {
-    a: [[46, 94, 46, 94]],
-    "other-1": [[22, 94, 20, 94]],
-    "other-2": [[70, 94, 72, 94]],
+    "other-1": [[12, 97, 14, 97]],
+    you: [[24, 97, 30, 97]],
+    "other-2": [[34, 97, 46, 97]],
+    a: [[62, 97, 62, 97]],
+    "other-4": [[84, 97, 84, 97]],
   },
+  // the question stands at the left (to 56%) from about 25% down; the device
+  // peeks in at the right edge, level with it
   open: {
-    a: [[58, 0, 40, 0], [74, 16, 108, 22], [89.5, 36, 108, 50], [91, 66, 108, 74, "from"], [72, 90, 76, 92]],
-    "other-1": [[12, 0, 8, 0], [50, 14, 70, 14], [85, 32, 108, 30], [86.5, 68, 108, 80], [60, 94, 84, 96]],
-    "other-2": [[36, 0, 70, 0], [66, 12, 108, 12], [93.5, 34, 112, 34], [95, 70, 112, 70], [82, 96, 112, 96]],
-    "other-4": [[106, 10, -10, 40], [98, 38, -10, 60], [99, 74, -10, 80]],
-    "other-5": [[106, 46, 100, 0], [101.5, 62, 88, 12], [102.5, 86, 108, 24]],
+    "other-1": [[48, 0, 22, 0], [70, 20, -4, 14], [76, 56, -4, 60], [78, 100, -4, 100]],
+    you: [[56, 0, 40, 0], [64, 22, 101.5, 12], [66, 58, 101.5, 60], [64, 100, 101.5, 100]],
+    "other-2": [[62, 0, 56, 0], [84, 16, 110, 8], [86, 52, 112, 40], [86, 100, 112, 100]],
+    a: [[74, 0, 72, 0], [80, 24, 103.5, 12], [90, 52, 103.5, 56], [93, 80, 103.5, 82], [92, 100, 103.5, 100]],
+    "other-4": [[92, 0, 86, 0], [102, 14, 112, 6], [112, 30, 114, 20]],
   },
+  // "This is mine." at the upper left (to 57% across, to 15% down), the device
+  // under it (to 44% across), the father's words at the right, level with
+  // the device's middle; on a phone, the words above and below the device
   memory: {
-    a: [[47, 6, 82, 5, "to"], [45.5, 45, 40, 30], [46, 80, -3, 72], [46, 97, -3, 99]],
-    "other-1": [[38, 3, 96, 10], [30, 32, 107, 36], [26, 100, 107, 99]],
-    "other-2": [[53, 28, 108, 30], [52, 60, 108, 50], [52.5, 96, 108, 80]],
-    "other-4": [[101.5, 20, -10, 30], [102, 96, -10, 80]],
-    "other-5": [[106, 8, 112, 8]],
+    a: [[92, 0, 103.5, 0, "grey"], [76, 9, 96, 12], [52, 19, 80, 19], [36, 30, 50, 30, "clay"], [26, 62, 60, 46], [24, 100, 103.5, 60, "clay"]],
+    you: [[64, 0, 101.5, 0], [60, 16, 101.5, 30], [53, 40, 101.5, 60], [52, 72, 101.5, 80], [46, 100, 101.5, 100]],
+    "other-1": [[80, 0, -4, 0], [90, 18, -4, 40], [104, 40, -4, 70], [106, 70, -4, 90], [100, 100, -4, 100]],
+    "other-2": [[86, 0, 112, 0], [100, 12, 112, 20], [110, 34, 114, 40]],
   },
-  // The years between are a short stretch, with no bead on the story's thread:
-  // no chess. "Years went by." stands large at the upper left (about 18% to
-  // 33% down), "No chess." at the lower right (about 58% to 73%, from 60%
-  // across); the threads weave between the two. On a phone the first is at
-  // 26% to 34% down across the width, the second from 50% to 58%, from 42%.
+  // "Years went by." at the upper left (to about 45% across, 18% to 30%
+  // down), "No chess." at the lower right (from 64% across, 58% to 70%); the
+  // threads weave between them. On a phone: 26% to 33% down across three
+  // quarters, and from 52% across, 50% to 58%.
   years: {
-    a: [[50, 3, 18, 4], [70, 12, 60, 12], [72, 30, 102, 20], [60, 42, 103, 41], [40, 50, 38, 47], [28, 60, 12, 58], [30, 80, 20, 80], [36, 99, 5, 97]],
-    "other-1": [[36, 4, 70, 3], [62, 9, 30, 7], [80, 22, -6, 13], [84, 40, -6, 30], [60, 48, -6, 52], [42, 64, 11, 80], [60.5, 96, 9, 96]],
-    "other-2": [[55, 6, 108, 2], [64, 12, 40, 9], [86, 17, 31.5, 16], [106, 22, 60, 20], [108, 30, 100, 22], [108, 40, 110, 24], [108, 50, 110, 36]],
-    "other-4": [[74, 3, -8, 5], [92, 14, -6, 20], [96, 34, -6, 50], [107, 50, 6, 78], [108, 95, -8, 99]],
-    "other-6": [[-6, 60, -8, 60], [10, 66, 12, 68], [18, 74, 24, 78], [24, 84, 22, 86], [30, 92, 14, 93], [34, 97, 9, 99]],
+    a: [[30, 0, 103.5, 0], [50, 9, 100, 12], [60, 28, 103, 24, "grey"], [50, 46, 100, 40], [38, 64, 40, 46, "grey"], [30, 84, 10, 62], [26, 100, 5, 100]],
+    you: [[44, 0, 101.5, 0], [62, 8, 101.5, 20], [72, 26, 101.5, 40], [62, 44, 70, 46], [46, 58, 30, 48], [44, 80, -4, 64], [48, 100, -6, 100]],
+    "other-1": [[60, 0, -4, 0], [78, 10, -4, 18], [86, 28, -4, 44], [80, 46, 16, 50], [56, 54, 30, 64], [52, 76, 20, 82], [62, 100, 14, 100]],
+    // one arrives in the years, from the left
+    "other-3": [[-6, 40, -8, 40], [10, 52, -6, 60], [20, 72, 4, 80], [16, 100, 8, 100]],
   },
   // The wooden set is pinned: its stretch is several screens long, and the
   // board and the words stay on screen while the stretch passes behind them.
@@ -97,22 +110,24 @@ const LINES = {
   // the board). It ends under the scene's own ground, which comes when the phone
   // does: from there the thread is the line that comes out of the phone.
   wooden: {
-    a: [[30, 0.4, 5, 0.4], [24, 23.5, 5, 23.5], [22, 44, 5, 44], [23, 58, 5, 58], [22, 70, 5, 70]],
-    "other-1": [[58, 0.5, 12, 0.3], [82, 1.6, OFF_LEFT, 2.2], [OFF_RIGHT, 2.9, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
-    "other-4": [[90, 0.8, OFF_LEFT, 1], [OFF_RIGHT, 2.1, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
-    "other-6": [[30, 0.8, 8, 0.2], [22, 3.1, OFF_LEFT, 2], [OFF_LEFT, 7, OFF_LEFT, 30]],
+    a: [[26, 0.4, 5, 0.4, "clay"], [24, 23.5, 5, 23.5], [22, 44, 5, 44], [23, 58, 5, 58], [22, 70, 5, 70]],
+    you: [[50, 0.4, -6, 0.3], [OFF_RIGHT, 2.2, OFF_LEFT, 2.2], [OFF_RIGHT, 60, OFF_LEFT, 60]],
+    "other-1": [[62, 0.5, 14, 0.3], [82, 1.6, OFF_LEFT, 2.2], [OFF_RIGHT, 2.9, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
+    "other-3": [[16, 0.8, 8, 0.2], [OFF_LEFT, 3.1, OFF_LEFT, 2], [OFF_LEFT, 7, OFF_LEFT, 30]],
   },
   encounter: {
     b: [[3, 30, -3, 2], [6, 60, -3, 50], [8, 104, -3, 99]],
   },
   close: {
     b: [[9, 35, -3, 50], [10, 96, -3, 100]],
+    "you-back": [[OFF_RIGHT, 10, OFF_RIGHT, 10], [94, 50, 101.5, 50], [90, 99, 101.5, 99]],
     "other-b1": [[-6, 30, -12, 20], [4, 70, -12, 60], [5.5, 99, -12, 90]],
     "other-b2": [[106, 10, 112, 10], [96, 50, 112, 50], [95, 99, 112, 90]],
     "other-b3": [[106, 62, 112, 62]],
   },
   onward: {
     b: [[16, 6, 2, 14], [38, 28, 16, 34], [46, 60, 36, 60], [48.5, 112, 42, 112]],
+    "you-back": [[84, 10, 96, 8], [62, 50, 70, 50], [57, 112, 56, 112]],
     "other-b1": [[22, 18, -8, 5], [40, 65, 20, 40], [41.5, 112, 28, 112]],
     "other-b2": [[76, 22, 108, 0], [57.5, 62, 75, 35], [55.5, 112, 62, 112]],
     "other-b3": [[86, 18, 108, 30], [64, 60, 80, 70], [62, 112, 72, 112]],
@@ -129,10 +144,15 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
   const [guesses, setGuesses] = React.useState({})
   const guess = key => ({ value: guesses[key], onChange: value => setGuesses(all => ({ ...all, [key]: value })) })
   const opening = React.useRef(null)
+  // Has the reader kept a thread of their own? (only for this reading)
+  const [yours, setYours] = React.useState(false)
+  // How many times en passant has been asked for, and how it is going.
+  const [passant, setPassant] = React.useState(0)
+  const [passantState, setPassantState] = React.useState("idle")
 
   return (
     <Words.Provider value={words}>
-      <div className={c("ch-story")}>
+      <div className={c("ch-story")} data-you={yours ? "true" : "false"}>
         <Chapters chapters={CHAPTERS} />
         <Thread />
 
@@ -147,7 +167,7 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             <Text name="intro" look="lead" className={c("ch-intro")} />
           </div>
           {/* the threads come out from under the cover's lower edge */}
-          <div className={c("ch-coverWrap")}>
+          <div className={c("ch-coverWrap")} data-thread-floor="">
             <Picture
               className={c("ch-cover")}
               name="cover"
@@ -164,6 +184,14 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
         <div className={c("ch-open")} ref={opening}>
           <Text name="opening" look="large" />
           <Text name="opening-aside" look="aside" />
+          {/* the reader may keep one of the grey threads as theirs */}
+          <div className={c("ch-hold")}>
+            <Text name="hold" look="lead" />
+            <button type="button" className={c("ch-ask")} aria-pressed={yours} onClick={() => setYours(on => !on)}>
+              <i aria-hidden="true" />
+              {yours ? "That thread is yours now" : "I have one"}
+            </button>
+          </div>
           <Knots of={LINES.open} />
         </div>
 
@@ -179,10 +207,15 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
               <Text name="mine" look="headline" />
               <Text name="mine-one" look="quiet" />
             </div>
-            <Device opening={opening} />
+            <Device opening={opening} run={passant} onState={setPassantState} />
             <div className={c("ch-col", "ch-told2")}>
               <Text name="memory" look="medium" />
               <Text name="memory-aside" look="quiet" />
+              {/* en passant, played on the device's own board */}
+              <button type="button" className={c("ch-ask")} disabled={passantState === "playing"} onClick={() => setPassant(n => n + 1)}>
+                <i aria-hidden="true" />
+                {passantState === "done" ? "Again" : "Show me on the board"}
+              </button>
             </div>
             <Knots of={LINES.memory} />
           </div>
@@ -237,6 +270,7 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             <div className={c("ch-col")}>
               <Text name="continuing" />
               <Text name="last-question" look="large" />
+              <Text name="yours" look="quiet" />
             </div>
             <Knots of={LINES.close} />
           </div>

@@ -51,7 +51,8 @@ const FOOT = 0.27
 const HEAD = 0.17
 
 const START = ["rnbqkbnr", "pppppppp", "", "", "", "", "PPPPPPPP", "RNBQKBNR"]
-// The game: an open game, as on the device of the first memory.
+// The game: an open game, as on the device of the first memory, and 1. e4 as
+// the author mostly opened before the London System, and only since.
 const PLIES = [
   ["e2", "e4"],
   ["e7", "e5"],
@@ -90,29 +91,30 @@ const REST = { tall: [0.2, 0.19] }
 // The scroll, in screens, since the scene was pinned. A move takes LASTS of
 // scrolling and the next begins EVERY after it, so one hand is still leaving
 // as the other comes in: something is always on its way.
-const TURN_AT = 0.4
-const SETUP_AT = 0.9
-const FIRST_AT = 1.65
+const TURN_AT = 0.3
+const SETUP_AT = 0.7
+const FIRST_AT = 1.2
 // Beside the set, two texts: the first as the set comes in, lies open and
 // turns over, the second from when the pieces are set up.
-const SAID = ["board", "not-a-player"]
-const SAID_AT = [1]
-const EVERY = 0.4
-const LASTS = 0.6
+const SAID = ["board", "possibilities"]
+const SAID_AT = [0.85]
+const EVERY = 0.3
+const LASTS = 0.5
 const GAME_OVER = FIRST_AT + (PLIES.length - 1) * EVERY + LASTS
 // The pieces are put away and the board becomes the phone's; at once the
 // phone goes to its place under the chart, which comes in as it does.
 const AWAY_AT = GAME_OVER + 0.08
 const PHONE_AT = GAME_OVER + 0.2
-const CHANGE = 0.6
+const CHANGE = 0.5
 const REST_AT = PHONE_AT + CHANGE + 0.1
-// The chart's line is whole from the moment it comes; then the note at its
-// peak, and the words that follow it.
-const DRAW_AT = REST_AT + CHANGE
-const QUIET = 0.45
-const ASK_AT = DRAW_AT + QUIET + 0.25
+// Beside the chart, first the claim, "I'm not THE chess player, though", as
+// the chart and the note at its peak (about 100 minutes a day) come in: the
+// data answers it without a word. Then the words that follow.
+const CLAIM_AT = REST_AT + CHANGE - 0.12
+const DRAW_AT = CLAIM_AT + 0.55
+const ASK_AT = DRAW_AT + 0.5
 const ASKS = 0.6
-export const SCREENS = ASK_AT + ASKS + 0.4
+export const SCREENS = ASK_AT + ASKS + 0.3
 // Of a move: the hand comes to the piece, carries it, and leaves.
 const TAKES = 0.32
 const LEAVES = 0.72
@@ -216,7 +218,7 @@ export const Wooden = ({ lines }) => {
   const still = useStill()
   // What changes in steps, for the page to say and to style: the rest is
   // written straight onto the pieces and the hands, frame by frame.
-  const [stage, setStage] = React.useState({ turned: false, set: false, quiet: false, played: 0, phone: false, words: SAID[0] })
+  const [stage, setStage] = React.useState({ turned: false, set: false, quiet: false, played: 0, phone: false, first: false, words: SAID[0] })
 
   const goal = () => {
     const box = pin.current.getBoundingClientRect()
@@ -300,8 +302,8 @@ export const Wooden = ({ lines }) => {
     }
     // the chart comes in as the phone goes to it
     chart.current.style.opacity = within(scrolled, REST_AT + 0.2, REST_AT + CHANGE).toFixed(3)
-    // the whole line is there as the chart arrives; then the note at its peak
-    chart.current.style.setProperty("--peak", within(scrolled, DRAW_AT, DRAW_AT + QUIET).toFixed(3))
+    // the whole line is there as the chart arrives, the note at its peak with it
+    chart.current.style.setProperty("--peak", within(scrolled, CLAIM_AT, CLAIM_AT + 0.3).toFixed(3))
     lid.current.style.transform =
       arrives > 0 ? `translate3d(${(place[0] - size * own[0]).toFixed(2)}px, ${(place[1] - size * own[1]).toFixed(2)}px, 0) scale(${size.toFixed(4)})` : "none"
     lid.current.style.opacity = (1 - within(arrives, 0.7, 1)).toFixed(3)
@@ -318,12 +320,16 @@ export const Wooden = ({ lines }) => {
           ? SAID[SAID_AT.filter(at => scrolled >= at).length]
           : scrolled < PHONE_AT + 0.3
             ? "none"
-            : scrolled < REST_AT + CHANGE - 0.12
+            : scrolled < CLAIM_AT
               ? "chess-com"
-              : scrolled < ASK_AT
-              ? "obsession"
-              : "obsession-questions",
+              : scrolled < DRAW_AT
+                ? "not-a-player"
+                : scrolled < ASK_AT
+                  ? "obsession"
+                  : "obsession-questions",
       phone: scrolled >= PHONE_AT + CHANGE / 2,
+      // 1. e4: as it is played on the set, and again on the phone's first game
+      first: (now.played >= 1 && scrolled < AWAY_AT) || (scrolled >= PHONE_AT + 0.3 && scrolled < CLAIM_AT),
     }
     setStage(before => (Object.keys(next).every(key => before[key] === next[key]) ? before : next))
   }
@@ -414,6 +420,11 @@ export const Wooden = ({ lines }) => {
             style={{ left: share(PHONE.left, BOARD.width), top: share(PHONE.top, BOARD.height), width: share(PHONE.width, BOARD.width), opacity: 0 }}
           />
         </div>
+        {/* The first move, the same on every board of Part I: the device's
+            screen shows it, the set plays it, the first game online opened with it. */}
+        <span className={c("ch-firstMove")} data-on={stage.first ? "true" : "false"} aria-hidden="true">
+          1. e4
+        </span>
         {/* The words beside the scene, each for its part of it. On a phone
             the set's give way when the game is answered: the hands need the
             room. Then a few for the phone, and two beside the chart. */}
@@ -425,7 +436,7 @@ export const Wooden = ({ lines }) => {
         <div className={c("ch-woodenText")} data-on={stage.words === "chess-com" ? "true" : "false"}>
           <Text name="chess-com" look="lead" />
         </div>
-        {["obsession", "obsession-questions"].map(name => (
+        {["not-a-player", "obsession", "obsession-questions"].map(name => (
           <div key={name} className={c("ch-woodenAfter")} data-on={stage.words === name ? "true" : "false"}>
             <Text name={name} look="lead" />
           </div>

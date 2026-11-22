@@ -19,8 +19,10 @@
 .ch-thread { position: absolute; top: 0; z-index: 1; overflow: hidden; pointer-events: none; }
 .ch-thread path {
   fill: none; stroke: var(--thread); stroke-width: 1.3; stroke-linecap: round;
-  transition: stroke-dashoffset 500ms ease-out;
+  transition: stroke-dashoffset 700ms var(--ch-ease), stroke 650ms ease, opacity 650ms ease;
 }
+/* The reader's own thread: one of the grey ones, until they keep it. */
+.ch-story[data-you="true"] .ch-thread path[data-run^="you"] { stroke: var(--ink); opacity: 0.92; }
 .ch-thread path[data-other] { stroke: var(--ink-3); opacity: 0.68; }
 .ch-tintFrom { stop-color: var(--ink-3); stop-opacity: 0.68; }
 .ch-tintTo { stop-color: var(--thread); }
@@ -44,6 +46,17 @@
    On a wide screen it is a rail in the right margin; on a narrower one, a bar
    across the top, whose button opens the list. */
 .ch-story { --bar: 0px; }
+/* One way of moving, for everything that moves in Part I: one easing, and
+   times between 650 and 900 ms. */
+.ch-story { --ch-ease: cubic-bezier(0.22, 0.8, 0.24, 1); --ch-move: 750ms; --ch-fade: 650ms; }
+/* Part I's type, in five roles: display (the title, the years), statement
+   (the question, "This is mine."), the statement's second voice (the line
+   under the question, the father's words), narrative, and the quiet note. */
+.ch-story {
+  --t-display: clamp(52px, 6.2vw, 92px);
+  --t-statement: clamp(30px, 3.6vw, 48px);
+  --t-second: clamp(24px, 2.9vw, 38px);
+}
 /* Where a chapter is opened: a point in the page, at the top of its section. */
 .ch-mark { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; }
 /* The last chapter may be shorter than the screen: it is opened with the
@@ -171,7 +184,7 @@
    the turn hides that one is a little taller. */
 .ch-sides {
   position: absolute; inset: 0; transform-style: preserve-3d;
-  transition: transform 1100ms cubic-bezier(0.35, 0.05, 0.2, 1);
+  transition: transform 900ms var(--ch-ease);
 }
 .ch-sides[data-turned="true"] { transform: rotateX(180deg); }
 .ch-side {
@@ -183,18 +196,18 @@
 /* ── the title and the cover: the first screen ──
    The title and a short text at the left, the cover, smaller, at the right. */
 .ch-hero {
-  position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
   align-items: center; column-gap: clamp(32px, 4vw, 64px);
   min-height: calc(100svh - 76px - var(--bar)); padding: calc(var(--bar) + 4svh) 0 6svh;
 }
 .ch-heroWords { display: grid; gap: clamp(18px, 2.4svh, 28px); align-content: center; }
 .ch-story .ch-title {
   margin: 0; color: var(--ink);
-  font: 400 clamp(38px, 5vw, 72px) / 1 var(--font-title); letter-spacing: var(--tracking-display); text-transform: none;
+  font: 400 var(--t-display) / 0.98 var(--font-title); letter-spacing: var(--tracking-display); text-transform: none;
 }
 .ch-text.ch-intro { max-width: 24em; color: var(--ink-2); }
 .ch-coverWrap { position: relative; }
-.ch-cover { width: 100%; max-height: calc(100svh - 76px - var(--bar) - 10svh); object-fit: contain; object-position: right center; }
+.ch-cover { width: 100%; max-height: calc(100svh - 76px - var(--bar) - 8svh); object-fit: contain; object-position: right center; }
 
 /* ── the opening: one screen ── */
 .ch-open {
@@ -204,25 +217,48 @@
 /* The question keeps clear of the right of the screen, where the device and
    the threads come down; its second line a little smaller. */
 .ch-open .ch-text { max-width: min(20em, 56%); }
-.ch-text.ch-aside { max-width: min(22em, 56%); font-size: clamp(24px, 3vw, 40px); line-height: 1.12; letter-spacing: var(--tracking-display); text-wrap: balance; }
+.ch-open .ch-text.ch-large { font-size: var(--t-statement); line-height: 1.08; }
+.ch-text.ch-aside { max-width: min(22em, 56%); font-size: var(--t-second); line-height: 1.12; letter-spacing: var(--tracking-display); text-wrap: balance; }
+.ch-memory .ch-text.ch-headline { font-size: var(--t-statement); }
+.ch-memory .ch-text.ch-medium { font-size: var(--t-second); line-height: 1.15; letter-spacing: var(--tracking-display); }
+/* "Hold on to it for a moment.", and the reader's choice to keep a thread */
+.ch-hold { display: grid; justify-items: start; gap: 14px; margin-top: 18px; max-width: 56%; }
+.ch-hold .ch-text { color: var(--ink-2); }
+/* A small quiet button, in the story's own type: the reader's thread, en passant. */
+.ch-story .ch-ask {
+  position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 10px; min-height: 40px; padding: 8px 14px;
+  border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--void); color: var(--ink-2);
+  font: 400 13px / 1.2 var(--font-mono); cursor: pointer;
+  transition: color 200ms ease, border-color 200ms ease;
+}
+.ch-story .ch-ask:hover { color: var(--ink); border-color: var(--ink-3); }
+.ch-story .ch-ask:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.ch-story .ch-ask:disabled { cursor: default; opacity: 0.6; }
+.ch-story .ch-ask i { width: 18px; height: 0; border-top: 1.5px solid var(--ink-3); transition: border-color var(--ch-fade) ease; }
+.ch-story .ch-ask[aria-pressed="true"] { color: var(--ink); }
+.ch-story .ch-ask[aria-pressed="true"] i { border-top-color: var(--ink); }
+.ch-told2 .ch-ask { justify-self: start; margin-top: 6px; }
+.ch-told2 .ch-ask i { border-top-color: var(--thread); }
 
 /* The Pocket Micro (origin.js). It lies in its place in the memory; while
    the opening question is read it is moved (--dx, --dy) to peek in at the
    column's right edge, mostly hidden, and glides home as the reader scrolls
    on. The memory's row clips it at the column's edge, not above or below. */
 .ch-memory { overflow-x: clip; }
-.ch-memory :is(.ch-mine, .ch-told2) { transition: opacity 400ms ease 250ms; }
+.ch-memory :is(.ch-mine, .ch-told2) { transition: opacity var(--ch-fade) ease 200ms; }
 .ch-memory[data-arrived="false"] :is(.ch-mine, .ch-told2) { opacity: 0; transition: opacity 200ms ease; }
 .ch-device { position: relative; z-index: 3; }
-.ch-device .ch-pocket { transform: none; transition: transform 750ms cubic-bezier(0.22, 0.8, 0.24, 1); }
+.ch-device .ch-pocket { transform: none; transition: transform var(--ch-move) var(--ch-ease); }
 .ch-device .ch-pocket[data-side="peek"] { transform: translate3d(var(--dx, 0px), var(--dy, 0px), 0); }
+/* on a phone it waits low, its top at the screen's foot, and rises */
+.ch-device .ch-pocket[data-side="low"] { transform: translate3d(0, 38%, 0); }
 .ch-pocket { position: relative; width: 100%; aspect-ratio: 800 / 1231; perspective: 1200px; }
 .ch-pocketRight, .ch-pocketFlap { position: absolute; top: 0; width: 50%; height: 100%; }
 .ch-pocketRight { left: 50%; overflow: hidden; }
 .ch-pocketRight .ch-picture { width: 200%; max-width: none; left: -100%; }
 .ch-pocketFlap {
   z-index: 3; left: 0; transform-origin: 100% 50%; transform-style: preserve-3d; transform: rotateY(0deg);
-  transition: transform 900ms cubic-bezier(0.45, 0, 0.2, 1);
+  transition: transform 850ms var(--ch-ease);
 }
 .ch-pocket[data-closed="true"] .ch-pocketFlap { transform: rotateY(180deg); }
 .ch-pocketFront, .ch-pocketBack { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
@@ -230,9 +266,20 @@
 .ch-pocketBack { transform: rotateY(180deg); }
 .ch-pocketBack .ch-picture { width: 200%; max-width: none; height: 100%; left: -100%; }
 /* once shut, the half beneath is gone (it would show past the cover's edge) */
-.ch-pocket[data-closed="true"] .ch-pocketRight { visibility: hidden; transition: visibility 0s linear 900ms; }
+.ch-pocket[data-closed="true"] .ch-pocketRight { visibility: hidden; transition: visibility 0s linear 850ms; }
+/* En passant on the device's own board (origin.js): squares and pawns cut
+   from the picture itself, and its tiny screen. Gone once it folds. */
+.ch-pocket { container-type: inline-size; }
+.ch-ep { position: absolute; inset: 0; z-index: 5; pointer-events: none; transition: opacity 300ms ease; }
+.ch-pocket[data-closed="true"] .ch-ep { opacity: 0; }
+.ch-epTile { position: absolute; background-image: url("/images/stories/chess/device.webp"); background-repeat: no-repeat; }
+.ch-epPiece { clip-path: circle(41% at 50% 50%); will-change: transform; }
+.ch-epScreen {
+  position: absolute; display: grid; place-items: center; background: rgb(164 156 139); border-radius: 2px;
+  color: #2b2823; font: 500 3.9cqw / 1 var(--font-mono); letter-spacing: 0.04em; white-space: nowrap;
+}
 @media (prefers-reduced-motion: reduce) {
-  .ch-device .ch-pocket, .ch-pocketFlap, .ch-memory :is(.ch-mine, .ch-told2) { transition: none !important; }
+  .ch-device .ch-pocket, .ch-pocketFlap, .ch-memory :is(.ch-mine, .ch-told2), .ch-ep { transition: none !important; }
   .ch-pocketFlap, .ch-pocketBack, .ch-pocket[data-closed="true"] .ch-pocketFlap { transform: none; }
   .ch-pocketBack { left: 100%; visibility: hidden; }
   .ch-pocket[data-closed="true"] .ch-pocketFront { visibility: hidden; }
@@ -257,14 +304,14 @@
 /* the chapter's largest words, at the left as the opening's are */
 .ch-text.ch-yearsText {
   position: absolute; left: 0; top: 18%; max-width: none;
-  font-size: clamp(64px, 7.6vw, 112px); line-height: 0.98; letter-spacing: -0.04em;
+  font-size: var(--t-display); line-height: 0.98; letter-spacing: -0.04em;
 }
 /* "No chess.": apart from it, at the lower right */
 .ch-text.ch-yearsNone { left: auto; right: 0; top: 58%; text-align: right; }
 .ch-decade {
   --shown: 1;
-  position: absolute; left: 50%; top: var(--at); z-index: 0; transform: translate(-50%, -50%);
-  color: var(--rule); font: 300 clamp(72px, 12vw, 164px) / 1 var(--font-title); letter-spacing: var(--tracking-display);
+  position: absolute; right: 0; top: var(--at); z-index: 0; transform: translateY(-50%); text-align: right;
+  color: var(--rule); font: 300 clamp(72px, 10vw, 150px) / 1 var(--font-title); letter-spacing: var(--tracking-display);
   pointer-events: none; user-select: none;
 }
 
@@ -298,7 +345,14 @@
    moves it too. It is taller than the scene's box and is cut by the screen. */
 .ch-woodenPhone { position: absolute; z-index: 3; height: auto; max-width: none; transform-origin: 0 0; pointer-events: none; will-change: transform, opacity; }
 /* The words beside the scene share one place, each there for its part of it. */
-.ch-woodenText { grid-column: 8 / 13; grid-row: 1; opacity: 0; transition: opacity 400ms ease; }
+.ch-woodenText { grid-column: 8 / 13; grid-row: 1; opacity: 0; transition: opacity var(--ch-fade) ease; }
+/* 1. e4, quietly under the board as it is played, and under the first game */
+.ch-firstMove {
+  position: absolute; left: 0; width: 50%; bottom: 5svh; text-align: center; z-index: 4;
+  color: var(--thread); font: 400 13px / 1 var(--font-mono); letter-spacing: 0.06em;
+  opacity: 0; transition: opacity var(--ch-fade) ease;
+}
+.ch-firstMove[data-on="true"] { opacity: 1; }
 .ch-woodenText[data-on="true"] { opacity: 1; }
 /* The scene's own ground, in the page's colour: it comes when the phone does,
    and the thread that came down the page is taken in under it. */
@@ -314,7 +368,7 @@
 /* … and the words beside the chart, one after the other in one place. */
 .ch-woodenAfter {
   position: absolute; left: 68%; right: 0; top: 44%; transform: translateY(-50%);
-  opacity: 0; transition: opacity 400ms ease;
+  opacity: 0; transition: opacity var(--ch-fade) ease;
 }
 .ch-woodenAfter[data-on="true"] { opacity: 1; }
 
@@ -671,9 +725,9 @@
   .ch-row { grid-template-columns: minmax(0, 1fr); row-gap: 5vh; }
   .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-mine, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-device, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
   .ch-years { height: 64vh; height: 64svh; }
-  .ch-text.ch-yearsText { top: 26%; font-size: clamp(42px, 12.5vw, 84px); }
+  .ch-text.ch-yearsText { top: 26%; font-size: clamp(38px, 11vw, 72px); }
   .ch-text.ch-yearsNone { top: 50%; }
-  .ch-open .ch-text, .ch-text.ch-aside { max-width: none; }
+  .ch-open .ch-text, .ch-text.ch-aside, .ch-hold { max-width: none; }
   .ch-hero { grid-template-columns: minmax(0, 1fr); row-gap: 28px; min-height: 0; padding: calc(var(--bar) + 4svh) 0 4svh; }
   .ch-cover { max-height: none; }
   .ch-memory { row-gap: 22px; padding-bottom: 5vh; }
@@ -693,7 +747,8 @@
   .ch-timePeak { font-size: 11px; }
   .ch-timePeak small { font-size: 9px; }
   .ch-woodenAfter { left: var(--page-margin); right: var(--page-margin); top: calc(var(--bar) + 2svh); transform: none; }
-  .ch-decade { left: 42%; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: 46px; }
+  .ch-firstMove { width: 100%; bottom: 4svh; }
+  .ch-decade { right: 0; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: 46px; }
   .ch-people { padding-top: 8vh; }
   .ch-peopleTitle { top: calc(var(--bar) + 1.2svh); }
   /* Part II's words stand under its name, the scene under them */

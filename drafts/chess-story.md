@@ -23,6 +23,10 @@ Do you have that one memory your mind keeps wandering back to?
 
 Nothing major, and yet so surprisingly vivid.
 
+<!--step:hold-->
+
+Hold on to it for a moment.
+
 <!--step:mine-->
 
 This is mine.
@@ -37,7 +41,7 @@ My father taught me how to play.
 
 <!--step:memory-aside-->
 
-Except for *en passant*, what is this rule anyway?
+Except for *en passant*. What is this rule anyway?
 
 <!--step:years-->
 
@@ -49,25 +53,27 @@ No chess.
 
 <!--step:board-->
 
-Then I bought a little wooden chess set. I played every now and then, with different people.
+Until I bought a little wooden chessboard. Different people, different stages of life, the same game.
+
+<!--step:possibilities-->
+
+I just like the strategic and analytical side of the game. That, and its endless possibilities.
 
 <!--step:not-a-player-->
 
-I’m not THE chess player.\
-I just like the strategic and analytical side of the game.\
-That, and its endless possibilities.
+I'm not THE chess player, though. It's far from being a defining part of who I am.
 
 <!--step:chess-com-->
 
-My first game on Chess.com lasted one move each.
+Then came Chess.com. My first game there lasted one move each, then my opponent resigned.
 
 <!--step:obsession-->
 
-By early 2026, I was opening Chess.com when I would usually have opened social media.
+It brought faster dopamine, to the point of overtaking social media in screen time. A winning trade-off?
 
 <!--step:obsession-questions-->
 
-More games, more mistakes, and with them, more questions.
+More games, more mistakes, more determination. And with them, more questions.
 
 <!--step:people-title-->
 
@@ -232,6 +238,10 @@ But what about what we do when things go wrong?
 <!--step:last-question-->
 
 *[The question handed back to the reader]*
+
+<!--step:yours-->
+
+Is yours still there?
 
 <!--step:method-->
 

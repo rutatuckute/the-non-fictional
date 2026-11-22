@@ -53,3 +53,9 @@ Title and a placeholder short text (`intro`) at the left, the cover smaller at t
 ## 22 November — threads out of the cover, the device peeks, the years apart
 
 Threads begin inside the cover's lower edge; grey threads at 0.68 opacity. Cover column 3/5 of the width. The device peeks at the right while the question is read and glides to its place (a transition, in the page's flow) as the reader scrolls on, the memory's words appearing with it. "No chess." is its own step, placed at the lower right. `cross.cjs` clean at all 16 sizes; typecheck and production build passed.
+
+## 22 November — Part I polished: clay means chess, the reader's thread, en passant, true seeds
+
+Owner-approved changes from the Part I brainstorm (see DESIGN.md): colour stops on the story's thread (clay / grey), calmer thread family from the cover with tips visible at load, the reader's optional thread (`you`, `you-back`), en passant played on the device with its LCD, the fold timed to "Years went by.", phone rise, the claim beside the chart, 1. e4 marks (checked against the author's games: London Feb–Mar 2026, 1. e4 only since April), the table's wording, type roles and one motion style, decades at the right, a faster wooden game (pin 7.3 instead of 8.45 screens), a bigger cover. The 1000-rating goal stays out.
+
+Checked: `chess-story/checks/part1-play.cjs` (reader's thread turns ivory and aria-pressed; en passant ends on E.P. with "Again"; 1440 and 375 wide, no errors), `again.cjs` screenshots through Part I at 1440×900 and 375×812, `cross.cjs` no thread through any words at 16 sizes. Typecheck and production build passed.
