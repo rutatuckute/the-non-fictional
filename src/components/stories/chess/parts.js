@@ -143,15 +143,41 @@ export const useSince = (step, every, most) => {
 // a card's passing gives (`rest` screens of it follow the card, with nothing
 // in them), or `{ bare: true }` for a stretch with no card at all.
 //
-// `plain` (Part II): no cards. Each step is `{ text, rest }`, and its text
+// `reading` (Part II): no cards either. On a wide screen each step's text
+// scrolls past beside the graphic, as words in the page do; a step with no
+// text (`{ rest }` or `{}`) leaves the graphic alone. On a phone the texts
+// stand at the top, one after another, as in `plain`.
+//
+// `plain`: no cards. Each step is `{ text, rest }`, and its text
 // stands in one place beside the graphic, giving way to the next step's as the
 // reader scrolls, as the sentences beside the wooden set do; a step with no
 // text leaves the graphic to speak alone. `open` leaves out the rule above.
 // `mark` names the scene for the chapters' navigation (chapters.js).
-export const Pinned = ({ label, steps, open = false, plain = false, mark, children }) => {
+export const useNarrow = () => {
+  const [narrow, setNarrow] = React.useState(false)
+  React.useEffect(() => {
+    const query = window.matchMedia("(max-width: 60rem)")
+    const update = () => setNarrow(query.matches)
+    update()
+    query.addEventListener("change", update)
+    return () => query.removeEventListener("change", update)
+  }, [])
+  return narrow
+}
+
+export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, reading = false, mark, className = "", children }) => {
   const [step, stepRef, refs] = useStep(steps.length)
+  const narrow = useNarrow()
+  const plain = plainOnly || (reading && narrow)
+  const scrolling = reading && !narrow
   return (
-    <section className={c("ch-pin")} data-open={open ? "true" : undefined} data-plain={plain ? "true" : undefined} aria-label={label}>
+    <section
+      className={`${c("ch-pin")} ${className}`}
+      data-open={open ? "true" : undefined}
+      data-plain={plain ? "true" : undefined}
+      data-reading={scrolling ? "true" : undefined}
+      aria-label={label}
+    >
       {/* where the chapters' navigation opens this scene: at its top, as it is pinned */}
       {mark ? <span id={mark} className={c("ch-mark")} /> : null}
       <div className={c("ch-stage")}>
@@ -172,8 +198,8 @@ export const Pinned = ({ label, steps, open = false, plain = false, mark, childr
       </div>
       <div className={c("ch-steps")}>
         {steps.map((item, index) => {
-          const made = plain || (item !== null && typeof item === "object" && ("card" in item || "bare" in item))
-          const bare = plain || (made && item.bare)
+          const made = plain || scrolling || (item !== null && typeof item === "object" && ("card" in item || "bare" in item))
+          const bare = plain || (scrolling ? !item.text : made && item.bare)
           return (
             <React.Fragment key={index}>
               <div
@@ -183,7 +209,7 @@ export const Pinned = ({ label, steps, open = false, plain = false, mark, childr
                 data-on={step === index ? "true" : "false"}
                 ref={stepRef(index)}
               >
-                <div className={c("ch-card")}>{plain ? null : made ? item.card : item}</div>
+                <div className={c("ch-card")}>{plain ? null : scrolling ? item.text : made ? item.card : item}</div>
               </div>
               {made && item.rest ? <div style={{ height: `${item.rest * 100}vh` }} aria-hidden="true" /> : null}
             </React.Fragment>

@@ -231,18 +231,18 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             <Knots of={LINES.years} />
           </div>
 
-          {/* The wooden set: different stages of life, the same game. It is
-              held on screen while it turns over to the board and a game is
-              played on it (wooden.js). The story's thread passes behind it;
-              the others pass it by. */}
-          <Wooden lines={LINES.wooden} />
         </section>
 
-        {/* Part II: its name stays at the top of the screen for the whole of it. */}
-        <section className={c("ch-people")}>
-          <Text name="people-title" look="partTitle" className={c("ch-peopleTitle")} />
+        {/* The wooden set, then the same phone into Part II (wooden.js), then
+            the club (scenes.js). Part II's name stays at the top of the screen
+            from the moment the first stranger is found to the end of the part. */}
+        <div className={c("ch-people")} data-people="" data-titled="false">
+          <div className={c("ch-peopleTitle")}>
+            <Text name="people-title" look="partTitle" />
+          </div>
+          <Wooden lines={LINES.wooden} />
           <People />
-        </section>
+        </div>
 
         <section className={c("ch-turn")} aria-label="Looking for answers in the data">
           <Mark id="the-investigation" />

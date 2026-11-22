@@ -34,15 +34,12 @@ export const PHONE_GAMES = [
   },
 ]
 
-// Small original vector silhouettes, legible at the phone's scale.
-const SHAPES = {
-  p: "M22.5 7a6 6 0 1 1 0 12 6 6 0 0 1 0-12ZM17 21h11l3 13H14ZM12 35h21v4H12Z",
-  r: "M10 7h6v6h4V7h5v6h4V7h6v12l-5 4 2 11H13l2-11-5-4ZM10 35h25v4H10Z",
-  b: "M23 6c-7 6-10 10-10 14 0 4 4 6 9 6s10-2 10-6c0-4-4-9-9-14ZM17 27h11l4 7H13ZM10 35h25v4H10Z",
-  n: "M13 8l8 4c10 0 14 10 13 22H13c0-6 7-9 11-12l-9 4-7-4 7-9ZM10 35h26v4H10Z",
-  q: "M8 13l8 6 6-10 7 10 8-6-6 19H14ZM12 33h21v3H12ZM10 37h25v3H10Z",
-  k: "M20 5h5v5h5v5h-5v5h-5v-5h-5v-5h5ZM12 22c-6-9 5-13 10-2 5-11 17-7 11 2l-4 11H16ZM12 34h21v3H12ZM10 38h25v3H10Z",
-}
+// Chess.com's own pieces, cut from the author's first-game screenshot
+// (scripts/stories/chess/make-phone-pieces.cjs), on Chess.com's own greens.
+const PIECE = letter => `/images/stories/chess/cc-${letter === letter.toUpperCase() ? "w" : "b"}${letter.toLowerCase()}.webp`
+const LIGHT = "#eeeed2"
+const DARK = "#769656"
+const LAST = ["#f6f669", "#baca2b"]
 
 export const PhonePosition = ({ game }) => {
   const pieces = []
@@ -74,36 +71,17 @@ export const PhonePosition = ({ game }) => {
             y={row * 45}
             width={45}
             height={45}
-            fill={
-              square === game.last
-                ? "#c6d57e"
-                : (file + row) % 2
-                  ? "#78964e"
-                  : "#ebedcf"
-            }
+            fill={square === game.last ? LAST[(file + row) % 2] : (file + row) % 2 ? DARK : LIGHT}
           />
         )
       })}
       {pieces.map(({ piece, file, row }) => (
-        <g
-          key={`${file}-${row}`}
-          transform={`translate(${file * 45} ${row * 45})`}
-          fill={piece === piece.toUpperCase() ? "#f8f5e9" : "#555851"}
-          stroke="#292c27"
-          strokeWidth="1.3"
-          strokeLinejoin="round"
-        >
-          <path d={SHAPES[piece.toLowerCase()]} />
-          {piece.toLowerCase() === "b" && <path d="m23 12-5 8" fill="none" />}
-          {piece.toLowerCase() === "n" && (
-            <circle cx="19" cy="17" r="1.2" fill="#292c27" stroke="none" />
-          )}
-        </g>
+        <image key={`${file}-${row}`} href={PIECE(piece)} x={file * 45} y={row * 45} width={45} height={45} />
       ))}
       {Array.from({ length: 8 }, (_, i) => (
         <g
           key={i}
-          fill={i % 2 ? "#ebedcf" : "#78964e"}
+          fill={i % 2 ? LIGHT : DARK}
           fontFamily="system-ui, sans-serif"
           fontSize="6"
         >

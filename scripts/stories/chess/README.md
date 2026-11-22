@@ -72,7 +72,7 @@ the published site. The names, in reading order:
 | Title screen | `intro` (the short text under the title, beside the cover) |
 | Opening | `opening`, `opening-aside` (the smaller second line), `hold` (then the reader may keep a thread of their own) |
 | I | `mine`, `mine-one`, `memory`, `memory-aside` (with the en passant demo on the device), `years`, `years-none` ("No chess.", placed apart), `board`, `same-game`, `possibilities`, `not-a-player` (beside the chart), `chess-com` (its **Chess.com** is shown in the data green), `obsession`, `obsession-questions` |
-| II | `people-title` (a heading), `people-intro`, `strangers`, `strangers-where`, `strangers-moment`, `club`, `professor`, `professor-quote`, `professor-how`, `boards`, `data` |
+| II | `people-bridge` (before the title), `people-title` (a heading), `people-intro`, `people-plain`, `people-picture`, `strangers`, `strangers-where`, `strangers-moment`, `people-many`, `club`, `professor`, `professor-quote`, `professor-how`, `professor-maybe`, `central`, `self`, `boards` |
 | III | `data-intro` |
 | III, first question | `say-message`, `say-prediction`, `say-guess`, `say-answer`, `say-surprise`, `say-limits` |
 | III, second question | `wrong-observation`, `wrong-decide`, `wrong-outcome`, `wrong-crowd`, `wrong-you` |
@@ -353,3 +353,9 @@ Parts I and II are built, with their pictures; the texts placed in them are
 the author's first drafts. Part III's first question is
 built from data; its other two, and Part IV, are still boxes that name what
 will stand there.
+
+- `make-phone-pieces.cjs`: Chess.com's own pieces for the strangers' phone (`cc-wk.webp` … `cc-bp.webp`), cut from the rebuilt first-game screenshot (`phone-new-game.png`, private, in the data-stories repository):
+
+      node make-phone-pieces.cjs <repo>/node_modules/sharp <data-stories>/chess-story/assets/phone-new-game.png <repo>/public/images/stories/chess
+
+- `board-notes.json` (public): what each of the thousand boards was, for its note on hover; from `chess-story/analysis/export_board_notes.py` in the data-stories repository.

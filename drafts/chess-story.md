@@ -86,13 +86,26 @@ A winning trade-off?
 More games, more mistakes, more determination.\
 And thus, more questions.
 
+<!--step:people-bridge-->
+
+Most of them, though, weren't about chess.
+
 <!--step:people-title-->
 
 ## The people behind the game
 
 <!--step:people-intro-->
 
-I could see their username, their rating, and how much time they had left. I kept wondering what they’d been doing five minutes before we played.
+There's something intrinsically beautiful in playing against a randomly matched stranger from any part of the world.
+
+<!--step:people-plain-->
+
+More often than not, no conversation happens.\
+Just a username, a rating, a country, and moves.
+
+<!--step:people-picture-->
+
+This is how I picture them.
 
 <!--step:strangers-->
 
@@ -104,11 +117,17 @@ Where are they now?
 
 <!--step:strangers-moment-->
 
-In which random moment of their lives they find themselves in?
+In which random moment of their lives do they find themselves?
+
+<!--step:people-many-->
+
+2,007 games.\
+1,938 different people.\
+1,910 of them I met exactly once.
 
 <!--step:club-->
 
-I went to London chess club once. Played the safe opening for the whites I learnt.
+Once, I went to a chess club in London. I played the safe opening I had learnt for White: the London System.
 
 <!--step:professor-->
 
@@ -116,19 +135,29 @@ A professor stood nearby, watching.
 
 <!--step:professor-quote-->
 
-Why are you playing the London system if aggressiveness is in your nature?
+Why are you playing the London System if aggressiveness is in your nature?
 
 <!--step:professor-how-->
 
 How did he know?
 
+<!--step:professor-maybe-->
+
+Maybe he was making a point about the London System.\
+Or maybe he saw something.
+
+<!--step:central-->
+
+How much can we understand about another person from such little information?
+
+<!--step:self-->
+
+I do it too. And sometimes I catch something about myself: after a loss, I rush into a new game, as if a win were due.
+
 <!--step:boards-->
 
-The board of thousand games.
-
-<!--step:data-->
-
-Chess.com provides the data.
+Chess.com keeps every game.\
+So I went down the rabbit hole.
 
 <!--step:data-intro-->
 

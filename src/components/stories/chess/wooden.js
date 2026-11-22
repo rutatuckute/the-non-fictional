@@ -7,6 +7,7 @@ import { c, Text } from "./parts"
 import SIZES from "./pieces.json"
 import { Knots } from "./thread"
 import { DROP, TimeChart } from "./time-chart"
+import { crossing, PEOPLE, PhoneScreen, Pictured, STRANGERS, STRANGERS_LABEL, strands } from "./strangers"
 
 // The wooden set, held on screen while the reader scrolls: it comes in open,
 // the pieces in their felt, turns over to the board, the pieces are set up,
@@ -29,6 +30,18 @@ import { DROP, TimeChart } from "./time-chart"
 // From the moment the phone appears, the scene has a ground of the page's own
 // colour under it: the thread, which came down the page into the board, is
 // continued above that ground through the phone, then becomes the chart line.
+//
+// Then Part II begins on the same phone. It grows back from the chart's corner
+// to the middle; its screen searches for an opponent; the part's title comes
+// as one is found. Three strangers, one after another: each one's game on the
+// screen, each pictured beside it as the author imagines them (the picture
+// draws itself in), each one's life a grey thread that comes in from the
+// screen's edge, through the phone, and away. Then the phone goes, and 1,938
+// faint threads cross the screen: one for each person met.
+//
+// Beside it all, on a wide screen, the words scroll past in a column of their
+// own (WORDS: each is in the middle of the screen at its moment); on a phone
+// they stand at the top, one after another.
 //
 // The scene follows the scroll (follow.js), it does not sit on it.
 
@@ -97,10 +110,8 @@ const REST = { tall: [0.2, 0.19] }
 const TURN_AT = 0.3
 const SETUP_AT = 0.62
 const FIRST_AT = 0.82
-const SAID = ["board", "same-game", "possibilities"]
 const EVERY = 0.3
 const LASTS = 0.5
-const SAID_AT = [FIRST_AT, FIRST_AT + 3 * EVERY]
 const GAME_OVER = FIRST_AT + (PLIES.length - 1) * EVERY + LASTS
 // The pieces are put away and the board becomes the phone's; at once the
 // phone goes to its place under the chart, which comes in as it does.
@@ -114,8 +125,33 @@ const REST_AT = PHONE_AT + CHANGE + 0.1
 const CLAIM_AT = REST_AT + CHANGE - 0.12
 const DRAW_AT = CLAIM_AT + 0.55
 const ASK_AT = DRAW_AT + 0.5
-const ASKS = 0.6
-export const SCREENS = ASK_AT + ASKS + 0.3
+// Part II: the phone grows back to the middle and searches; the title and
+// the first stranger; the other two; then the many.
+const HANDOFF_AT = ASK_AT + 0.55
+const SEARCH_AT = HANDOFF_AT + 0.25
+export const TITLE_AT = HANDOFF_AT + 0.7
+const MET = [TITLE_AT, TITLE_AT + 1.45, TITLE_AT + 2.0]
+const PICTURE_AT = [TITLE_AT + 0.85, MET[1] + 0.1, MET[2] + 0.1]
+const MANY_AT = MET[2] + 0.55
+export const SCREENS = MANY_AT + 0.85
+// The words, each at its moment (screens into the scene) and in its look.
+const WORDS = [
+  ["board", 0.05],
+  ["same-game", FIRST_AT + 0.1],
+  ["possibilities", FIRST_AT + 3 * EVERY + 0.1],
+  ["chess-com", PHONE_AT + 0.35],
+  ["not-a-player", CLAIM_AT + 0.05],
+  ["obsession", DRAW_AT + 0.05],
+  ["obsession-questions", ASK_AT + 0.05],
+  ["people-bridge", HANDOFF_AT + 0.25],
+  ["people-intro", TITLE_AT + 0.1],
+  ["people-plain", TITLE_AT + 0.45],
+  ["people-picture", PICTURE_AT[0] + 0.05],
+  ["strangers", TITLE_AT + 1.15, "question"],
+  ["strangers-where", MET[1] + 0.12, "question"],
+  ["strangers-moment", MET[2] + 0.12, "question"],
+  ["people-many", MANY_AT + 0.3, "question"],
+]
 // Of a move: the hand comes to the piece, carries it, and leaves.
 const TAKES = 0.32
 const LEAVES = 0.72
@@ -215,12 +251,48 @@ export const Wooden = ({ lines }) => {
   const incoming = React.useRef(null)
   const plot = React.useRef(null)
   const title = React.useRef(null)
+  const pictured = React.useRef(null)
+  const crossings = React.useRef([])
+  const many = React.useRef(null)
+  const strandsOf = React.useRef(null)
+  const drawnMany = React.useRef(-1)
+  // the many: drawn on a canvas, only when how many changes
+  const drawMany = (share, narrow) => {
+    const canvas = many.current
+    if (!canvas) return
+    const count = Math.round(share * PEOPLE)
+    const width = canvas.clientWidth
+    const height = canvas.clientHeight
+    const key = `${width}x${height}`
+    if (count === drawnMany.current && strandsOf.current?.key === key) return
+    if (strandsOf.current?.key !== key) {
+      const ratio = Math.min(2, window.devicePixelRatio || 1)
+      canvas.width = Math.round(width * ratio)
+      canvas.height = Math.round(height * ratio)
+      strandsOf.current = { key, ratio, list: strands(width, height) }
+    }
+    drawnMany.current = count
+    const { ratio, list } = strandsOf.current
+    const pen = canvas.getContext("2d")
+    pen.setTransform(ratio, 0, 0, ratio, 0, 0)
+    pen.clearRect(0, 0, width, height)
+    pen.strokeStyle = getComputedStyle(canvas).color
+    pen.globalAlpha = narrow ? 0.1 : 0.085
+    pen.lineWidth = 0.7
+    pen.beginPath()
+    for (let i = 0; i < count; i++) {
+      const [a, m, b] = list[i]
+      pen.moveTo(a[0], a[1])
+      pen.quadraticCurveTo(m[0], m[1], b[0], b[1])
+    }
+    pen.stroke()
+  }
   const pieces = React.useRef({})
   const hands = React.useRef({})
   const still = useStill()
   // What changes in steps, for the page to say and to style: the rest is
   // written straight onto the pieces and the hands, frame by frame.
-  const [stage, setStage] = React.useState({ turned: false, set: false, social: false, played: 0, phone: false, first: false, words: SAID[0] })
+  const [stage, setStage] = React.useState({ turned: false, set: false, social: false, played: 0, phone: false, first: false, words: WORDS[0][0], who: -1, online: false, narrow: false })
 
   const goal = () => {
     const box = pin.current.getBoundingClientRect()
@@ -270,10 +342,46 @@ export const Wooden = ({ lines }) => {
     const rest = [Math.max(screen.left + 4, origin.left - (PHONE.width * k * restSize) / 2) - box.left, origin.bottom + DROP - box.top]
     const arrives = within(scrolled, PHONE_AT, PHONE_AT + CHANGE)
     const leaves = gently(within(scrolled, REST_AT, REST_AT + CHANGE))
-    const size = leaves > 0 ? heldSize + (restSize - heldSize) * leaves : 1 + (heldSize - 1) * gently(arrives)
-    const place = leaves > 0 ? mix(held, rest, leaves) : mix(own, held, gently(arrives))
+    // Part II: back from the chart's corner to the middle (on a phone, smaller
+    // and to the left, with room beside it for the stranger)
+    const back = gently(within(scrolled, HANDOFF_AT, HANDOFF_AT + CHANGE))
+    const metSize = narrow ? (screen.height * 0.44) / tall : heldSize
+    const met = narrow
+      ? [screen.left + screen.width * 0.27 - box.left - (PHONE.width * k * metSize) / 2, screen.top + screen.height * 0.63 - box.top - (tall * metSize) / 2]
+      : held
+    const size = back > 0 ? restSize + (metSize - restSize) * back : leaves > 0 ? heldSize + (restSize - heldSize) * leaves : 1 + (heldSize - 1) * gently(arrives)
+    const place = back > 0 ? mix(rest, met, back) : leaves > 0 ? mix(held, rest, leaves) : mix(own, held, gently(arrives))
+    const gone = within(scrolled, MANY_AT, MANY_AT + 0.3)
     phone.current.style.transform = `translate3d(${(place[0] - own[0]).toFixed(2)}px, ${(place[1] - own[1]).toFixed(2)}px, 0) scale(${size.toFixed(4)})`
-    phone.current.style.opacity = gently(within(arrives, 0.1, 0.7)).toFixed(3)
+    phone.current.style.opacity = (gently(within(arrives, 0.1, 0.7)) * (1 - gone)).toFixed(3)
+    // its screen: the first game, then the search, then the strangers' games
+    phone.current.style.setProperty("--online", within(scrolled, SEARCH_AT - 0.15, SEARCH_AT).toFixed(3))
+    // the strangers, pictured beside the phone, each drawing itself in
+    const centre = [box.left + place[0] + (PHONE.width * k * size) / 2 - screen.left, box.top + place[1] + (tall * size) / 2 - screen.top]
+    if (pictured.current) {
+      pictured.current.style.opacity = (1 - gone).toFixed(3)
+      pictured.current.querySelectorAll("[data-who]").forEach(node => {
+        const index = Number(node.dataset.who)
+        node.style.setProperty("--drawn", (still ? 1 : gently(within(scrolled, PICTURE_AT[index], PICTURE_AT[index] + 0.4))).toFixed(3))
+      })
+    }
+    // each one's life, a grey thread through the game
+    crossings.current.forEach((path, index) => {
+      if (!path) return
+      const d = crossing(index, narrow, screen.width, screen.height, centre)
+      if (path.getAttribute("d") !== d) path.setAttribute("d", d)
+      const length = path.getTotalLength()
+      const end = MET[index + 1] ?? MANY_AT
+      const u = still ? (scrolled >= MET[index] && scrolled < end ? 1 : 0) : within(scrolled, MET[index] - 0.1, MET[index] + 0.6) + within(scrolled, end - 0.15, end + 0.45)
+      path.style.strokeDasharray = `${length} ${length}`
+      path.style.strokeDashoffset = (length * (1 - u)).toFixed(1)
+      path.style.opacity = u > 0 && u < 2 ? "1" : "0"
+    })
+    // and then all of them: one faint thread for each person met
+    drawMany(still ? (scrolled >= MANY_AT + 0.3 ? 1 : 0) : gently(within(scrolled, MANY_AT + 0.1, MANY_AT + 0.85)), narrow)
+    // the part's name stays at the top from the moment the first is found
+    const people = pin.current.closest("[data-people]")
+    if (people) people.dataset.titled = scrolled >= TITLE_AT - 0.1 ? "true" : "false"
     // the ground comes under the scene as the phone appears, and takes the thread in
     veil.current.style.opacity = within(arrives, 0.04, 0.3).toFixed(3)
     // Take over the visible thread exactly where the previous scroll crosses
@@ -294,17 +402,17 @@ export const Wooden = ({ lines }) => {
       const point = source.getPointAtLength((lo + hi) / 2)
       const startX = point.x + sourceBox.left - screen.left
       const intoGutter = gently(within(scrolled, REST_AT, REST_AT + 0.18))
-      const lane = startX + ((narrow ? 4 : 1) - startX) * intoGutter
+      const lane = startX + ((narrow ? 4 : 1) - startX) * intoGutter * (1 - back)
       const endX = box.left + place[0] + PHONE.width * k * size / 2 - screen.left
       const endY = box.top + place[1] + tall * size * 0.58 - screen.top
       const head = (title.current ||= chart.current.querySelector("h3")).getBoundingClientRect()
-      const bendY = narrow ? 32 : Math.max(24, Math.min(endY * 0.45, head.top - screen.top - 18))
+      const bendY = narrow ? 32 : Math.max(24, Math.min(endY * 0.45, head.top - screen.top - 18)) * (1 - back) + Math.max(24, endY * 0.4) * back
       const turnY = Math.max(bendY, endY - 45)
       link.current.setAttribute("d", `M${startX.toFixed(2)},0 C${startX.toFixed(2)},${(bendY * 0.45).toFixed(2)} ${lane.toFixed(2)},${(bendY * 0.55).toFixed(2)} ${lane.toFixed(2)},${bendY.toFixed(2)} L${lane.toFixed(2)},${turnY.toFixed(2)} Q${lane.toFixed(2)},${endY.toFixed(2)} ${endX.toFixed(2)},${endY.toFixed(2)}`)
-      link.current.parentElement.style.opacity = within(arrives, 0.04, 0.3).toFixed(3)
+      link.current.parentElement.style.opacity = (within(arrives, 0.04, 0.3) * (1 - gone)).toFixed(3)
     }
     // the chart comes in as the phone goes to it
-    chart.current.style.opacity = within(scrolled, REST_AT + 0.2, REST_AT + CHANGE).toFixed(3)
+    chart.current.style.opacity = (within(scrolled, REST_AT + 0.2, REST_AT + CHANGE) * (1 - within(scrolled, HANDOFF_AT - 0.05, HANDOFF_AT + 0.3))).toFixed(3)
     // the whole line is there as the chart arrives, the note at its peak with it
     chart.current.style.setProperty("--peak", within(scrolled, CLAIM_AT, CLAIM_AT + 0.3).toFixed(3))
     lid.current.style.transform =
@@ -318,19 +426,12 @@ export const Wooden = ({ lines }) => {
       // the social media estimate joins the chart with "A winning trade-off?"
       social: scrolled >= DRAW_AT,
       played: now.played,
-      // (no words for a moment as the board becomes the phone)
-      words:
-        scrolled < PHONE_AT + 0.15
-          ? SAID[SAID_AT.filter(at => scrolled >= at).length]
-          : scrolled < PHONE_AT + 0.3
-            ? "none"
-            : scrolled < CLAIM_AT
-              ? "chess-com"
-              : scrolled < DRAW_AT
-                ? "not-a-player"
-                : scrolled < ASK_AT
-                  ? "obsession"
-                  : "obsession-questions",
+      // (on a phone, one at a time: each from a little before its moment;
+      // none for a moment as the board becomes the phone)
+      words: scrolled >= PHONE_AT + 0.05 && scrolled < PHONE_AT + 0.25 ? "none" : (WORDS.filter(([, at]) => scrolled >= at - 0.3).pop() || WORDS[0])[0],
+      who: scrolled < TITLE_AT ? -1 : MET.filter(at => scrolled >= at).length - 1,
+      online: scrolled >= HANDOFF_AT,
+      narrow: Boolean(narrow),
       phone: scrolled >= PHONE_AT + CHANGE / 2,
       // 1. e4: as it is played on the set, and again on the phone's first game
       first: (now.played >= 1 && scrolled < AWAY_AT) || (scrolled >= PHONE_AT + 0.3 && scrolled < CLAIM_AT),
@@ -340,7 +441,9 @@ export const Wooden = ({ lines }) => {
   useFollow(goal, paint, { still, watch: scene })
 
   const share = (value, of) => `${((value / of) * 100).toFixed(3)}%`
-  const label = stage.phone
+  const label = stage.online
+    ? STRANGERS_LABEL
+    : stage.phone
     ? PHONE_ALT
     : !stage.turned
     ? SIDES[0].alt
@@ -358,6 +461,13 @@ export const Wooden = ({ lines }) => {
         <i className={c("ch-woodenVeil")} ref={veil} style={{ opacity: 0 }} />
         <svg className={c("ch-woodenLink")} aria-hidden="true" style={{ opacity: 0 }}>
           <path ref={link} />
+        </svg>
+        {/* the strangers' lives, crossing the game; then all of them */}
+        <canvas className={c("ch-many")} ref={many} aria-hidden="true" />
+        <svg className={c("ch-crossings")} aria-hidden="true">
+          {STRANGERS.map((each, index) => (
+            <path key={each.name} ref={node => (crossings.current[index] = node)} style={{ opacity: 0 }} />
+          ))}
         </svg>
         <div className={c("ch-woodenChart")} ref={chart} style={{ opacity: 0 }}>
           <TimeChart social={stage.social} />
@@ -411,41 +521,57 @@ export const Wooden = ({ lines }) => {
             </div>
           </div>
           {/* Chess.com arrives: the third object, after the device and the set. */}
-          <img
+          <div
             ref={phone}
             className={c("ch-woodenPhone")}
-            src="/images/stories/chess/phone.webp"
-            srcSet="/images/stories/chess/phone-480.webp 480w, /images/stories/chess/phone.webp 800w"
-            sizes="(max-width: 60rem) 72vw, 330px"
-            alt=""
-            width={800}
-            height={1704}
-            decoding="async"
             style={{ left: share(PHONE.left, BOARD.width), top: share(PHONE.top, BOARD.height), width: share(PHONE.width, BOARD.width), opacity: 0 }}
-          />
+          >
+            <img
+              className={c("ch-firstGame")}
+              src="/images/stories/chess/phone.webp"
+              srcSet="/images/stories/chess/phone-480.webp 480w, /images/stories/chess/phone.webp 800w"
+              sizes="(max-width: 60rem) 72vw, 330px"
+              alt=""
+              width={800}
+              height={1704}
+              decoding="async"
+            />
+            {/* Part II: the same phone, searching, then each stranger's game */}
+            <div className={c("ch-onlineScreen")}>
+              <PhoneScreen who={stage.who} />
+            </div>
+          </div>
         </div>
         {/* The first move, the same on every board of Part I: the device's
             screen shows it, the set plays it, the first game online opened with it. */}
         <span className={c("ch-firstMove")} data-on={stage.first ? "true" : "false"} aria-hidden="true">
           1. e4
         </span>
-        {/* The words beside the scene, each for its part of it. On a phone
-            the set's give way when the game is answered: the hands need the
-            room. Then a few for the phone, and two beside the chart. */}
-        {SAID.map(name => (
-          <div key={name} className={c("ch-woodenText")} data-on={stage.words === name ? "true" : "false"}>
-            <Text name={name} look="lead" />
+        <Pictured who={stage.who} ref={pictured} />
+        {/* On a phone the words stand at the top, one after another. */}
+        {stage.narrow ? (
+          <div className={c("ch-woodenTold")}>
+            {WORDS.map(([name, , look]) => (
+              <div key={name} data-on={stage.words === name ? "true" : "false"}>
+                <Text name={name} look={look || "lead"} />
+              </div>
+            ))}
           </div>
-        ))}
-        <div className={c("ch-woodenText")} data-on={stage.words === "chess-com" ? "true" : "false"}>
-          <Text name="chess-com" look="lead" />
-        </div>
-        {["not-a-player", "obsession", "obsession-questions"].map(name => (
-          <div key={name} className={c("ch-woodenAfter")} data-on={stage.words === name ? "true" : "false"}>
-            <Text name={name} look="lead" />
-          </div>
-        ))}
+        ) : null}
       </div>
+      {/* On a wide screen they scroll past beside it, each in the middle of
+          the screen at its moment. */}
+      {!stage.narrow ? (
+        <div className={c("ch-woodenWords")}>
+          {WORDS.map(([name, at, look]) => (
+            <div key={name} style={{ top: `calc(${(at + 0.5).toFixed(3)} * 100svh)` }}>
+              <Text name={name} look={look || "lead"} />
+            </div>
+          ))}
+        </div>
+      ) : null}
+      {/* where the chapters' navigation opens Part II */}
+      <span id="the-people" className={c("ch-mark")} style={{ top: `calc(${(TITLE_AT + 0.08).toFixed(3)} * 100svh)` }} />
       <Knots of={lines} />
     </div>
   )

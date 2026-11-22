@@ -68,14 +68,17 @@ const HANDS = [MINE, THEIRS]
 
 // The scroll, in screens, since the card that names the London System reached
 // its line. A move takes LASTS and the next begins EVERY after it.
-const FIRST_AT = 0.2
-const EVERY = 0.28
-const LASTS = 0.42
-// How much longer than a step's own stretch (0.72 of a screen) this takes: the
+const FIRST_AT = 0.15
+const EVERY = 0.2
+const LASTS = 0.34
+// How much longer than a step's own stretch (0.58 of a screen) this takes: the
 // scene's step is given this much more scrolling (see `rest` in Pinned).
-export const CLUB_REST = FIRST_AT + (PLIES.length - 1) * EVERY + LASTS + 0.1 - 0.72
+export const CLUB_REST = FIRST_AT + (PLIES.length - 1) * EVERY + LASTS + 0.1 - 0.58
 const TAKES = 0.32
 const LEAVES = 0.72
+
+// The London System, set up: where White's pawns and pieces stand.
+const LONDON = ["d4", "f4", "e3", "f3", "c3"]
 
 // A square: its centre, and how wide a square is at its rank.
 const square = name => {
@@ -227,6 +230,30 @@ export const ClubBoard = ({ during }) => {
           style={{ width: share((SIZES[piece.kind].w * PER_100(piece.colour)) / BOARD.width) }}
         />
       ))}
+      {/* What "safe" means: once it is set up, the London System's pawns and
+          pieces' squares take the thread's clay (d4, f4, e3, f3, c3). */}
+      {LONDON.map(name => {
+        const file = "abcdefgh".indexOf(name[0])
+        const row = 8 - Number(name[1])
+        const edges = BOARD.x[row]
+        return (
+          <i
+            key={name}
+            className={c("ch-london")}
+            data-on={played >= PLIES.length ? "true" : "false"}
+            style={{
+              left: share(edges[file] / BOARD.width),
+              top: share(BOARD.y[row] / BOARD.height),
+              width: share((edges[file + 1] - edges[file]) / BOARD.width),
+              height: share((BOARD.y[row + 1] - BOARD.y[row]) / BOARD.height),
+            }}
+          />
+        )
+      })}
+      {/* The first move, as Part I marked 1. e4 on every board: here, the other one. */}
+      <span className={c("ch-firstMove", "ch-clubMove")} data-on={played >= 1 ? "true" : "false"} aria-hidden="true">
+        1. d4 · the London System
+      </span>
       {HANDS.map(hand => (
         <img
           key={hand.name}
