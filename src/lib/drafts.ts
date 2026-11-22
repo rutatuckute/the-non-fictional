@@ -25,6 +25,8 @@ export type Draft = {
   inquiry: string | null
   topic: string | null
   excerpt: string
+  // A path under public/, e.g. /images/uploads/…: the cover on cards and shares.
+  coverImage: string | null
   body: string
 }
 
@@ -62,6 +64,7 @@ const parse = (file: string, text: string): Draft => {
     inquiry: fields.inquiry || null,
     topic: fields.topic || null,
     excerpt: fields.excerpt || '',
+    coverImage: fields.cover || null,
     body: text.slice(head[0].length),
   }
 }

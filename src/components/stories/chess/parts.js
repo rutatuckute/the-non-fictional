@@ -148,14 +148,14 @@ export const useSince = (step, every, most) => {
 // reader scrolls, as the sentences beside the wooden set do; a step with no
 // text leaves the graphic to speak alone. `open` leaves out the rule above.
 // `mark` names the scene for the chapters' navigation (chapters.js).
-export const Pinned = ({ label, steps, open = false, plain = false, mark, reading = false, className = "", trail, children }) => {
+export const Pinned = ({ label, steps, open = false, plain = false, mark, children }) => {
   const [step, stepRef, refs] = useStep(steps.length)
   return (
-    <section className={`${c("ch-pin")} ${className}`} data-reading={reading ? "true" : undefined} data-open={open ? "true" : undefined} data-plain={plain ? "true" : undefined} aria-label={label}>
+    <section className={c("ch-pin")} data-open={open ? "true" : undefined} data-plain={plain ? "true" : undefined} aria-label={label}>
       {/* where the chapters' navigation opens this scene: at its top, as it is pinned */}
       {mark ? <span id={mark} className={c("ch-mark")} /> : null}
       <div className={c("ch-stage")}>
-        {plain && !reading ? (
+        {plain ? (
           <div className={c("ch-told")}>
             {steps.map((item, index) =>
               item.text ? (
@@ -183,15 +183,13 @@ export const Pinned = ({ label, steps, open = false, plain = false, mark, readin
                 data-on={step === index ? "true" : "false"}
                 ref={stepRef(index)}
               >
-                <div className={c("ch-card")}>{plain ? reading ? item.text : null : made ? item.card : item}</div>
-                {item?.mark ? <span id={item.mark} className={c("ch-mark")} /> : null}
+                <div className={c("ch-card")}>{plain ? null : made ? item.card : item}</div>
               </div>
               {made && item.rest ? <div style={{ height: `${item.rest * 100}vh` }} aria-hidden="true" /> : null}
             </React.Fragment>
           )
         })}
       </div>
-      {trail}
     </section>
   )
 }

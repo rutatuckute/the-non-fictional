@@ -3,10 +3,10 @@
 import * as React from "react"
 
 import { Chapters, Mark } from "./chapters"
-import { c, Holder, Text, Words } from "./parts"
+import { c, Holder, Picture, Text, Words } from "./parts"
+import { Device } from "./origin"
 import { People, Reveal, Say, Wrong } from "./scenes"
 import { Knots, Thread } from "./thread"
-import { Origin } from "./origin"
 import { Wooden } from "./wooden"
 
 // The chess story is the whole piece: one continuous scroll in four parts,
@@ -53,25 +53,45 @@ const CHAPTERS = [
 ]
 
 // Beyond the screen's edge, whatever the window's width: the column is centred in it.
+const OFF_LEFT = "calc(50% - 60vw)"
+const OFF_RIGHT = "calc(50% + 60vw)"
 const LINES = {
   open: {
-    a: [[86, 0, 96, 0], [90, 32, 98, 34], [87, 64, 96, 68, "from"], [80, 99, 95, 99]],
-    "other-1": [[70, 0, 95, 0], [76, 34, 96, 34], [75, 99, 95, 99]],
-    "other-2": [[96, 0, -5, 0], [98, 30, -5, 30], [96, 99, -5, 99]],
+    a: [[58, 0, 40, 0], [74, 16, 108, 22], [89.5, 36, 108, 50], [91, 66, 108, 74, "from"], [72, 90, 76, 92]],
+    "other-1": [[12, 0, 8, 0], [50, 14, 70, 14], [85, 32, 108, 30], [86.5, 68, 108, 80], [60, 94, 84, 96]],
+    "other-2": [[36, 0, 70, 0], [66, 12, 108, 12], [93.5, 34, 112, 34], [95, 70, 112, 70], [82, 96, 112, 96]],
+    "other-4": [[106, 10, -10, 40], [98, 38, -10, 60], [99, 74, -10, 80]],
+    "other-5": [[106, 46, 100, 0], [101.5, 62, 88, 12], [102.5, 86, 108, 24]],
   },
   memory: {
-    a: [[78, 2, -3, 2, "to"], [76, 52, -3, 52], [72, 74, -3, 74], [-2, 99, -3, 99]],
-    "other-1": [[78, 5, 95, 5], [88, 48, 100, 48], [105, 82, 110, 82]],
-    "other-2": [[96, 5, -5, 5], [103, 42, -10, 42], [110, 70, -14, 70]],
+    a: [[47, 6, 82, 5, "to"], [45.5, 45, 40, 30], [46, 80, -3, 72], [46, 97, -3, 99]],
+    "other-1": [[38, 3, 96, 10], [30, 32, 107, 36], [26, 100, 107, 99]],
+    "other-2": [[53, 28, 108, 30], [52, 60, 108, 50], [52.5, 96, 108, 80]],
+    "other-4": [[101.5, 20, -10, 30], [102, 96, -10, 80]],
+    "other-5": [[106, 8, 112, 8]],
   },
+  // The years between are a short stretch, with no bead on the story's thread:
+  // no chess. The others keep clear of the few words there (right of the
+  // thread from 28% to 40% down; on a phone, right of it from 38% to 54%).
   years: {
-    a: [[-2, 0, -3, 0], [-2.5, 50, -3, 50], [24, 100, -3, 100]],
+    a: [[50, 5, 18, 5], [51, 26, 19, 26], [49, 48, 17.5, 48], [50.5, 70, 16, 68], [50, 99, 5, 97]],
+    "other-1": [[36, 6, 70, 3], [43.5, 20, 36, 8], [45, 38, 26, 20], [50, 50, 18, 50], [55.5, 62, 10.5, 62], [57, 80, 11, 80], [60.5, 96, 9, 96]],
+    "other-2": [[55, 6, 108, 2], [64, 13, 40, 9], [86, 19, 31.5, 20], [106, 22, 34, 28], [108, 30, 70, 33], [108, 40, 100, 35], [108, 50, 110, 36]],
+    "other-4": [[74, 3, -8, 5], [90, 16, 9, 12], [92, 44, 5.5, 50], [86, 76, 6, 78], [78, 95, -8, 99]],
+    "other-6": [[-6, 28, -8, 60], [20, 33, 12, 68], [36, 41, 24, 78], [38.5, 58, 22, 86], [37, 80, 14, 93], [34, 97, 9, 99]],
   },
+  // The wooden set is pinned: its stretch is several screens long, and the
+  // board and the words stay on screen while the stretch passes behind them.
+  // So the other threads leave by the screen's edge in the first screen and
+  // stay out; only the story's thread is there, coming down the screen and in
+  // behind the board (on a phone, at the far left, clear of the words above
+  // the board). It ends under the scene's own ground, which comes when the phone
+  // does: from there the thread is the line that comes out of the phone.
   wooden: {
-    a: [[25, 0, -3, 0], [25, 50, -3, 50], [44, 100, -3, 100]],
-  },
-  online: {
-    a: [[45, 0, -3, 0], [44, 28, -3, 28], [44, 60, -3, 60], [44, 100, -3, 100]],
+    a: [[30, 0.4, 5, 0.4], [24, 23.5, 5, 23.5], [22, 44, 5, 44], [23, 58, 5, 58], [22, 70, 5, 70]],
+    "other-1": [[58, 0.5, 12, 0.3], [82, 1.6, OFF_LEFT, 2.2], [OFF_RIGHT, 2.9, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
+    "other-4": [[90, 0.8, OFF_LEFT, 1], [OFF_RIGHT, 2.1, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
+    "other-6": [[30, 0.8, 8, 0.2], [22, 3.1, OFF_LEFT, 2], [OFF_LEFT, 7, OFF_LEFT, 30]],
   },
   encounter: {
     b: [[3, 30, -3, 2], [6, 60, -3, 50], [8, 104, -3, 99]],
@@ -99,6 +119,7 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
   // What the reader answered, kept for the step that shows the result.
   const [guesses, setGuesses] = React.useState({})
   const guess = key => ({ value: guesses[key], onChange: value => setGuesses(all => ({ ...all, [key]: value })) })
+  const opening = React.useRef(null)
 
   return (
     <Words.Provider value={words}>
@@ -106,15 +127,71 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
         <Chapters chapters={CHAPTERS} />
         <Thread />
 
-        <Origin title={title} lines={LINES} />
-        <section className={c("ch-firstChapter")} aria-label="The years and the wooden set">
+        {/* The title and the cover, then the story begins. */}
+        <header className={c("ch-hero")}>
+          <Mark id="the-thread" />
+          <h1 className={c("ch-title")} itemProp="headline">
+            {title}
+          </h1>
+          <Picture
+            className={c("ch-cover")}
+            name="cover"
+            alt="Two hands over a pink and white chessboard, seen from above: an older man's in a tweed sleeve reaching for a black piece, a woman's with a signet ring at the near side. Behind them, a dark grid of tiny green and grey boards."
+            width={1600}
+            height={1067}
+            small={800}
+            sizes="(max-width: 60rem) 92vw, 1100px"
+          />
+        </header>
+
+        <div className={c("ch-open")} ref={opening}>
+          <Text name="opening" look="large" />
+          <Text name="opening-aside" look="aside" />
+          <Knots of={LINES.open} />
+        </div>
+
+        <section className={c("ch-free")} aria-label="One of the threads in a life">
+          {/* The memory, under its decade. One thread takes its colour as
+              it reaches the words: this one. The device, first glimpsed at
+              the opening's right, comes to its place here (origin.js). */}
+          <div className={c("ch-row", "ch-memory")}>
+            <span className={c("ch-decade")} data-reveal="" style={{ "--at": "0px", "--pat": "-14px" }}>
+              2000s
+            </span>
+            <div className={c("ch-mine")}>
+              <Text name="mine" look="headline" />
+              <Text name="mine-one" look="quiet" />
+            </div>
+            <Device opening={opening} />
+            <div className={c("ch-col", "ch-told2")}>
+              <Text name="memory" look="medium" />
+              <Text name="memory-aside" look="quiet" />
+            </div>
+            <Knots of={LINES.memory} />
+          </div>
+
+          {/* The years between, in brief: the thread runs bare among the
+              others, and the 2020s come. */}
           <div className={c("ch-years")}>
-            <Text name="years" className={c("ch-yearsText")} />
+            <span className={c("ch-decade")} data-reveal="" style={{ "--at": "74%", "--pat": "76%" }}>
+              2020s
+            </span>
+            <Text name="years" look="lead" className={c("ch-yearsText")} />
             <Knots of={LINES.years} />
           </div>
+
+          {/* The wooden set: different stages of life, the same game. It is
+              held on screen while it turns over to the board and a game is
+              played on it (wooden.js). The story's thread passes behind it;
+              the others pass it by. */}
           <Wooden lines={LINES.wooden} />
         </section>
-        <People lines={LINES.online} />
+
+        {/* Part II: its name stays at the top of the screen for the whole of it. */}
+        <section className={c("ch-people")}>
+          <Text name="people-title" look="partTitle" className={c("ch-peopleTitle")} />
+          <People />
+        </section>
 
         <section className={c("ch-turn")} aria-label="Looking for answers in the data">
           <Mark id="the-investigation" />

@@ -1,5 +1,5 @@
 ---
-title: Chess story (working title)
+title: Chess, again?
 slug: chess-story
 date: 2026-11-14
 form: data
@@ -7,12 +7,16 @@ category: Data
 inquiry: connection
 topic: Chess
 excerpt: Working draft.
+cover: /images/uploads/chess-again-cover.jpg
 ---
 <!--story:chess-->
 
 <!--step:opening-->
 
-Do you have a memory your mind keeps wandering back to?\
+Do you have that one memory your mind keeps wandering back to?
+
+<!--step:opening-aside-->
+
 Nothing major, and yet so surprisingly vivid.
 
 <!--step:mine-->

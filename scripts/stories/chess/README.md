@@ -69,7 +69,7 @@ the published site. The names, in reading order:
 
 | Part | Names |
 | --- | --- |
-| Opening | `opening` |
+| Opening | `opening`, `opening-aside` (the smaller second line) |
 | I | `mine`, `mine-one`, `memory`, `memory-aside`, `years`, `board`, `not-a-player`, `chess-com`, `obsession`, `obsession-questions` |
 | II | `people-title` (a heading), `people-intro`, `strangers`, `strangers-where`, `strangers-moment`, `club`, `professor`, `professor-quote`, `professor-how`, `boards`, `data` |
 | III | `data-intro` |
