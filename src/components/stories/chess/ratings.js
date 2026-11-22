@@ -15,7 +15,7 @@ const days = [...new Set([...T.rapid, ...T.bullet].map(d => d[0]))].sort()
 const atDay = (series, date) => series.filter(d => d[0] <= date).at(-1)
 
 // One persistent stage. Scroll opens the diary, then the two last ratings become
-// one clay dot on a different pair of axes. The captions name the measure change.
+// one green dot on a different pair of axes. The captions name the measure change.
 export const RatingStory = ({ step }) => {
   const box = React.useRef(null), steps = React.useContext(PinSteps)
   const [size, setSize] = React.useState({ width: 560, height: 400 })

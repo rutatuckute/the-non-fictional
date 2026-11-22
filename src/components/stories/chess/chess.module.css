@@ -64,7 +64,7 @@
   content: ""; position: absolute; left: 0; top: 50%; z-index: 1; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%;
   background: var(--ink-3); box-shadow: 0 0 0 4px var(--void); transition: background-color 150ms ease, transform 150ms ease;
 }
-.ch-navList > li[data-on="true"] > a::before { background: var(--thread); transform: scale(1.3); }
+.ch-navList > li[data-on="true"] > a::before { background: var(--form-data); transform: scale(1.3); }
 
 /* A wide screen: the rail. The story's column gives way on the right for as
    much as the margin lacks, so the rail is never over the story; and the
@@ -82,7 +82,7 @@
   /* the line through the dots, and how much of it the reader has come */
   .ch-navList::before, .ch-navList::after { content: ""; position: absolute; left: 3px; top: var(--line-top, 0px); width: 1px; }
   .ch-navList::before { height: var(--line-long, 0px); background: var(--rule-strong); }
-  .ch-navList::after { height: var(--line-done, 0px); background: var(--thread); }
+  .ch-navList::after { height: var(--line-done, 0px); background: var(--form-data); }
   .ch-navList > li > a { display: block; padding-left: 24px; font: 400 13px / 1.35 var(--font-mono); }
   /* the parts of a chapter show while it is being read, or while the keyboard is in it */
   .ch-story .ch-navParts { display: none; gap: 9px; padding: 11px 0 2px 24px; }
@@ -101,11 +101,11 @@
     font: 500 13px / 1 var(--font-mono); text-align: left; cursor: pointer; pointer-events: auto; -webkit-tap-highlight-color: transparent;
   }
   .ch-navNow { display: inline-flex; align-items: center; gap: 10px; min-width: 0; white-space: nowrap; }
-  .ch-navNow::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--thread); }
+  .ch-navNow::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--form-data); }
   .ch-navAsk { display: inline-flex; flex: none; align-items: center; gap: 9px; color: var(--ink-2); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; }
   .ch-navAsk svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; }
   /* how far through the chapters the reader is, along the bar's foot */
-  .ch-navDone { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--thread); transform-origin: 0 50%; transform: scaleX(var(--done, 0)); }
+  .ch-navDone { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--form-data); transform-origin: 0 50%; transform: scaleX(var(--done, 0)); }
   .ch-navPanel {
     position: absolute; top: var(--bar); left: calc(-1 * var(--page-margin)); right: calc(-1 * var(--page-margin)); display: none;
     max-height: calc(100vh - var(--bar)); max-height: calc(100svh - var(--bar)); overflow-y: auto; padding: 18px var(--page-margin) 14px;
@@ -267,6 +267,7 @@
   color: var(--ink-2); font: 500 12px / 1.4 var(--font-mono);
 }
 .ch-legend span { display: inline-flex; align-items: center; gap: 9px; }
+.ch-chart { --thread: var(--form-data); --social: var(--ink-2); }
 .ch-key { display: inline-block; flex: none; width: 24px; height: 0; border-top: 2px solid var(--thread); }
 .ch-key[data-line="social"] { border-top: 2px dashed var(--social); }
 .ch-plot { position: relative; aspect-ratio: 8 / 3; margin: 0 0 1.9rem 2rem; }
@@ -362,6 +363,8 @@
   position: absolute; inset: 0; color: #dedcd8;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 6px; font-size: 2.5cqw; line-height: 1;
 }
+.ch-phonePosition { position: absolute; left: 9.75%; top: 33.1%; width: 79.85%; height: auto; display: block; }
+.ch-phoneMove { position: absolute; top: 15.3%; left: 15%; color: #dedcd8; font-size: 1.15em; }
 .ch-screenBar {
   position: absolute; left: 12.8%; top: 25%; height: 2.85%; display: flex; align-items: flex-start; white-space: nowrap;
   opacity: 0; transition: opacity 300ms ease;
@@ -436,7 +439,7 @@
 /* What he asked, across the top of the scene; and what it left behind, alone. */
 /* A speech balloon over his head, its tail towards him; it comes up from there. */
 .ch-layer.ch-bubble {
-  z-index: 6; left: 2%; right: 0; bottom: 84%; padding: 15px 20px 17px;
+  z-index: 6; left: -20%; right: 22%; bottom: 84%; padding: 15px 20px 17px;
   border: 1px solid var(--ink-2); border-radius: 20px; background: var(--void); transform-origin: 34% 100%;
   transition: opacity 400ms ease, transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s linear 400ms;
 }
@@ -447,7 +450,8 @@
   border-right: 1px solid var(--ink-2); border-bottom: 1px solid var(--ink-2); background: var(--void);
   transform: rotate(45deg) skew(12deg, 12deg);
 }
-.ch-bubble .ch-text { max-width: none; }
+.ch-bubble .ch-text { max-width: none; text-align: center; }
+.ch-bubble .ch-text p { text-align: center; }
 .ch-layer.ch-how { z-index: 6; inset: 0; display: grid; place-items: center; text-align: center; }
 /* The thousand: one picture, four of the scene's squares wide and centred in
    the scene, kept to the scene's box so the words beside it stay clear; it
@@ -466,9 +470,11 @@
 }
 /* What we say about ourselves. */
 .ch-messageCopy h3 { margin: 0 0 16px; font: 500 26px / 1.1 var(--font-title); letter-spacing: -0.02em; }
-/* The message opens the inquiry. The same clay point survives the change of axes. */
-.ch-messagePhone { display: block; width: auto; height: min(73svh, 650px); max-width: 100%; object-fit: contain; margin-inline: auto; }
-.ch-ratings { position: relative; margin: 0; width: 100%; color: var(--ink); }
+/* The message opens the inquiry. The same green point survives the change of axes. */
+.ch-messagePhone { position: relative; width: auto; aspect-ratio: 800 / 1704; height: min(73svh, 650px); max-width: 100%; margin-inline: auto; }
+.ch-messagePhone > img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.ch-story .ch-messagePop { position: absolute; z-index: 2; left: 50%; top: 48%; width: clamp(260px, 145%, 440px); box-sizing: border-box; padding: 18px 22px; border-radius: 22px 22px 6px 22px; background: var(--form-data); color: var(--void); font: 400 clamp(15px, 1.4vw, 20px) / 1.42 var(--font-mono, sans-serif); box-shadow: 0 18px 40px rgba(17, 16, 15, 0.45); transform-origin: 50% 50%; transform: translate(-50%, -50%) scale(0.55); }
+.ch-ratings { --thread: var(--form-data); position: relative; margin: 0; width: 100%; color: var(--ink); }
 .ch-ratingTitle { font: 400 clamp(21px, 2.2vw, 29px) / 1.15 var(--font-title); letter-spacing: -0.02em; }
 .ch-ratingKey { display: flex; flex-wrap: wrap; gap: 5px 16px; margin-block: 12px 5px; color: var(--ink-2); font: 400 11px / 1.4 var(--font-mono); min-height: 16px; }
 .ch-ratingKey span { display: inline-flex; align-items: center; gap: 6px; }
@@ -574,7 +580,7 @@
 .ch-rows i { background: var(--rule-strong); }
 .ch-rows i + i { background: color-mix(in srgb, var(--rule-strong) 60%, var(--rule)); }
 .ch-rows i + i + i { background: var(--rule); }
-.ch-rows[data-you="true"] i:first-child { background: var(--thread); }
+.ch-rows[data-you="true"] i:first-child { background: var(--form-data); }
 .ch-guess { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .ch-guess button {
   min-height: 40px; padding: 0 16px; border: 1px solid var(--ink-2); border-radius: 99px; background: none; cursor: pointer;
@@ -658,7 +664,7 @@
   /* with only the professor beside it, the board can take more of a phone's width */
   .ch-boardwrap[data-view="club"], .ch-boardwrap[data-view="how"] { width: min(44svh, 80%); transform: translate(10%, -4%); }
   .ch-layer.ch-place { right: 74%; top: 30%; }
-  .ch-layer.ch-bubble { left: -6%; right: -4%; bottom: 86%; padding: 12px 16px 14px; }
+  .ch-layer.ch-bubble { left: -17%; right: 7%; bottom: 86%; padding: 12px 16px 14px; }
   .ch-step[data-bare="true"] { min-height: 80vh; }
   /* fewer, larger boards: here a tiny board is 14% of the square; the grid
      fades out at the top and bottom of the scene's box, under the words */

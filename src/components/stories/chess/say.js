@@ -8,12 +8,6 @@ import say from "./say.json"
 // B1's guesses and B2's evidence, joined: anonymous patterns, one choice per
 // group, then the corresponding row. Nothing is revealed merely by scrolling.
 const GROUPS = say.names.groups
-const COLOURS = {
-  bad: "#3987e5",
-  good: "#c98500",
-  jokes: "#d55181",
-  aims: "#58a668",
-}
 const OPTIONS = ["Rated lower", "About the same", "Rated higher"]
 const truth = g =>
   g.high < 0.5 ? "Rated lower" : g.low > 0.5 ? "Rated higher" : "About the same"
@@ -45,7 +39,7 @@ const Result = ({ group, choice, active = false }) => (
   <div
     className={c("ch-nameResult")}
     data-active={active}
-    style={{ "--name-tone": COLOURS[group.key] }}
+    style={{ "--name-tone": "var(--form-data)" }}
   >
     <div className={c("ch-nameResultHead")}>
       <span>{group.label}</span>
@@ -110,7 +104,7 @@ export const Usernames = () => {
                 key={g.key}
                 className={c("ch-nameBlock")}
                 data-answered={Boolean(guesses[g.key])}
-                style={{ "--name-tone": COLOURS[g.key] }}
+                style={{ "--name-tone": "var(--form-data)" }}
               >
                 <h4>
                   <i aria-hidden="true" />
@@ -194,7 +188,7 @@ export const Usernames = () => {
                 />
               ) : (
                 <div key={g.key} className={c("ch-nameWaiting")}>
-                  <span style={{ "--name-tone": COLOURS[g.key] }}>
+                  <span style={{ "--name-tone": "var(--form-data)" }}>
                     {g.label}
                   </span>
                   <span>Make a guess to reveal</span>

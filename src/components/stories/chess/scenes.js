@@ -4,6 +4,7 @@ import * as React from "react"
 
 import { CLUB_REST, ClubBoard } from "./club"
 import { c, Guess, Holder, Pinned, Show, Text, useSince } from "./parts"
+import { Message, PhonePosition, PHONE_GAMES } from "./phone-scenes"
 import { RatingStory } from "./ratings"
 import { Usernames } from "./say"
 
@@ -19,11 +20,43 @@ const during = (step, ...steps) => steps.includes(step)
 // was unknown). `figure` names each one's picture, and `focus` the point in
 // it (its hands) that the picture fades out around.
 const STRANGERS = [
-  { name: "torre_torta_07", rating: 743, country: "Brazil", flag: "br", tone: "#6f5a4a", figure: "stranger-1", focus: "42% 46%" },
-  { name: "pawn_wala_19", rating: 812, country: "India", flag: "in", tone: "#4f5f6b", figure: "stranger-2", focus: "68% 42%" },
-  { name: "oga_blunders_ng", rating: 688, country: "Nigeria", flag: "ng", tone: "#5c6650", figure: "stranger-3", focus: "50% 52%" },
-  { name: "krzywy_goniec", rating: 905, country: "Poland", flag: "pl", tone: "#6a5266", figure: "stranger-4", focus: "36% 40%" },
-]
+  {
+    name: "torre_torta_07",
+    rating: 743,
+    country: "Brazil",
+    flag: "br",
+    tone: "#6f5a4a",
+    figure: "stranger-1",
+    focus: "42% 46%",
+  },
+  {
+    name: "pawn_wala_19",
+    rating: 812,
+    country: "India",
+    flag: "in",
+    tone: "#4f5f6b",
+    figure: "stranger-2",
+    focus: "68% 42%",
+  },
+  {
+    name: "oga_blunders_ng",
+    rating: 688,
+    country: "Nigeria",
+    flag: "ng",
+    tone: "#5c6650",
+    figure: "stranger-3",
+    focus: "50% 52%",
+  },
+  {
+    name: "krzywy_goniec",
+    rating: 905,
+    country: "Poland",
+    flag: "pl",
+    tone: "#6a5266",
+    figure: "stranger-4",
+    focus: "36% 40%",
+  },
+].map((stranger, index) => ({ ...stranger, ...PHONE_GAMES[index] }))
 // Each stays for this much scrolling, in screens: the four pass while three short questions do.
 const EACH = 0.55
 
@@ -41,7 +74,14 @@ const FLAGS = {
       <rect width="6" height="4" fill="#ffffff" />
       <rect width="6" height="1.34" fill="#f4a13a" />
       <rect y="2.66" width="6" height="1.34" fill="#1c8a3a" />
-      <circle cx="3" cy="2" r="0.42" fill="none" stroke="#2a3f9b" strokeWidth="0.16" />
+      <circle
+        cx="3"
+        cy="2"
+        r="0.42"
+        fill="none"
+        stroke="#2a3f9b"
+        strokeWidth="0.16"
+      />
     </>
   ),
   ng: (
@@ -64,20 +104,22 @@ const Flag = ({ of }) => (
   </svg>
 )
 
-// The phone of Part I again, before a game: the board set up, the clocks full.
-// Only the opponent changes, as the reader scrolls: on the phone's screen, and
+// The phone of Part I again: a different position and pair of clocks for
+// each invented opponent, changing together as the reader scrolls, and
 // beside it, large enough to read. The country is shown by its flag alone;
 // its name is in the scene's description, for those who cannot see the flag.
 // Until one is `matched`, there is nobody on the other side yet.
 const Strangers = ({ step, matched }) => {
   const since = useSince(step, EACH, STRANGERS.length - 1)
   const now = matched ? since : -1
+  const game = STRANGERS[Math.max(0, now)]
   return (
     <div
       className={c("ch-phoneBox")}
       role="img"
-      aria-label={`A phone with a game of chess about to begin. The opponent keeps changing: ${STRANGERS.map(
-        each => `${each.name}, rated ${each.rating}, ${each.country}`,
+      aria-label={`Illustrative games in progress, with different positions and clocks. The opponent keeps changing: ${STRANGERS.map(
+        each =>
+          `${each.name}, rated ${each.rating}, ${each.country}, clocks ${each.clocks.join(" and ")}`,
       ).join("; ")}.`}
     >
       <img
@@ -89,25 +131,36 @@ const Strangers = ({ step, matched }) => {
         height={1704}
         decoding="async"
       />
-      {/* What the page writes on the phone's screen: the opponent's bar, and both clocks. */}
+      {/* Position and clocks change with the opponent; the phone frame stays. */}
+      <PhonePosition game={game} />
       <div className={c("ch-screen")} aria-hidden="true">
         {STRANGERS.map((each, index) => (
-          <div key={each.name} className={c("ch-screenBar")} data-on={index === now ? "true" : "false"}>
+          <div
+            key={each.name}
+            className={c("ch-screenBar")}
+            data-on={index === now ? "true" : "false"}
+          >
             <i style={{ background: each.tone }} />
             <b>{each.name}</b>
             <span>({each.rating})</span>
             <Flag of={each.flag} />
           </div>
         ))}
+        {matched && <span className={c("ch-phoneMove")}>{game.move}</span>}
         <span className={c("ch-clock")} data-whose="theirs">
-          10:00
+          {game.clocks[0]}
         </span>
         <span className={c("ch-clock")} data-whose="mine">
-          10:00
+          {game.clocks[1]}
         </span>
       </div>
       {STRANGERS.map((each, index) => (
-        <div key={each.name} className={c("ch-who")} data-on={index === now ? "true" : "false"} aria-hidden="true">
+        <div
+          key={each.name}
+          className={c("ch-who")}
+          data-on={index === now ? "true" : "false"}
+          aria-hidden="true"
+        >
           <b>{each.name}</b>
           <span>
             <Flag of={each.flag} />
@@ -131,7 +184,18 @@ const Strangers = ({ step, matched }) => {
 
 // What the scene shows at each step: the phone, and then its strangers; the
 // club's board; the remark, alone; the board among a thousand.
-const VIEWS = ["phone", "phone", "phone", "phone", "club", "club", "club", "how", "many", "many"]
+const VIEWS = [
+  "phone",
+  "phone",
+  "phone",
+  "phone",
+  "club",
+  "club",
+  "club",
+  "how",
+  "many",
+  "many",
+]
 
 // Part II. One board stays on screen: on the phone, where strangers come and
 // go; then at the club in London, where the opening is played and the
@@ -236,7 +300,12 @@ export const Say = () => (
     <Pinned
       label="What we say about ourselves"
       steps={[
-        <Text key="1" name="say-message" look="cardText" className={c("ch-messageCopy")} />,
+        <Text
+          key="1"
+          name="say-message"
+          look="cardText"
+          className={c("ch-messageCopy")}
+        />,
         <Text key="timeline" name="say-isolation" look="cardText" />,
         { card: <Text name="say-prediction" look="cardText" />, rest: 0.45 },
         <Text key="widen" name="say-widen" look="cardText" />,
@@ -247,7 +316,7 @@ export const Say = () => (
       {step => (
         <div className={c("ch-stack")}>
           <Show flow on={step === 0}>
-            <img className={c("ch-messagePhone")} src="/images/stories/chess/message-07.webp" width={600} height={1298} alt="My message: Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀" />
+            <Message />
           </Show>
           <div hidden={step < 1 || step > 5}>
             <RatingStory step={step} />
@@ -268,7 +337,11 @@ export const Wrong = ({ guess }) => (
       <Text key="1" name="wrong-observation" look="cardText" />,
       <React.Fragment key="2">
         <Text name="wrong-decide" look="cardText" />
-        <Guess label="Your decision" options={["Resign", "Play on"]} {...guess} />
+        <Guess
+          label="Your decision"
+          options={["Resign", "Play on"]}
+          {...guess}
+        />
       </React.Fragment>,
       <Text key="3" name="wrong-outcome" look="cardText" />,
       <Text key="4" name="wrong-crowd" look="cardText" />,
@@ -281,12 +354,23 @@ export const Wrong = ({ guess }) => (
           <div className={c("ch-board", "ch-boardSmall")} />
           <p className={c("ch-note")}>
             A real position: the queen has just been lost
-            {step === 2 && guess.value ? ` · you chose to ${guess.value.toLowerCase()}` : ""}
+            {step === 2 && guess.value
+              ? ` · you chose to ${guess.value.toLowerCase()}`
+              : ""}
           </p>
         </Show>
         <Show flow on={step >= 3}>
-          <Rows rows={[[36, 14, 50], [46, 12, 42], [55, 9, 36], [65, 6, 29]]} />
-          <p className={c("ch-note")}>After losing the queen: resign, abandon, play on, by rating</p>
+          <Rows
+            rows={[
+              [36, 14, 50],
+              [46, 12, 42],
+              [55, 9, 36],
+              [65, 6, 29],
+            ]}
+          />
+          <p className={c("ch-note")}>
+            After losing the queen: resign, abandon, play on, by rating
+          </p>
         </Show>
         <Show flow on={step === 4}>
           <Rows you rows={[[18, 2, 80]]} />
@@ -315,11 +399,17 @@ export const Reveal = () => (
           <p className={c("ch-note")}>The professor’s board again</p>
         </Show>
         <Show flow on={step >= 1}>
-          <Holder open label="Your games over time, the London System months marked" ratio="16 / 7" />
+          <Holder
+            open
+            label="Your games over time, the London System months marked"
+            ratio="16 / 7"
+          />
         </Show>
         <Show flow on={step === 2}>
           <Rows rows={[[34], [58]]} />
-          <p className={c("ch-note")}>A measure of playing style, before and after</p>
+          <p className={c("ch-note")}>
+            A measure of playing style, before and after
+          </p>
         </Show>
       </div>
     )}
