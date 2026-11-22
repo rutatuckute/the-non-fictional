@@ -29,7 +29,7 @@ import { DROP, TimeChart } from "./time-chart"
 //
 // From the moment the phone appears, the scene has a ground of the page's own
 // colour under it: the thread, which came down the page into the board, is
-// taken in there, and what comes out of the phone is the same thread, as data.
+// continued above that ground through the phone, then becomes the chart line.
 //
 // The scene follows the scroll (follow.js), it does not sit on it.
 
@@ -211,6 +211,8 @@ export const Wooden = ({ lines }) => {
   const phone = React.useRef(null)
   const veil = React.useRef(null)
   const chart = React.useRef(null)
+  const link = React.useRef(null)
+  const incoming = React.useRef(null)
   const plot = React.useRef(null)
   const pieces = React.useRef({})
   const hands = React.useRef({})
@@ -273,6 +275,32 @@ export const Wooden = ({ lines }) => {
     phone.current.style.opacity = gently(within(arrives, 0.1, 0.7)).toFixed(3)
     // the ground comes under the scene as the phone appears, and takes the thread in
     veil.current.style.opacity = within(arrives, 0.04, 0.3).toFixed(3)
+    // Take over the visible thread exactly where the previous scroll crosses
+    // the stage's top. The stage's ground can then cover the old page-space
+    // line without losing it. As the chart arrives, route the continuation
+    // through the left gutter and under the phone, clear of axes and words.
+    const source = (incoming.current?.isConnected ? incoming.current : null) ||
+      (incoming.current = pin.current.closest('[class*="__ch-story"]').querySelector('path[data-run="a"]'))
+    if (source) {
+      const sourceBox = source.ownerSVGElement.getBoundingClientRect()
+      const targetY = screen.top - sourceBox.top
+      let lo = 0, hi = source.getTotalLength()
+      for (let i = 0; i < 25; i++) {
+        const middle = (lo + hi) / 2
+        if (source.getPointAtLength(middle).y < targetY) lo = middle
+        else hi = middle
+      }
+      const point = source.getPointAtLength((lo + hi) / 2)
+      const startX = point.x + sourceBox.left - screen.left
+      const intoGutter = gently(within(scrolled, REST_AT, REST_AT + 0.18))
+      const lane = startX + ((narrow ? 4 : 1) - startX) * intoGutter
+      const endX = box.left + place[0] + PHONE.width * k * size / 2 - screen.left
+      const endY = box.top + place[1] + tall * size * 0.58 - screen.top
+      const bendY = narrow ? 32 : Math.max(24, Math.min(endY * 0.45, origin.top - screen.top - 34))
+      const turnY = Math.max(bendY, endY - 45)
+      link.current.setAttribute("d", `M${startX.toFixed(2)},0 C${startX.toFixed(2)},${(bendY * 0.45).toFixed(2)} ${lane.toFixed(2)},${(bendY * 0.55).toFixed(2)} ${lane.toFixed(2)},${bendY.toFixed(2)} L${lane.toFixed(2)},${turnY.toFixed(2)} Q${lane.toFixed(2)},${endY.toFixed(2)} ${endX.toFixed(2)},${endY.toFixed(2)}`)
+      link.current.parentElement.style.opacity = within(arrives, 0.04, 0.3).toFixed(3)
+    }
     // the chart comes in as the phone goes to it; then its lines, then the questions
     chart.current.style.opacity = within(scrolled, REST_AT + 0.2, REST_AT + CHANGE).toFixed(3)
     const across = CLIMB * within(scrolled, DRAW_AT, DRAW_AT + QUIET) + (1 - CLIMB) * within(scrolled, DRAW_AT + QUIET, DRAW_AT + QUIET + CLIMBS)
@@ -322,6 +350,9 @@ export const Wooden = ({ lines }) => {
     <div className={c("ch-woodenPin")} ref={pin} style={{ "--screens": SCREENS }}>
       <div className={c("ch-woodenStage")} ref={stand}>
         <i className={c("ch-woodenVeil")} ref={veil} style={{ opacity: 0 }} />
+        <svg className={c("ch-woodenLink")} aria-hidden="true" style={{ opacity: 0 }}>
+          <path ref={link} />
+        </svg>
         <div className={c("ch-woodenChart")} ref={chart} style={{ opacity: 0 }}>
           <TimeChart />
         </div>

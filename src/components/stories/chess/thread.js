@@ -415,6 +415,7 @@ export const Thread = () => {
         <g key={run.name}>
           <path
             d={run.d}
+            data-run={run.name}
             data-other={run.other ? "true" : undefined}
             style={run.name === "a" && tint ? { stroke: `url(#${tintId})` } : undefined}
           />
