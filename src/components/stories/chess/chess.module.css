@@ -22,7 +22,7 @@
   transition: stroke-dashoffset 700ms var(--ch-ease), stroke 650ms ease, opacity 650ms ease;
 }
 /* The reader's own thread: one of the grey ones, until they keep it. */
-.ch-story[data-you="true"] .ch-thread path[data-run^="you"] { stroke: var(--ink); opacity: 0.92; }
+.ch-story[data-you="true"] .ch-thread path[data-run^="you"] { stroke: var(--form-data); opacity: 1; stroke-width: 2; }
 .ch-thread path[data-other] { stroke: var(--ink-3); opacity: 0.68; }
 .ch-tintFrom { stop-color: var(--ink-3); stop-opacity: 0.68; }
 .ch-tintTo { stop-color: var(--thread); }
@@ -235,8 +235,8 @@
 .ch-story .ch-ask:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .ch-story .ch-ask:disabled { cursor: default; opacity: 0.6; }
 .ch-story .ch-ask i { width: 18px; height: 0; border-top: 1.5px solid var(--ink-3); transition: border-color var(--ch-fade) ease; }
-.ch-story .ch-ask[aria-pressed="true"] { color: var(--ink); }
-.ch-story .ch-ask[aria-pressed="true"] i { border-top-color: var(--ink); }
+.ch-story .ch-ask[aria-pressed="true"] { color: var(--form-data); border-color: var(--form-data); background: color-mix(in srgb, var(--form-data) 10%, var(--void)); }
+.ch-story .ch-ask[aria-pressed="true"] i { border-top-color: var(--form-data); }
 .ch-told2 .ch-ask { justify-self: start; margin-top: 6px; }
 .ch-told2 .ch-ask i { border-top-color: var(--thread); }
 
@@ -367,7 +367,6 @@
   mask-composite: intersect;
   filter: blur(calc((1 - var(--drawn, 1)) * 3px));
 }
-.ch-pictured .ch-who em { color: var(--ink-3); font: italic 400 11px / 1.2 var(--font-mono); letter-spacing: 0.08em; opacity: var(--drawn, 1); }
 /* The words of the wooden scene and Part II's start, on a wide screen: in a
    column of their own that scrolls past the scene. */
 .ch-woodenWords { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
@@ -636,21 +635,17 @@
 /* Part III: the investigation. Down the rabbit hole (dive.js): the thousand
    boards, where Part II left them, are dived into; three boards come up, one for
    each question, each a way into its part. */
-.ch-dive { position: relative; z-index: 3; height: 240vh; height: 240svh; background: var(--void); }
-.ch-diveMark { position: absolute; left: 0; top: 87vh; top: 87svh; }
-.ch-diveStage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
-.ch-diveDeep {
-  position: absolute; left: 32%; top: 50%; width: calc(4 * min(54vh, 49.9%));
-  transform: translate(-50%, -50%) scale(calc(1 + var(--dive, 0) * 7)); opacity: calc(1 - var(--boards, 0)); will-change: transform;
-}
-.ch-diveDeep img { display: block; width: 100%; height: auto; }
-/* the club's board, back in its place at the grid's middle: the way down */
-.ch-diveDeep img.ch-diveClub { position: absolute; left: 50%; top: 50%; width: 2.3%; transform: translate(-50%, -50%); }
+.ch-games { position: absolute; inset: 0; display: grid; place-items: center; transform: scale(calc(1 + var(--dive, 0) * 7)); opacity: calc(1 - var(--boards, 0)); }
+.ch-dive { position: absolute; inset: 0; z-index: 7; pointer-events: none; }
+.ch-diveTitle { position: absolute; top: calc(var(--bar) + 5svh); left: 0; right: 0; opacity: var(--boards, 0); }
+.ch-people[data-diving="true"] > .ch-peopleTitle { opacity: 0; }
+.ch-club .ch-step { position: relative; }
+.ch-stepMark { position: absolute; left: 0; top: 80vh; width: 0; height: 0; }
 .ch-diveThree {
   position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; gap: 5svh; padding: calc(var(--bar) + 12svh) 0 6svh;
   opacity: var(--boards, 0); transform: translateY(calc((1 - var(--boards, 0)) * 4svh)); pointer-events: none;
 }
-.ch-diveStage[data-boards="true"] .ch-diveThree { pointer-events: auto; }
+.ch-dive[data-boards="true"] .ch-diveThree { pointer-events: auto; }
 .ch-text.ch-diveWords { max-width: 30em; text-align: center; }
 .ch-diveWords p { text-align: center; }
 .ch-diveBoards { display: grid; grid-template-columns: repeat(3, minmax(0, 210px)); gap: clamp(20px, 4vw, 60px); justify-content: center; width: 100%; margin: 0; padding: 0; list-style: none; }
@@ -727,6 +722,7 @@
   position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); padding: 0.55em 1em; border-radius: 999px; white-space: nowrap;
   background: rgb(38 36 33 / 0.92); color: #f4f1ea; font: 600 13px / 1.2 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; box-shadow: 0 8px 22px rgb(0 0 0 / 0.4);
 }
+.ch-crowd { --outcome-resigned: #b59dd9; --outcome-left: #c7a568; --outcome-lost: #79a9cf; --outcome-saved: var(--form-data); }
 .ch-crowd, .ch-hers { width: min(100%, 30rem); margin: 0; }
 .ch-crowdTitle { margin-bottom: 18px; color: var(--ink); font: 400 clamp(21px, 2.2vw, 29px) / 1.15 var(--font-title); letter-spacing: -0.02em; }
 .ch-crowdTitle small { display: block; margin-top: 6px; color: var(--ink-3); font: 400 11px / 1.4 var(--font-mono); letter-spacing: 0; }
@@ -734,27 +730,27 @@
 .ch-hers .ch-crowdPawns { grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 7px 4px; }
 .ch-crowdPawns svg { display: block; width: 100%; height: auto; transition: opacity var(--ch-fade) ease; }
 .ch-crowdPawns svg path { fill: var(--rule-strong); transition: fill var(--ch-fade) ease; }
-.ch-crowdPawns svg[data-kind="resigned"] path { fill: var(--ink-3); }
-.ch-crowdPawns svg[data-kind="left"] path { fill: var(--rule-strong); }
-.ch-crowdPawns svg[data-kind="lost"] path { fill: var(--ink-2); }
-.ch-crowdPawns svg[data-kind="saved"] path { fill: var(--ink); }
+.ch-crowdPawns svg[data-kind="resigned"] path { fill: var(--outcome-resigned); }
+.ch-crowdPawns svg[data-kind="left"] path { fill: var(--outcome-left); }
+.ch-crowdPawns svg[data-kind="lost"] path { fill: var(--outcome-lost); }
+.ch-crowdPawns svg[data-kind="saved"] path { fill: var(--outcome-saved); }
 .ch-crowd[data-focus="saved"] .ch-crowdPawns svg:not([data-kind="saved"]):not([data-kind="lost"]) { opacity: 0.25; }
-.ch-crowdPawns svg[data-kind="mine"] path { fill: var(--thread); }
+.ch-crowdPawns svg[data-kind="mine"] path { fill: var(--form-data); }
 .ch-crowdPawns svg[data-kind="minelost"] path { fill: color-mix(in srgb, var(--thread) 28%, var(--void)); }
 .ch-crowdKey { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 18px; margin: 18px 0 0; padding: 0; list-style: none; color: var(--ink-2); font: 400 11.5px / 1.3 var(--font-mono); }
 .ch-crowdKey li { display: flex; align-items: center; gap: 8px; }
 .ch-crowdKey li::before { content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--rule-strong); }
-.ch-crowdKey li[data-kind="resigned"]::before { background: var(--ink-3); }
-.ch-crowdKey li[data-kind="lost"]::before { background: var(--ink-2); }
-.ch-crowdKey li[data-kind="saved"]::before { background: var(--ink); }
+.ch-crowdKey li[data-kind="resigned"]::before { background: var(--outcome-resigned); }
+.ch-crowdKey li[data-kind="lost"]::before { background: var(--outcome-lost); }
+.ch-crowdKey li[data-kind="saved"]::before { background: var(--outcome-saved); }
+.ch-crowdKey li[data-kind="left"]::before { background: var(--outcome-left); }
 .ch-crowdKey b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
 .ch-story .ch-crowdOn { margin-top: 14px; color: var(--ink); font: 400 12px / 1.4 var(--font-mono); }
 .ch-crowdBands { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; pointer-events: auto; }
 .ch-crowdBands .ch-ask { min-height: 34px; padding: 5px 11px; font-size: 12px; }
 .ch-crowdBands .ch-ask i { display: none; }
 @media (max-width: 60rem) {
-  .ch-dive { height: 220svh; }
-  .ch-diveDeep { left: 50%; top: 55svh; width: calc(6.2 * min(34svh, 60%)); }
+  .ch-diveTitle { top: calc(var(--bar) + 1.2svh); left: var(--page-margin); right: var(--page-margin); }
   .ch-diveThree { padding: calc(var(--bar) + 10svh) var(--page-margin) 4svh; gap: 4svh; }
   .ch-diveBoards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
   .ch-diveBoards a { font-size: 11px; gap: 10px; }
@@ -850,7 +846,7 @@
 .ch-pawns { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 5px; max-width: 20rem; }
 .ch-pawns svg { display: block; width: 100%; height: auto; max-height: 33px; overflow: visible; }
 .ch-pawnOff { fill: var(--rule-strong); }
-.ch-pawnOn { fill: var(--ink); }
+.ch-pawnOn { fill: var(--form-data); }
 .ch-nameBaseline .ch-pawnOn { fill: var(--ink-3); }
 .ch-nameResult[data-active="true"] .ch-nameResultHead > span { color: var(--name-tone); }
 .ch-story .ch-nameVerdict { margin-top: 8px; color: var(--ink-2); font: 400 11px / 1.4 var(--font-mono); }
@@ -947,6 +943,7 @@
   .ch-side, .ch-sideBack { transform: none; -webkit-backface-visibility: visible; backface-visibility: visible; }
   .ch-sides[data-turned="true"] .ch-sideFront, .ch-sides[data-turned="false"] .ch-sideBack { visibility: hidden; }
   .ch-boardwrap, .ch-woodenAfter, .ch-screenBar, .ch-who, .ch-who[data-on="true"], .ch-told > div, .ch-told > div[data-on="true"] { transition: none; }
+  .ch-games { transform: none; }
   .ch-layer.ch-phoneLayer, .ch-layer.ch-clubBoard, .ch-layer.ch-professor, .ch-layer.ch-minis, .ch-layer.ch-bubble, .ch-layer.ch-bubble[data-on="true"],
   .ch-layer.ch-phoneLayer[data-on="true"], .ch-layer.ch-clubBoard[data-on="true"], .ch-layer.ch-professor[data-on="true"], .ch-layer.ch-minis[data-on="true"] { transition: none; }
   .ch-thread path, .ch-thread circle, .ch-thread text, .ch-card, .ch-layer, .ch-layer[data-on="true"], .ch-guess button, .ch-woodenPieces, .ch-woodenPieces[data-on="true"], .ch-woodenText { transition: none; }

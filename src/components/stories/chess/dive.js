@@ -2,17 +2,11 @@
 
 import * as React from "react"
 
-import { Mark } from "./chapters"
 import { useFollow, useStill } from "./follow"
-import { c, Text } from "./parts"
+import { c, PinSteps, stepLine, Text } from "./parts"
 
-// Down the rabbit hole: from Part II's thousand boards into Part III. The
-// grid of games, where Part II left it, is dived into as the reader scrolls
-// (through the club's board at its middle), and gives way to three boards,
-// one for each question the investigation asks. Each is a way into its part.
-// Part III's name comes with them and stays at the top (data-titled on the
-// part's wrapper). With motion turned off the three boards are simply there.
-
+// Continue the original club scene: its existing board and grid zoom together.
+// Only the investigation choices are rendered here, over that same pinned stage.
 const within = (t, from, to) => Math.max(0, Math.min(1, (t - from) / (to - from)))
 const gently = t => t * t * (3 - 2 * t)
 
@@ -61,55 +55,51 @@ const QUESTIONS = [
   },
 ]
 
-export const Dive = () => {
+export const Dive = ({ during }) => {
   const root = React.useRef(null)
-  const stage = React.useRef(null)
+  const steps = React.useContext(PinSteps)
   const still = useStill()
   const goal = () => {
-    const box = root.current.getBoundingClientRect()
-    return Math.max(0, Math.min(1, -box.top / (box.height - window.innerHeight)))
+    const node = steps?.current?.[during]
+    if (!node) return 0
+    return Math.max(0, Math.min(1, (stepLine() - node.getBoundingClientRect().top) / (window.innerHeight * 1.4)))
   }
   const paint = p => {
-    const dive = still ? 1 : gently(within(p, 0.02, 0.5))
-    const boards = still ? 1 : gently(within(p, 0.38, 0.62))
-    stage.current.style.setProperty("--dive", dive.toFixed(4))
-    stage.current.style.setProperty("--boards", boards.toFixed(4))
-    stage.current.dataset.boards = boards > 0.5 ? "true" : "false"
-    const part = root.current.closest("[data-part]")
-    if (part) part.dataset.titled = p > 0.36 || still ? "true" : "false"
+    const dive = still ? 0 : gently(within(p, 0, 0.65))
+    const boards = still ? (p > 0.02 ? 1 : 0) : gently(within(p, 0.42, 0.78))
+    const stage = root.current.parentElement
+    stage.style.setProperty("--dive", dive.toFixed(4))
+    stage.style.setProperty("--boards", boards.toFixed(4))
+    root.current.dataset.boards = boards > 0.5 ? "true" : "false"
+    root.current.inert = boards <= 0.5
+    root.current.setAttribute("aria-hidden", boards <= 0.5 ? "true" : "false")
+    stage.closest("[data-people]").dataset.diving = boards > 0.5 ? "true" : "false"
   }
   useFollow(goal, paint, { still, watch: root })
 
   return (
-    <section className={c("ch-dive")} ref={root} aria-label="Looking for answers in the data">
-      {/* where the chapters' navigation opens Part III: with the three boards in view */}
-      <span className={c("ch-diveMark")}>
-        <Mark id="the-investigation" />
-      </span>
-      <div className={c("ch-diveStage")} ref={stage} data-boards="false">
-        <div className={c("ch-diveDeep")} aria-hidden="true">
-          <img src="/images/stories/chess/boards.webp" alt="" width={1776} height={1296} decoding="async" />
-          <img className={c("ch-diveClub")} src="/images/stories/chess/club-board-empty-600.webp" alt="" width={600} height={497} decoding="async" />
-        </div>
-        <div className={c("ch-diveThree")}>
-          <Text name="data-intro" look="lead" className={c("ch-diveWords")} />
-          <ol className={c("ch-diveBoards")}>
-            {QUESTIONS.map((q, i) => (
-              <li key={q.id}>
-                <a href={`#${q.id}`}>
-                  <svg viewBox="0 0 80 84" aria-hidden="true">
-                    <Squares />
-                    {q.mark}
-                  </svg>
-                  <span>
-                    <b>{i + 1}</b> {q.label}
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ol>
-        </div>
+    <div className={c("ch-dive")} ref={root} data-boards="false" aria-label="Looking for answers in the data">
+      <div className={c("ch-diveTitle")}>
+        <Text name="investigation-title" look="partTitle" />
       </div>
-    </section>
+      <div className={c("ch-diveThree")}>
+        <Text name="data-intro" look="lead" className={c("ch-diveWords")} />
+        <ol className={c("ch-diveBoards")}>
+          {QUESTIONS.map((q, i) => (
+            <li key={q.id}>
+              <a href={`#${q.id}`}>
+                <svg viewBox="0 0 80 84" aria-hidden="true">
+                  <Squares />
+                  {q.mark}
+                </svg>
+                <span>
+                  <b>{i + 1}</b> {q.label}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
   )
 }

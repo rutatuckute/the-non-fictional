@@ -145,8 +145,6 @@ const WORDS = [
   ["obsession-questions", ASK_AT + 0.05],
   ["people-bridge", HANDOFF_AT + 0.25],
   ["people-intro", TITLE_AT + 0.1],
-  ["people-plain", TITLE_AT + 0.45],
-  ["people-picture", PICTURE_AT[0] + 0.05],
   ["strangers", TITLE_AT + 1.15, "question"],
   ["strangers-where", MET[1] + 0.12, "question"],
   ["strangers-moment", MET[2] + 0.12, "question"],

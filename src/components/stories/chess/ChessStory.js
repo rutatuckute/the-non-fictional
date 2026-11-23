@@ -9,7 +9,6 @@ import { People, Say } from "./scenes"
 import { Reveal } from "./reveal"
 import { Chat } from "./phone-scenes"
 import { Wrong } from "./wrong"
-import { Dive } from "./dive"
 import { Knots, Thread } from "./thread"
 import { Wooden } from "./wooden"
 
@@ -250,11 +249,10 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
 
         {/* Part III: down the rabbit hole into three questions (dive.js), then
             each in turn. Its name stays at the top from the three boards on. */}
-        <div className={c("ch-people", "ch-part3")} data-part="investigation" data-titled="false">
+        <div className={c("ch-people", "ch-part3")} data-part="investigation" data-titled="true">
           <div className={c("ch-peopleTitle")}>
             <Text name="investigation-title" look="partTitle" />
           </div>
-          <Dive />
           <Say />
           <Wrong guess={guess("resign")} />
           <Reveal />

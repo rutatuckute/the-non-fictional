@@ -98,15 +98,6 @@ Most of them, though, weren't about chess.
 
 There's something intrinsically beautiful in playing against a randomly matched stranger from any part of the world.
 
-<!--step:people-plain-->
-
-More often than not, no conversation happens.\
-Just a username, a rating, a country, and moves.
-
-<!--step:people-picture-->
-
-This is how I picture them.
-
 <!--step:strangers-->
 
 Who are they?

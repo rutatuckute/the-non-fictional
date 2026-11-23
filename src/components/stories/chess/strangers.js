@@ -110,7 +110,6 @@ export const Pictured = React.forwardRef(function Pictured({ who }, ref) {
             decoding="async"
             style={{ "--at": each.focus }}
           />
-          <em>imagined</em>
         </div>
       ))}
     </div>

@@ -165,7 +165,7 @@ export const useNarrow = () => {
   return narrow
 }
 
-export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, reading = false, mark, className = "", children }) => {
+export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, reading = false, mark, className = "", overlay, children }) => {
   const [step, stepRef, refs] = useStep(steps.length)
   const narrow = useNarrow()
   const plain = plainOnly || (reading && narrow)
@@ -181,20 +181,23 @@ export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, r
       {/* where the chapters' navigation opens this scene: at its top, as it is pinned */}
       {mark ? <span id={mark} className={c("ch-mark")} /> : null}
       <div className={c("ch-stage")}>
-        {plain ? (
-          <div className={c("ch-told")}>
-            {steps.map((item, index) =>
-              item.text ? (
-                <div key={index} data-on={step === index ? "true" : "false"}>
-                  {item.text}
-                </div>
-              ) : null,
-            )}
+        <PinSteps.Provider value={refs}>
+          {plain ? (
+            <div className={c("ch-told")}>
+              {steps.map((item, index) =>
+                item.text ? (
+                  <div key={index} data-on={step === index ? "true" : "false"}>
+                    {item.text}
+                  </div>
+                ) : null,
+              )}
+            </div>
+          ) : null}
+          <div className={c("ch-scene")}>
+            {children(step)}
           </div>
-        ) : null}
-        <div className={c("ch-scene")}>
-          <PinSteps.Provider value={refs}>{children(step)}</PinSteps.Provider>
-        </div>
+          {overlay}
+        </PinSteps.Provider>
       </div>
       <div className={c("ch-steps")}>
         {steps.map((item, index) => {
@@ -209,6 +212,9 @@ export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, r
                 data-on={step === index ? "true" : "false"}
                 ref={stepRef(index)}
               >
+                {item?.mark ? (
+                  <span className={c("ch-stepMark")}><span id={item.mark} className={c("ch-mark")} /></span>
+                ) : null}
                 <div className={c("ch-card")}>{plain ? null : scrolling ? item.text : made ? item.card : item}</div>
               </div>
               {made && item.rest ? <div style={{ height: `${item.rest * 100}vh` }} aria-hidden="true" /> : null}

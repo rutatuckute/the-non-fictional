@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { CLUB_REST, ClubBoard } from "./club"
+import { Dive } from "./dive"
 import { c, Pinned, Show, Text } from "./parts"
 import { Message } from "./phone-scenes"
 import { RatingStory } from "./ratings"
@@ -16,7 +17,7 @@ import { Usernames } from "./say"
 // is set up and the professor leans in; his question, alone; "How did he
 // know?", alone; the board again; the central question, alone; the board
 // among the thousand games.
-const VIEWS = ["club", "club", "quiet", "quiet", "club", "quiet", "many", "many"]
+const VIEWS = ["club", "club", "quiet", "quiet", "club", "quiet", "many", "many", "many"]
 
 // How a game ended, for the tiny board under the reader's pointer.
 const LONG = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })
@@ -73,6 +74,7 @@ export const People = () => (
     open
     reading
     className={c("ch-club")}
+    overlay={<Dive during={8} />}
     label="The professor at the London chess club"
     steps={[
       // the London System is set up on the board while this step's stretch passes
@@ -85,41 +87,44 @@ export const People = () => (
       {},
       { text: <Text name="self" look="lead" /> },
       { text: <Text name="boards" look="lead" /> },
+      { mark: "the-investigation", rest: 1.8 },
     ]}
   >
     {step => (
       <>
-        {/* How the author's last 998 games ended, each a tiny board
-            (scripts/stories/chess/make-boards.cjs); the middle place is the
-            club's. */}
-        <Show on={step >= 6} className={c("ch-minis")}>
-          <Boards />
-        </Show>
-        <div className={c("ch-boardwrap")} data-view={VIEWS[step]}>
-          {/* The club: its own board, pink and white. The two players are
-              hands (club.js); the professor, who leans in once the opening is
-              played, is the scene's one figure. */}
-          <Show on={step >= 1 && step <= 5} className={c("ch-professor")}>
-            <img
-              src="/images/stories/chess/professor.webp"
-              srcSet="/images/stories/chess/professor-300.webp 300w, /images/stories/chess/professor.webp 520w"
-              sizes="(max-width: 60rem) 45vw, 380px"
-              alt="An older man in a dark jacket, seen from behind, bows over the board, his hands clasped behind his back."
-              width={520}
-              height={778}
-              decoding="async"
-            />
+        <div className={c("ch-games")}>
+          {/* How the author's last 998 games ended, each a tiny board
+              (scripts/stories/chess/make-boards.cjs); the middle place is the
+              club's. */}
+          <Show on={step >= 6} className={c("ch-minis")}>
+            <Boards />
           </Show>
-          <Show on className={c("ch-clubBoard")}>
-            <ClubBoard during={0} />
-          </Show>
-          <Show on={step === 0} className={c("ch-place")}>
-            <svg viewBox="0 0 10 14" aria-hidden="true">
-              <path d="M5 0.6a4.2 4.2 0 0 0-4.2 4.2C0.8 8 5 13.4 5 13.4S9.2 8 9.2 4.8A4.2 4.2 0 0 0 5 0.6Zm0 5.9a1.7 1.7 0 1 1 0-3.4 1.7 1.7 0 0 1 0 3.4Z" />
-            </svg>
-            London
-            <span>early 2026</span>
-          </Show>
+          <div className={c("ch-boardwrap")} data-view={VIEWS[step]}>
+            {/* The club: its own board, pink and white. The two players are
+                hands (club.js); the professor, who leans in once the opening is
+                played, is the scene's one figure. */}
+            <Show on={step >= 1 && step <= 5} className={c("ch-professor")}>
+              <img
+                src="/images/stories/chess/professor.webp"
+                srcSet="/images/stories/chess/professor-300.webp 300w, /images/stories/chess/professor.webp 520w"
+                sizes="(max-width: 60rem) 45vw, 380px"
+                alt="An older man in a dark jacket, seen from behind, bows over the board, his hands clasped behind his back."
+                width={520}
+                height={778}
+                decoding="async"
+              />
+            </Show>
+            <Show on className={c("ch-clubBoard")}>
+              <ClubBoard during={0} />
+            </Show>
+            <Show on={step === 0} className={c("ch-place")}>
+              <svg viewBox="0 0 10 14" aria-hidden="true">
+                <path d="M5 0.6a4.2 4.2 0 0 0-4.2 4.2C0.8 8 5 13.4 5 13.4S9.2 8 9.2 4.8A4.2 4.2 0 0 0 5 0.6Zm0 5.9a1.7 1.7 0 1 1 0-3.4 1.7 1.7 0 0 1 0 3.4Z" />
+              </svg>
+              London
+              <span>early 2026</span>
+            </Show>
+          </div>
         </div>
         {/* The turn of the story, each alone and quiet: everything else dims. */}
         <Show on={step === 2} className={c("ch-big")}>

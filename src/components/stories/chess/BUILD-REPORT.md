@@ -91,3 +91,13 @@ The chat screenshot (private, data-stories repository) lit only where his questi
 ## 23 November — the chats as the page's own text; method notes
 
 Owner's changes: no hour on either phone (18 May 2026 only); Part IV's messages no longer recognisable as any app — written as HTML on the blank phone, hers in clay, his in a quiet grey (the screenshot-derived image and its script removed); "What we cannot know" removed; short method notes written. Checked: screenshots at 1440×900 and 375×812, `cross.cjs` 16 sizes, `nav.cjs`. Typecheck and production build passed.
+
+## 23 November — reader thread, copy, pawn colours and continuous rabbit-hole zoom
+
+Selected reader thread (including its return at the end): data green, full opacity, 2px stroke, with a matching selected control. Removed the no-conversation passage, “This is how I picture them” and the visible “imagined” captions. The rabbit-hole transition now extends the original club stage: the same grid and board zoom in together, then the three investigation links appear. Removed both duplicate transition images. Hidden links are inert; reduced motion switches scenes without scaling.
+
+Username results and selected guess/rating controls use data green. Queen-loss outcomes have four matching pawn/legend colours: lavender resigned, amber left, blue played on and lost, green saved. The author's saved games also use green.
+
+Verified on the local Next preview at port 3200 using Playwright Chromium: `checks/story-revisions.cjs` in the data-stories project passed at 320, 360, 375, 390, 600, 768, 820, 1024 and 1440px. Checks cover copy removal, selected thread colour, one original grid retained across forward/reverse zoom, chapter landing and links, keyboard selections, coloured result pawns versus grey baseline, matching outcome legends, rating changes, reduced motion and no horizontal overflow or page errors. `checks/nav.cjs` passed all chapter jumps and keyboard/menu interactions at 1440×900 and 390×844. Screenshots inspected at 375×812 and 1440×900, including intermediate zoom frames and both pawn charts; artifacts in `/tmp/chess-story-revisions/` (and `/tmp/chess-1440-*.png`). `npm run typecheck`, `npm run build` and `git diff --check` passed. Matrix shared-browser actions were unavailable; visual verification used the standalone local browser. No persistence flow changed.
+
+Guidance loaded: matrix-app-builder, matrix-design-system, matrix-app-ui-patterns, emil-design-eng and animate; preserved this existing Next.js site's runtime and editorial identity.
