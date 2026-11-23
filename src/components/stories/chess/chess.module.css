@@ -712,56 +712,95 @@
   .ch-scaleRow { margin-top: 0; }
   .ch-story .ch-scaleSays { font-size: 11px; }
 }
-/* What we do when things go wrong (wrong.js): the phone, the hundred, hers. */
-.ch-wrong { --scene: wrong; }
+/* What we do when things go wrong (wrong.js): the phone, the fork, the hundred, the charts.
+   Clay is the author; data green, games saved and the reader's controls; lavender, resigning. */
+.ch-wrong { --scene: wrong; --resign: #b59dd9; --lost: #55524d; }
 .ch-wrongScene { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
 .ch-layer.ch-wrongLayer { inset: 0; display: grid; place-items: center; }
 .ch-wrongPhone { position: relative; height: min(76svh, 680px); aspect-ratio: 800 / 1704; }
+.ch-wrongPhone[data-small="true"] { height: min(54svh, 470px); }
 .ch-wrongPhone .ch-phoneBox { height: auto; }
+.ch-wrongPhone[data-small="true"] .ch-screen { display: none; }
 .ch-story .ch-wrongSay {
   position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); padding: 0.55em 1em; border-radius: 999px; white-space: nowrap;
   background: rgb(38 36 33 / 0.92); color: #f4f1ea; font: 600 13px / 1.2 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; box-shadow: 0 8px 22px rgb(0 0 0 / 0.4);
 }
-.ch-crowd { --outcome-resigned: #b59dd9; --outcome-left: #c7a568; --outcome-lost: #79a9cf; --outcome-saved: var(--form-data); }
-.ch-crowd, .ch-hers { width: min(100%, 30rem); margin: 0; }
-.ch-crowdTitle { margin-bottom: 18px; color: var(--ink); font: 400 clamp(21px, 2.2vw, 29px) / 1.15 var(--font-title); letter-spacing: -0.02em; }
-.ch-crowdTitle small { display: block; margin-top: 6px; color: var(--ink-3); font: 400 11px / 1.4 var(--font-mono); letter-spacing: 0; }
-.ch-crowdPawns { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 7px 4px; }
-.ch-hers .ch-crowdPawns { grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 7px 4px; }
-.ch-crowdPawns svg { display: block; width: 100%; height: auto; transition: opacity var(--ch-fade) ease; }
-.ch-crowdPawns svg path { fill: var(--rule-strong); transition: fill var(--ch-fade) ease; }
-.ch-crowdPawns svg[data-kind="resigned"] path { fill: var(--outcome-resigned); }
-.ch-crowdPawns svg[data-kind="left"] path { fill: var(--outcome-left); }
-.ch-crowdPawns svg[data-kind="lost"] path { fill: var(--outcome-lost); }
-.ch-crowdPawns svg[data-kind="saved"] path { fill: var(--outcome-saved); }
-.ch-crowd[data-focus="saved"] .ch-crowdPawns svg:not([data-kind="saved"]):not([data-kind="lost"]) { opacity: 0.25; }
-.ch-crowdPawns svg[data-kind="mine"] path { fill: var(--form-data); }
-.ch-crowdPawns svg[data-kind="minelost"] path { fill: color-mix(in srgb, var(--thread) 28%, var(--void)); }
-.ch-crowdKey { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 18px; margin: 18px 0 0; padding: 0; list-style: none; color: var(--ink-2); font: 400 11.5px / 1.3 var(--font-mono); }
-.ch-crowdKey li { display: flex; align-items: center; gap: 8px; }
-.ch-crowdKey li::before { content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--rule-strong); }
-.ch-crowdKey li[data-kind="resigned"]::before { background: var(--outcome-resigned); }
-.ch-crowdKey li[data-kind="lost"]::before { background: var(--outcome-lost); }
-.ch-crowdKey li[data-kind="saved"]::before { background: var(--outcome-saved); }
-.ch-crowdKey li[data-kind="left"]::before { background: var(--outcome-left); }
-.ch-crowdKey b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
-.ch-story .ch-crowdOn { margin-top: 14px; color: var(--ink); font: 400 12px / 1.4 var(--font-mono); }
-.ch-crowdBands { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; pointer-events: auto; }
-.ch-crowdBands .ch-ask { min-height: 34px; padding: 5px 11px; font-size: 12px; }
-.ch-crowdBands .ch-ask i { display: none; }
+.ch-wrongFork { display: flex; gap: clamp(12px, 2.4vw, 32px); align-items: flex-start; justify-content: center; }
+.ch-story .ch-wrongWay {
+  display: grid; justify-items: center; gap: 4px; padding: 10px 10px 12px; border: 1px solid transparent; border-radius: 18px;
+  background: none; color: var(--ink-3); font: 400 11px / 1.3 var(--font-mono); cursor: pointer; pointer-events: auto; transition: border-color var(--ch-fade) ease;
+}
+.ch-wrongWay b { margin-top: 8px; color: var(--ink); font: 400 clamp(17px, 1.6vw, 21px) / 1.15 var(--font-title); letter-spacing: -0.01em; }
+.ch-wrongWay .ch-wrongPhone { transition: opacity var(--ch-fade) ease; }
+.ch-wrongWay[aria-pressed="false"] .ch-wrongPhone { opacity: 0.5; }
+.ch-wrongWay[aria-pressed="true"] { border-color: var(--form-data); }
+.ch-story .ch-wrongWay:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.ch-wrongRange { display: grid; gap: 6px; max-width: 22rem; margin-top: 16px; color: var(--ink-3); font: 400 12px / 1.2 var(--font-mono); }
+.ch-wrongRange b { color: var(--ink); font: 400 30px / 1 var(--font-title); }
+.ch-wrongRange input { width: 100%; accent-color: var(--form-data); pointer-events: auto; }
+.ch-hundred, .ch-levels, .ch-mine { width: min(100%, 34rem); margin: 0; }
+.ch-lever { display: grid; justify-items: start; width: min(100%, 22rem); margin: 0; }
+.ch-lever .ch-hundredTitle { width: 100%; }
+.ch-hundred svg, .ch-levels svg, .ch-mine svg { display: block; width: 100%; height: auto; overflow: visible; }
+.ch-hundred svg { max-height: 66svh; pointer-events: auto; }
+.ch-hundredTitle { margin-bottom: 16px; color: var(--ink); font: 400 clamp(20px, 2.1vw, 27px) / 1.15 var(--font-title); letter-spacing: -0.02em; }
+.ch-hundredTitle small { display: block; margin-top: 6px; color: var(--ink-3); font: 400 11.5px / 1.4 var(--font-mono); letter-spacing: 0; }
+.ch-hBoard { transition: transform 900ms cubic-bezier(0.2, 0.7, 0.2, 1), opacity 300ms ease; }
+.ch-hTint { fill: none; stroke: none; transition: fill 300ms ease, stroke 300ms ease; }
+.ch-hBoard[data-state="guessed"] .ch-hTint { stroke: var(--ink); stroke-width: 3; }
+.ch-hBoard[data-state="saved"] .ch-hTint { fill: var(--form-data); fill-opacity: 0.22; stroke: var(--form-data); stroke-width: 3; }
+.ch-hBoard[data-state="lost"] { opacity: 0.3; }
+.ch-hBoard[data-state="saved-mark"] .ch-hTint { fill: var(--form-data); }
+.ch-hBoard[data-state="lost-mark"] .ch-hTint { fill: var(--lost); }
+.ch-miniWhite { fill: #efe8dc; }
+.ch-miniBlack { fill: #151413; stroke: #8d867b; stroke-width: 0.6; }
+.ch-payoff { opacity: 0; transition: opacity var(--ch-fade) ease; }
+.ch-payoff[data-on="true"] { opacity: 1; transition: opacity var(--ch-fade) ease 500ms; }
+.ch-payoffGrid { stroke: var(--rule); stroke-width: 1; }
+.ch-payoffTick { fill: var(--ink-3); font: 400 11px / 1 var(--font-mono); }
+.ch-payoffResign { stroke: var(--resign); stroke-width: 2; stroke-dasharray: 6 5; }
+.ch-payoffLine { fill: none; stroke: var(--ink); stroke-width: 2; }
+.ch-payoffNote { fill: var(--ink-2); font: 400 12.5px / 1 var(--font-mono); }
+.ch-payoffNote[data-kind="resign"] { fill: var(--resign); }
+.ch-payoffNote[data-kind="saved"] { fill: var(--form-data); }
+.ch-payoffNote[data-kind="dim"], .ch-payoffNote[data-kind="none"] { fill: var(--ink-3); }
+.ch-payoffPrice { fill: var(--rule-strong); }
+.ch-story .ch-hundredSum { margin-top: 10px; color: var(--ink-2); font: 400 12px / 1.4 var(--font-mono); }
+.ch-hundredSum b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+.ch-levelsHead { fill: var(--ink); font: 400 12px / 1 var(--font-mono); }
+.ch-levelsBand { fill: var(--ink-2); font: 400 11.5px / 1 var(--font-mono); }
+.ch-levels g[data-mine="true"] .ch-levelsBand { fill: var(--thread); }
+.ch-levelsResign { fill: var(--resign); opacity: 0.85; }
+.ch-levelsSaved { fill: var(--form-data); stroke: var(--void); stroke-width: 2; }
+.ch-story .ch-bigShare { margin: 4px 0 16px; color: var(--ink); font: 400 clamp(42px, 5vw, 66px) / 1 var(--font-title); font-variant-numeric: tabular-nums; }
+.ch-bigShare span { margin-left: 4px; color: var(--ink-3); font: 400 12px / 1 var(--font-mono); }
+.ch-waffle { display: block; width: 100%; max-width: 17rem; height: auto; }
+.ch-waffle circle { fill: #2b2927; transition: fill 300ms ease; }
+.ch-waffle circle[data-on="true"] { fill: var(--form-data); }
+.ch-mineSquare { fill: color-mix(in srgb, var(--thread) 28%, var(--void)); }
+.ch-mineSquare[data-kind="saved"] { fill: var(--form-data); }
+.ch-mineSquare[data-kind="gave"] { fill: none; stroke: var(--thread); stroke-width: 1.5; stroke-dasharray: 3 2; }
+.ch-meet { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px clamp(18px, 3vw, 40px); width: min(100%, 34rem); margin: 0; }
+.ch-story .ch-meetTitle { margin: 0; color: var(--ink); font: 400 12px / 1.3 var(--font-mono); transition: color var(--ch-fade) ease; }
+.ch-meet > div[data-on="false"] .ch-meetTitle { color: var(--ink-3); }
+.ch-meet figcaption { grid-column: 1 / -1; color: var(--ink-3); font: 400 11.5px / 1.4 var(--font-mono); }
 @media (max-width: 60rem) {
   .ch-diveTitle { top: calc(var(--bar) + 1.2svh); left: var(--page-margin); right: var(--page-margin); }
   .ch-diveThree { padding: calc(var(--bar) + 10svh) var(--page-margin) 4svh; gap: 4svh; }
   .ch-diveBoards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
   .ch-diveBoards a { font-size: 11px; gap: 10px; }
   .ch-wrongPhone { height: 46svh; }
+  .ch-wrongPhone[data-small="true"] { height: 30svh; }
+  .ch-hundred svg { max-height: 44svh; }
+  .ch-story .ch-bigShare { font-size: 40px; margin-bottom: 10px; }
+  .ch-waffle { max-width: 12rem; }
   /* Part III's sentences run longer: its pictures start lower, the words on their own ground */
   .ch-part3 .ch-pin[data-plain="true"] .ch-scene { top: 35svh; height: 62svh; }
   .ch-part3 .ch-told > div { padding-bottom: 14px; background: linear-gradient(var(--void) 82%, transparent); }
-  .ch-crowd, .ch-hers { width: 100%; }
-  .ch-crowdTitle { font-size: 19px; margin-bottom: 10px; }
-  .ch-crowdKey { margin-top: 10px; }
-  .ch-crowdBands .ch-ask { min-height: 30px; padding: 3px 8px; font-size: 11px; }
+  .ch-hundred, .ch-levels, .ch-mine, .ch-meet { width: 100%; }
+  .ch-hundredTitle { font-size: 19px; margin-bottom: 10px; }
+  .ch-payoffTick, .ch-levelsBand, .ch-levelsHead { font-size: 18px; }
+  .ch-payoffNote { font-size: 17px; }
 }
 /* Part III: the investigation. */
 .ch-turn {
