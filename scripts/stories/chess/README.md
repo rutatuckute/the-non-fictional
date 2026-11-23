@@ -78,7 +78,7 @@ the published site. The names, in reading order:
 | III, second question | `wrong-observation`, `wrong-decide`, `wrong-outcome`, `wrong-crowd`, `wrong-you` |
 | III, third question | `reveal-professor`, `reveal-games`, `reveal-style` |
 | III, the end of it | `unknown`, `unknown-showed`, `unknown-cannot` |
-| IV | `encounter`, `continuing`, `last-question`, `yours` ("Is yours still there?") |
+| IV | `ending-title` (a heading), `encounter` (beside the message on the phone), `continuing`, `last-question`, `yours` ("Is yours still there?") |
 | After the story | `method` |
 
 ## The pictures
@@ -363,3 +363,7 @@ will stand there.
 - `wrong.json` (investigation 2): from `chess-story/analysis/export_wrong.py` in the data-stories repository (`.venv/bin/python -I chess-story/analysis/export_wrong.py <repo>/src/components/stories/chess/wrong.json`).
 
 - `style.json` (investigation 3): from `chess-story/analysis/export_style.py` in the data-stories repository, after `style_scales.py` and `fast_mistakes.py` (definitions fixed beforehand in `style-definitions.md`).
+
+- `make-hinge.cjs`: Part IV's phone (`hinge.webp`, `hinge-480.webp`): only his question, its hour and her answer lit from the chat screenshot (private, in the data-stories repository); nothing else of it is drawn.
+
+      node make-hinge.cjs <repo>/node_modules/sharp <data-stories>/chess-story/assets/phone-front-original.png <data-stories>/chess-story/assets/hinge-exchange-original.jpg <repo>/public/images/stories/chess

@@ -914,8 +914,14 @@
 .ch-two > * { max-width: none; padding: 18px 20px; border: 1px solid var(--rule-strong); }
 
 /* Part IV, and what follows the story. */
-.ch-encounter { padding-top: 14vh; }
-.ch-chat { grid-column: 2 / 7; }
+.ch-encounter { padding-top: 6vh; }
+/* the phone close: its lower part, where the chat is, fading out upwards */
+.ch-chat {
+  grid-column: 1 / 7; justify-self: center; position: relative; z-index: 2; width: 100%; max-width: 460px; aspect-ratio: 800 / 1000; overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%); mask-image: linear-gradient(to bottom, transparent, #000 22%);
+}
+.ch-chat img { position: absolute; left: 0; bottom: 0; display: block; width: 100%; height: auto; }
+.ch-endingTitle { position: relative; z-index: 2; padding-top: 12vh; }
 .ch-encounter .ch-col { grid-column: 8 / 12; align-self: center; }
 .ch-close { padding-top: 22vh; }
 .ch-close .ch-col { grid-column: 3 / 11; display: grid; gap: 9vh; }
@@ -948,7 +954,7 @@
 @media (max-width: 60rem) {
   .ch-knot { left: var(--px); top: var(--py); }
   .ch-row { grid-template-columns: minmax(0, 1fr); row-gap: 5vh; }
-  .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-mine, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-device, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
+  .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-mine, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-device, .ch-row > .ch-chat, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
   .ch-years { height: 64vh; height: 64svh; }
   .ch-text.ch-yearsText { top: 26%; }
   .ch-text.ch-yearsNone { top: 50%; }

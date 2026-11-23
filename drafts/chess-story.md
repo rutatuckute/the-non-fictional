@@ -321,17 +321,27 @@ And the scales describe how I play, not who I am.
 
 *[What they cannot tell us about a person]*
 
+<!--step:ending-title-->
+
+## Back to the threads of life
+
 <!--step:encounter-->
 
-*[11 · Another unexpected encounter. The message, and the person who is still in your life.]*
+Remember my message about blitz? This is the one it answered.
+
+Hey, do you play chess? Another unexpected appearance of chess in my life, and I had no idea where it would lead.
 
 <!--step:continuing-->
 
-*[12 · The continuing thread. Still playing, still curious, still wrong about some things.]*
+The game continues. I still play, and the person who sent that message is still in my life, playing a big part in it. If anything, he is the one who kept pushing me to work on this website, so this story coming to life has a lot to do with him.
+
+We still play together, asking questions, getting things both wrong and right.
 
 <!--step:last-question-->
 
-*[The question handed back to the reader]*
+What's your thread? The small, apparently minor thing that has quietly come with you through life.
+
+What is your chess?
 
 <!--step:yours-->
 

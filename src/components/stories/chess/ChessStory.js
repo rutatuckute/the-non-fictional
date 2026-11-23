@@ -3,7 +3,7 @@
 import * as React from "react"
 
 import { Chapters, Mark } from "./chapters"
-import { c, Holder, Picture, Text, Words } from "./parts"
+import { c, Picture, Text, Words } from "./parts"
 import { Device } from "./origin"
 import { People, Say } from "./scenes"
 import { Reveal } from "./reveal"
@@ -268,14 +268,27 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
 
         <section className={c("ch-free", "ch-back")} aria-label="Back to the threads of life">
           <Mark id="the-ending" />
+          <Text name="ending-title" look="partTitle" className={c("ch-endingTitle")} />
           <div className={c("ch-row", "ch-encounter")}>
-            <Holder className={c("ch-chat")} label="The message" ratio="4 / 3" />
-            <Text name="encounter" className={c("ch-col")} />
+            {/* the message that started it, and her answer: only these, and their hour */}
+            <div className={c("ch-chat")}>
+            <img
+              src="/images/stories/chess/hinge.webp"
+              srcSet="/images/stories/chess/hinge-480.webp 480w, /images/stories/chess/hinge.webp 800w"
+              sizes="(max-width: 60rem) 70vw, 330px"
+              alt="A phone showing two messages, Monday 18 May, 23:52. His: “heyy, do you play on chess.com? what’s your rating on blitz? xd”. Mine: “Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀”. No names or pictures are shown."
+              width={800}
+              height={1704}
+              loading="lazy"
+              decoding="async"
+            />
+            </div>
+            <Text name="encounter" look="lead" className={c("ch-col")} />
             <Knots of={LINES.encounter} />
           </div>
           <div className={c("ch-row", "ch-close")}>
             <div className={c("ch-col")}>
-              <Text name="continuing" />
+              <Text name="continuing" look="lead" />
               <Text name="last-question" look="large" />
               <Text name="yours" look="quiet" />
             </div>
