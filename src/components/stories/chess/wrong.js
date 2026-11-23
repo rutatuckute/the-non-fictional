@@ -4,15 +4,15 @@ import * as React from "react"
 
 import { useFollow, useStill } from "./follow"
 import { c, Guess, Pinned, PinSteps, Show, stepLine, Text } from "./parts"
-import { PhonePosition } from "./phone-scenes"
+import { CcBoard, lastMove } from "./cc-board"
 import data from "./wrong.json"
 import paths from "./wrong-paths.json"
 
-// Part III, second question: what we do when things go wrong. On the same
-// phone as Part II: an opponent who loses the queen and resigns. Then the
+// Part III, second question: what we do when things go wrong. On a
+// Chess.com board (no phone): an opponent who loses the queen and resigns. Then the
 // reader picks one of two ways a game goes wrong, a queen down in the middle
 // of the game or only the king left at the end, and walks it:
-//   decide   the author's own game, on the phone, and the reader's choice
+//   decide   the author's own game, on its board, and the reader's choice
 //   outcome  the rest of that game, as the reader scrolls
 //   guess    100 real games of players at her level (rapid, rated 600–799):
 //            how many of those who played on did not lose?
@@ -27,11 +27,11 @@ import paths from "./wrong-paths.json"
 //   meet     both paths side by side
 //   you      her own words, and the way to the other path
 // (wrong-paths.json from analysis/export_wrong_paths.py; wrong.json from
-// export_wrong.py for the phone scenes.)
+// export_wrong.py for her own games.)
 //
 // Colours: clay is the author; data green, games that were saved; lavender,
 // resigning; grey, games lost; the reader's guess is light. The boards the
-// reader decides on are Chess.com's own (the phone); the hundred are marks in
+// reader decides on are Chess.com's own (cc-board.js); the hundred are marks in
 // a chart, so they stay quiet.
 
 const D = data.decision
@@ -40,70 +40,71 @@ const HER = paths.her
 const placement = fen => String(fen || "8/8/8/8/8/8/8/8").split(" ")[0]
 const pct = v => `${Math.round(v * 100)}%`
 const signed = v => (v > 0 ? `+${v}` : v < 0 ? `−${Math.abs(v)}` : "0")
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+const day = d => {
+  const [y, m, dd] = String(d).split("-")
+  return `${Number(dd)} ${MONTHS[Number(m) - 1]} ${y}`
+}
+const side = colour => (colour === "b" ? "Black" : "White")
 
 // The author's two games, from the moment it went wrong to the end.
 const GAMES = {
   queen: {
     fens: D.fens,
+    date: D.date,
+    colour: D.colour,
+    rating: D.rating,
     oppRating: D.oppRating,
+    note: `Stockfish ${signed(D.eval)} · lost`,
     label: at => {
       const ply = at - 1
-      return at ? `${D.move + Math.floor(ply / 2)}${ply % 2 ? "…" : "."} ${D.sans[ply]}` : `${D.move}.`
+      return at ? `${D.move + Math.floor(ply / 2)}${ply % 2 ? "…" : "."} ${D.sans[ply]}` : `move ${D.move}`
     },
     end: "Opponent resigned",
     first: "Your queen is gone",
   },
   king: {
     fens: KG.fens,
+    date: KG.date,
+    colour: KG.colour,
+    rating: KG.rating,
     oppRating: KG.oppRating,
+    note: "Only my king. Three pawns on their way to becoming queens.",
     label: at => KG.labels[at],
     end: "Stalemate",
     first: "Only your king is left",
   },
 }
 
-// The phone, its screen showing a position: the opponent's bar at the top
-// says only their rating (no names); `say` lies across the board.
-const PhoneGame = ({ fen, rating, say, moves, small = false }) => (
-  <div className={c("ch-wrongPhone")} data-small={small ? "true" : undefined}>
-    <div className={c("ch-phoneBox")}>
-      <img
-        src="/images/stories/chess/phone-game.webp"
-        srcSet="/images/stories/chess/phone-game-480.webp 480w, /images/stories/chess/phone-game.webp 800w"
-        sizes="(max-width: 60rem) 45vw, 320px"
-        alt=""
-        width={800}
-        height={1704}
-        decoding="async"
-      />
-      <PhonePosition game={{ fen: placement(fen), last: "" }} />
-      <div className={c("ch-screen")} aria-hidden="true">
-        <div className={c("ch-screenBar")} data-on="true">
-          <i style={{ background: "#55524d" }} />
-          <b>Opponent</b>
-          <span>({rating})</span>
-        </div>
-        {moves ? <span className={c("ch-phoneMove")}>{moves}</span> : null}
-      </div>
-      {say ? <span className={c("ch-wrongSay")}>{say}</span> : null}
-    </div>
-  </div>
-)
-
-// The two ways in, side by side; either phone picks its path.
+// The two ways in, side by side; either board picks its path.
 const Fork = ({ path, onPath }) => (
   <div className={c("ch-wrongFork")}>
     {[
-      ["queen", "A queen down", "in the middle of the game", D.fens[0], D.oppRating],
-      ["king", "Only the king left", "at the end", KG.fens[0], KG.oppRating],
-    ].map(([key, title, sub, fen, rating]) => (
+      ["queen", "A queen down", "in the middle of the game", GAMES.queen],
+      ["king", "Only the king left", "at the end", GAMES.king],
+    ].map(([key, title, sub, g]) => (
       <button key={key} type="button" className={c("ch-wrongWay")} aria-pressed={path === key} onClick={() => onPath(key)}>
-        <PhoneGame fen={fen} rating={rating} small />
+        <CcBoard fen={g.fens[0]} colour={g.colour} rating={g.rating} oppRating={g.oppRating} small label={`${title}: the position`} />
         <b>{title}</b>
         <span>{sub}</span>
       </button>
     ))}
   </div>
+)
+
+// One position of the author's game, the move that led to it in yellow.
+const GameBoard = ({ game, at, say, bottom }) => (
+  <CcBoard
+    fen={game.fens[at]}
+    colour={game.colour}
+    rating={game.rating}
+    oppRating={game.oppRating}
+    last={at ? lastMove(game.fens[at - 1], game.fens[at]) : []}
+    top={`${day(game.date)} · I play ${side(game.colour)} · ${game.label(at)}`}
+    bottom={bottom}
+    say={say}
+    label={`My game of ${day(game.date)}, ${game.label(at)}`}
+  />
 )
 
 // The rest of the author's game, a position per stretch of scrolling.
@@ -124,8 +125,8 @@ const PlayOut = ({ during, game }) => {
     { still, watch: box },
   )
   return (
-    <div ref={box}>
-      <PhoneGame fen={game.fens[Math.min(at, last)]} rating={game.oppRating} moves={game.label(Math.min(at, last))} say={at >= last ? game.end : null} />
+    <div ref={box} className={c("ch-wrongPlay")}>
+      <GameBoard game={game} at={Math.min(at, last)} say={at >= last ? game.end : null} />
     </div>
   )
 }
@@ -539,13 +540,21 @@ export const Wrong = ({ guess }) => {
           <div className={c("ch-wrongScene")} data-path={path}>
             <StepSpy at={at} onStep={setStep} />
             <Show on={now === "observation"} className={c("ch-wrongLayer")}>
-              <PhoneGame fen={data.resigned.fen} rating={data.resigned.oppRating} moves={`${data.resigned.move}. …`} say="Opponent resigned" />
+              <CcBoard
+                fen={data.resigned.fen}
+                colour={data.resigned.colour}
+                rating={data.resigned.rating}
+                oppRating={data.resigned.oppRating}
+                top={`${day(data.resigned.date)} · I play ${side(data.resigned.colour)} · move ${data.resigned.move}`}
+                say="Opponent resigned"
+                label="The opponent, a queen down, resigned."
+              />
             </Show>
             <Show on={now === "fork"} className={c("ch-wrongLayer")}>
               <Fork path={path} onPath={choose} />
             </Show>
             <Show on={now === "decide"} className={c("ch-wrongLayer")}>
-              <PhoneGame fen={game.fens[0]} rating={game.oppRating} moves={game.label(0)} say={guess.value ? `You chose: ${guess.value.toLowerCase()}` : game.first} />
+              <GameBoard game={game} at={0} bottom={game.note} say={guess.value ? `You chose: ${guess.value.toLowerCase()}` : game.first} />
             </Show>
             <Show on={now === "outcome"} className={c("ch-wrongLayer")}>
               <PlayOut key={path} during={names.indexOf("outcome")} game={game} />
@@ -563,7 +572,15 @@ export const Wrong = ({ guess }) => {
               <Mine path={path} />
             </Show>
             <Show on={now === "stalemate"} className={c("ch-wrongLayer")}>
-              <PhoneGame fen={data.stalemate.fen} rating={data.stalemate.oppRating} moves={`${data.stalemate.moves + 1}.`} say="Stalemate" />
+              <CcBoard
+                fen={data.stalemate.fen}
+                colour={data.stalemate.colour}
+                rating={data.stalemate.rating}
+                oppRating={data.stalemate.oppRating}
+                top={`${day(data.stalemate.date)} · I play ${side(data.stalemate.colour)} · move ${data.stalemate.moves + 1}`}
+                say="Stalemate"
+                label="Stalemate: my lone king, three queens against it."
+              />
             </Show>
             <Show on={now === "meet" || now === "you"} className={c("ch-wrongLayer")}>
               <Meet path={path} />

@@ -717,22 +717,34 @@
 .ch-wrong { --scene: wrong; --resign: #b59dd9; --lost: #55524d; }
 .ch-wrongScene { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
 .ch-layer.ch-wrongLayer { inset: 0; display: grid; place-items: center; }
-.ch-wrongPhone { position: relative; height: min(76svh, 680px); aspect-ratio: 800 / 1704; }
-.ch-wrongPhone[data-small="true"] { height: min(54svh, 470px); }
-.ch-wrongPhone .ch-phoneBox { height: auto; }
-.ch-wrongPhone[data-small="true"] .ch-screen { display: none; }
-.ch-story .ch-wrongSay {
-  position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); padding: 0.55em 1em; border-radius: 999px; white-space: nowrap;
-  background: rgb(38 36 33 / 0.92); color: #f4f1ea; font: 600 13px / 1.2 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; box-shadow: 0 8px 22px rgb(0 0 0 / 0.4);
+/* The boards of her games, as Chess.com draws them (cc-board.js), without the phone. */
+.ch-cc { --cc: min(100%, 60svh, 540px); display: grid; gap: 0; width: var(--cc); margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.ch-cc[data-small="true"] { --cc: min(40vw, 40svh, 300px); }
+.ch-story .ch-ccNote { margin: 0 0 12px; color: var(--ink-3); font: 400 11.5px / 1.4 var(--font-mono); font-variant-numeric: tabular-nums; }
+.ch-story p.ch-ccNote { margin: 12px 0 0; color: var(--ink-2); }
+.ch-ccBar { display: flex; align-items: center; gap: 8px; height: 34px; color: #dedcd8; font-size: 13px; white-space: nowrap; }
+.ch-ccBar i { flex: none; width: 26px; height: 26px; border-radius: 3px; background: #55524d; }
+.ch-ccBar[data-mine="true"] i { background: var(--thread); }
+.ch-ccBar b { font-weight: 600; }
+.ch-ccBar span { color: #9c9a96; }
+.ch-cc[data-small="true"] .ch-ccBar { height: 26px; gap: 6px; font-size: 11px; }
+.ch-cc[data-small="true"] .ch-ccBar i { width: 18px; height: 18px; }
+.ch-ccBoardBox { position: relative; border-radius: 3px; overflow: hidden; box-shadow: 0 10px 30px rgb(0 0 0 / 0.35); }
+.ch-ccBoardBox svg { display: block; width: 100%; height: auto; }
+.ch-ccCoord { font: 600 9px / 1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.ch-story .ch-ccSay {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 0.6em 1.1em; border-radius: 8px; white-space: nowrap;
+  background: rgb(38 36 33 / 0.94); color: #f4f1ea; font: 600 14px / 1.2 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; box-shadow: 0 8px 22px rgb(0 0 0 / 0.45);
 }
+.ch-wrongPlay { display: grid; place-items: center; width: 100%; }
 .ch-wrongFork { display: flex; gap: clamp(12px, 2.4vw, 32px); align-items: flex-start; justify-content: center; }
 .ch-story .ch-wrongWay {
   display: grid; justify-items: center; gap: 4px; padding: 10px 10px 12px; border: 1px solid transparent; border-radius: 18px;
   background: none; color: var(--ink-3); font: 400 11px / 1.3 var(--font-mono); cursor: pointer; pointer-events: auto; transition: border-color var(--ch-fade) ease;
 }
-.ch-wrongWay b { margin-top: 8px; color: var(--ink); font: 400 clamp(17px, 1.6vw, 21px) / 1.15 var(--font-title); letter-spacing: -0.01em; }
-.ch-wrongWay .ch-wrongPhone { transition: opacity var(--ch-fade) ease; }
-.ch-wrongWay[aria-pressed="false"] .ch-wrongPhone { opacity: 0.5; }
+.ch-wrongWay > b { margin-top: 8px; color: var(--ink); font: 400 clamp(17px, 1.6vw, 21px) / 1.15 var(--font-title); letter-spacing: -0.01em; }
+.ch-wrongWay .ch-cc { transition: opacity var(--ch-fade) ease; }
+.ch-wrongWay[aria-pressed="false"] .ch-cc { opacity: 0.5; }
 .ch-wrongWay[aria-pressed="true"] { border-color: var(--form-data); }
 .ch-story .ch-wrongWay:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .ch-wrongRange { display: grid; gap: 6px; max-width: 22rem; margin-top: 16px; color: var(--ink-3); font: 400 12px / 1.2 var(--font-mono); }
@@ -789,8 +801,12 @@
   .ch-diveThree { padding: calc(var(--bar) + 10svh) var(--page-margin) 4svh; gap: 4svh; }
   .ch-diveBoards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
   .ch-diveBoards a { font-size: 11px; gap: 10px; }
-  .ch-wrongPhone { height: 46svh; }
-  .ch-wrongPhone[data-small="true"] { height: 30svh; }
+  .ch-cc { --cc: min(100%, 44svh); }
+  .ch-cc[data-small="true"] { --cc: min(40vw, 28svh); }
+  .ch-ccBar { height: 28px; font-size: 12px; }
+  .ch-ccBar i { width: 20px; height: 20px; }
+  .ch-story .ch-ccNote { margin-bottom: 6px; font-size: 10.5px; }
+  .ch-story p.ch-ccNote { margin: 6px 0 0; }
   .ch-hundred svg { max-height: 44svh; }
   .ch-story .ch-bigShare { font-size: 40px; margin-bottom: 10px; }
   .ch-waffle { max-width: 12rem; }
