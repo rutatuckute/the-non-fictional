@@ -87,3 +87,7 @@ Built: reveal.js (the switch barcode, the reader's guesses on three scales, each
 ## 23 November — Part IV: the message, and the question handed back
 
 The chat screenshot (private, data-stories repository) lit only where his question, its hour and her answer are (`make-hinge.cjs`, from the earlier reveal mock), on the story's phone, shown close with the top fading. Part title "Back to the threads of life"; the encounter, the continuing game and the closing question drafted from the owner's arc. Checked: screenshots at 1440×900 and 375×812, `cross.cjs` 16 sizes, `nav.cjs`. Typecheck and production build passed.
+
+## 23 November — the chats as the page's own text; method notes
+
+Owner's changes: no hour on either phone (18 May 2026 only); Part IV's messages no longer recognisable as any app — written as HTML on the blank phone, hers in clay, his in a quiet grey (the screenshot-derived image and its script removed); "What we cannot know" removed; short method notes written. Checked: screenshots at 1440×900 and 375×812, `cross.cjs` 16 sizes, `nav.cjs`. Typecheck and production build passed.

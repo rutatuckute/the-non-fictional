@@ -309,18 +309,6 @@ Maybe he saw something in me. Maybe his question changed how I played. The games
 
 And the scales describe how I play, not who I am.
 
-<!--step:unknown-->
-
-*[10 · What we cannot know. Observations against interpretations.]*
-
-<!--step:unknown-showed-->
-
-*[What the games showed]*
-
-<!--step:unknown-cannot-->
-
-*[What they cannot tell us about a person]*
-
 <!--step:ending-title-->
 
 ## Back to the threads of life
@@ -349,6 +337,13 @@ Is yours still there?
 
 <!--step:method-->
 
-*[Method and data: how the numbers were made]*
+### Method and data
+
+- **Games.** Chess.com's public data: my 2,007 games (to 15 November 2026), and the games of a random sample of 12,000 players, July to September 2026 (4.65 million). No other player is named; the strangers of Part II and how I picture them are invented.
+- **Time in games.** Minutes a day from each game's recorded start and end, smoothed over about ten days. The social media line is my own rough estimate, not a measurement.
+- **Rapid and bullet.** July–September median ratings of 1,388 players with at least 20 games in each.
+- **Usernames.** Names sorted into groups by 47 hand-checked rules; each group's ratings set against a typical opponent's, with 95% ranges from resampling.
+- **Losing the queen.** 41,709 rapid games (1 in 45 of the sample); the first queen lost from an even position, scored by Stockfish 19 at depth 12. My own games were analysed at depth 16.
+- **Style.** The three scales were defined before they were computed: 10-minute games only, against players at my rating with at least 30 such games.
 
 <!--/story-->

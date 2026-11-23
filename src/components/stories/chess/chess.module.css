@@ -915,12 +915,18 @@
 
 /* Part IV, and what follows the story. */
 .ch-encounter { padding-top: 6vh; }
-/* the phone close: its lower part, where the chat is, fading out upwards */
+/* the phone close: its lower part, where the chat is, fading out upwards. The
+   messages are the page's own text: hers in clay, his in a quiet grey. */
 .ch-chat {
-  grid-column: 1 / 7; justify-self: center; position: relative; z-index: 2; width: 100%; max-width: 460px; aspect-ratio: 800 / 1000; overflow: hidden;
+  grid-column: 1 / 7; justify-self: center; position: relative; z-index: 2; width: 100%; max-width: 460px; aspect-ratio: 800 / 1000; overflow: hidden; container-type: inline-size;
   -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%); mask-image: linear-gradient(to bottom, transparent, #000 22%);
 }
 .ch-chat img { position: absolute; left: 0; bottom: 0; display: block; width: 100%; height: auto; }
+.ch-chatScreen { position: absolute; left: 13%; right: 13%; bottom: 12%; display: grid; gap: 3.2cqw; font: 400 3.5cqw / 1.42 var(--font-mono); }
+.ch-story .ch-chatDay { justify-self: center; color: var(--ink-3); font-size: 2.9cqw; letter-spacing: 0.04em; }
+.ch-story .ch-chatTheirs, .ch-story .ch-chatMine { max-width: 78%; padding: 2.6cqw 3.6cqw; }
+.ch-story .ch-chatTheirs { justify-self: start; border-radius: 3.8cqw 3.8cqw 3.8cqw 1cqw; background: #34322f; color: var(--ink); }
+.ch-story .ch-chatMine { justify-self: end; border-radius: 3.8cqw 3.8cqw 1cqw 3.8cqw; background: var(--thread); color: #fff8ef; }
 .ch-endingTitle { position: relative; z-index: 2; padding-top: 12vh; }
 .ch-encounter .ch-col { grid-column: 8 / 12; align-self: center; }
 .ch-close { padding-top: 22vh; }

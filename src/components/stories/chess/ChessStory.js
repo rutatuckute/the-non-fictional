@@ -7,6 +7,7 @@ import { c, Picture, Text, Words } from "./parts"
 import { Device } from "./origin"
 import { People, Say } from "./scenes"
 import { Reveal } from "./reveal"
+import { Chat } from "./phone-scenes"
 import { Wrong } from "./wrong"
 import { Dive } from "./dive"
 import { Knots, Thread } from "./thread"
@@ -257,32 +258,14 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           <Say />
           <Wrong guess={guess("resign")} />
           <Reveal />
-          <section className={c("ch-free", "ch-unknown")} aria-label="What we cannot know">
-            <Text name="unknown" />
-            <div className={c("ch-two")}>
-              <Text name="unknown-showed" />
-              <Text name="unknown-cannot" />
-            </div>
-          </section>
         </div>
 
         <section className={c("ch-free", "ch-back")} aria-label="Back to the threads of life">
           <Mark id="the-ending" />
           <Text name="ending-title" look="partTitle" className={c("ch-endingTitle")} />
           <div className={c("ch-row", "ch-encounter")}>
-            {/* the message that started it, and her answer: only these, and their hour */}
-            <div className={c("ch-chat")}>
-            <img
-              src="/images/stories/chess/hinge.webp"
-              srcSet="/images/stories/chess/hinge-480.webp 480w, /images/stories/chess/hinge.webp 800w"
-              sizes="(max-width: 60rem) 70vw, 330px"
-              alt="A phone showing two messages, Monday 18 May, 23:52. His: “heyy, do you play on chess.com? what’s your rating on blitz? xd”. Mine: “Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀”. No names or pictures are shown."
-              width={800}
-              height={1704}
-              loading="lazy"
-              decoding="async"
-            />
-            </div>
+            {/* the message that started it, and her answer (phone-scenes.js) */}
+            <Chat />
             <Text name="encounter" look="lead" className={c("ch-col")} />
             <Knots of={LINES.encounter} />
           </div>

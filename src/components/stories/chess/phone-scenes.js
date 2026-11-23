@@ -134,7 +134,7 @@ export const Message = () => {
         decoding="async"
       />
       {/* when it was sent, as the screenshot shows it */}
-      <p className={c("ch-messageTime")}>18 May 2026, 23:52</p>
+      <p className={c("ch-messageTime")}>18 May 2026</p>
       <p className={c("ch-messagePop")} ref={bubble}>
         Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz
         😀
@@ -142,3 +142,17 @@ export const Message = () => {
     </div>
   )
 }
+
+// Part IV: the message that started it, and her answer, written on the blank
+// phone as the page's own text (not a screenshot of any app): her bubble in
+// the thread's clay, his in a quiet grey, the day above them.
+export const Chat = () => (
+  <div className={c("ch-chat")} role="img" aria-label="A phone showing two messages, 18 May 2026. His: “heyy, do you play on chess.com? what’s your rating on blitz? xd”. Mine: “Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀”.">
+    <img src="/images/stories/chess/phone-empty.webp" width={800} height={1704} alt="" loading="lazy" decoding="async" />
+    <div className={c("ch-chatScreen")} aria-hidden="true">
+      <p className={c("ch-chatDay")}>18 May 2026</p>
+      <p className={c("ch-chatTheirs")}>heyy, do you play on chess.com? what’s your rating on blitz? xd</p>
+      <p className={c("ch-chatMine")}>Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀</p>
+    </div>
+  </div>
+)
