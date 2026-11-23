@@ -267,15 +267,47 @@ This is one of them: my lone king against three queens.
 
 <!--step:reveal-professor-->
 
-*[09 · What our choices reveal. Back to the professor's remark. Conditional: stays only if the evidence is real.]*
+### What our choices reveal
 
-<!--step:reveal-games-->
+He said it in early 2026, while I was still playing the London System.
 
-*[Your games over time. Leaving the London System.]*
+On 23 March, I stopped. I haven't played it since.
 
-<!--step:reveal-style-->
+<!--step:reveal-guess-->
 
-*[Did the style change? Only what the data supports.]*
+You've seen a little of how I play. Where would you place me?
+
+<!--step:reveal-initiative-->
+
+**Initiative.** How often my moves force something: a check, a capture, a threat.
+
+During the London months, I was ordinary. Since the switch, my moves are more forcing than those of 93 in 100 players at my rating.
+
+<!--step:reveal-safety-->
+
+**Safety.** How early I castle.
+
+Careful then, careful now. And I do trade queens more often than not, earlier than almost anyone at my level.
+
+<!--step:reveal-tempo-->
+
+**Tempo.** How often I move in under two seconds.
+
+In life I'm impulsive, and on the board I sometimes move fast without thinking too much. Since the switch, faster than 86 in 100 players.
+
+Oddly, my fast moves are rarely my mistakes.
+
+<!--step:reveal-verdict-->
+
+So he was right. Just not yet.
+
+When he said it, my games didn't show it. A few weeks later, they did.
+
+<!--step:reveal-limits-->
+
+Maybe he saw something in me. Maybe his question changed how I played. The games can't tell which.
+
+And the scales describe how I play, not who I am.
 
 <!--step:unknown-->
 

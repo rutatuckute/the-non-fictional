@@ -3,7 +3,7 @@
 import * as React from "react"
 
 import { CLUB_REST, ClubBoard } from "./club"
-import { c, Holder, Pinned, Show, Text } from "./parts"
+import { c, Pinned, Show, Text } from "./parts"
 import { Message } from "./phone-scenes"
 import { RatingStory } from "./ratings"
 import { Usernames } from "./say"
@@ -170,31 +170,3 @@ export const Say = () => (
   </section>
 )
 
-// Third question: what our choices reveal. It stays only if the games bear it out.
-export const Reveal = () => (
-  <Pinned
-    reading
-    mark="what-we-choose"
-    label="What our choices reveal"
-    steps={[
-      { text: <Text name="reveal-professor" look="lead" /> },
-      { text: <Text name="reveal-games" look="lead" /> },
-      { text: <Text name="reveal-style" look="lead" /> },
-    ]}
-  >
-    {step => (
-      <div className={c("ch-stack")}>
-        <Show flow on={step === 0}>
-          <div className={c("ch-board", "ch-boardSmall")} />
-          <p className={c("ch-note")}>The professor’s board again</p>
-        </Show>
-        <Show flow on={step >= 1}>
-          <Holder open label="Your games over time, the London System months marked" ratio="16 / 7" />
-        </Show>
-        <Show flow on={step === 2}>
-          <p className={c("ch-note")}>A measure of playing style, before and after</p>
-        </Show>
-      </div>
-    )}
-  </Pinned>
-)
