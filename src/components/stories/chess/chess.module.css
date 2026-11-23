@@ -133,6 +133,13 @@
 
 /* ── words ── */
 .ch-text { position: relative; z-index: 2; min-width: 0; max-width: 34rem; }
+/* Every named passage shares the same alignment, including the wooden set
+   and free-scroll sections outside the pinned cards. */
+.ch-story .ch-text,
+.ch-story .ch-text :is(p, h2, h3, h4, blockquote, li) { text-align: center; }
+.ch-col > .ch-text,
+.ch-woodenText > .ch-text,
+.ch-woodenAfter > .ch-text { margin-inline: auto; }
 .ch-text > :last-child { margin-bottom: 0; }
 .ch-text.ch-large {
   max-width: 20em;
@@ -202,7 +209,7 @@
 }
 .ch-heroWords { display: grid; gap: clamp(18px, 2.4svh, 28px); align-content: center; }
 .ch-story .ch-title {
-  margin: 0; color: var(--ink);
+  margin: 0; color: var(--ink); text-align: center;
   font: 400 var(--t-display) / 0.98 var(--font-title); letter-spacing: var(--tracking-display); text-transform: none;
 }
 .ch-text.ch-intro { max-width: 24em; color: var(--ink-2); }
@@ -222,7 +229,7 @@
 .ch-memory .ch-text.ch-headline { font-size: var(--t-statement); }
 .ch-memory .ch-text.ch-medium { font-size: var(--t-second); line-height: 1.15; letter-spacing: var(--tracking-display); }
 /* "Hold on to it for a moment.", and the reader's choice to keep a thread */
-.ch-hold { display: grid; justify-items: start; gap: 14px; margin-top: 18px; max-width: 56%; }
+.ch-hold { display: grid; justify-items: center; gap: 14px; margin-top: 18px; max-width: 56%; }
 .ch-hold .ch-text { color: var(--ink-2); font-size: clamp(16px, 1.3vw, 19px); line-height: 1.4; }
 /* A small quiet button, in the story's own type: the reader's thread, en passant. */
 .ch-story .ch-ask {
@@ -237,7 +244,7 @@
 .ch-story .ch-ask i { width: 18px; height: 0; border-top: 1.5px solid var(--ink-3); transition: border-color var(--ch-fade) ease; }
 .ch-story .ch-ask[aria-pressed="true"] { color: var(--form-data); border-color: var(--form-data); background: color-mix(in srgb, var(--form-data) 10%, var(--void)); }
 .ch-story .ch-ask[aria-pressed="true"] i { border-top-color: var(--form-data); }
-.ch-told2 .ch-ask { justify-self: start; margin-top: 6px; }
+.ch-told2 .ch-ask { justify-self: center; margin-top: 6px; }
 .ch-told2 .ch-ask i { border-top-color: var(--thread); }
 
 /* The Pocket Micro (origin.js). It lies in its place in the memory; while
@@ -307,7 +314,7 @@
   font-size: var(--t-display); line-height: 0.98; letter-spacing: var(--tracking-display);
 }
 /* "No chess.": apart from it, at the lower right */
-.ch-text.ch-yearsNone { left: auto; right: 0; top: 58%; text-align: right; }
+.ch-text.ch-yearsNone { left: auto; right: 0; top: 58%; }
 .ch-decade {
   --shown: 1;
   position: absolute; right: 0; top: var(--at); z-index: 0; transform: translateY(-50%); text-align: right;
@@ -443,6 +450,13 @@
   opacity: 0.45; transition: opacity 300ms ease; pointer-events: auto;
 }
 .ch-step[data-on="true"] .ch-card { opacity: 1; }
+/* The words that come in on the scroll are centred, and what stands among
+   them (a choice, a range, a waffle) is centred with them. */
+.ch-card, .ch-told > div { text-align: center; }
+.ch-card :is(p, h2, h3, li), .ch-told > div :is(p, h2, h3, li) { text-align: center; }
+.ch-card :is(.ch-text, .ch-wrongRange, .ch-waffle), .ch-told > div :is(.ch-text, .ch-wrongRange, .ch-waffle) { margin-inline: auto; }
+.ch-card :is(.ch-guess), .ch-told > div :is(.ch-guess) { justify-content: center; }
+.ch-card .ch-hold, .ch-told > div .ch-hold { justify-items: center; margin-inline: auto; }
 /* A scene that follows on from the page above it has no rule over it. */
 .ch-pin[data-open="true"] { border-top: 0; }
 /* Part II's words: no cards. They stand in one place beside the scene, each

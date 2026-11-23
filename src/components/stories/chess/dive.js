@@ -42,7 +42,7 @@ const QUESTIONS = [
   },
   {
     id: "what-we-choose",
-    label: "What our choices reveal",
+    label: <>What our <em>choices</em> reveal</>,
     // 1. d4 or 1. e4
     mark: (
       <g>
@@ -78,7 +78,7 @@ export const Dive = ({ during }) => {
   useFollow(goal, paint, { still, watch: root })
 
   return (
-    <div className={c("ch-dive")} ref={root} data-boards="false" aria-label="Looking for answers in the data">
+    <div className={c("ch-dive")} ref={root} data-boards="false" aria-label="The data">
       <div className={c("ch-diveTitle")}>
         <Text name="investigation-title" look="partTitle" />
       </div>

@@ -44,7 +44,7 @@ const CHAPTERS = [
   { id: "the-people", label: "The people" },
   {
     id: "the-investigation",
-    label: "The investigation",
+    label: "The data",
     parts: [
       { id: "what-we-say", label: "What we say" },
       { id: "when-things-go-wrong", label: "When things go wrong" },
@@ -189,7 +189,6 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           <Text name="opening-aside" look="aside" />
           {/* the reader may keep one of the grey threads as theirs */}
           <div className={c("ch-hold")}>
-            <Text name="hold" look="lead" />
             <button type="button" className={c("ch-ask")} aria-pressed={yours} onClick={() => setYours(on => !on)}>
               <i aria-hidden="true" />
               {yours ? "That thread is yours now" : "I have one"}

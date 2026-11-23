@@ -13,7 +13,7 @@ cover: /images/uploads/chess-again-cover.jpg
 
 <!--step:intro-->
 
-[A short text under the title, to come.]
+We think we're making choices.
 
 <!--step:opening-->
 
@@ -24,8 +24,6 @@ Do you have that one memory your mind keeps wandering back to?
 Nothing major, and yet so surprisingly vivid.
 
 <!--step:hold-->
-
-Hold on to it for a moment.
 
 <!--step:mine-->
 
@@ -45,7 +43,7 @@ Except for *en passant*. What is this rule anyway?
 
 <!--step:years-->
 
-Years went by.
+Life went on.
 
 <!--step:years-none-->
 
@@ -53,17 +51,18 @@ No chess.
 
 <!--step:board-->
 
-Until I bought this little wooden chessboard.
+Until I bought this compact chessboard.
 
 <!--step:same-game-->
 
-Different people.\
-Different stages of life.\
-Same game.
+Different people,\
+met by chance or by design.\
+Yet, whatever life threw at us,\
+same game.
 
 <!--step:possibilities-->
 
-I just like the strategic and analytical side of the game.\
+I just like the strategic and analytical aspect of the game.\
 That, and its endless possibilities.
 
 <!--step:not-a-player-->
@@ -74,7 +73,8 @@ It's far from being a defining part of who I am.
 <!--step:chess-com-->
 
 Then came **Chess.com**.\
-My first game there lasted one move each, then my opponent resigned.
+After one move my opponent resigned.\
+Beginner's luck?
 
 <!--step:obsession-->
 
@@ -83,12 +83,14 @@ A winning trade-off?
 
 <!--step:obsession-questions-->
 
-More games, more mistakes, more determination.\
+More games,\
+more mistakes,\
+yet, more determination.\
 And thus, more questions.
 
 <!--step:people-bridge-->
 
-Most of them, though, weren't about chess.
+Thought most of them, weren't really about chess.
 
 <!--step:people-title-->
 
@@ -108,17 +110,17 @@ Where are they now?
 
 <!--step:strangers-moment-->
 
-In which random moment of their lives do they find themselves?
+In which random moment of their lives do they find themselves in?
 
 <!--step:people-many-->
 
-2,007 games.\
-1,938 different people.\
-1,910 of them I met exactly once.
+2007 games.\
+1938 different people.\
+1910 of them met once.
 
 <!--step:club-->
 
-Once, I went to a chess club in London. I played the safe opening I had learnt for White: the London System.
+I went to a chess club in London once. I played the safe opening I had learnt for White: the London System.
 
 <!--step:professor-->
 
@@ -152,11 +154,11 @@ So I went down the rabbit hole.
 
 <!--step:investigation-title-->
 
-## Looking for answers in the data
+## The data
 
 <!--step:data-intro-->
 
-Each of these questions started at the board, not in a spreadsheet.
+Each of these questions started in my head, not in code.
 
 <!--step:say-message-->
 
@@ -346,7 +348,7 @@ A queen down, I played on in 119 games. I saved 15.
 
 <!--step:reveal-professor-->
 
-### What our choices reveal
+### What our *choices* reveal
 
 He said it in early 2026, while I was still playing the London System.
 
