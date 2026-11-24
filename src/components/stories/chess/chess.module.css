@@ -367,15 +367,17 @@
 .ch-crossings { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .ch-crossings path { fill: none; stroke: var(--ink-3); stroke-opacity: 0.75; stroke-width: 1.3; stroke-linecap: round; transition: opacity 300ms ease; }
 .ch-many { position: absolute; left: 0; top: 0; width: 64%; height: 100%; color: var(--ink-2); pointer-events: none; }
-/* The last screen of threads is also the first screen of this weave. The
-   board lands in the club scene's exact layout before that scene takes over. */
-.ch-threadBridge { height: 240vh; height: 240svh; margin-top: -100vh; margin-top: -100svh; background: transparent; }
-.ch-threadBridge .ch-stage { background: var(--void); }
-.ch-threadBridge:not([data-active="true"]) .ch-stage { opacity: 0; pointer-events: none; }
-.ch-threadBridge + .ch-club { margin-top: -100vh; margin-top: -100svh; background: transparent; }
-.ch-threadBridge + .ch-club .ch-stage { background: var(--void); }
-.ch-threadBridge + .ch-club:not([data-arrived="true"]) .ch-stage { opacity: 0; pointer-events: none; }
-.ch-threadBridge .ch-clubBoard { opacity: 0; transition: none; }
+/* One thread field, in the original pinned stage, from the statistics to
+   the pink board. Only the final club scene overlaps its last screen. */
+.ch-pin.ch-threadWeave { position: absolute; inset: 0; background: transparent; pointer-events: none; }
+.ch-threadWeave .ch-clubBoard { opacity: 0; transition: none; }
+.ch-woodenPin + .ch-club { margin-top: -100vh; margin-top: -100svh; background: transparent; }
+.ch-woodenPin + .ch-club .ch-stage { background: var(--void); }
+.ch-woodenPin + .ch-club:not([data-arrived="true"]) .ch-stage { opacity: 0; pointer-events: none; }
+.ch-weaveIncoming { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ch-weaveIncoming path { fill: none; stroke: var(--thread); stroke-width: 1.3; stroke-linecap: round; }
+.ch-weaveIncoming path[data-kind="other"] { stroke: var(--ink-3); }
+.ch-manyCopy { position: absolute; left: 66%; right: 0; top: 50%; z-index: 6; transform: translateY(-50%); }
 /* How the author pictures each stranger: beside the phone, drawing itself in. */
 .ch-pictured { position: absolute; left: 45%; top: 26%; width: 19%; z-index: 4; pointer-events: none; }
 .ch-pictured .ch-who { left: 0; top: 0; width: 100%; max-width: none; }
@@ -1065,6 +1067,7 @@
   .ch-people[data-titled="true"] .ch-woodenTold { top: calc(var(--bar) + 7.5svh); }
   .ch-woodenTold > div { position: absolute; left: 0; right: 0; top: 0; padding-bottom: 18px; background: linear-gradient(var(--void) 80%, transparent); opacity: 0; transition: opacity 300ms ease; }
   .ch-woodenTold > div[data-on="true"] { opacity: 1; }
+  .ch-manyCopy { left: var(--page-margin); right: var(--page-margin); top: calc(var(--bar) + 7.5svh); transform: none; padding-bottom: 18px; background: linear-gradient(var(--void) 80%, transparent); }
   .ch-pictured { left: 54%; top: 40%; width: 43%; }
   .ch-many { width: 100%; }
   /* the turn of the story, quiet and alone over the whole screen */

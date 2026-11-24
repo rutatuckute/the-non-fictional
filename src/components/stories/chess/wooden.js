@@ -7,7 +7,8 @@ import { c, Text } from "./parts"
 import SIZES from "./pieces.json"
 import { Knots } from "./thread"
 import { DROP, TimeChart } from "./time-chart"
-import { crossing, PEOPLE, PhoneScreen, Pictured, STRANGERS, STRANGERS_LABEL, strands } from "./strangers"
+import { crossing, PhoneScreen, Pictured, STRANGERS, STRANGERS_LABEL } from "./strangers"
+import { ThreadBridge } from "./thread-bridge"
 
 // The wooden set, held on screen while the reader scrolls: it comes in open,
 // the pieces in their felt, turns over to the board, the pieces are set up,
@@ -133,7 +134,9 @@ export const TITLE_AT = HANDOFF_AT + 0.7
 const MET = [TITLE_AT, TITLE_AT + 1.45, TITLE_AT + 2.0]
 const PICTURE_AT = [TITLE_AT + 0.85, MET[1] + 0.1, MET[2] + 0.1]
 const MANY_AT = MET[2] + 0.55
-export const SCREENS = MANY_AT + 0.85
+// Read all three statistics before this same thread field begins to weave.
+const WEAVE_AT = MANY_AT + 1.9
+export const SCREENS = WEAVE_AT + 1.4
 // The words, each at its moment (screens into the scene) and in its look.
 const WORDS = [
   ["board", 0.05],
@@ -148,7 +151,6 @@ const WORDS = [
   ["strangers", TITLE_AT + 1.15, "question"],
   ["strangers-where", MET[1] + 0.12, "question"],
   ["strangers-moment", MET[2] + 0.12, "question"],
-  ["people-many", MANY_AT + 0.3, "question"],
 ]
 // Of a move: the hand comes to the piece, carries it, and leaves.
 const TAKES = 0.32
@@ -252,39 +254,7 @@ export const Wooden = ({ lines }) => {
   const pictured = React.useRef(null)
   const crossings = React.useRef([])
   const many = React.useRef(null)
-  const strandsOf = React.useRef(null)
-  const drawnMany = React.useRef(-1)
-  // the many: drawn on a canvas, only when how many changes
-  const drawMany = (share, narrow) => {
-    const canvas = many.current
-    if (!canvas) return
-    const count = Math.round(share * PEOPLE)
-    const width = canvas.clientWidth
-    const height = canvas.clientHeight
-    const key = `${width}x${height}`
-    if (count === drawnMany.current && strandsOf.current?.key === key) return
-    if (strandsOf.current?.key !== key) {
-      const ratio = Math.min(2, window.devicePixelRatio || 1)
-      canvas.width = Math.round(width * ratio)
-      canvas.height = Math.round(height * ratio)
-      strandsOf.current = { key, ratio, list: strands(width, height) }
-    }
-    drawnMany.current = count
-    const { ratio, list } = strandsOf.current
-    const pen = canvas.getContext("2d")
-    pen.setTransform(ratio, 0, 0, ratio, 0, 0)
-    pen.clearRect(0, 0, width, height)
-    pen.strokeStyle = getComputedStyle(canvas).color
-    pen.globalAlpha = narrow ? 0.1 : 0.085
-    pen.lineWidth = 0.7
-    pen.beginPath()
-    for (let i = 0; i < count; i++) {
-      const [a, m, b] = list[i]
-      pen.moveTo(a[0], a[1])
-      pen.quadraticCurveTo(m[0], m[1], b[0], b[1])
-    }
-    pen.stroke()
-  }
+  const manyCopy = React.useRef(null)
   const pieces = React.useRef({})
   const hands = React.useRef({})
   const still = useStill()
@@ -375,8 +345,21 @@ export const Wooden = ({ lines }) => {
       path.style.strokeDashoffset = (length * (1 - u)).toFixed(1)
       path.style.opacity = u > 0 && u < 2 ? "1" : "0"
     })
-    // and then all of them: one faint thread for each person met
-    drawMany(still ? (scrolled >= MANY_AT + 0.3 ? 1 : 0) : gently(within(scrolled, MANY_AT + 0.1, MANY_AT + 0.85)), narrow)
+    // Accumulate and weave on the very same canvas, without replacing the
+    // statistics scene or covering its final line with a new section.
+    many.current?.paint({
+      share: still ? Number(scrolled >= MANY_AT + 0.3) : gently(within(scrolled, MANY_AT + 0.1, MANY_AT + 0.85)),
+      scrolled: scrolled - WEAVE_AT,
+      still,
+      narrow: Boolean(narrow),
+    })
+    const club = pin.current.nextElementSibling
+    club.dataset.arrived = club.getBoundingClientRect().top <= 0 ? "true" : "false"
+    // On phones these words are pinned above the drawing. Fade them only
+    // after their reading pause, as the weave itself begins.
+    manyCopy.current.style.opacity = String(still
+      ? Number(scrolled >= MANY_AT + 0.3 && scrolled < WEAVE_AT)
+      : within(scrolled, MANY_AT + 0.05, MANY_AT + 0.3) * (1 - within(scrolled, WEAVE_AT, WEAVE_AT + 0.3)))
     // the part's name stays at the top from the moment the first is found
     const people = pin.current.closest("[data-people]")
     if (people) people.dataset.titled = scrolled >= TITLE_AT - 0.1 ? "true" : "false"
@@ -426,7 +409,7 @@ export const Wooden = ({ lines }) => {
       played: now.played,
       // (on a phone, one at a time: each from a little before its moment;
       // none for a moment as the board becomes the phone)
-      words: scrolled >= PHONE_AT + 0.05 && scrolled < PHONE_AT + 0.25 ? "none" : (WORDS.filter(([, at]) => scrolled >= at - 0.3).pop() || WORDS[0])[0],
+      words: scrolled >= MANY_AT || (scrolled >= PHONE_AT + 0.05 && scrolled < PHONE_AT + 0.25) ? "none" : (WORDS.filter(([, at]) => scrolled >= at - 0.3).pop() || WORDS[0])[0],
       who: scrolled < TITLE_AT ? -1 : MET.filter(at => scrolled >= at).length - 1,
       online: scrolled >= HANDOFF_AT,
       narrow: Boolean(narrow),
@@ -461,7 +444,7 @@ export const Wooden = ({ lines }) => {
           <path ref={link} />
         </svg>
         {/* the strangers' lives, crossing the game; then all of them */}
-        <canvas className={c("ch-many")} ref={many} aria-hidden="true" />
+        <ThreadBridge ref={many} narrow={stage.narrow} />
         <svg className={c("ch-crossings")} aria-hidden="true">
           {STRANGERS.map((each, index) => (
             <path key={each.name} ref={node => (crossings.current[index] = node)} style={{ opacity: 0 }} />
@@ -556,6 +539,9 @@ export const Wooden = ({ lines }) => {
             ))}
           </div>
         ) : null}
+        <div className={c("ch-manyCopy")} ref={manyCopy} style={{ opacity: 0 }}>
+          <Text name="people-many" look="question" />
+        </div>
       </div>
       {/* On a wide screen they scroll past beside it, each in the middle of
           the screen at its moment. */}

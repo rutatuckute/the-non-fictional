@@ -11,7 +11,6 @@ import { Chat } from "./phone-scenes"
 import { Wrong } from "./wrong"
 import { Knots, Thread } from "./thread"
 import { Wooden } from "./wooden"
-import { ThreadBridge } from "./thread-bridge"
 
 // The chess story is the whole piece: one continuous scroll in four parts,
 // with threads running through it.
@@ -244,7 +243,6 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             <Text name="people-title" look="partTitle" />
           </div>
           <Wooden lines={LINES.wooden} />
-          <ThreadBridge />
           <People />
         </div>
 

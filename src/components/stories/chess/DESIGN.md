@@ -58,7 +58,7 @@ The four invented phone opponents retain distinct illustrative legal positions a
 
 The opening question, “This is mine”, the father's words and their smaller asides keep their original left alignment. Later passages stay centred, with larger narrative type (22–28px, 19px for the longer phone passages) and a modest increase in card text.
 
-After the 2,007-game passage, the same 1,938 seeded threads weave into the pink club board's squares as the reader scrolls. The bridge and both neighbours share their first/last screen; the board uses the club's layout and measured square geometry, then hands over to the opening position before the first hand moves. Reverse scrolling unwinds the weave. Reduced motion switches directly between the threads and board.
+The 2,007-game passage and weave share one canvas in the original pinned scene. Two incoming threads feed the 1,938 seeded strands; all three statistics lines stay fully visible for a reading pause before that same field weaves into the pink club board's squares. The board uses the club's layout and measured square geometry, then hands over to the opening position before the first hand moves. Reverse scrolling unwinds the weave. Reduced motion switches directly between the threads and board.
 
 The ending's grey incoming message uses the earlier blitz bubble's scroll-driven scale and opacity, outside the cropped phone frame. The date stays above it, and her clay reply remains on the screen. Reduced motion shows the enlarged message without scaling.
 
