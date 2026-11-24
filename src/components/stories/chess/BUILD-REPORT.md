@@ -1,5 +1,11 @@
 # What we say — verification, 21 November 2026
 
+## 24 November — personal narrative, labels and handoffs
+
+Applied the owner's nine-passage sequence, with one wordless median-to-coordinate beat. The phone and chart remain mounted in one stage: the message contracts into the claim-date marker while the phone fades and the timeline emerges. The closing pace plot dissolves into the question about others and username patterns. Strengthened the persistent chapter label and adjusted compact style-chart spacing for its extra height. Normal/fast chess labels and a ten-minute/one-minute legend replace terse format names. Removed personal numerical rating callouts and accessible exact-rating descriptions. Retained the author marker; replaced the separate 1,252-player pace swarm with a 36-bin half-second histogram, without mapping identities between cohorts. The data disclosure explains the separate sample.
+
+Final typecheck, production build and whitespace checks passed. Chromium checks passed at 320×640, 375×812, 768×1024, 1024×768 and 1440×900 for all scene states, partial entry/rating/pace/exit transitions, stopped and reverse scrolling, one persistent author marker, histogram/no pace dots, hidden personal rating values, legend text, camera controls, reduced motion, no copy overlap or horizontal overflow, and no page errors. The shared investigation-heading check also passed at all five sizes, including later sections. Phone, tablet and desktop screenshots were inspected in `/tmp/chess-say-continuity/`; reproduction uses `chess-story/checks/say-ratings.cjs` and `investigation-headings.cjs` in the data-stories repository. Physical devices were not tested. No source observations, dependencies or database schema changed.
+
 ## 24 November — sticky investigation identity
 
 Renamed the chapter to “Looking for answers in the data”. Added a quiet parent label and prominent active question, with the shared choice-screen board motif and no header numbering. Each title persists throughout its entire investigation, including usernames and both resignation paths. Choice labels now match the reading titles. Measured header/copy clearance preserves the claims charts and adjusts compact fork/style layouts. Reduced motion removes heading translation; inactive states are aria-hidden.

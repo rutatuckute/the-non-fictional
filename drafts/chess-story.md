@@ -164,59 +164,43 @@ Each of these questions started in my head, not in code.
 
 ### What we say about ourselves
 
+Before *judging* others, I'll start with myself.
+
+<!--step:say-claim-->
+
+"Soooo bad at blitz", I said. Bullet, actually. Blitz, bullet, *bref*. In human terms, that's just fast chess.
+
 <!--step:say-isolation-->
 
-Seven weeks later, I tried bullet.
-
-Faster still.
+Seven weeks later, I actually tried it. And now, in retrospect, I can cross-check the claims of my past self.
 
 <!--step:say-prediction-->
 
-309 games later, my bullet rating had settled in the 400s. Rapid was much higher.
-
-Seemed about right.
-
-<!--step:say-widen-->
-
-But bad compared with whom?
-
-<!--step:say-dot-->
-
-Put those two ratings together, and that's me.
+My rating in fast chess dropped below my usual rating, as expected. But was I really soooo bad?
 
 <!--step:say-crowd-->
 
-Each dot is someone who plays both.
-
-For **87%**, bullet is lower than rapid.
+For **87%** players, the bullet rating is indeed lower than the rapid rating.
 
 <!--step:say-perspective-->
 
-And there I am. About where you'd expect.
-
-The gap I had taken so personally was ordinary.
-
-<!--step:say-pace-question-->
-
-Same player.
-
-How fast do I actually move?
+And that's me. My supposedly bad performance is the most ordinary.
 
 <!--step:say-pace-->
 
-There was one funny detail, though.
-
-In ten-minute games, I take **5 seconds per move**.
+There is one funny detail, though. In 10 minute games, I take just **5 seconds per move**.
 
 <!--step:say-hurry-->
 
-Faster than **9 in 10** players at my level.
+That's faster than **9 in 10** players at my level. Apparently, I am playing in fast chess mode either way.
 
-Apparently, I was in a hurry either way.
+<!--step:say-others-->
+
+### And what about the others?
+
+I made my claim in a text. Some people make theirs right in their usernames.
 
 <!--step:say-guess-->
-
-That was my claim. Other players put theirs in their usernames.
 
 Before looking at their ratings, what would you expect? Make a guess for each kind of name.
 

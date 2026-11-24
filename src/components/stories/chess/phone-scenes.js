@@ -97,32 +97,28 @@ export const PhonePosition = ({ game }) => {
   )
 }
 
-export const Message = () => {
+export const Message = ({ collapse = 0, target }) => {
   const box = React.useRef(null),
     bubble = React.useRef(null)
   const steps = React.useContext(PinSteps)
   const still = useStill()
+  const paint = progress => {
+    if (!bubble.current) return
+    const node = box.current, pop = bubble.current
+    const grow = still ? 1 : 0.55 + 0.45 * progress
+    const rect = node.getBoundingClientRect(), parent = node.offsetParent.getBoundingClientRect()
+    const dx = target ? target.x - (rect.left - parent.left) - node.clientWidth / 2 : 0
+    const dy = target ? target.y - (rect.top - parent.top) - node.clientHeight * 0.48 : 0
+    pop.style.transform = `translate(-50%, -50%) translate(${still ? 0 : dx * collapse}px, ${still ? 0 : dy * collapse}px) scale(${still ? 1 : grow * (1 - collapse) + 10 / pop.offsetWidth * collapse}, ${still ? 1 : grow * (1 - collapse) + 10 / pop.offsetHeight * collapse})`
+    pop.style.borderRadius = `${22 + collapse * 120}px`
+    pop.style.opacity = String(1 - Math.max(0, (collapse - 0.85) / 0.15))
+  }
+  React.useLayoutEffect(() => { paint(1) }, [collapse, target?.x, target?.y, still])
   useFollow(
     () => {
       const card = steps?.current?.[0]?.firstElementChild
-      if (!card) return 0
-      return Math.max(
-        0,
-        Math.min(
-          1,
-          (window.innerHeight * 0.9 - card.getBoundingClientRect().top) /
-            (window.innerHeight * 0.35),
-        ),
-      )
-    },
-    progress => {
-      if (!bubble.current) return
-      bubble.current.style.transform = `translate(-50%, -50%) scale(${still ? 1 : 0.55 + 0.45 * progress})`
-      bubble.current.style.opacity = still
-        ? "1"
-        : String(0.78 + 0.22 * progress)
-    },
-    { still, watch: box },
+      return card ? Math.max(0, Math.min(1, (window.innerHeight * 0.9 - card.getBoundingClientRect().top) / (window.innerHeight * 0.35))) : 0
+    }, paint, { still, watch: box },
   )
   return (
     <div className={c("ch-messagePhone")} ref={box} data-still={still}>
@@ -132,12 +128,12 @@ export const Message = () => {
         height={1704}
         alt="A phone, with my message lifting out of its screen."
         decoding="async"
+        style={{ opacity: 1 - Math.min(1, collapse * 2) }}
       />
       {/* when it was sent, as the screenshot shows it */}
-      <p className={c("ch-messageTime")}>18 May 2026</p>
+      <p className={c("ch-messageTime")} style={{ opacity: 1 - Math.min(1, collapse * 2) }}>18 May 2026</p>
       <p className={c("ch-messagePop")} ref={bubble}>
-        Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz
-        😀
+        <span style={{ opacity: 1 - Math.min(1, collapse * 3) }}>Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀</span>
       </p>
     </div>
   )

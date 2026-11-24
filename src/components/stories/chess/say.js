@@ -89,7 +89,7 @@ export const Usernames = () => {
   return (
     <section className={c("ch-usernames")} id="what-names-say" aria-labelledby="names-title">
       <header className={c("ch-namesIntro")}>
-        <h3 id="names-title">And what about everyone else?</h3>
+        <h3 id="names-title" className={c("ch-navHidden")}>What usernames say</h3>
         <Text name="say-guess" look="lead" />
       </header>
       {GROUPS.map((g, index) => (

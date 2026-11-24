@@ -1188,7 +1188,7 @@
   .ch-investigationState { transform: none; transition: opacity 160ms ease, visibility 0s linear 160ms; }
 }
 @media (max-width: 40rem) {
-  .ch-part3 .ch-reveal .ch-scales { gap: 6px; }
+  .ch-part3 .ch-reveal .ch-scales { gap: 2px; }
   .ch-part3 .ch-reveal .ch-scaleHead { margin-bottom: 3px; }
   .ch-part3 .ch-reveal .ch-scaleRow { margin-top: 2px; }
   .ch-part3 .ch-reveal .ch-scaleSays { margin-top: 4px; }
@@ -1199,4 +1199,26 @@
   .ch-part3 .ch-wrongFork { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; gap: 8px; }
   .ch-part3 .ch-wrongWay { min-width: 0; padding: 4px 4px 8px; }
   .ch-part3 .ch-wrongWay .ch-cc { --cc: min(100%, max(52px, calc(var(--investigation-graphic-height) - 156px))); }
+}
+
+/* One stage carries the message into the evidence, then into the next question. */
+.ch-ratingPhone { position: absolute; inset: 0; display: grid; place-items: center; z-index: 2; pointer-events: none; }
+.ch-ratingPhone .ch-messagePhone { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); margin: 0; height: min(100%, 62svh, 600px); max-height: 100%; }
+.ch-ratingLegend { display: grid; gap: 4px; margin-top: 5px; color: var(--ink-2); font: 400 12px / 1.35 var(--font-mono); }
+.ch-ratingLegend span { display: flex; align-items: baseline; gap: 7px; }
+.ch-ratingLegend i { flex: 0 0 16px; border-top: 2px solid color-mix(in srgb, var(--thread) 45%, var(--ink)); }
+.ch-ratingLegend span + span i { border-color: var(--thread); }
+.ch-paceDistribution rect { fill: var(--ink-3); opacity: 0.55; }
+.ch-ratings [data-highlight="true"] .ch-paceDistribution rect[data-slower="true"] { fill: var(--ink-2); opacity: 0.85; }
+.ch-ratingQuestion { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; pointer-events: none; }
+.ch-ratingQuestion h3 { max-width: 12em; margin: 0; color: var(--ink); font: 400 clamp(30px, 4vw, 56px) / 1.06 var(--font-title); letter-spacing: -0.025em; }
+.ch-story .ch-ratingQuestion p { display: flex; flex-wrap: wrap; gap: 14px 28px; margin: 28px 0 0; color: var(--ink-3); font: 400 clamp(12px, 1.2vw, 16px) / 1.5 var(--font-mono); }
+.ch-ratingQuestion span:nth-child(2n) { color: var(--thread); }
+.ch-story .ch-investigationEyebrow h2 { color: var(--ink-2); font-size: clamp(15px, 1.5vw, 20px); line-height: 1.25; }
+.ch-peopleTitle .ch-investigationEyebrow { margin-bottom: 7px; }
+@media (max-width: 60rem) {
+  .ch-ratingLegend { font-size: 11px; }
+  .ch-ratingPhone .ch-messagePhone { height: min(100%, 48svh); }
+  .ch-story .ch-investigationEyebrow h2 { font-size: 14px; }
+  .ch-ratingQuestion h3 { font-size: clamp(28px, 5vw, 42px); }
 }

@@ -5,6 +5,7 @@ import { c, PinSteps, stepLine } from "./parts"
 import { useFollow, useStill } from "./follow"
 import data from "./ratings.json"
 import pace from "./pace.json"
+import { Message } from "./phone-scenes"
 
 const T = data.timeline, S = data.scatter
 const time = day => Date.parse(`${day}T00:00:00Z`)
@@ -56,37 +57,14 @@ const OverviewCloud = React.memo(function OverviewCloud() {
   return <g fill="var(--ink-3)">{S.points.map(([x, y], i) => <circle key={i} cx={x / 3000 * 56} cy={34 - y / 3000 * 34} r={0.55} />)}</g>
 })
 
-// Deterministic beeswarm: x is the recorded pace, y only prevents collisions.
-// No random jitter, invented observations or mapping between the two peer cohorts.
-const packPace = (width, left, right, top, bottom) => {
-  const radius = width < 400 ? 1 : 1.65
-  const diameter = radius * 2 + 0.5
-  const points = []
-  const centre = (top + bottom) / 2
-  for (const seconds of [...pace.peers.seconds].sort((a, b) => a - b)) {
-    const x = scale(seconds, 0, 18, left, right)
-    const neighbours = []
-    for (let i = points.length - 1; i >= 0 && x - points[i].x < diameter; i--) neighbours.push(points[i])
-    let offset = 0
-    for (let k = 0; k < pace.peers.players * 2; k++) {
-      offset = k === 0 ? 0 : Math.ceil(k / 2) * diameter * (k % 2 ? 1 : -1)
-      if (neighbours.every(q => (x - q.x) ** 2 + (centre + offset - q.y) ** 2 >= diameter ** 2 - 0.01)) break
-    }
-    points.push({ x, y: centre + offset, seconds })
-  }
-  // Compress the packing vertically if needed; x continues to encode exact pace.
-  const extent = Math.max(...points.map(q => Math.abs(q.y - centre)), 1)
-  const compression = Math.min(1, ((bottom - top) / 2 - radius) / extent)
-  return { radius, points: points.map(q => ({ ...q, y: centre + (q.y - centre) * compression })) }
-}
-const PaceCloud = React.memo(function PaceCloud({ swarm }) {
-  return <g className={c("ch-paceCloud")}>
-    {swarm.points.map((q, i) => <circle key={i} cx={q.x} cy={q.y} r={swarm.radius} data-slower={q.seconds > pace.me.seconds} />)}
-  </g>
-})
+// A histogram uses the separate pace cohort without implying that rating dots
+// are the same players. Each half-second bin counts real exported observations.
+const PACE_BINS = Array.from({ length: 36 }, (_, i) => pace.peers.seconds.filter(v => v >= i / 2 && v < (i + 1) / 2).length)
+const PACE_MAX = Math.max(...PACE_BINS)
 
 export const RatingStory = ({ step }) => {
-  const box = React.useRef(null), steps = React.useContext(PinSteps)
+  const box = React.useRef(null), canvas = React.useRef(null), steps = React.useContext(PinSteps)
+  const [canvasTop, setCanvasTop] = React.useState(64)
   const [size, setSize] = React.useState({ width: 680, height: 460 })
   const [at, setAt] = React.useState(0)
   const [view, setView] = React.useState(null)
@@ -97,8 +75,10 @@ export const RatingStory = ({ step }) => {
   React.useLayoutEffect(() => {
     const scene = box.current.closest(`.${c("ch-scene")}`)
     const update = () => {
-      const width = box.current.getBoundingClientRect().width
-      if (width) setSize({ width, height: Math.min(520, Math.max(158, scene.clientHeight - 168)) })
+      const bounds = box.current.getBoundingClientRect()
+      const width = bounds.width
+      if (canvas.current) setCanvasTop(canvas.current.getBoundingClientRect().top - bounds.top)
+      if (width) setSize({ width, height: Math.min(520, Math.max(100, scene.clientHeight - 218)) })
     }
     const observer = new ResizeObserver(update)
     observer.observe(scene); observer.observe(box.current); update()
@@ -125,7 +105,8 @@ export const RatingStory = ({ step }) => {
   const w = size.width, h = size.height
   const left = w < 400 ? 35 : 44, right = w - 20, top = 36, bottom = h - 40
   const period = smooth(at - 3), morph = smooth(at - 4), out = smooth(at - 5)
-  const bridge = smooth(at - 7), enterPace = smooth(at - 8)
+  const bridge = smooth((at - 7) / 0.4), enterPace = smooth((at - 7.4) / 0.6)
+  const entry = smooth(at - 2), exit = smooth(at - 9)
   const zoomTime = smooth(period / 0.65)
   const minTime = mix(START, JULY, zoomTime), maxTime = mix(END, OCTOBER, zoomTime)
   const tx = stamp => scale(typeof stamp === "string" ? time(stamp) : stamp, minTime, maxTime, left, right)
@@ -136,15 +117,14 @@ export const RatingStory = ({ step }) => {
   const sx = value => scale(value, xMin, xMax, left, right)
   const sy = value => scale(value, yMin, yMax, bottom, top)
   const px = value => scale(value, 0, 18, left, right)
-  const timelineOpacity = 1 - smooth(morph / 0.45)
+  const timelineOpacity = entry * (1 - smooth(morph / 0.45))
   const scatterOpacity = smooth((morph - 0.45) / 0.55) * (1 - smooth(bridge / 0.5))
   const crowdOpacity = smooth(out / 0.65)
   const paceOpacity = smooth((enterPace - 0.2) / 0.6)
   const medianOpacity = smooth((period - 0.4) / 0.4) * (1 - bridge)
   const guideOpacity = medianOpacity * (1 - smooth(out / 0.7))
-  const swarm = React.useMemo(() => packPace(w, left, right, 68, bottom - 12), [w, h, left, right, bottom])
-  const paceY = (68 + bottom - 12) / 2
-  const revealDate = mix(time(T.bulletFirst), END, smooth(at - 1))
+  const paceY = bottom - 12
+  const revealDate = mix(time(T.bulletFirst), END, smooth((at - 2.35) / 0.65))
   const rapid = T.rapid.filter(q => time(q[0]) <= revealDate).at(-1)
   const bullet = T.bullet.filter(q => time(q[0]) <= revealDate).at(-1)
   const medianX = tx((JULY + OCTOBER) / 2)
@@ -158,25 +138,30 @@ export const RatingStory = ({ step }) => {
   const title = step === 3 ? "The same three months" : step === 4 ? "Two ratings. One player."
     : step === 5 ? "Me, among other players" : step === 6 ? "About where you'd expect"
       : step === 7 ? "How fast do I actually move?" : step >= 8 ? "Ten-minute games" : "My ratings, on their own"
-  const subtitle = step === 3 ? "July–September · median rating in each format" : step === 4 ? "Rapid across. Bullet up."
+  const subtitle = step === 3 ? "July–September · median rating in each format" : step === 4 ? "Normal chess across. Fast chess up."
     : step === 5 || step === 6 ? `${S.players.toLocaleString("en-GB")} players · July–September medians`
       : step >= 7 ? `${pace.peers.players.toLocaleString("en-GB")} peers at my level · July–September` : "2026 · last rating each day played"
   const help = mode === "pace"
-    ? `One dot per peer. Ten-minute games without increment, lasting at least 10 moves. ${pace.me.games} of my games; peers have median rapid ratings of ${pace.ratingBand[0]}–${pace.ratingBand[1]} and at least ${pace.minGames} qualifying games. For each game, clock time used divided by moves played; then the median across games for each player. Dots use values rounded to 0.1s; the percentile is calculated before rounding. This is a different qualifying peer sample from the rating chart.`
+    ? `Shaded bars count players by their typical seconds per move, in half-second intervals. Ten-minute games without increment, lasting at least 10 moves. ${pace.me.games} of my games; peers have median rapid ratings of ${pace.ratingBand[0]}–${pace.ratingBand[1]} and at least ${pace.minGames} qualifying games. For each game, clock time used divided by moves played; then the median across games for each player. The distribution uses values rounded to 0.1s; the percentile is calculated before rounding. This is a different qualifying peer sample from the rating chart.`
     : mode === "scatter"
-      ? `One dot per player with at least 20 games in each format. The diagonal means equal ratings. The typical line joins median bullet ratings in 100-point rapid bands with at least 10 players. My dot uses the same July–September medians. The typical value at my exact rapid rating is interpolated between bands. My level zooms the rapid axis to 400–1000 and bullet to 100–850; the overview shows this frame in the whole sample.`
+      ? `One dot per player with at least 20 games in each format. The diagonal means equal ratings. The typical line joins median bullet ratings in 100-point rapid bands with at least 10 players. My dot uses the same July–September medians. The typical value at my exact rapid rating is interpolated between bands. My level zooms into nearby ratings; the overview shows this frame in the whole sample.`
       : "Lines connect days played. The early bullet drop is a new rating settling. Rapid and bullet have separate rating pools. The July–September portion is summarized by its two median ratings before those values become one player dot. The medians differ from my latest ratings."
-  const label = step >= 8 ? `My pace: 5.0 seconds per move. Typical peer: 7.7 seconds. Faster than 93% of peers.`
-    : step === 7 ? "The same author, changing the question from ratings to speed."
-      : step >= 4 ? `My median rapid rating ${S.me[0]} is the horizontal coordinate; bullet ${S.me[1]} is vertical. ${step >= 5 ? `${S.players} sampled players; 87% are rated lower in bullet.` : ""} ${step === 6 ? `Typical bullet at my level is about ${EXPECTED}.` : ""}`
-        : "My rapid and bullet ratings through 2026. Bullet settled in the 400s. The July–September medians are rapid 678 and bullet 425."
+  const label = step >= 9 ? "The pace chart dissolves into a question: And what about the others?"
+    : step >= 7 ? "My pace: 5 seconds per move. Typical peer: 7.7 seconds. Faster than 93% of a separate sample of peers."
+      : step >= 4 ? `Normal chess rating is horizontal; fast chess is vertical. ${step >= 5 ? "87% of sampled players are rated lower in fast chess." : ""} ${step === 6 ? "My gap is about typical at my level." : ""}`
+        : "My normal and fast chess ratings through 2026, shown without numerical rating labels."
+  const chartStyle = { opacity: entry * (1 - exit), transform: still ? undefined : `translateY(${-exit * 24}px)` }
+
 
   return (
     <figure ref={box} className={c("ch-ratings")} data-mode={mode} data-still={still} data-rating-step={step}
       data-progress={at.toFixed(3)} data-focus={focus.toFixed(3)}>
-      <figcaption className={c("ch-ratingTitle")}>{title}</figcaption>
-      <p className={c("ch-ratingSubtitle")}>{subtitle}</p>
-      <svg className={c("ch-ratingCanvas")} width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={label}>
+      <div className={c("ch-ratingPhone")} aria-hidden={step >= 3} style={{ visibility: entry >= 1 ? "hidden" : "visible" }}>
+        <Message collapse={entry} target={{ x: tx(T.claim), y: top + canvasTop }} />
+      </div>
+      <figcaption className={c("ch-ratingTitle")} style={chartStyle} aria-hidden={step < 2 || step >= 9}>{title}</figcaption>
+      <p className={c("ch-ratingSubtitle")} style={chartStyle} aria-hidden={step < 2 || step >= 9}>{subtitle}</p>
+      <svg ref={canvas} className={c("ch-ratingCanvas")} width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={label} aria-hidden={step < 2 || step >= 9} style={{ opacity: 1 - exit, transform: still ? undefined : `translateY(${-exit * 24}px)` }}>
         <defs>
           <g id={`${id}-player`}><circle r={w < 400 ? 1.35 : 1.8}
             transform={`scale(${(xMax - xMin) / (right - left)},${(yMax - yMin) / (bottom - top)})`} /></g>
@@ -184,7 +169,7 @@ export const RatingStory = ({ step }) => {
           <clipPath id={`${id}-reveal`}><rect x={left} y={top - 10} width={Math.max(0, Math.min(right, tx(revealDate)) - left)} height={bottom - top + 10} /></clipPath>
         </defs>
         <g opacity={timelineOpacity} aria-hidden="true" data-layer="timeline">
-          {[200, 400, 600, 800, 1000].map(v => <g key={v}><line className={c("ch-ratingGrid")} x1={left} x2={right} y1={ty(v)} y2={ty(v)} /><text x={left - 8} y={ty(v) + 4} textAnchor="end">{v}</text></g>)}
+          {[200, 400, 600, 800, 1000].map(v => <g key={v}><line className={c("ch-ratingGrid")} x1={left} x2={right} y1={ty(v)} y2={ty(v)} /></g>)}
           <g clipPath={`url(#${id}-plot)`}>
             <rect className={c("ch-ratingWindow")} opacity={period * 0.14} x={tx(JULY)} y={top} width={tx(OCTOBER) - tx(JULY)} height={bottom - top} />
             <g clipPath={`url(#${id}-reveal)`} opacity={1 - period * 0.85}>
@@ -193,6 +178,7 @@ export const RatingStory = ({ step }) => {
             </g>
             <g opacity={1 - period}>
               <line className={c("ch-ratingRef")} x1={tx(T.claim)} x2={tx(T.claim)} y1={top} y2={bottom} />
+              <circle cx={tx(T.claim)} cy={top} r={3.5} fill="var(--thread)" />
               <text x={tx(T.claim) + 7} y={top + 14}>18 May · “soooo bad”</text>
             </g>
           </g>
@@ -201,8 +187,8 @@ export const RatingStory = ({ step }) => {
             return x >= left - 2 && x <= right + 2 && (period > 0.3 || m % 2) ? <text key={m} x={x} y={bottom + 22} textAnchor="middle">{["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov"][m - 1]}</text> : null
           })}
           <g opacity={1 - period}>
-            {rapid && <text x={right} y={ty(rapid[1]) - 11} textAnchor="end" className={c("ch-ratingPale")}>Rapid</text>}
-            {bullet && <text x={right} y={ty(bullet[1]) + 18} textAnchor="end" className={c("ch-ratingClay")}>Bullet</text>}
+            {rapid && <text x={right} y={ty(rapid[1]) - 11} textAnchor="end" className={c("ch-ratingPale")}>Normal chess (rapid)</text>}
+            {bullet && <text x={right} y={ty(bullet[1]) + 18} textAnchor="end" className={c("ch-ratingClay")}>Fast chess (bullet)</text>}
             <path className={c("ch-ratingGap")} opacity={smooth(at - 2)} d={`M${right - 18} ${ty(T.rapid.at(-1)[1])} h8 V${ty(T.bullet.at(-1)[1])} h-8`} />
           </g>
         </g>
@@ -216,7 +202,7 @@ export const RatingStory = ({ step }) => {
               {y >= top - 1 && y <= bottom + 1 && <g opacity={yAlpha}><line className={c("ch-ratingGrid")} x1={left} x2={right} y1={y} y2={y} /><text x={left - 8} y={y + 4} textAnchor="end">{v}</text></g>}
             </g>
           })}
-          <text x={left} y={16}>Bullet rating</text><text x={(left + right) / 2} y={h - 1} textAnchor="middle">Rapid rating</text>
+          <text x={left} y={16}>Fast chess (bullet)</text><text x={(left + right) / 2} y={h - 1} textAnchor="middle">Normal chess (rapid)</text>
           <g clipPath={`url(#${id}-plot)`}>
             <g transform={`matrix(${(right - left) / (xMax - xMin)},0,0,${(bottom - top) / (yMax - yMin)},${left - xMin * (right - left) / (xMax - xMin)},${bottom + yMin * (bottom - top) / (yMax - yMin)})`}>
               <line x1={0} y1={0} x2={3000} y2={-3000} className={c("ch-ratingRef")} vectorEffect="non-scaling-stroke" />
@@ -229,7 +215,7 @@ export const RatingStory = ({ step }) => {
           <g opacity={focus}>
             <circle cx={sx(S.me[0])} cy={sy(EXPECTED)} r={4} className={c("ch-ratingExpected")} />
             <path className={c("ch-ratingRef")} d={`M${sx(S.me[0])} ${sy(EXPECTED)} h${Math.min(60, w * 0.1)}`} />
-            <text x={sx(S.me[0]) + Math.min(60, w * 0.1) + 5} y={sy(EXPECTED) + 4}>Typical ≈{EXPECTED}</text>
+            <text x={sx(S.me[0]) + Math.min(60, w * 0.1) + 5} y={sy(EXPECTED) + 4}>Typical at my level</text>
           </g>
         </g>
         {/* Both period summaries physically become the two coordinate guides. */}
@@ -237,38 +223,44 @@ export const RatingStory = ({ step }) => {
           <line className={c("ch-ratingRapid")} x1={mix(left, sx(S.me[0]), morph)} x2={mix(right, sx(S.me[0]), morph)}
             y1={mix(ty(S.me[0]), bottom, morph)} y2={mix(ty(S.me[0]), top, morph)} />
           <line className={c("ch-ratingBullet")} x1={left} x2={right} y1={mix(ty(S.me[1]), sy(S.me[1]), morph)} y2={mix(ty(S.me[1]), sy(S.me[1]), morph)} />
-          <text className={c("ch-ratingPale")} x={mix(left + 8, sx(S.me[0]) + 8, morph)} y={mix(ty(S.me[0]) - 12, bottom - 12, morph)}>Rapid {S.me[0]}</text>
-          <text className={c("ch-ratingClay")} x={left + 8} y={mix(ty(S.me[1]), sy(S.me[1]), morph) - 12}>Bullet {S.me[1]}</text>
+          <text className={c("ch-ratingPale")} x={mix(left + 8, sx(S.me[0]) + 8, morph)} y={mix(ty(S.me[0]) - 12, bottom - 12, morph)}>Normal chess</text>
+          <text className={c("ch-ratingClay")} x={left + 8} y={mix(ty(S.me[1]), sy(S.me[1]), morph) - 12}>Fast chess</text>
         </g>
-        <g opacity={paceOpacity} aria-hidden="true" data-layer="pace" data-highlight={step >= 9}>
-          <text x={left} y={16}>Seconds per move · one dot, one peer</text>
+        <g opacity={paceOpacity} aria-hidden="true" data-layer="pace" data-highlight={step >= 8}>
+          <text x={left} y={16}>Seconds per move · players at my level</text>
           <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={bottom} y2={bottom} />
           {[0, 5, 10, 15].map(v => <text key={v} x={px(v)} y={bottom + 22} textAnchor="middle">{v}s</text>)}
           <text x={left} y={h - 1}>Faster</text><text x={right} y={h - 1} textAnchor="end">Slower</text>
-          <PaceCloud swarm={swarm} />
+          <g className={c("ch-paceDistribution")}>
+            {PACE_BINS.map((count, i) => {
+              const height = count / PACE_MAX * Math.max(20, bottom - 80)
+              return <rect key={i} x={px(i / 2)} y={bottom - height} width={Math.max(1, (right - left) / 36 - 1)} height={height} data-slower={i / 2 >= pace.me.seconds} />
+            })}
+          </g>
           <line className={c("ch-ratingRef")} x1={px(pace.peers.median)} x2={px(pace.peers.median)} y1={57} y2={bottom - 8} />
           <text x={px(pace.peers.median) + 8} y={49}>Typical · 7.7s</text>
           <line className={c("ch-paceMeLine")} x1={px(pace.me.seconds)} x2={px(pace.me.seconds)} y1={35} y2={bottom - 8} />
           <text className={c("ch-ratingClay")} x={px(pace.me.seconds) - 8} y={27} textAnchor="end">Me · 5.0s</text>
         </g>
         {/* One author marker, retained from the timeline through the final pace plot. */}
-        <g className={c("ch-ratingMe")} data-author-marker="true" opacity={step ? 1 : 0}
+        <g className={c("ch-ratingMe")} data-author-marker="true" opacity={entry * (1 - exit)}
           style={{ transform: `translate(${meX}px, ${meY}px)` }} aria-hidden="true">
           <circle r={step < 3 ? 4.5 : 6} />
           <text x={10} y={-12} opacity={smooth(morph / 0.6) * (1 - enterPace)}>Me</text>
         </g>
       </svg>
-      <div className={c("ch-ratingReadout")}>
-        {step >= 9 ? <span>Faster than <b>{Math.round(pace.fasterThan * 100)}%</b> of peers</span>
-          : step === 8 ? <span>Me <b>5.0s</b> · typical peer 7.7s per move</span>
-            : step === 7 ? <span>Same player. A different question.</span>
-              : step === 6 ? <><span className={c("ch-ratingClay")}>My bullet: {S.me[1]}</span><span>Typical at my level: ≈{EXPECTED}</span></>
-                : step === 5 ? <span><b>87%</b> are rated lower in bullet</span>
-                  : step === 3 || step === 4 ? <><span>Rapid {S.me[0]}</span><span className={c("ch-ratingClay")}>Bullet {S.me[1]}</span></>
-                    : step === 2 ? <><span>Rapid {T.rapid.at(-1)[1]}</span><span className={c("ch-ratingClay")}>Bullet {T.bullet.at(-1)[1]}</span></>
-                      : <span>Bullet began on 6 July · seven weeks after the message</span>}
+      <div className={c("ch-ratingLegend")} aria-hidden={step < 2 || step >= 7} style={{ ...chartStyle, visibility: step >= 7 ? "hidden" : undefined }}>
+        <span><i />Normal chess (rapid) — 10 minutes per player.</span>
+        <span><i />Fast chess (bullet) — 1 minute per player.</span>
       </div>
-      <div className={c("ch-ratingTools")}>
+      <div className={c("ch-ratingReadout")} style={chartStyle} aria-hidden={step < 2 || step >= 9}>
+        {step >= 8 ? <span>Faster than <b>9 in 10</b> players at my level</span>
+          : step === 7 ? <span>Me <b>5 seconds</b> · typical peer 7.7 seconds per move</span>
+            : step === 6 ? <span>My gap is about typical at my level</span>
+              : step === 5 ? <span><b>87%</b> are rated lower in fast chess</span>
+                : <span>July–September · the same period in both formats</span>}
+      </div>
+      <div className={c("ch-ratingTools")} style={chartStyle} inert={step < 2 || step >= 9} aria-hidden={step < 2 || step >= 9}>
         <div className={c("ch-ratingExplore")} inert={step !== 6} aria-hidden={step !== 6} data-visible={step === 6}>
           <div role="group" aria-label="Rating chart view" className={c("ch-ratingViews")}>
             <button type="button" aria-pressed={view !== "all"} onClick={e => chooseView("mine", e)}>My level</button>
@@ -282,6 +274,10 @@ export const RatingStory = ({ step }) => {
           </button>
         </div>
         <button className={c("ch-ratingDetails")} type="button" aria-expanded={summary} aria-controls={`${id}-notes`} onClick={() => setSummary(v => !v)}>About the data</button>
+      </div>
+      <div className={c("ch-ratingQuestion")} style={{ opacity: exit, transform: still ? undefined : `translateY(${(1 - exit) * 20}px)` }} aria-hidden={step < 9}>
+        <h3>And what about the others?</h3>
+        <p><span>badatchess…</span><span>chessmaster…</span><span>blundermaster…</span><span>futuregm…</span></p>
       </div>
       {summary && <p id={`${id}-notes`} className={c("ch-ratingHelp")}>{help}</p>}
     </figure>
