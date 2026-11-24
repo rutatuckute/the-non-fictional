@@ -229,6 +229,8 @@ export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, r
                   <span className={c("ch-stepMark")}><span id={item.mark} className={c("ch-mark")} /></span>
                 ) : null}
                 <div className={c("ch-card")}>{plain ? null : scrolling ? item.text : made ? item.card : item}</div>
+                {/* a link target that lands on this step; after the card, so the card stays the step's first child */}
+                {item?.anchor ? <span id={item.anchor} style={{ display: "block", height: 0 }} /> : null}
               </div>
               {made && item.rest ? <div style={{ height: `${item.rest * 100}vh` }} aria-hidden="true" /> : null}
             </React.Fragment>

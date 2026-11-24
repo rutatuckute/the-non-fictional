@@ -198,21 +198,27 @@ That's faster than **9 in 10** players at my level. Apparently, I am playing in 
 
 ### And what about the others?
 
-I made my claim in a text. Some people make theirs right in their usernames.
+That was my claim. Other people don't wait for a midnight text, they put it in their username.
 
 <!--step:say-guess-->
 
-Before looking at their ratings, what would you expect? Make a guess for each kind of name.
+Four kinds of claims. Before I show you their ratings: higher or lower than a typical opponent?
 
 <!--step:say-surprise-->
 
-The apologisers and the boasters both sit a little below a typical opponent. The players joking about blunders are above, and those aiming high are higher still.
+The chessmasters are rated below average. So are the ones who say they're bad, and the two are barely apart: about one bad afternoon.
 
-<!--step:say-limits-->
+<!--step:say-road-->
 
-A name is a claim, not a reliable guide to the person across the board. These are patterns across groups; any one player can be the exception.
+The ones joking about their blunders? Above average. And the road to GM? Higher than everyone. Still about 1,300 points short.
 
-People who call themselves bad aren't worse than those who call themselves good. But they do give up more often.
+<!--step:say-me-->
+
+And me? Right next to badatchess. Maybe that should have been my username.
+
+<!--step:say-giveup-->
+
+Calling yourself bad doesn't make you worse. It does make you quicker to give up: **52** of every 100 of their losses end with them pressing resign. Everyone else: **45**.
 
 <!--step:wrong-observation-->
 

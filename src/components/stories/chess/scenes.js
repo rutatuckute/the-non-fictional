@@ -6,7 +6,8 @@ import { CLUB_REST, ClubBoard } from "./club"
 import { Dive } from "./dive"
 import { c, Pinned, Show, Text, useNarrow } from "./parts"
 import { RatingStory } from "./ratings"
-import { Usernames } from "./say"
+import { NameAsk, NameScore } from "./say"
+import { GROUPS, crowdStage } from "./crowd"
 
 // The pinned scenes of the chess story: the club in London (Part II), and the
 // three questions put to the data. Where a graphic is not made yet, a box says
@@ -146,7 +147,7 @@ export const People = () => (
 // graphic, as everywhere since Part I.
 // Reserve the tallest passage above the chart on phones. Measuring all passages
 // keeps the graphic in one place as the words change, including at larger text sizes.
-const SayGraphics = ({ step }) => {
+const SayGraphics = ({ step, revealed }) => {
   const box = React.useRef(null)
   const narrow = useNarrow()
   React.useLayoutEffect(() => {
@@ -160,34 +161,52 @@ const SayGraphics = ({ step }) => {
   }, [narrow])
   return (
     <div ref={box} className={c("ch-stack", "ch-sayGraphics")}>
-      <RatingStory step={step} />
+      <RatingStory step={step} revealed={revealed} />
     </div>
   )
 }
 
-export const Say = () => (
-  <section className={c("ch-saySection")} aria-label="Claims and evidence">
-    <span id="what-we-say" className={c("ch-mark")} />
-    <Pinned
-      reading
-      className={c("ch-sayPin")}
-      label="What we say about ourselves"
-      steps={[
-        { text: <Text name="say-message" look="lead" className={c("ch-messageCopy")} /> },
-        { text: <Text name="say-claim" look="lead" />, rest: 0.25 },
-        { text: <Text name="say-isolation" look="lead" /> },
-        { text: <Text name="say-prediction" look="lead" /> },
-        { rest: 0.1 },
-        { text: <Text name="say-crowd" look="lead" /> },
-        { text: <Text name="say-perspective" look="lead" /> },
-        { text: <Text name="say-pace" look="lead" /> },
-        { text: <Text name="say-hurry" look="lead" />, rest: 0.25 },
-        { text: <Text name="say-others" look="lead" />, rest: 0.35 },
-      ]}
-    >
-      {step => <SayGraphics step={step} />}
-    </Pinned>
-    <Usernames />
-  </section>
-)
+export const Say = () => {
+  // What the reader guessed for each kind of username (this reading only).
+  const [guesses, setGuesses] = React.useState({})
+  const ask = g => ({
+    text: <NameAsk group={g} value={guesses[g.key]} onChange={v => setGuesses(all => ({ ...all, [g.key]: v }))} />,
+    rest: 0.15,
+  })
+  return (
+    <section className={c("ch-saySection")} aria-label="Claims and evidence">
+      <span id="what-we-say" className={c("ch-mark")} />
+      <Pinned
+        reading
+        className={c("ch-sayPin")}
+        label="What we say about ourselves"
+        steps={[
+          { text: <Text name="say-message" look="lead" className={c("ch-messageCopy")} /> },
+          { text: <Text name="say-claim" look="lead" />, rest: 0.25 },
+          { text: <Text name="say-isolation" look="lead" /> },
+          { text: <Text name="say-prediction" look="lead" /> },
+          { rest: 0.1 },
+          { text: <Text name="say-crowd" look="lead" /> },
+          { text: <Text name="say-perspective" look="lead" /> },
+          { text: <Text name="say-pace" look="lead" /> },
+          { text: <Text name="say-hurry" look="lead" />, rest: 0.25 },
+          { text: <Text name="say-others" look="lead" className={c("ch-messageCopy")} />, rest: 0.3, anchor: "what-names-say" },
+          { text: <Text name="say-guess" look="lead" /> },
+          ...GROUPS.map(ask),
+          { text: <><NameScore guesses={guesses} /><Text name="say-surprise" look="lead" /></>, rest: 0.1 },
+          { text: <Text name="say-road" look="lead" /> },
+          { text: <Text name="say-me" look="lead" />, rest: 0.15 },
+          { text: <Text name="say-giveup" look="lead" />, rest: 0.35 },
+        ]}
+      >
+        {step => {
+          // A row opens when its guess is made, and every row once the result is read.
+          const all = ["all", "me", "giveup"].includes(crowdStage(step))
+          const revealed = Object.fromEntries(GROUPS.map(g => [g.key, all || Boolean(guesses[g.key])]))
+          return <SayGraphics step={step} revealed={revealed} />
+        }}
+      </Pinned>
+    </section>
+  )
+}
 
