@@ -1,5 +1,11 @@
 # What we say — verification, 21 November 2026
 
+## 24 November — sticky investigation identity
+
+Renamed the chapter to “Looking for answers in the data”. Added a quiet parent label and prominent active question, with the shared choice-screen board motif and no header numbering. Each title persists throughout its entire investigation, including usernames and both resignation paths. Choice labels now match the reading titles. Measured header/copy clearance preserves the claims charts and adjusts compact fork/style layouts. Reduced motion removes heading translation; inactive states are aria-hidden.
+
+Typecheck, production build and whitespace checks passed. Local Chromium checks at 320×640, 375×812, 768×1024, 1024×768 and 1440×900 covered all three titles and icons, sticky persistence, usernames, both resignation paths, forward/reverse anchor jumps, reduced motion, header/prose/graphic clearance, no horizontal overflow and no page errors. Screenshots inspected on phone and desktop in `/tmp/chess-investigation-headings/`. Reproduction: `chess-story/checks/investigation-headings.cjs` in the data-stories repo. Physical devices were not tested. No dependencies, schema, data or production content changed.
+
 ## 24 November — continuous graph choreography
 
 Replaced chart swaps with a persistent timeline / coordinate construction / population / pace stage. Added period zoom, median-to-coordinate guide transformation, a retained author marker, global and local rating cameras, typical-line drawing, a clickable overview with “My level / All players”, and a pace beeswarm. Enlarged the desktop plotting area, retained phone text clearance, cleared the sticky heading at intermediate desktop widths, and added opening/final reading pauses. Two short passages introduce the coordinate construction and speed question. No source observations, dependencies, schema or later story sections changed.

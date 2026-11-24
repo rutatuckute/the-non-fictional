@@ -166,12 +166,25 @@ export const useNarrow = () => {
 }
 
 export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, reading = false, mark, className = "", overlay, children }) => {
+  const root = React.useRef(null)
   const [step, stepRef, refs] = useStep(steps.length)
   const narrow = useNarrow()
   const plain = plainOnly || (reading && narrow)
   const scrolling = reading && !narrow
+  React.useLayoutEffect(() => {
+    const pin = root.current
+    if (!plain || !pin.closest('[data-part="investigation"]')) return
+    const copy = pin.querySelector(`.${c("ch-told")} > [data-on="true"]`)
+    if (!copy) return
+    const measure = () => pin.style.setProperty("--investigation-copy-height", `${Math.ceil(copy.getBoundingClientRect().height)}px`)
+    const observer = new ResizeObserver(measure)
+    observer.observe(copy)
+    measure()
+    return () => observer.disconnect()
+  }, [plain, step])
   return (
     <section
+      ref={root}
       className={`${c("ch-pin")} ${className}`}
       data-open={open ? "true" : undefined}
       data-plain={plain ? "true" : undefined}

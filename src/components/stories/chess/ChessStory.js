@@ -7,6 +7,7 @@ import { c, Picture, Text, Words } from "./parts"
 import { Device } from "./origin"
 import { People, Say } from "./scenes"
 import { Reveal } from "./reveal"
+import { InvestigationHeader } from "./investigation-header"
 import { Chat } from "./phone-scenes"
 import { Wrong } from "./wrong"
 import { Knots, Thread } from "./thread"
@@ -246,15 +247,15 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           <People />
         </div>
 
-        {/* Part III: down the rabbit hole into three questions (dive.js), then
-            each in turn. Its name stays at the top from the three boards on. */}
+        {/* Part III: the parent label and each question's board/title stay at
+            the top while its investigation is read, including its sub-sections. */}
         <div className={c("ch-people", "ch-part3")} data-part="investigation" data-titled="true">
           <div className={c("ch-peopleTitle")}>
-            <Text name="investigation-title" look="partTitle" />
+            <InvestigationHeader />
           </div>
-          <Say />
-          <Wrong guess={guess("resign")} />
-          <Reveal />
+          <section data-investigation-part="what-we-say"><Say /></section>
+          <section data-investigation-part="when-things-go-wrong"><Wrong guess={guess("resign")} /></section>
+          <section data-investigation-part="what-we-choose"><Reveal /></section>
         </div>
 
         <section className={c("ch-free", "ch-back")} aria-label="Back to the threads of life">

@@ -1153,3 +1153,50 @@
   /* the longer texts have to fit above the board, and above Part II's scene */
   .ch-people .ch-woodenText .ch-text.ch-lead, .ch-people .ch-woodenTold .ch-text.ch-lead, .ch-told .ch-text.ch-lead { font-size: 19px; line-height: 1.4; }
 }
+
+/* The investigation's parent label stays quiet; its current question is the
+   reading title. The same boards identify the choices and the active part. */
+.ch-part3 { --investigation-top: calc(var(--bar) + 2svh); --investigation-bottom: calc(var(--investigation-top) + var(--investigation-header-height, 64px)); }
+.ch-part3 > .ch-peopleTitle { top: var(--investigation-top); }
+.ch-investigationHeader { position: relative; box-sizing: border-box; width: min(64%, 44rem); padding: 4px 12px 10px 60px; background: var(--void); box-shadow: 0 0 16px 10px var(--void); }
+.ch-peopleTitle .ch-investigationEyebrow { display: block; margin: 0 0 4px; padding: 0; background: none; box-shadow: none; }
+.ch-story .ch-investigationEyebrow h2 { margin: 0; padding: 0; border: 0; color: var(--ink-3); font: 400 12px / 1.35 var(--font-mono); letter-spacing: 0; text-transform: none; white-space: normal; text-align: left; }
+.ch-investigationStates { display: grid; }
+.ch-investigationState { position: relative; grid-area: 1 / 1; opacity: 0; visibility: hidden; transform: translateY(4px); transition: opacity 200ms ease, transform 220ms cubic-bezier(0.19, 1, 0.22, 1), visibility 0s linear 220ms; }
+.ch-investigationState[data-active="true"] { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+.ch-investigationState > .ch-investigationBoard { position: absolute; left: -60px; top: calc(50% - 12px); transform: translateY(-50%); width: 48px; height: 50px; }
+.ch-story .ch-investigationState h3 { margin: 0; padding: 0; border: 0; color: var(--ink); font: 400 clamp(23px, 2.1vw, 28px) / 1.12 var(--font-title); letter-spacing: -0.02em; white-space: normal; }
+.ch-part3 .ch-card .ch-text > h3, .ch-part3 .ch-told .ch-text > h3 { display: none; }
+.ch-part3 .ch-pin[data-reading="true"] .ch-scene { top: calc(var(--investigation-bottom) + 16px); bottom: 16px; }
+.ch-diveTitle .ch-partTitle h2 { white-space: normal; }
+@media (max-width: 60rem) {
+  .ch-part3 { --investigation-top: calc(var(--bar) + 1.2svh); }
+  .ch-investigationHeader { width: 100%; padding-left: 48px; padding-right: 4px; }
+  .ch-peopleTitle .ch-investigationEyebrow { margin-bottom: 3px; }
+  .ch-story .ch-investigationEyebrow h2 { font-size: 11px; }
+  .ch-story .ch-investigationState h3 { font-size: 18px; line-height: 1.2; }
+  .ch-investigationState > .ch-investigationBoard { left: -48px; top: calc(50% - 8px); width: 36px; height: 38px; }
+  .ch-part3 .ch-pin[data-plain="true"] { --investigation-graphic-height: calc(100svh - var(--investigation-bottom) - var(--investigation-copy-height, 120px) - 40px); }
+  .ch-part3 .ch-told { top: calc(var(--investigation-bottom) + 12px); }
+  .ch-part3 .ch-pin[data-plain="true"] .ch-scene { top: calc(var(--investigation-bottom) + var(--investigation-copy-height, 120px) + 24px); bottom: 16px; height: var(--investigation-graphic-height); }
+  .ch-part3 .ch-sayPin[data-plain="true"] .ch-scene { top: calc(var(--investigation-bottom) + var(--say-copy, 130px) + 24px); height: calc(100svh - var(--investigation-bottom) - var(--say-copy, 130px) - 40px); }
+  .ch-part3 .ch-wrong .ch-cc { --cc: min(100%, 44svh, max(80px, calc(var(--investigation-graphic-height) - 112px))); }
+  .ch-part3 .ch-wrong :is(.ch-hundred, .ch-levels, .ch-mine) > svg { max-height: max(96px, calc(var(--investigation-graphic-height) - 110px)); }
+  .ch-part3 .ch-reveal .ch-scales { gap: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ch-investigationState { transform: none; transition: opacity 160ms ease, visibility 0s linear 160ms; }
+}
+@media (max-width: 40rem) {
+  .ch-part3 .ch-reveal .ch-scales { gap: 6px; }
+  .ch-part3 .ch-reveal .ch-scaleHead { margin-bottom: 3px; }
+  .ch-part3 .ch-reveal .ch-scaleRow { margin-top: 2px; }
+  .ch-part3 .ch-reveal .ch-scaleSays { margin-top: 4px; }
+  .ch-part3 .ch-reveal .ch-scaleRow svg { max-height: clamp(16px, calc((var(--investigation-graphic-height) - 360px) / 6), 44px); }
+}
+
+@media (max-width: 60rem) {
+  .ch-part3 .ch-wrongFork { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; gap: 8px; }
+  .ch-part3 .ch-wrongWay { min-width: 0; padding: 4px 4px 8px; }
+  .ch-part3 .ch-wrongWay .ch-cc { --cc: min(100%, max(52px, calc(var(--investigation-graphic-height) - 156px))); }
+}

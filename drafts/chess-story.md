@@ -154,7 +154,7 @@ So I went down the rabbit hole.
 
 <!--step:investigation-title-->
 
-## The answers in the data
+## Looking for answers in the data
 
 <!--step:data-intro-->
 
