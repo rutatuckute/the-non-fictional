@@ -1208,8 +1208,6 @@
 .ch-ratingLegend span { display: flex; align-items: baseline; gap: 7px; }
 .ch-ratingLegend i { flex: 0 0 16px; border-top: 2px solid color-mix(in srgb, var(--thread) 45%, var(--ink)); }
 .ch-ratingLegend span + span i { border-color: var(--thread); }
-.ch-paceDistribution rect { fill: var(--ink-3); opacity: 0.55; }
-.ch-ratings [data-highlight="true"] .ch-paceDistribution rect[data-slower="true"] { fill: var(--ink-2); opacity: 0.85; }
 .ch-ratingQuestion { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; pointer-events: none; }
 .ch-ratingQuestion h3 { max-width: 12em; margin: 0; color: var(--ink); font: 400 clamp(30px, 4vw, 56px) / 1.06 var(--font-title); letter-spacing: -0.025em; }
 .ch-story .ch-ratingQuestion p { display: flex; flex-wrap: wrap; gap: 14px 28px; margin: 28px 0 0; color: var(--ink-3); font: 400 clamp(12px, 1.2vw, 16px) / 1.5 var(--font-mono); }

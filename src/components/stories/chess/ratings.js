@@ -22,6 +22,7 @@ const typicalAt = r => {
   return S.curve.at(-1).bullet
 }
 const EXPECTED = Math.round(typicalAt(S.me[0]))
+const LINKED_SCATTER = new Set(pace.peers.scatterIndices.filter(i => i !== null))
 const WORLD_TICKS = Array.from({ length: 16 }, (_, i) => i * 200)
 
 const useCamera = (goal, immediate, automatic) => {
@@ -49,7 +50,7 @@ const useCamera = (goal, immediate, automatic) => {
 // Memoization keeps 1,388 marks out of the per-frame React reconciliation work.
 const RatingCloud = React.memo(function RatingCloud({ dot }) {
   return <g className={c("ch-ratingPeers")}>
-    {S.points.map(([rapid, bullet], i) => <use key={i} href={`#${dot}`} x={rapid} y={-bullet}
+    {S.points.map(([rapid, bullet], i) => LINKED_SCATTER.has(i) ? null : <use key={i} href={`#${dot}`} x={rapid} y={-bullet}
       data-lower={bullet < rapid} data-near={Math.abs(rapid - S.me[0]) <= 100} />)}
   </g>
 })
@@ -57,10 +58,34 @@ const OverviewCloud = React.memo(function OverviewCloud() {
   return <g fill="var(--ink-3)">{S.points.map(([x, y], i) => <circle key={i} cx={x / 3000 * 56} cy={34 - y / 3000 * 34} r={0.55} />)}</g>
 })
 
-// A histogram uses the separate pace cohort without implying that rating dots
-// are the same players. Each half-second bin counts real exported observations.
-const PACE_BINS = Array.from({ length: 36 }, (_, i) => pace.peers.seconds.filter(v => v >= i / 2 && v < (i + 1) / 2).length)
-const PACE_MAX = Math.max(...PACE_BINS)
+// Deterministic beeswarm: x is the recorded pace, y only prevents collisions.
+// Source-linked identities are retained for the players shared by both cohorts.
+const packPace = (width, left, right, top, bottom) => {
+  const radius = width < 400 ? 1 : 1.65
+  const diameter = radius * 2 + 0.5
+  const points = []
+  const centre = (top + bottom) / 2
+  for (const { seconds, index } of pace.peers.seconds.map((seconds, index) => ({ seconds, index })).sort((a, b) => a.seconds - b.seconds)) {
+    const x = scale(seconds, 0, 18, left, right)
+    const neighbours = []
+    for (let i = points.length - 1; i >= 0 && x - points[i].x < diameter; i--) neighbours.push(points[i])
+    let offset = 0
+    for (let k = 0; k < pace.peers.players * 2; k++) {
+      offset = k === 0 ? 0 : Math.ceil(k / 2) * diameter * (k % 2 ? 1 : -1)
+      if (neighbours.every(q => (x - q.x) ** 2 + (centre + offset - q.y) ** 2 >= diameter ** 2 - 0.01)) break
+    }
+    points.push({ x, y: centre + offset, seconds, index, scatterIndex: pace.peers.scatterIndices[index] })
+  }
+  // Compress the packing vertically if needed; x continues to encode exact pace.
+  const extent = Math.max(...points.map(q => Math.abs(q.y - centre)), 1)
+  const compression = Math.min(1, ((bottom - top) / 2 - radius) / extent)
+  return { radius, points: points.map(q => ({ ...q, y: centre + (q.y - centre) * compression })) }
+}
+const PaceCloud = React.memo(function PaceCloud({ swarm }) {
+  return <g className={c("ch-paceCloud")}>
+    {swarm.points.filter(q => q.scatterIndex === null).map(q => <circle key={q.index} data-pace-index={q.index} cx={q.x} cy={q.y} r={swarm.radius} data-slower={q.seconds > pace.me.seconds} />)}
+  </g>
+})
 
 export const RatingStory = ({ step }) => {
   const box = React.useRef(null), canvas = React.useRef(null), steps = React.useContext(PinSteps)
@@ -123,7 +148,8 @@ export const RatingStory = ({ step }) => {
   const paceOpacity = smooth((enterPace - 0.2) / 0.6)
   const medianOpacity = smooth((period - 0.4) / 0.4) * (1 - bridge)
   const guideOpacity = medianOpacity * (1 - smooth(out / 0.7))
-  const paceY = bottom - 12
+  const swarm = React.useMemo(() => packPace(w, left, right, 68, bottom - 12), [w, h, left, right, bottom])
+  const paceY = (68 + bottom - 12) / 2
   const revealDate = mix(time(T.bulletFirst), END, smooth((at - 2.35) / 0.65))
   const rapid = T.rapid.filter(q => time(q[0]) <= revealDate).at(-1)
   const bullet = T.bullet.filter(q => time(q[0]) <= revealDate).at(-1)
@@ -142,7 +168,7 @@ export const RatingStory = ({ step }) => {
     : step === 5 || step === 6 ? `${S.players.toLocaleString("en-GB")} players · July–September medians`
       : step >= 7 ? `${pace.peers.players.toLocaleString("en-GB")} peers at my level · July–September` : "2026 · last rating each day played"
   const help = mode === "pace"
-    ? `Shaded bars count players by their typical seconds per move, in half-second intervals. Ten-minute games without increment, lasting at least 10 moves. ${pace.me.games} of my games; peers have median rapid ratings of ${pace.ratingBand[0]}–${pace.ratingBand[1]} and at least ${pace.minGames} qualifying games. For each game, clock time used divided by moves played; then the median across games for each player. The distribution uses values rounded to 0.1s; the percentile is calculated before rounding. This is a different qualifying peer sample from the rating chart.`
+    ? `One dot per player. The 231 players shared with the rating sample move from their actual scatter positions; the remaining dots fade out or in as the cohort changes. Ten-minute games without increment, lasting at least 10 moves. ${pace.me.games} of my games; peers have median rapid ratings of ${pace.ratingBand[0]}–${pace.ratingBand[1]} and at least ${pace.minGames} qualifying games. For each game, clock time used divided by moves played; then the median across games for each player. Dots use values rounded to 0.1s; the percentile is calculated before rounding. This is a different qualifying peer sample from the rating chart.`
     : mode === "scatter"
       ? `One dot per player with at least 20 games in each format. The diagonal means equal ratings. The typical line joins median bullet ratings in 100-point rapid bands with at least 10 players. My dot uses the same July–September medians. The typical value at my exact rapid rating is interpolated between bands. My level zooms into nearby ratings; the overview shows this frame in the whole sample.`
       : "Lines connect days played. The early bullet drop is a new rating settling. Rapid and bullet have separate rating pools. The July–September portion is summarized by its two median ratings before those values become one player dot. The medians differ from my latest ratings."
@@ -227,20 +253,30 @@ export const RatingStory = ({ step }) => {
           <text className={c("ch-ratingClay")} x={left + 8} y={mix(ty(S.me[1]), sy(S.me[1]), morph) - 12}>Fast chess</text>
         </g>
         <g opacity={paceOpacity} aria-hidden="true" data-layer="pace" data-highlight={step >= 8}>
-          <text x={left} y={16}>Seconds per move · players at my level</text>
+          <text x={left} y={16}>Seconds per move · one dot, one peer</text>
           <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={bottom} y2={bottom} />
           {[0, 5, 10, 15].map(v => <text key={v} x={px(v)} y={bottom + 22} textAnchor="middle">{v}s</text>)}
           <text x={left} y={h - 1}>Faster</text><text x={right} y={h - 1} textAnchor="end">Slower</text>
-          <g className={c("ch-paceDistribution")}>
-            {PACE_BINS.map((count, i) => {
-              const height = count / PACE_MAX * Math.max(20, bottom - 80)
-              return <rect key={i} x={px(i / 2)} y={bottom - height} width={Math.max(1, (right - left) / 36 - 1)} height={height} data-slower={i / 2 >= pace.me.seconds} />
-            })}
-          </g>
+          <PaceCloud swarm={swarm} />
           <line className={c("ch-ratingRef")} x1={px(pace.peers.median)} x2={px(pace.peers.median)} y1={57} y2={bottom - 8} />
           <text x={px(pace.peers.median) + 8} y={49}>Typical · 7.7s</text>
           <line className={c("ch-paceMeLine")} x1={px(pace.me.seconds)} x2={px(pace.me.seconds)} y1={35} y2={bottom - 8} />
           <text className={c("ch-ratingClay")} x={px(pace.me.seconds) - 8} y={27} textAnchor="end">Me · 5.0s</text>
+        </g>
+        {/* These are the same source players in both charts, never an arbitrary pairing. */}
+        <g clipPath={`url(#${id}-plot)`} aria-hidden="true" data-layer="linked-peers"
+          opacity={smooth((morph - 0.45) / 0.55) * crowdOpacity}>
+          {swarm.points.filter(q => q.scatterIndex !== null).map(q => {
+            const [rapid, bullet] = S.points[q.scatterIndex]
+            const alpha = step >= 8 ? (q.seconds > pace.me.seconds ? 1 : 0.3)
+              : step >= 7 ? 0.7 : step === 6 ? (Math.abs(rapid - S.me[0]) <= 100 ? 0.85 : 0.2)
+                : step === 5 ? (bullet < rapid ? 0.9 : 0.18) : 0.65
+            const fill = step >= 8 && q.seconds > pace.me.seconds ? "var(--ink)"
+              : step === 6 && Math.abs(rapid - S.me[0]) <= 100 || step === 5 && bullet < rapid ? "var(--ink-2)" : "var(--ink-3)"
+            return <circle key={q.scatterIndex} data-linked-peer="true" data-scatter-index={q.scatterIndex} data-pace-index={q.index}
+              r={mix(w < 400 ? 1.35 : 1.8, swarm.radius, enterPace)} fill={fill} opacity={alpha}
+              style={{ transform: `translate(${mix(sx(rapid), q.x, enterPace)}px, ${mix(sy(bullet), q.y, enterPace)}px)` }} />
+          })}
         </g>
         {/* One author marker, retained from the timeline through the final pace plot. */}
         <g className={c("ch-ratingMe")} data-author-marker="true" opacity={entry * (1 - exit)}
