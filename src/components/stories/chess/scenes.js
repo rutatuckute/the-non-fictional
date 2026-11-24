@@ -175,14 +175,16 @@ export const Say = () => (
       className={c("ch-sayPin")}
       label="What we say about ourselves"
       steps={[
-        { text: <Text name="say-message" look="lead" className={c("ch-messageCopy")} /> },
+        { text: <Text name="say-message" look="lead" className={c("ch-messageCopy")} />, rest: 0.25 },
         { text: <Text name="say-isolation" look="lead" /> },
         { text: <Text name="say-prediction" look="lead" /> },
         { text: <Text name="say-widen" look="lead" /> },
+        { text: <Text name="say-dot" look="lead" />, rest: 0.3 },
         { text: <Text name="say-crowd" look="lead" /> },
         { text: <Text name="say-perspective" look="lead" /> },
+        { text: <Text name="say-pace-question" look="lead" /> },
         { text: <Text name="say-pace" look="lead" /> },
-        { text: <Text name="say-hurry" look="lead" />, rest: 0.25 },
+        { text: <Text name="say-hurry" look="lead" />, rest: 0.65 },
       ]}
     >
       {step => <SayGraphics step={step} />}

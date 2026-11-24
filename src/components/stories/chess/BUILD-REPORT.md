@@ -1,5 +1,11 @@
 # What we say — verification, 21 November 2026
 
+## 24 November — continuous graph choreography
+
+Replaced chart swaps with a persistent timeline / coordinate construction / population / pace stage. Added period zoom, median-to-coordinate guide transformation, a retained author marker, global and local rating cameras, typical-line drawing, a clickable overview with “My level / All players”, and a pace beeswarm. Enlarged the desktop plotting area, retained phone text clearance, cleared the sticky heading at intermediate desktop widths, and added opening/final reading pauses. Two short passages introduce the coordinate construction and speed question. No source observations, dependencies, schema or later story sections changed.
+
+Typecheck, production build and whitespace checks passed. Local Chromium checks passed at 320×640, 375×812, 768×1024, 1024×768 and 1440×900. Verification covers all ten stages, the intermediate morph, stopped-scroll synchronization, reverse jumps, retention of the same author SVG node, all 1,252 pace dots, automatic local zoom, pointer and keyboard camera controls, reduced motion, viewport fit, chapter-title clearance, text/graphic overlap and page errors. Evidence is in `/tmp/chess-say-motion/`; the updated browser check is `chess-story/checks/say-ratings.cjs` in the data-stories repo. Physical devices were not tested.
+
 ## 24 November — personal claim, ordinary gap and rapid pace
 
 Removed the numerical gap guess and timeline scrubber, shortened the prose, acknowledged the move from blitz to faster bullet, and completed the rating timeline before its conclusion. Added a July–September comparison-period beat to establish the medians used by the scatter. The typical-line reveal emphasizes the author's rating neighbourhood and explicitly compares bullet 425 with an interpolated typical value of about 406. Added the existing A7 pace analysis: 267 personal ten-minute games, 1,252 comparable players, 5.0s per move against 7.7s, faster than 92.6% (93% on the chart, “9 in 10” in prose). Added the method note and updated the research export and existing browser check. No username findings or later style scales changed.

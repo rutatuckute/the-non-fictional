@@ -180,6 +180,10 @@ Seemed about right.
 
 But bad compared with whom?
 
+<!--step:say-dot-->
+
+Put those two ratings together, and that's me.
+
 <!--step:say-crowd-->
 
 Each dot is someone who plays both.
@@ -191,6 +195,12 @@ For **87%**, bullet is lower than rapid.
 And there I am. About where you'd expect.
 
 The gap I had taken so personally was ordinary.
+
+<!--step:say-pace-question-->
+
+Same player.
+
+How fast do I actually move?
 
 <!--step:say-pace-->
 
