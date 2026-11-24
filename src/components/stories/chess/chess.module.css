@@ -133,13 +133,16 @@
 
 /* ── words ── */
 .ch-text { position: relative; z-index: 2; min-width: 0; max-width: 34rem; }
-/* Every named passage shares the same alignment, including the wooden set
-   and free-scroll sections outside the pinned cards. */
+/* Later passages stay centred; the opening question and personal memory
+   keep the left edge of their original reading columns. */
 .ch-story .ch-text,
 .ch-story .ch-text :is(p, h2, h3, h4, blockquote, li) { text-align: center; }
 .ch-col > .ch-text,
 .ch-woodenText > .ch-text,
 .ch-woodenAfter > .ch-text { margin-inline: auto; }
+.ch-story :is(.ch-open, .ch-memory) .ch-text,
+.ch-story :is(.ch-open, .ch-memory) .ch-text :is(p, h2, h3, h4, blockquote, li) { text-align: left; }
+.ch-memory .ch-col > .ch-text { margin-inline: 0; }
 .ch-text > :last-child { margin-bottom: 0; }
 .ch-text.ch-large {
   max-width: 20em;
@@ -147,8 +150,9 @@
 }
 .ch-text.ch-headline { font-size: clamp(30px, 3.4vw, 46px); line-height: 1.08; letter-spacing: var(--tracking-display); }
 .ch-text.ch-lead { font-size: clamp(20px, 1.8vw, 25px); line-height: 1.45; }
+.ch-people .ch-text.ch-lead, .ch-back .ch-text.ch-lead { font-size: clamp(22px, 2vw, 28px); }
 .ch-text.ch-medium { font-size: clamp(22px, 2.6vw, 32px); line-height: 1.2; letter-spacing: var(--tracking-title); text-wrap: balance; }
-.ch-text.ch-cardText { font-size: 17px; line-height: 1.5; }
+.ch-text.ch-cardText { font-size: 18px; line-height: 1.5; }
 /* Said in passing: smaller and quieter than the text it follows. */
 .ch-text.ch-quiet { font-size: clamp(16px, 1.3vw, 18px); line-height: 1.5; color: var(--ink-2); }
 /* Said aloud, in a speech balloon. */
@@ -229,7 +233,7 @@
 .ch-memory .ch-text.ch-headline { font-size: var(--t-statement); }
 .ch-memory .ch-text.ch-medium { font-size: var(--t-second); line-height: 1.15; letter-spacing: var(--tracking-display); }
 /* "Hold on to it for a moment.", and the reader's choice to keep a thread */
-.ch-hold { display: grid; justify-items: center; gap: 14px; margin-top: 18px; max-width: 56%; }
+.ch-hold { display: grid; justify-items: start; gap: 14px; margin-top: 18px; max-width: 56%; }
 .ch-hold .ch-text { color: var(--ink-2); font-size: clamp(16px, 1.3vw, 19px); line-height: 1.4; }
 /* A small quiet button, in the story's own type: the reader's thread, en passant. */
 .ch-story .ch-ask {
@@ -244,7 +248,7 @@
 .ch-story .ch-ask i { width: 18px; height: 0; border-top: 1.5px solid var(--ink-3); transition: border-color var(--ch-fade) ease; }
 .ch-story .ch-ask[aria-pressed="true"] { color: var(--form-data); border-color: var(--form-data); background: color-mix(in srgb, var(--form-data) 10%, var(--void)); }
 .ch-story .ch-ask[aria-pressed="true"] i { border-top-color: var(--form-data); }
-.ch-told2 .ch-ask { justify-self: center; margin-top: 6px; }
+.ch-told2 .ch-ask { justify-self: start; margin-top: 6px; }
 .ch-told2 .ch-ask i { border-top-color: var(--thread); }
 
 /* The Pocket Micro (origin.js). It lies in its place in the memory; while
@@ -363,6 +367,15 @@
 .ch-crossings { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .ch-crossings path { fill: none; stroke: var(--ink-3); stroke-opacity: 0.75; stroke-width: 1.3; stroke-linecap: round; transition: opacity 300ms ease; }
 .ch-many { position: absolute; left: 0; top: 0; width: 64%; height: 100%; color: var(--ink-2); pointer-events: none; }
+/* The last screen of threads is also the first screen of this weave. The
+   board lands in the club scene's exact layout before that scene takes over. */
+.ch-threadBridge { height: 240vh; height: 240svh; margin-top: -100vh; margin-top: -100svh; background: transparent; }
+.ch-threadBridge .ch-stage { background: var(--void); }
+.ch-threadBridge:not([data-active="true"]) .ch-stage { opacity: 0; pointer-events: none; }
+.ch-threadBridge + .ch-club { margin-top: -100vh; margin-top: -100svh; background: transparent; }
+.ch-threadBridge + .ch-club .ch-stage { background: var(--void); }
+.ch-threadBridge + .ch-club:not([data-arrived="true"]) .ch-stage { opacity: 0; pointer-events: none; }
+.ch-threadBridge .ch-clubBoard { opacity: 0; transition: none; }
 /* How the author pictures each stranger: beside the phone, drawing itself in. */
 .ch-pictured { position: absolute; left: 45%; top: 26%; width: 19%; z-index: 4; pointer-events: none; }
 .ch-pictured .ch-who { left: 0; top: 0; width: 100%; max-width: none; }
@@ -983,14 +996,19 @@
 /* the phone close: its lower part, where the chat is, fading out upwards. The
    messages are the page's own text: hers in clay, his in a quiet grey. */
 .ch-chat {
-  grid-column: 1 / 7; justify-self: center; position: relative; z-index: 2; width: 100%; max-width: 460px; aspect-ratio: 800 / 1000; overflow: hidden; container-type: inline-size;
+  grid-column: 1 / 7; justify-self: center; position: relative; z-index: 2; width: 100%; max-width: 460px; aspect-ratio: 800 / 1000; container-type: inline-size;
+}
+.ch-chatFrame { position: absolute; inset: 0; overflow: hidden;
   -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%); mask-image: linear-gradient(to bottom, transparent, #000 22%);
 }
 .ch-chat img { position: absolute; left: 0; bottom: 0; display: block; width: 100%; height: auto; }
 .ch-chatScreen { position: absolute; left: 13%; right: 13%; bottom: 12%; display: grid; gap: 3.2cqw; font: 400 3.5cqw / 1.42 var(--font-mono); }
 .ch-story .ch-chatDay { justify-self: center; color: var(--ink-3); font-size: 2.9cqw; letter-spacing: 0.04em; }
+.ch-chatFrame > .ch-chatDay { position: absolute; left: 50%; top: 25%; transform: translateX(-50%); white-space: nowrap; font-family: var(--font-mono); }
 .ch-story .ch-chatTheirs, .ch-story .ch-chatMine { max-width: 78%; padding: 2.6cqw 3.6cqw; }
 .ch-story .ch-chatTheirs { justify-self: start; border-radius: 3.8cqw 3.8cqw 3.8cqw 1cqw; background: #34322f; color: var(--ink); }
+.ch-chatScreen .ch-chatTheirs { visibility: hidden; }
+.ch-story .ch-messagePop.ch-chatPop { top: 43%; width: min(110%, 440px, calc(100vw - 2 * var(--page-margin))); border-radius: 22px 22px 22px 6px; background: #34322f; color: #f0e9df; }
 .ch-story .ch-chatMine { justify-self: end; border-radius: 3.8cqw 3.8cqw 1cqw 3.8cqw; background: var(--thread); color: #fff8ef; }
 .ch-endingTitle { position: relative; z-index: 2; padding-top: 12vh; }
 .ch-encounter .ch-col { grid-column: 8 / 12; align-self: center; }
@@ -1075,7 +1093,7 @@
   .ch-scene { inset: max(7svh, calc(var(--bar) + 10px)) var(--page-margin) auto; height: 54svh; }
   .ch-step { align-items: flex-end; min-height: 100vh; padding-bottom: 5vh; }
   .ch-card { width: 100%; padding: 14px 16px 16px; background: color-mix(in srgb, var(--raised) 94%, transparent); }
-  .ch-text.ch-cardText { font-size: 16px; }
+  .ch-text.ch-cardText { font-size: 17px; }
   .ch-boardwrap { width: min(34svh, 60%); }
   /* the phone and the words beside it need the screen's width */
   .ch-boardwrap[data-view="phone"] { width: min(46svh, 92%); }
@@ -1110,5 +1128,5 @@
   .ch-story { --t-display: min(52px, 13.6vw); }
   .ch-plot, .ch-woodenChart .ch-plot { aspect-ratio: 1.55; }
   /* the longer texts have to fit above the board, and above Part II's scene */
-  .ch-woodenText .ch-text.ch-lead, .ch-told .ch-text.ch-lead { font-size: 17px; line-height: 1.42; }
+  .ch-people .ch-woodenText .ch-text.ch-lead, .ch-people .ch-woodenTold .ch-text.ch-lead, .ch-told .ch-text.ch-lead { font-size: 19px; line-height: 1.4; }
 }

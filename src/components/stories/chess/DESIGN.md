@@ -54,6 +54,14 @@ A plain part title, then the message that started it all, written on the blank p
 
 The four invented phone opponents retain distinct illustrative legal positions and clock pairs, never claimed as records of their games. The professor's bubble sits left and centres its text. Other chart highlights use data green. Preserve the club sequence, the enlarged investigation message, ratings and username interactions during opening revisions.
 
+## 24 November — reading alignment and the woven board
+
+The opening question, “This is mine”, the father's words and their smaller asides keep their original left alignment. Later passages stay centred, with larger narrative type (22–28px, 19px for the longer phone passages) and a modest increase in card text.
+
+After the 2,007-game passage, the same 1,938 seeded threads weave into the pink club board's squares as the reader scrolls. The bridge and both neighbours share their first/last screen; the board uses the club's layout and measured square geometry, then hands over to the opening position before the first hand moves. Reverse scrolling unwinds the weave. Reduced motion switches directly between the threads and board.
+
+The ending's grey incoming message uses the earlier blitz bubble's scroll-driven scale and opacity, outside the cropped phone frame. The date stays above it, and her clay reply remains on the screen. Reduced motion shows the enlarged message without scaling.
+
 ## 23 November — selected thread, copy and continuous zoom
 
 The selected reader thread and its control use data green (#6ecb78), also when it returns at the ending. Remove the “More often than not, no conversation happens / Just a username…” passage and “This is how I picture them”, along with the visible “imagined” captions. The method still explains the invented illustrations. Dive is an overlay of the existing club stage; its last scroll step zooms the existing grid and club board, then reveals the three question links. Reverse scrolling restores that same scene. Reduced motion switches the scene without zooming; hidden question links are inert and outside the accessibility tree.

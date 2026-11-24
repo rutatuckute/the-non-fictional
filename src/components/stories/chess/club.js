@@ -33,6 +33,7 @@ const BOARD = {
     [72, 188, 291, 399, 501, 610, 715, 823, 930],
   ],
 }
+export { BOARD as CLUB_BOARD }
 // The picture's own perspective: the far pieces are seen almost from the
 // side, the near ones from well above. So the two colours are two drawings
 // (scripts/stories/chess/make-pieces.cjs), each fitted to its own side: how
@@ -166,7 +167,10 @@ export const ClubBoard = ({ during }) => {
     const node = steps?.current?.[during]
     if (!node) return 0
     const top = (node.firstElementChild || node).getBoundingClientRect().top
-    return Math.max(0, Math.min(CLUB_REST + 1.2, (stepLine() - top) / window.innerHeight))
+    // The opening position first arrives from the weave. A card can enter
+    // before its stage pins; wait for the board to land before moving a hand.
+    const arrived = -node.closest("section").getBoundingClientRect().top / window.innerHeight
+    return Math.max(0, Math.min(CLUB_REST + 1.2, arrived, (stepLine() - top) / window.innerHeight))
   }
   const paint = scrolled => {
     const k = table.current.clientWidth / BOARD.width

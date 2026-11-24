@@ -1,5 +1,13 @@
 # What we say — verification, 21 November 2026
 
+## 24 November — opening alignment, larger copy and thread-to-board transition
+
+Restored left alignment for the opening question, the personal memory and their asides/controls. Later passages remain centred, with larger narrative and card text. Added a reversible scroll-driven bridge that weaves the existing 1,938 seeded threads into the pink club board, using its measured squares and actual responsive layout. The following game waits for the board to arrive. The ending's grey incoming message now enlarges outside the phone crop with the earlier blitz bubble's scale/opacity; its date stays above it. Reduced motion switches from threads to board and displays the enlarged message without scaling.
+
+Typecheck, production build and diff whitespace checks passed. Local Chromium checks at 320×640, 375×812, 768×1024, 1024×768 and 1440×900 verified opening alignment, later centred/enlarged copy, intermediate and final weave states, reverse scroll, matching board geometry at handoff, message enlargement and viewport fit, reduced motion, no horizontal overflow and no JavaScript errors. Screenshots inspected on phone and desktop. Evidence: `/tmp/chess-thread-polish/`; browser check: `/tmp/chess-thread-polish.cjs`. Physical devices were not tested. No dependencies, schema or story data changed.
+
+## 21 November — original verification
+
 Implemented in the existing Next.js story worktree, preserving its runtime and visual identity. Loaded matrix-app-builder, matrix-design-system, emil-design-eng, and animate (SVG reference).
 
 `npm run typecheck` and `npm run build` passed. No dependency or schema changes. This is a read-only article graphic, so no record persistence checks apply.
