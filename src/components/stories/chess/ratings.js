@@ -4,144 +4,150 @@ import * as React from "react"
 import { c, PinSteps, stepLine } from "./parts"
 import { useFollow, useStill } from "./follow"
 import data from "./ratings.json"
+import pace from "./pace.json"
 
 const T = data.timeline, S = data.scatter
 const time = day => Date.parse(`${day}T00:00:00Z`)
 const start = time("2026-01-01"), end = time(T.through), claim = time(T.claim)
 const scale = (v, a, b, lo, hi) => lo + (v - a) / (b - a) * (hi - lo)
+const clamp = v => Math.max(0, Math.min(1, v))
 const path = points => points.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`).join(" ")
-const dateLabel = day => new Date(time(day)).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" })
-const days = [...new Set([...T.rapid, ...T.bullet].map(d => d[0]))].sort()
 const atDay = (series, date) => series.filter(d => d[0] <= date).at(-1)
-// The typical bullet rating at a rapid rating, from the medians' line.
 const typicalAt = r => {
-  const c = S.curve
-  if (r <= c[0].rapid) return c[0].bullet
-  for (let i = 1; i < c.length; i++)
-    if (r <= c[i].rapid) return c[i - 1].bullet + ((r - c[i - 1].rapid) / (c[i].rapid - c[i - 1].rapid)) * (c[i].bullet - c[i - 1].bullet)
-  return c.at(-1).bullet
+  const curve = S.curve
+  for (let i = 1; i < curve.length; i++)
+    if (r <= curve[i].rapid) return scale(r, curve[i - 1].rapid, curve[i].rapid, curve[i - 1].bullet, curve[i].bullet)
+  return curve.at(-1).bullet
 }
-// The reader's guess is for a player at about my own rapid rating.
-const ASK_AT = Math.round(S.me[0] / 50) * 50
-const CLAIMED = dateLabel(T.claim)
+const expected = Math.round(typicalAt(S.me[0]))
+const bins = Array.from({ length: 36 }, (_, i) => ({ seconds: i / 2, count: pace.peers.seconds.filter(s => s >= i / 2 && s < (i + 1) / 2).length }))
+const maxBin = Math.max(...bins.map(b => b.count))
 
-// One persistent stage. Scroll opens the diary, then the two last ratings become
-// one green dot on a different pair of axes. The captions name the measure change.
+// The comparison uses period medians, not the timeline's latest ratings.
+// Establish those values before adding the crowd. Pace gets a separate chart.
 export const RatingStory = ({ step }) => {
   const box = React.useRef(null), steps = React.useContext(PinSteps)
-  const [size, setSize] = React.useState({ width: 560, height: 400 })
+  const [size, setSize] = React.useState({ width: 560, height: 340 })
   const [reveal, setReveal] = React.useState(0)
-  const [picked, setPicked] = React.useState(null)
-  const [hover, setHover] = React.useState(null)
   const [summary, setSummary] = React.useState(false)
-  // where the reader thinks a typical player sits, before the line is shown
-  const [guess, setGuess] = React.useState(null)
   const still = useStill()
   const id = React.useId().replace(/:/g, "")
   React.useLayoutEffect(() => {
-    const update = () => setSize({ width: Math.max(240, box.current.getBoundingClientRect().width), height: Math.min(400, window.innerHeight * (window.innerWidth <= 960 ? (window.innerHeight < 700 ? 0.24 : 0.30) : 0.48)) })
+    const scene = box.current.closest(`.${c("ch-scene")}`)
+    const update = () => {
+      const width = box.current.getBoundingClientRect().width
+      if (!width) return
+      setSize({ width, height: Math.min(380, Math.max(150, scene.clientHeight - 162)) })
+    }
     const observer = new ResizeObserver(update)
+    observer.observe(scene)
     observer.observe(box.current)
-    window.addEventListener("resize", update)
     update()
-    return () => { observer.disconnect(); window.removeEventListener("resize", update) }
+    return () => observer.disconnect()
   }, [])
   useFollow(() => {
-    if (still) return step >= 2 ? 1 : (claim - start) / (end - start)
-    if (step >= 3) return 1
-    if (step < 1) return 0
-    const node = steps?.current?.[step]?.firstElementChild
-    if (!node) return 0
-    const p = Math.max(0, Math.min(1, (stepLine() - node.getBoundingClientRect().top) / (window.innerHeight * 0.55)))
-    const cut = (claim - start) / (end - start)
-    return step === 1 ? cut * (0.5 + 0.5 * p) : cut + (1 - cut) * p
+    if (step < 1) return (claim - start) / (end - start)
+    if (step >= 2 || still) return 1
+    const node = steps?.current?.[1]?.firstElementChild
+    if (!node) return 1
+    const p = clamp((stepLine() - node.getBoundingClientRect().top) / (window.innerHeight * 0.32))
+    const cut = (time(T.bulletFirst) - start) / (end - start)
+    return cut + (1 - cut) * p
   }, setReveal, { still, watch: box })
-  React.useEffect(() => { setPicked(null); setHover(null); setSummary(false) }, [step])
+  React.useEffect(() => setSummary(false), [step])
 
-  const wide = step >= 4, typical = step >= 5
-  const w = size.width, h = size.height, left = 40, right = w - 18, top = 38, bottom = h - 34
+  const mode = step >= 6 ? "pace" : step >= 4 ? "scatter" : "timeline"
+  const period = step === 3, typical = step === 5
+  const w = size.width, h = size.height, left = 36, right = w - 20, top = 36, bottom = h - 34
   const tx = v => scale(time(v), start, end, left, right)
   const ty = v => scale(v, 100, 1100, bottom, top)
   const sx = v => scale(v, 0, 3000, left, right)
   const sy = v => scale(v, 0, 3000, bottom, top)
-  const shown = picked === null ? start + (end - start) * reveal : time(days[picked])
+  const px = v => scale(v, 0, 18, left, right)
+  const shown = start + (end - start) * reveal
   const date = new Date(shown).toISOString().slice(0, 10)
   const rapid = atDay(T.rapid, date), bullet = atDay(T.bullet, date)
-  const latest = T.bullet.at(-1)
-  const peers = React.useMemo(() => S.points.map((q, i) => <circle key={i} cx={sx(q[0])} cy={sy(q[1])} r={w < 400 ? 1.5 : 2.1} />), [w, h])
-  const meX = wide ? sx(S.me[0]) : tx(bullet?.[0] || latest[0])
-  const meY = wide ? sy(S.me[1]) : ty(bullet?.[1] || latest[1])
-  const selected = hover && wide ? hover : null
-  const inspect = event => {
-    if (!wide) return
-    const r = event.currentTarget.getBoundingClientRect()
-    const px = (event.clientX - r.left) / r.width * w, py = (event.clientY - r.top) / r.height * h
-    let nearest = null, distance = 400
-    for (const q of S.points) {
-      const d = (sx(q[0]) - px) ** 2 + (sy(q[1]) - py) ** 2
-      if (d < distance) { distance = d; nearest = q }
-    }
-    setHover(nearest)
-  }
+  const crowd = React.useMemo(() => S.points.map((q, i) => (
+    <circle key={i} cx={sx(q[0])} cy={sy(q[1])} r={w < 400 ? 1.5 : 2}
+      data-near={Math.abs(q[0] - S.me[0]) <= 100 ? "true" : "false"} />
+  )), [w, h])
+  const title = mode === "pace" ? "Ten-minute games" : mode === "scatter" ? "Me, among other players" : period ? "The same three months" : "My ratings, on their own"
+  const subtitle = mode === "pace" ? "Seconds per move · one value per player" : mode === "scatter" ? "July–September medians · one dot, one player" : period ? "July–September · median rating in each format" : "2026 · last rating each day played"
+  const description = mode === "pace"
+    ? `In ten-minute games I use ${pace.me.seconds.toFixed(1)} seconds per move, compared with a peer median of ${pace.peers.median.toFixed(1)}. Faster than ${Math.round(pace.fasterThan * 100)}% of ${pace.peers.players} peers.`
+    : mode === "scatter"
+      ? `Rapid rating horizontally, bullet vertically. ${Math.round(S.shareLower * 100)}% of ${S.players} sampled players are lower in bullet. My period medians are rapid ${S.me[0]}, bullet ${S.me[1]}. ${typical ? `Typical bullet at my rapid rating is about ${expected}.` : ""}`
+      : `My rapid and bullet ratings. I sent the message on 18 May. Bullet began seven weeks later, on 6 July. After ${T.bulletGames} games its rating settled in the 400s. ${period ? `July–September medians: rapid ${S.me[0]}, bullet ${S.me[1]}.` : ""}`
+  const foot = mode === "pace" ? `${pace.me.games} of my games · ${pace.peers.players.toLocaleString("en-GB")} peers at my level · July–September`
+    : mode === "scatter" ? `${S.players.toLocaleString("en-GB")} players · at least 20 games in each format`
+      : period ? "These same period medians become my dot in the next chart."
+        : "Rapid and bullet have separate rating pools."
+  const help = mode === "pace"
+    ? `Ten-minute games without increment, lasting at least 10 moves. For each game, clock time used divided by moves played; then the median across games for each player. Peers have a median rapid rating of ${pace.ratingBand[0]}–${pace.ratingBand[1]} and at least ${pace.minGames} qualifying games. Percentile calculated before rounding. This describes speed within rapid.`
+    : mode === "scatter"
+      ? "The diagonal means equal ratings. The typical line joins median bullet ratings in 100-point rapid bands with at least 10 players. My dot uses the same July–September medians as everyone else's; the typical value at my exact rapid rating is interpolated between bands."
+      : "Lines connect days played. The early bullet drop is a new rating settling, rather than a loss of skill. The shaded July–September period uses the same dates as the comparison sample; its medians differ from my latest ratings."
 
   return (
-    <figure ref={box} className={c("ch-ratings")} data-wide={wide} data-still={still}>
-      <figcaption className={c("ch-ratingTitle")}>{wide ? "Me, among everyone else" : "What it looked like from where I stood"}</figcaption>
-      <div className={c("ch-ratingKey")}>
-        {wide ? <><span>One dot, one player</span><span data-kind="me">Me</span>{typical && <span data-kind="typical">Typical bullet rating</span>}</> : <><span data-kind="rapid">My rapid rating</span><span data-kind="me">My bullet rating</span></>}
-      </div>
-      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={wide ? `Rapid and bullet median ratings for ${S.players} sampled players, July to September 2026. ${Math.round(S.shareLower * 100)}% rated lower in bullet. My rapid ${S.me[0]}, bullet ${S.me[1]}, close to the typical line.` : `My daily last ratings through 2026. Claim on ${CLAIMED}. Bullet began on 6 July, seven weeks later; 309 games through 24 September.`} onPointerMove={inspect} onPointerDown={inspect} onPointerLeave={() => setHover(null)}>
+    <figure ref={box} className={c("ch-ratings")} data-mode={mode} data-still={still} data-rating-step={step}>
+      <figcaption className={c("ch-ratingTitle")}>{title}</figcaption>
+      <p className={c("ch-ratingSubtitle")}>{subtitle}</p>
+      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={description}>
         <defs><clipPath id={id}><rect x={left - 3} y={top - 15} width={Math.max(0, scale(shown, start, end, left, right) - left + 4)} height={bottom - top + 25} /></clipPath></defs>
-        <g className={c("ch-ratingLayer")} opacity={wide ? 0 : 1} aria-hidden="true">
+        {mode === "timeline" && <g key="timeline" className={c("ch-ratingLayer")} aria-hidden="true">
+          {period && <rect className={c("ch-ratingWindow")} x={tx("2026-07-01")} y={top} width={tx("2026-10-01") - tx("2026-07-01")} height={bottom - top} />}
           {[200, 400, 600, 800, 1000].map(t => <g key={t}><line className={c("ch-ratingGrid")} x1={left} x2={right} y1={ty(t)} y2={ty(t)} /><text x={left - 8} y={ty(t) + 4} textAnchor="end">{t}</text></g>)}
-          {[0, 2, 4, 6, 8, 10].map(m => <text key={m} x={tx(`2026-${String(m + 1).padStart(2, "0")}-01`)} y={bottom + 22} textAnchor="middle">{["Jan", "Mar", "May", "Jul", "Sep", "Nov"][m / 2]}</text>)}
-          <text x={left} y={16}>My rating · 2026</text>
-          <line className={c("ch-ratingRef")} x1={tx(T.claim)} x2={tx(T.claim)} y1={top} y2={bottom} />
-          <text x={tx(T.claim) + 7} y={top + 12}>{CLAIMED}</text>
-          <text x={tx(T.claim) + 7} y={top + 27}>“soooo bad”</text>
-          <g clipPath={`url(#${id})`}>
+          {[1, 3, 5, 7, 9, 11].map((m, i) => <text key={m} x={tx(`2026-${String(m).padStart(2, "0")}-01`)} y={bottom + 22} textAnchor="middle">{["Jan", "Mar", "May", "Jul", "Sep", "Nov"][i]}</text>)}
+          {!period && <><line className={c("ch-ratingRef")} x1={tx(T.claim)} x2={tx(T.claim)} y1={top} y2={bottom} /><text x={tx(T.claim) + 7} y={top - 12}>18 May · “soooo bad”</text></>}
+          <g clipPath={`url(#${id})`} opacity={period ? 0.3 : 1}>
             <path className={c("ch-ratingRapid")} d={path(T.rapid.map(([d, v]) => [tx(d), ty(v)]))} />
             <path className={c("ch-ratingBullet")} d={path(T.bullet.map(([d, v]) => [tx(d), ty(v)]))} />
           </g>
-          {rapid && <circle cx={tx(rapid[0])} cy={ty(rapid[1])} r={3} fill="var(--ink-2)" />}
-        </g>
-        <g className={c("ch-ratingLayer")} opacity={wide ? 1 : 0} aria-hidden="true">
+          {period ? S.me.map((v, i) => <g key={i}>
+            <line className={c(i ? "ch-ratingBullet" : "ch-ratingRapid")} x1={tx("2026-07-01")} x2={tx("2026-10-01")} y1={ty(v)} y2={ty(v)} />
+            <text x={tx("2026-07-01") + 5} y={ty(v) - 9} className={c(i ? "ch-ratingClay" : "ch-ratingPale")}>{i ? "Bullet" : "Rapid"} {v}</text>
+          </g>) : <>
+            {rapid && <g><circle cx={tx(rapid[0])} cy={ty(rapid[1])} r={3} fill="var(--ink-2)" /><text x={right} y={ty(rapid[1]) - 12} textAnchor="end" className={c("ch-ratingPale")}>Rapid</text></g>}
+            {bullet && <g><circle cx={tx(bullet[0])} cy={ty(bullet[1])} r={4} fill="var(--thread)" /><text x={right} y={ty(bullet[1]) + 19} textAnchor="end" className={c("ch-ratingClay")}>Bullet</text></g>}
+          </>}
+        </g>}
+        {mode === "scatter" && <g key="scatter" className={c("ch-ratingLayer")} aria-hidden="true">
           {[0, 1000, 2000, 3000].map(t => <g key={t}><line className={c("ch-ratingGrid")} x1={left} x2={right} y1={sy(t)} y2={sy(t)} /><text x={left - 8} y={sy(t) + 4} textAnchor="end">{t}</text><text x={sx(t)} y={bottom + 19} textAnchor="middle">{t}</text></g>)}
-          <text x={left} y={16}>Bullet rating</text><text x={(left + right) / 2} y={h - 1} textAnchor="middle">Rapid rating</text>
+          <text x={left} y={14}>Bullet rating</text><text x={(left + right) / 2} y={h - 1} textAnchor="middle">Rapid rating</text>
           <line x1={sx(0)} y1={sy(0)} x2={sx(3000)} y2={sy(3000)} className={c("ch-ratingRef")} />
-          <text x={sx(1700)} y={sy(1700) - 12} textAnchor="middle">Same in both</text>
-          <g className={c("ch-ratingPeers")}>{peers}</g>
-          <path className={c("ch-ratingTypical")} opacity={typical ? 1 : 0} d={path(S.curve.map(q => [sx(q.rapid), sy(q.bullet)]))} />
-          {selected && <circle cx={sx(selected[0])} cy={sy(selected[1])} r={5} fill="none" stroke="var(--ink)" />}
-          {guess !== null && (
-            <g className={c("ch-ratingGuess")}>
-              <line x1={sx(ASK_AT)} x2={sx(ASK_AT)} y1={sy(0)} y2={sy(guess)} />
-              <circle cx={sx(ASK_AT)} cy={sy(guess)} r={5} />
-              <text x={sx(ASK_AT) - 9} y={sy(guess) + 4} textAnchor="end">You</text>
-            </g>
-          )}
-        </g>
-        <g className={c("ch-ratingMe")} style={{ transform: `translate(${meX}px, ${meY}px)`, opacity: wide || bullet ? 1 : 0 }} aria-hidden="true">
-          <circle r={wide ? 6 : 4} /><text x={10} y={-10}>{wide ? "Me" : "Bullet"}</text>
-        </g>
+          <text x={sx(1800)} y={sy(1800) - 12} textAnchor="middle">Same in both</text>
+          {typical && <rect x={sx(S.me[0] - 100)} y={top} width={sx(200) - sx(0)} height={bottom - top} className={c("ch-ratingWindow")} />}
+          <g className={c("ch-ratingPeers")} data-focus={typical}>{crowd}</g>
+          {typical && <path className={c("ch-ratingTypical")} d={path(S.curve.map(q => [sx(q.rapid), sy(q.bullet)]))} />}
+          <g className={c("ch-ratingMe")} transform={`translate(${sx(S.me[0])},${sy(S.me[1])})`}>
+            <circle r={6} /><text x={10} y={-10}>Me</text>
+          </g>
+        </g>}
+        {mode === "pace" && <g key="pace" className={c("ch-ratingLayer")} aria-hidden="true">
+          <text x={left} y={68}>Players</text>
+          {bins.map(bin => <rect key={bin.seconds} className={c("ch-paceBin")} data-slower={step >= 7 && bin.seconds >= pace.me.seconds}
+            x={px(bin.seconds) + 1} y={bottom - bin.count / maxBin * (bottom - 74)}
+            width={Math.max(1, px(0.5) - px(0) - 2)} height={bin.count / maxBin * (bottom - 74)} />)}
+          <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={bottom} y2={bottom} />
+          {[0, 5, 10, 15].map(v => <text key={v} x={px(v)} y={bottom + 20} textAnchor="middle">{v}s</text>)}
+          <text x={left} y={h - 1}>Faster</text><text x={right} y={h - 1} textAnchor="end">Slower</text>
+          <line className={c("ch-paceMeLine")} x1={px(pace.me.seconds)} x2={px(pace.me.seconds)} y1={31} y2={bottom} />
+          <text className={c("ch-ratingClay")} x={px(pace.me.seconds) - 8} y={22} textAnchor="end">Me · {pace.me.seconds.toFixed(1)}s</text>
+          <line className={c("ch-ratingRef")} x1={px(pace.peers.median)} x2={px(pace.peers.median)} y1={55} y2={bottom} />
+          <text x={px(pace.peers.median) + 8} y={46}>Typical · {pace.peers.median.toFixed(1)}s</text>
+        </g>}
       </svg>
-      <div className={c("ch-ratingReadout")} aria-live="polite">
-        {wide ? (selected ? `One player · rapid ${selected[0]} · bullet ${selected[1]}` : `Me · rapid ${S.me[0]} · bullet ${S.me[1]}`) : `${dateLabel(date)} · rapid ${rapid?.[1] ?? "—"} · bullet ${bullet?.[1] ?? "not yet played"}`}
+      <div className={c("ch-ratingReadout")}>
+        {mode === "pace" ? (step >= 7 ? <span>Faster than <b>{Math.round(pace.fasterThan * 100)}%</b> of peers</span> : null)
+          : mode === "scatter" ? (typical ? <><span className={c("ch-ratingClay")}>My bullet: {S.me[1]}</span><span>Typical at my level: ≈{expected}</span></> : <><span>My rapid {S.me[0]}</span><span className={c("ch-ratingClay")}>My bullet {S.me[1]}</span></>)
+            : period ? <><span>Rapid {S.me[0]}</span><span className={c("ch-ratingClay")}>Bullet {S.me[1]}</span></>
+              : step >= 2 ? <><span>Rapid {T.rapid.at(-1)[1]}</span><span className={c("ch-ratingClay")}>Bullet {T.bullet.at(-1)[1]}</span></> : "Bullet began on 6 July · seven weeks after the message"}
       </div>
-      {wide && !typical && (
-        <label className={c("ch-ratingScrub", "ch-ratingAsk")}>
-          {`A player rated ${ASK_AT} in rapid: in bullet, about`}
-          <input type="range" min={100} max={1400} step={10} value={guess ?? ASK_AT} onChange={e => setGuess(Number(e.target.value))} aria-valuetext={`${guess ?? ASK_AT} in bullet`} />
-          <b>{guess ?? "?"}</b>
-        </label>
-      )}
-      {wide && typical && guess !== null && (
-        <p className={c("ch-ratingAnswer")}>{`You guessed ${guess}. Typically, ${Math.round(typicalAt(ASK_AT) / 10) * 10}.`}</p>
-      )}
-      {!wide && <label className={c("ch-ratingScrub")}>Explore my ratings<input type="range" min={0} max={days.length - 1} value={picked ?? Math.max(0, days.findLastIndex(d => d <= date))} onChange={e => setPicked(Number(e.target.value))} aria-valuetext={`${dateLabel(date)}: rapid ${rapid?.[1] ?? "not played"}, bullet ${bullet?.[1] ?? "not played"}`} /></label>}
-      <div className={c("ch-ratingFooter")}><p className={c("ch-ratingFoot")}>{wide ? `${S.players.toLocaleString("en-GB")} sampled players · July–September medians · ≥20 games in each format. Ratings are separate pools.` : "Last rating each day played. A new rating settles quickly; the early bullet drop is not a loss of skill."}</p>
-      <button className={c("ch-ratingDetails")} type="button" aria-expanded={summary} aria-controls={`${id}-notes`} onClick={() => setSummary(v => !v)}>How to read this</button></div>
-      {summary && <p id={`${id}-notes`} className={c("ch-ratingHelp")}>{wide ? `The diagonal means equal ratings. ${Math.round(S.shareLower * 100)}% sit below it. The typical line is the median bullet rating in each 100-point rapid band (at least 10 players). My dot uses the same July–September medians as everyone else.` : `Scroll to unfold the two lines, or use the slider. On ${CLAIMED} I predicted I would be bad. I first played bullet on 6 July. Lines connect days played; they do not imply games on every day.`}</p>}
+      <div className={c("ch-ratingFooter")}>
+        <p className={c("ch-ratingFoot")}>{foot}</p>
+        <button className={c("ch-ratingDetails")} type="button" aria-expanded={summary} aria-controls={`${id}-notes`} onClick={() => setSummary(v => !v)}>About the data</button>
+      </div>
+      {summary && <p id={`${id}-notes`} className={c("ch-ratingHelp")}>{help}</p>}
     </figure>
   )
 }

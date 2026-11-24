@@ -4,7 +4,7 @@ import * as React from "react"
 
 import { CLUB_REST, ClubBoard } from "./club"
 import { Dive } from "./dive"
-import { c, Pinned, Show, Text } from "./parts"
+import { c, Pinned, Show, Text, useNarrow } from "./parts"
 import { Message } from "./phone-scenes"
 import { RatingStory } from "./ratings"
 import { Usernames } from "./say"
@@ -145,31 +145,47 @@ export const People = () => (
 // against her games, then what usernames say against the ratings of the
 // opponents you meet (say.js, from real games). Its words scroll beside the
 // graphic, as everywhere since Part I.
+// Reserve the tallest passage above the chart on phones. Measuring all passages
+// keeps the graphic in one place as the words change, including at larger text sizes.
+const SayGraphics = ({ step }) => {
+  const box = React.useRef(null)
+  const narrow = useNarrow()
+  React.useLayoutEffect(() => {
+    const pin = box.current.closest("section")
+    const copies = pin.querySelectorAll(`.${c("ch-told")} > div`)
+    const measure = () => pin.style.setProperty("--say-copy", `${Math.max(0, ...Array.from(copies, el => el.getBoundingClientRect().height))}px`)
+    const observer = new ResizeObserver(measure)
+    copies.forEach(el => observer.observe(el))
+    measure()
+    return () => observer.disconnect()
+  }, [narrow])
+  return (
+    <div ref={box} className={c("ch-stack", "ch-sayGraphics")}>
+      <Show flow on={step === 0}><Message /></Show>
+      <div hidden={step === 0}><RatingStory step={step} /></div>
+    </div>
+  )
+}
+
 export const Say = () => (
   <section className={c("ch-saySection")} aria-label="Claims and evidence">
     <span id="what-we-say" className={c("ch-mark")} />
     <Pinned
       reading
+      className={c("ch-sayPin")}
       label="What we say about ourselves"
       steps={[
         { text: <Text name="say-message" look="lead" className={c("ch-messageCopy")} /> },
         { text: <Text name="say-isolation" look="lead" /> },
-        { text: <Text name="say-prediction" look="lead" />, rest: 0.45 },
+        { text: <Text name="say-prediction" look="lead" /> },
         { text: <Text name="say-widen" look="lead" /> },
         { text: <Text name="say-crowd" look="lead" /> },
         { text: <Text name="say-perspective" look="lead" /> },
+        { text: <Text name="say-pace" look="lead" /> },
+        { text: <Text name="say-hurry" look="lead" />, rest: 0.25 },
       ]}
     >
-      {step => (
-        <div className={c("ch-stack")}>
-          <Show flow on={step === 0}>
-            <Message />
-          </Show>
-          <div hidden={step < 1 || step > 5}>
-            <RatingStory step={step} />
-          </div>
-        </div>
-      )}
+      {step => <SayGraphics step={step} />}
     </Pinned>
     <Usernames />
   </section>

@@ -860,50 +860,53 @@
 .ch-story .ch-messageTime { position: absolute; z-index: 2; left: 50%; top: 31%; transform: translateX(-50%); color: var(--ink-3); font: 400 11px / 1 var(--font-mono); letter-spacing: 0.06em; white-space: nowrap; }
 .ch-story .ch-messagePop { position: absolute; z-index: 2; left: 50%; top: 48%; width: clamp(260px, 145%, 440px); box-sizing: border-box; padding: 18px 22px; border-radius: 22px 22px 6px 22px; background: var(--thread); color: #fff8ef; font: 400 clamp(15px, 1.4vw, 20px) / 1.42 var(--font-mono, sans-serif); box-shadow: 0 18px 40px rgba(17, 16, 15, 0.45); transform-origin: 50% 50%; transform: translate(-50%, -50%) scale(0.55); }
 .ch-ratings { position: relative; margin: 0; width: 100%; color: var(--ink); }
-.ch-ratingTitle { font: 400 clamp(21px, 2.2vw, 29px) / 1.15 var(--font-title); letter-spacing: -0.02em; }
-.ch-ratingKey { display: flex; flex-wrap: wrap; gap: 5px 16px; margin-block: 12px 5px; color: var(--ink-2); font: 400 11px / 1.4 var(--font-mono); min-height: 16px; }
-.ch-ratingKey span { display: inline-flex; align-items: center; gap: 6px; }
-.ch-ratingKey span[data-kind]::before { content: ""; width: 14px; height: 2px; background: var(--ink-2); }
-.ch-ratingKey span[data-kind="me"]::before { background: var(--thread); }
-.ch-ratings[data-wide="true"] .ch-ratingKey span[data-kind="me"]::before { width: 6px; height: 6px; border-radius: 50%; }
-.ch-ratingKey span[data-kind="typical"]::before { background: var(--ink-2); }
-.ch-ratingKey span[data-kind="rapid"]::before { background: color-mix(in srgb, var(--thread) 50%, var(--ink-3)); }
-.ch-ratings svg { display: block; overflow: visible; max-width: 100%; touch-action: pan-y; }
-.ch-ratings svg text { fill: var(--ink-2); font: 400 10px / 1 var(--font-mono); }
+.ch-ratingTitle { font: 400 clamp(22px, 2.2vw, 29px) / 1.15 var(--font-title); letter-spacing: -0.02em; }
+.ch-story .ch-ratingSubtitle { margin: 8px 0 5px; color: var(--ink-2); font: 400 12px / 1.4 var(--font-mono); }
+.ch-ratings svg { display: block; overflow: visible; max-width: 100%; }
+.ch-ratings svg text { fill: var(--ink-2); font: 400 11px / 1 var(--font-mono); }
 .ch-ratingGrid { stroke: var(--rule); stroke-width: 1; }
 .ch-ratingRef { stroke: var(--ink-3); stroke-dasharray: 3 5; opacity: 0.7; }
-.ch-ratingRapid, .ch-ratingBullet, .ch-ratingTypical { fill: none; stroke: var(--ink-2); stroke-width: 1.7; stroke-linejoin: round; }
+.ch-ratingRapid, .ch-ratingBullet, .ch-ratingTypical { fill: none; stroke: var(--ink-2); stroke-width: 1.8; stroke-linejoin: round; }
 .ch-ratingBullet { stroke: var(--thread); stroke-width: 2; }
-.ch-ratingRapid { stroke: color-mix(in srgb, var(--thread) 50%, var(--ink-3)); }
-.ch-ratingTypical { stroke: var(--ink-2); transition: opacity 240ms ease; }
-/* the reader's guess, in their own light */
-.ch-ratingGuess line { stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 2 4; }
-.ch-ratingGuess circle { fill: var(--ink); stroke: var(--void); stroke-width: 2; }
-.ch-ratings .ch-ratingGuess text { fill: var(--ink); }
-.ch-ratingAsk { margin-top: 12px; color: var(--ink); font-size: 11px; }
-.ch-ratingAsk input { accent-color: var(--ink); }
-.ch-ratingAsk b { min-width: 3.2em; color: var(--ink); font: 500 15px / 1 var(--font-mono); font-variant-numeric: tabular-nums; }
-.ch-story .ch-ratingAnswer { margin-top: 10px; color: var(--ink); font: 400 12px / 1.4 var(--font-mono); }
-.ch-ratingPeers { fill: var(--ink-3); opacity: 0.48; }
-.ch-ratingLayer { transition: opacity 240ms ease; }
-.ch-ratingMe { transition: transform 650ms cubic-bezier(0.645, 0.045, 0.355, 1), opacity 180ms ease; }
-.ch-ratings[data-wide="false"] .ch-ratingMe { transition: opacity 180ms ease; }
+.ch-ratingRapid { stroke: color-mix(in srgb, var(--thread) 45%, var(--ink)); }
+.ch-ratingTypical { stroke: var(--ink-2); }
+.ch-ratingWindow { fill: var(--thread); opacity: 0.10; }
+.ch-ratingPeers { fill: var(--ink-3); }
+.ch-ratingPeers circle { opacity: 0.6; transition: opacity 240ms ease; }
+.ch-ratingPeers[data-focus="true"] circle[data-near="false"] { opacity: 0.13; }
+.ch-ratingPeers[data-focus="true"] circle[data-near="true"] { fill: var(--ink-2); opacity: 0.85; }
+.ch-ratingLayer { animation: ch-rating-in 260ms cubic-bezier(0.19, 1, 0.22, 1) both; }
+@keyframes ch-rating-in { from { opacity: 0; } to { opacity: 1; } }
 .ch-ratingMe circle { fill: var(--thread); stroke: var(--void); stroke-width: 2; }
-.ch-ratings .ch-ratingMe text { fill: var(--thread); font-weight: 600; }
-.ch-ratingReadout { min-height: 17px; margin-top: 10px; font: 400 11px / 1.4 var(--font-mono); color: var(--ink); font-variant-numeric: tabular-nums; }
-.ch-ratingScrub { display: flex; align-items: center; gap: 12px; color: var(--ink-2); font: 400 10px / 1.3 var(--font-mono); }
-.ch-ratingScrub input { flex: 1; min-width: 0; height: 32px; margin: 0; accent-color: var(--thread); cursor: ew-resize; }
-.ch-ratingScrub input:focus-visible, .ch-ratingDetails:focus-visible { outline: 2px solid var(--thread); outline-offset: 3px; }
-.ch-story .ch-ratingFoot { margin-top: 7px; color: var(--ink-3); font: 400 10px / 1.45 var(--font-mono); }
-.ch-ratingFooter { display: flex; align-items: center; gap: 12px; margin-top: 7px; }
-.ch-ratingFooter .ch-ratingFoot { flex: 1; margin-top: 0; }
-.ch-ratingDetails { flex: 0 0 auto; max-width: 72px; text-align: left; padding: 8px 0; border: 0; background: none; color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; font: 400 10px / 1.4 var(--font-mono); cursor: pointer; }
-.ch-story .ch-ratingHelp { position: absolute; z-index: 2; bottom: 36px; left: 0; right: 0; padding: 16px; border: 1px solid var(--rule-strong); background: var(--raised); color: var(--ink-2); font: 400 12px / 1.5 var(--font-mono); }
-@media (max-width: 60rem) { .ch-messagePhone { height: 50svh; } }
+.ch-ratings .ch-ratingMe text, .ch-ratings .ch-ratingClay, .ch-ratingClay { fill: var(--thread); color: var(--thread); }
+.ch-ratings .ch-ratingPale { fill: color-mix(in srgb, var(--thread) 45%, var(--ink)); }
+.ch-ratingMe text { font-weight: 600; }
+.ch-ratingReadout { display: flex; flex-wrap: wrap; align-content: center; gap: 4px 18px; min-height: 36px; margin-top: 8px; font: 400 13px / 1.4 var(--font-mono); color: var(--ink); font-variant-numeric: tabular-nums; }
+.ch-ratingReadout b { font-weight: 500; color: var(--thread); }
+.ch-ratingFooter { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
+.ch-story .ch-ratingFoot { flex: 1; margin: 0; color: var(--ink-3); font: 400 12px / 1.4 var(--font-mono); }
+.ch-ratingDetails { flex: 0 0 72px; min-height: 44px; text-align: left; padding: 4px 0; border: 0; background: none; color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; font: 400 12px / 1.4 var(--font-mono); cursor: pointer; }
+.ch-ratingDetails:focus-visible { outline: 2px solid var(--thread); outline-offset: 3px; }
 .ch-ratingDetails:active { color: var(--thread); }
+.ch-story .ch-ratingHelp { position: absolute; z-index: 2; bottom: 48px; left: 0; right: 0; max-height: 180px; overflow-y: auto; margin: 0; padding: 16px; border: 1px solid var(--rule-strong); background: var(--raised); color: var(--ink-2); font: 400 12px / 1.5 var(--font-mono); }
+.ch-paceBin { fill: var(--ink-3); opacity: 0.55; transition: opacity 240ms ease; }
+.ch-paceBin[data-slower="true"] { fill: var(--ink-2); opacity: 0.9; }
+.ch-paceMeLine { stroke: var(--thread); stroke-width: 2; }
 @media (hover: hover) and (pointer: fine) { .ch-ratingDetails:hover { color: var(--ink); } }
-@media (pointer: coarse) { .ch-ratingDetails { min-height: 44px; } .ch-ratingScrub input { min-height: 44px; } }
-@media (prefers-reduced-motion: reduce) { .ch-ratingMe, .ch-ratingLayer, .ch-ratingTypical { transition: none; } }
+@media (max-width: 60rem) {
+  .ch-messagePhone { height: 50svh; }
+  .ch-part3 .ch-sayPin[data-plain="true"] .ch-scene { top: calc(var(--bar) + 7svh + var(--say-copy, 180px) + 22px); bottom: 18px; height: auto; }
+  .ch-part3 .ch-sayPin .ch-told > div { padding-bottom: 0; background: none; }
+  .ch-sayPin .ch-messagePhone { height: min(48svh, 100%); }
+  .ch-sayGraphics:has(.ch-messagePhone) { max-height: 100%; }
+  .ch-sayGraphics .ch-panel { max-height: 100%; }
+  .ch-ratingReadout { font-size: 12px; }
+  .ch-ratings svg text { font-size: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ch-ratingLayer { animation: none; }
+  .ch-ratingPeers circle, .ch-paceBin { transition: none; }
+}
 .ch-saySection { position: relative; z-index: 3; background: var(--void); }
 .ch-usernames { position: relative; padding: 5vh 0 12vh; scroll-margin-top: 80px; }
 .ch-namesIntro { max-width: 38rem; margin-bottom: 36px; }

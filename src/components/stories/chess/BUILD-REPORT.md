@@ -1,5 +1,11 @@
 # What we say — verification, 21 November 2026
 
+## 24 November — personal claim, ordinary gap and rapid pace
+
+Removed the numerical gap guess and timeline scrubber, shortened the prose, acknowledged the move from blitz to faster bullet, and completed the rating timeline before its conclusion. Added a July–September comparison-period beat to establish the medians used by the scatter. The typical-line reveal emphasizes the author's rating neighbourhood and explicitly compares bullet 425 with an interpolated typical value of about 406. Added the existing A7 pace analysis: 267 personal ten-minute games, 1,252 comparable players, 5.0s per move against 7.7s, faster than 92.6% (93% on the chart, “9 in 10” in prose). Added the method note and updated the research export and existing browser check. No username findings or later style scales changed.
+
+Typecheck, the final production build and whitespace checks passed. Local Chromium checks passed at 320×640, 375×812, 768×1024, 1024×768 and 1440×900: all eight scene states, backward jumps, unclipped graphics, no text/graphic overlap or horizontal overflow, absence of sliders, comparison values, speed percentile, data disclosure and reduced motion, with no page errors. Screenshots inspected at phone and desktop sizes in `/tmp/chess-say-polish/`. The final 320px rerun also verified keyboard access to the disclosure. The revised check is `chess-story/checks/say-ratings.cjs` in the data-stories repo; accepts an optional URL and viewport width. Physical devices were not tested. This remains the development/preview draft.
+
 ## 24 November — opening alignment, larger copy and thread-to-board transition
 
 Follow-up correction: removed the separate pinned bridge and its duplicate canvas. The original stage now owns accumulation, a pause showing all three statistics lines, and the weave on one persistent canvas, with two incoming threads. Only the final club stage overlaps it. `/tmp/chess-single-threads.cjs` passed at 320×640, 375×812, 768×1024, 1024×768 and 1440×900: one canvas throughout, exactly two incoming lines, full unclipped statistics during the pause, intermediate/final weave states, identical restored canvas pixels on reverse scroll, board handoff geometry, reduced motion, no overflow and no page errors. Phone and desktop screenshots inspected in `/tmp/chess-single-threads/`.

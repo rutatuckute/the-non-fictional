@@ -164,45 +164,49 @@ Each of these questions started in my head, not in code.
 
 ### What we say about ourselves
 
-“I would be soooo bad at blitz.”
-
 <!--step:say-isolation-->
 
-If I only looked at my own ratings, the verdict seemed obvious.
+Seven weeks later, I tried bullet.
 
-Here was rapid: the game I knew. And here, on 18 May, the claim.
+Faster still.
 
 <!--step:say-prediction-->
 
-Seven weeks later, I tried bullet. 309 games later, its rating had settled in the 400s, while rapid kept climbing.
+309 games later, my bullet rating had settled in the 400s. Rapid was much higher.
 
-I said I would be bad. From where I stood, it looked as though I was right.
+Seemed about right.
 
 <!--step:say-widen-->
 
-But lower than what? Lower than whom?
-
-So I stopped comparing me to me, and started comparing me to everyone else.
+But bad compared with whom?
 
 <!--step:say-crowd-->
 
-Each dot is a player who plays both. Rapid rating across; bullet rating up.
+Each dot is someone who plays both.
 
-Under the diagonal, bullet is lower than rapid. That is where **87%** of these players sit.
-
-How much lower, typically? Make your guess under the chart.
+For **87%**, bullet is lower than rapid.
 
 <!--step:say-perspective-->
 
-And there I am, close to the typical line.
+And there I am. About where you'd expect.
 
 The gap I had taken so personally was ordinary.
 
-Maybe this was less about me, and more about how bullet works.
+<!--step:say-pace-->
+
+There was one funny detail, though.
+
+In ten-minute games, I take **5 seconds per move**.
+
+<!--step:say-hurry-->
+
+Faster than **9 in 10** players at my level.
+
+Apparently, I was in a hurry either way.
 
 <!--step:say-guess-->
 
-I had made a claim about myself. Plenty of players put theirs in their usernames.
+That was my claim. Other players put theirs in their usernames.
 
 Before looking at their ratings, what would you expect? Make a guess for each kind of name.
 
@@ -423,6 +427,7 @@ Is yours still there?
 - **Games.** Chess.com's public data: my 2,007 games (to 15 November 2026), and the games of a random sample of 12,000 players, July to September 2026 (4.65 million). No other player is named; the strangers of Part II and how I picture them are invented.
 - **Time in games.** Minutes a day from each game's recorded start and end, smoothed over about ten days. The social media line is my own rough estimate, not a measurement.
 - **Rapid and bullet.** July–September median ratings of 1,388 players with at least 20 games in each.
+- **Pace in rapid.** My 267 ten-minute games in July–September, compared with 1,252 players within 100 points of my median rapid rating, each with at least 20 such games. For each game lasting at least 10 moves, seconds used divided by moves played; then the median across games for each player. My 5.0 seconds against a peer median of 7.7; faster than 92.6% of peers, rounded to 93%.
 - **Usernames.** Names sorted into groups by 47 hand-checked rules; each group's ratings set against a typical opponent's, with 95% ranges from resampling.
 - **Losing the queen.** Every rapid game of the sample (and 1 in 5 blitz and bullet games): the first queen lost from an even position, counted by material, 389,170 cases; a Stockfish 19 check (depth 12) on 1 in 45 found 96% of them lost. Rating points are Chess.com's usual ±8 between equal ratings, adjusted for the rating gap.
 - **Only the king left.** All 4.65 million games: 337,234 in which one side had only its king left and the other could still checkmate.
