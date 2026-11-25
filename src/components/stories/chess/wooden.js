@@ -339,19 +339,13 @@ export const Wooden = ({ lines }) => {
       const d = crossing(index, narrow, screen.width, screen.height, centre)
       if (path.getAttribute("d") !== d) path.setAttribute("d", d)
       const length = path.getTotalLength()
-      const end = MET[index + 1] ?? MANY_AT
-      const u = still ? (scrolled >= MET[index] && scrolled < end ? 1 : 0) : within(scrolled, MET[index] - 0.1, MET[index] + 0.6) + within(scrolled, end - 0.15, end + 0.45)
+      // The last opponent stays: their white strand joins the author's clay
+      // strand in the field, instead of being drawn out with the phone.
+      const end = MET[index + 1] ?? Infinity
+      const u = still ? (scrolled >= MET[index] && scrolled < end ? 1 : 0) : within(scrolled, MET[index] - 0.1, MET[index] + 0.6) + (Number.isFinite(end) ? within(scrolled, end - 0.15, end + 0.45) : 0)
       path.style.strokeDasharray = `${length} ${length}`
       path.style.strokeDashoffset = (length * (1 - u)).toFixed(1)
       path.style.opacity = u > 0 && u < 2 ? "1" : "0"
-    })
-    // Accumulate and weave on the very same canvas, without replacing the
-    // statistics scene or covering its final line with a new section.
-    many.current?.paint({
-      share: still ? Number(scrolled >= MANY_AT + 0.3) : gently(within(scrolled, MANY_AT + 0.1, MANY_AT + 0.85)),
-      scrolled: scrolled - WEAVE_AT,
-      still,
-      narrow: Boolean(narrow),
     })
     const club = pin.current.nextElementSibling
     club.dataset.arrived = club.getBoundingClientRect().top <= 0 ? "true" : "false"
@@ -390,7 +384,7 @@ export const Wooden = ({ lines }) => {
       const bendY = narrow ? 32 : Math.max(24, Math.min(endY * 0.45, head.top - screen.top - 18)) * (1 - back) + Math.max(24, endY * 0.4) * back
       const turnY = Math.max(bendY, endY - 45)
       link.current.setAttribute("d", `M${startX.toFixed(2)},0 C${startX.toFixed(2)},${(bendY * 0.45).toFixed(2)} ${lane.toFixed(2)},${(bendY * 0.55).toFixed(2)} ${lane.toFixed(2)},${bendY.toFixed(2)} L${lane.toFixed(2)},${turnY.toFixed(2)} Q${lane.toFixed(2)},${endY.toFixed(2)} ${endX.toFixed(2)},${endY.toFixed(2)}`)
-      link.current.parentElement.style.opacity = (within(arrives, 0.04, 0.3) * (1 - gone)).toFixed(3)
+      link.current.parentElement.style.opacity = within(arrives, 0.04, 0.3).toFixed(3)
     }
     // the chart comes in as the phone goes to it
     chart.current.style.opacity = (within(scrolled, REST_AT + 0.2, REST_AT + CHANGE) * (1 - within(scrolled, HANDOFF_AT - 0.05, HANDOFF_AT + 0.3))).toFixed(3)
@@ -399,6 +393,17 @@ export const Wooden = ({ lines }) => {
     lid.current.style.transform =
       arrives > 0 ? `translate3d(${(place[0] - size * own[0]).toFixed(2)}px, ${(place[1] - size * own[1]).toFixed(2)}px, 0) scale(${size.toFixed(4)})` : "none"
     lid.current.style.opacity = (1 - within(arrives, 0.7, 1)).toFixed(3)
+
+    // Continue the two paths just painted into the crowd, then into board
+    // squares. Run last so the phone cannot overwrite their shared geometry.
+    many.current?.paint({
+      share: still ? Number(scrolled >= MANY_AT + 0.3) : gently(within(scrolled, MANY_AT + 0.2, MANY_AT + 0.95)),
+      joined: still ? Number(scrolled >= MANY_AT + 0.3) : gently(within(scrolled, MANY_AT, MANY_AT + 0.85)),
+      scrolled: scrolled - WEAVE_AT,
+      still,
+      narrow: Boolean(narrow),
+      threads: [link.current, crossings.current[STRANGERS.length - 1]],
+    })
 
     const next = {
       turned: scrolled >= TURN_AT,
