@@ -139,6 +139,8 @@ How did he know?
 Maybe he was making a point about the London System.\
 Or maybe he saw something.
 
+[Later, I looked for it in my games ↓](#what-we-choose)
+
 <!--step:central-->
 
 How much can we understand about another person from such little information?
@@ -342,7 +344,7 @@ You've seen a little of how I play. Where would you place me?
 
 **Initiative.** How often my moves force something: a check, a capture, a threat.
 
-During the London months, I was ordinary. Since the switch, my moves are more forcing than those of 93 in 100 players at my rating.
+Since the switch, my moves are more forcing than those of 93 in 100 players at my rating.
 
 <!--step:reveal-safety-->
 
@@ -362,7 +364,9 @@ Oddly, my fast moves are rarely my mistakes.
 
 So he was right. Just not yet.
 
-When he said it, my games didn't show it. A few weeks later, they did.
+When he said it, my games didn't show it: in the London months, my moves were ordinary. A few weeks later, they did.
+
+Move through the months and watch it happen.
 
 <!--step:reveal-limits-->
 
