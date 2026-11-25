@@ -197,7 +197,7 @@ export const RatingStory = ({ step, revealed = {} }) => {
   const subtitle = mode === "giveup" ? "Rapid games they lost · July–September" : mode === "names" ? "Rapid rating of opponents met · July–September"
     : mode === "crowd" ? "Opponents met in rapid games · July–September" : step === 3 ? "July–September · median rating in each format" : step === 4 ? "Normal chess across. Fast chess up."
     : step === 5 || step === 6 ? `${S.players.toLocaleString("en-GB")} players · July–September medians`
-      : step >= 7 ? `${pace.peers.players.toLocaleString("en-GB")} peers at my level · July–September` : "2026 · last rating each day played"
+      : step >= 7 ? `${pace.peers.players.toLocaleString("en-GB")} players at my level · July–September` : "2026 · last rating each day played"
   const label = mode === "giveup" ? `Of 100 lost games, players whose names say they are bad resigned ${Math.round(GROUPS[0].resigned * 100)}; everyone else ${Math.round(NAMES.everyoneResigned * 100)}.`
     : mode === "names" ? `Rapid ratings by what usernames say, against a typical opponent at ${TYPICAL}. ${GROUPS.filter(g => revealed[g.key]).map(g => `${g.label}: median ${g.median}`).join(". ")}${stage === "me" ? ". My own rating sits next to the group that says it is bad." : ""}`
       : mode === "crowd" ? "The pace chart's axis goes; its dots become a crowd of other players, some wearing usernames."

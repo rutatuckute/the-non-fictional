@@ -45,7 +45,7 @@ const SCALES = [
     ends: ["deliberate", "impulsive"],
   },
 ]
-const BAND = { london: "rated 400–600", since: "rated 600–900" }
+const BAND = { london: "at my level then (rated 400–600)", since: "at my level (rated 600–900)" }
 const pct = v => `${Math.round(v * 100)}%`
 const inHundred = v => Math.round(v * 100)
 const longDay = day =>

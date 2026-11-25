@@ -219,7 +219,7 @@ const Hundred = ({ P, path, mode, guess, revealed, clockAt, choice }) => {
           </>
         ) : (
           <>
-            100 players rated {P.level}, {what}
+            100 players at my level, {what}
             <small>
               {mode === "guess"
                 ? `Your guess: ${guess} of 100 did not lose`
@@ -408,7 +408,7 @@ const Meet = ({ guesses }) => (
         </div>
       )
     })}
-    <figcaption>players rated {paths.queen.level} who stayed and did not lose</figcaption>
+    <figcaption>players at my level (rated {paths.queen.level}) who stayed and did not lose</figcaption>
   </figure>
 )
 

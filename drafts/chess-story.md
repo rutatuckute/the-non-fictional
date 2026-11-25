@@ -244,7 +244,7 @@ Thirty-seven moves later, it was my opponent who resigned.
 
 <!--step:wrong-guess-->
 
-Here are 100 real games. In each, a player rated 600–799 lost their queen in an even position, and played on.
+Here are 100 real games. In each, a player at my level (rated 600–799) lost their queen in an even position, and played on.
 
 How many of them do you think did not lose?
 
@@ -298,7 +298,7 @@ All three pawns became queens. Eighteen moves later, my king had nowhere left to
 
 <!--step:wrong-guess-king-->
 
-Here are 100 real games. In each, a player rated 600–799 was left with only their king, and the other side could still checkmate. They played on.
+Here are 100 real games. In each, a player at my level (rated 600–799) was left with only their king, and the other side could still checkmate. They played on.
 
 How many of them do you think did not lose?
 
@@ -344,7 +344,7 @@ You've seen a little of how I play. Where would you place me?
 
 **Initiative.** How often my moves force something: a check, a capture, a threat.
 
-Since the switch, my moves are more forcing than those of 93 in 100 players at my rating.
+Since the switch, my moves are more forcing than those of 93 in 100 players at my level.
 
 <!--step:reveal-safety-->
 
@@ -427,6 +427,6 @@ Is yours still there?
 - **Usernames.** Names sorted into groups by 47 hand-checked rules; each group's ratings set against a typical opponent's, with 95% ranges from resampling.
 - **Losing the queen.** Every rapid game of the sample (and 1 in 5 blitz and bullet games): the first queen lost from an even position, counted by material, 389,170 cases; a Stockfish 19 check (depth 12) on 1 in 45 found 96% of them lost. Rating points are Chess.com's usual ±8 between equal ratings, adjusted for the rating gap. My own games (and my opponents') are counted by the same rules: rapid, to 15 November.
 - **Only the king left.** All 4.65 million games: 337,234 in which one side had only its king left and the other could still checkmate. My own: rapid games.
-- **Style.** The three scales were defined before they were computed: 10-minute games only, against players at my rating with at least 30 such games.
+- **Style.** The three scales were defined before they were computed: 10-minute games only, against players at my level with at least 30 such games.
 
 <!--/story-->
