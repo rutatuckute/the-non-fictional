@@ -53,7 +53,10 @@ const yours = (id, said) => {
         const who = i === 0 ? " players at my level" : ""
         return decision[key] === "Resign" ? `${when}, you resigned, like ${rate.resign} in 100${who}.` : `${when}, you played on, like ${rate.on} in 100${who}.`
       })
-    return told.length ? told.join(" ") : "You didn’t decide."
+    // with their own games counted (you.js), what they did when it happened
+    const q = said.queens && said.chesscom && said.queens.username === said.chesscom.username ? said.queens : null
+    const decided = told.length ? told.join(" ") : "You didn’t decide."
+    return q ? `${decided} On Chess.com you lost your queen like this ${q.cases} times, stayed ${q.on} and saved ${q.saved}.` : decided
   }
   const placed = said.scales || {}
   const guessed = SCALES.filter(([key]) => placed[key] != null)

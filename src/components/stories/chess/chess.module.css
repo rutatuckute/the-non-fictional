@@ -1309,3 +1309,25 @@
   .ch-story .ch-youInput { flex: 1 1 100%; }
   .ch-youRow .ch-ask { flex: 1 0 auto; justify-content: center; }
 }
+
+/* "When things go wrong", for the reader (you.js YourQueens, wrong.js): their
+   lost queens, counted from Chess.com, in green beside hers */
+.ch-youQueens { display: grid; justify-items: center; gap: 8px; text-align: center; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--rule); }
+.ch-youQueensWords { margin-bottom: 4px; }
+.ch-youQueens .ch-ask { min-height: 44px; }
+.ch-youQueens .ch-ask i { border-top-color: var(--form-data); }
+.ch-story .ch-youQueens .ch-youStatus[data-kind="counted"] { color: var(--form-data); }
+.ch-story .ch-youQueens .ch-youStatus:empty { display: none; }
+.ch-mineYou text { fill: var(--form-data); font: 600 calc(13px * var(--u, 1)) / 1 var(--font-mono); letter-spacing: 0.06em; }
+.ch-mineYou .ch-mineSquare { fill: color-mix(in srgb, var(--form-data) 28%, var(--void)); }
+.ch-mineYou .ch-mineSquare[data-kind="saved"] { fill: var(--form-data); }
+.ch-mineYou .ch-mineSquare[data-kind="gave"] { fill: none; stroke: var(--form-data); stroke-width: 1.5; stroke-dasharray: 3 2; }
+.ch-levelsYou rect, .ch-levelsYou circle { fill: var(--form-data); }
+.ch-levelsYou line { stroke: var(--rule); }
+.ch-levelsYou text { fill: var(--form-data); font: 400 calc(12px * var(--u, 1)) / 1 var(--font-mono); }
+/* on a phone the scene's room is the words' leftovers: once counted, the box keeps only its answer */
+@media (max-width: 60rem) {
+  .ch-youQueens[data-kind="counted"] :is(.ch-youQueensWords, .ch-ask, .ch-youNote) { display: none; }
+  .ch-youQueens[data-kind="counted"] { padding-top: 12px; margin-top: 12px; }
+  .ch-mine .ch-youChose { display: none; }
+}

@@ -4,7 +4,8 @@ import * as React from "react"
 
 import { useFollow, useStill } from "./follow"
 import { c, Guess, Pinned, PinSteps, Show, stepLine, Text, useNarrow, useUnit } from "./parts"
-import { useTell } from "./reader"
+import { useReader, useTell } from "./reader"
+import { YourQueens } from "./you"
 import { CcBoard, lastMove } from "./cc-board"
 import data from "./wrong.json"
 import paths from "./wrong-paths.json"
@@ -23,7 +24,8 @@ import paths from "./wrong-paths.json"
 //   taleb    the same chart, read as optionality
 //   clock    the same hundred again, regrouped: the other player's clock
 //   levels   by rating: who gives up at once, and who is saved by staying
-//   mine     her own games of that kind
+//   mine     her own games of that kind (and, if the reader asks, theirs:
+//            you.js counts them from Chess.com, in green beside hers)
 // The lone king walks decide, outcome (ending in the three-queens stalemate),
 // guess, play, payoff and mine; the ideas it shares with the queen (the price
 // of resigning, the clock) are not told twice. Then:
@@ -50,6 +52,14 @@ const day = d => {
   return `${Number(dd)} ${MONTHS[Number(m) - 1]} ${y}`
 }
 const side = colour => (colour === "b" ? "Black" : "White")
+
+// The reader's own lost queens (you.js), while they belong to the name found
+// at the start of Part III.
+const useYours = () => {
+  const said = useReader()
+  const q = said.queens
+  return q && said.chesscom && q.username === said.chesscom.username ? { ...q, rating: said.chesscom.rapid.rating } : null
+}
 
 // The author's two games, from the moment it went wrong to the end.
 const GAMES = {
@@ -309,6 +319,12 @@ const Hundred = ({ P, path, mode, guess, revealed, clockAt, choice }) => {
 const Levels = ({ P, path }) => {
   const R = P.byLevel
   const unit = useUnit()
+  // the reader, in green, a row of their own under the sample's: how often they
+  // gave up at once, and of the times they stayed, how often they were saved
+  const you = useYours()
+  const yourGave = you ? (you.resigned + you.left) / you.cases : 0
+  const yourSaved = you?.on ? you.saved / you.on : null
+  const rows = R.length + (you ? 1 : 0)
   const top = path === "queen" ? 0.3 : 0.45
   // (room for "1000–1199" and both headings at 12 px on a phone)
   const x0 = 130
@@ -322,14 +338,23 @@ const Levels = ({ P, path }) => {
       <figcaption className={c("ch-hundredTitle")}>
         By rating
         <small>{path === "queen" ? "a queen down" : "only the king left"} · rapid games of the sample</small>
+        {you ? <small className={c("ch-youChose")}>In green, you: your rapid games on Chess.com</small> : null}
       </figcaption>
-      <svg ref={unit} viewBox={`0 0 600 ${R.length * rh + 70}`} role="img" aria-label={R.map(r => `${r.band}: ${pct(r.resigned)} gave up at once, ${pct(r.saved)} of those who stayed did not lose`).join("; ")}>
+      <svg
+        ref={unit}
+        viewBox={`0 0 600 ${rows * rh + 70}`}
+        role="img"
+        aria-label={
+          R.map(r => `${r.band}: ${pct(r.resigned)} gave up at once, ${pct(r.saved)} of those who stayed did not lose`).join("; ") +
+          (you ? `; you: ${pct(yourGave)} gave up at once${yourSaved != null ? `, ${pct(yourSaved)} of the times you stayed you did not lose` : ""}` : "")
+        }
+      >
         <text x={x0} y={20} className={c("ch-levelsHead")}>{path === "queen" ? "Resigned at once" : "Gave up at once"}</text>
         <text x={xs0} y={20} className={c("ch-levelsHead")}>Stayed, did not lose</text>
         {[0, top / 3, (2 * top) / 3, top].map(v => (
           <g key={v}>
-            <line x1={dot(v)} x2={dot(v)} y1={34} y2={34 + R.length * rh} className={c("ch-payoffGrid")} />
-            <text x={dot(v)} y={52 + R.length * rh} textAnchor="middle" className={c("ch-payoffTick")}>{pct(v)}</text>
+            <line x1={dot(v)} x2={dot(v)} y1={34} y2={34 + rows * rh} className={c("ch-payoffGrid")} />
+            <text x={dot(v)} y={52 + rows * rh} textAnchor="middle" className={c("ch-payoffTick")}>{pct(v)}</text>
           </g>
         ))}
         {R.map((r, i) => {
@@ -345,6 +370,26 @@ const Levels = ({ P, path }) => {
             </g>
           )
         })}
+        {you
+          ? (() => {
+              const y = 34 + R.length * rh
+              const gave = Math.min(0.6, yourGave)
+              return (
+                <g className={c("ch-levelsYou")}>
+                  <line x1={x0 - 60} x2={x1 + 50} y1={y + 1} y2={y + 1} />
+                  <text x={x0 - 12} y={y + rh / 2 + 4} textAnchor="end">You</text>
+                  <rect x={x0} y={y + rh * 0.24} width={Math.max(2, bar(gave))} height={rh * 0.52} rx={3} />
+                  <text x={x0 + Math.max(2, bar(gave)) + 6} y={y + rh / 2 + 4}>{pct(yourGave)}</text>
+                  {yourSaved != null ? (
+                    <>
+                      <circle cx={dot(Math.min(top, yourSaved))} cy={y + rh / 2} r={6.5} />
+                      <text x={dot(Math.min(top, yourSaved)) + 11} y={y + rh / 2 + 4}>{pct(yourSaved)}</text>
+                    </>
+                  ) : null}
+                </g>
+              )
+            })()
+          : null}
       </svg>
     </figure>
   )
@@ -363,12 +408,25 @@ const Waffle = ({ lit, label }) => (
 const Mine = ({ path }) => {
   const q = HER.queen
   const k = HER.king
+  const you = useYours()
+  const unit = useUnit()
+  // the reader's, as hers: saved, lost, gave up at once (resigned or left)
+  const yours =
+    path === "queen" && you
+      ? [...Array(you.saved).fill("saved"), ...Array(you.on - you.saved).fill("lost"), ...Array(you.resigned + you.left).fill("gave")]
+      : []
   const kinds =
     path === "queen"
       ? [...Array(q.saved).fill("saved"), ...Array(q.on - q.saved).fill("lost"), ...Array(q.resigned).fill("gave")]
       : [...Array(k.saved).fill("saved"), ...Array(k.lone - k.saved - k.gaveup).fill("lost"), ...Array(k.gaveup).fill("gave")]
   const cols = path === "queen" ? 12 : 20
   const size = 600 / cols
+  const herHeight = Math.ceil(kinds.length / cols) * size
+  // (theirs smaller when there are many, so both fit the scene)
+  const yourCols = yours.length <= 48 ? 12 : yours.length <= 192 ? 24 : 40
+  const yourSize = 600 / yourCols
+  const yourTop = herHeight + 64
+  const height = yours.length ? yourTop + Math.ceil(yours.length / yourCols) * yourSize : herHeight
   return (
     <figure className={c("ch-mine")}>
       <figcaption className={c("ch-hundredTitle")}>
@@ -378,11 +436,38 @@ const Mine = ({ path }) => {
             ? `${q.on} times I stayed · ${q.saved} I did not lose (${q.won} won, ${q.drew} drew) · players in my exact situations: ${q.expected} · resigned ${q.resigned} (outlined)`
             : `${k.saved} I did not lose, ${k.stalemate} of them by stalemate · gave up ${k.gaveup} (outlined) · rapid games`}
         </small>
+        {yours.length ? (
+          <small className={c("ch-youChose")}>
+            Below, in green, yours: {you.cases} games · stayed {you.on} · did not lose {you.saved} · players at your level: about {Math.round(you.expected)} · gave up at once {you.resigned + you.left} (outlined)
+          </small>
+        ) : null}
       </figcaption>
-      <svg viewBox={`0 0 600 ${Math.ceil(kinds.length / cols) * size}`} role="img" aria-label={`${kinds.filter(x => x === "saved").length} saved of ${kinds.length}`}>
+      <svg
+        ref={unit}
+        viewBox={`0 0 600 ${height}`}
+        role="img"
+        aria-label={`Mine: ${kinds.filter(x => x === "saved").length} saved of ${kinds.length}.${yours.length ? ` Yours: ${you.saved} saved of ${yours.length}.` : ""}`}
+      >
         {kinds.map((kind, i) => (
           <rect key={i} x={(i % cols) * size + 2} y={Math.floor(i / cols) * size + 2} width={size - 4} height={size - 4} rx={3} data-kind={kind} className={c("ch-mineSquare")} />
         ))}
+        {yours.length ? (
+          <g className={c("ch-mineYou")}>
+            <text x={0} y={herHeight + 42}>You</text>
+            {yours.map((kind, i) => (
+              <rect
+                key={i}
+                x={(i % yourCols) * yourSize + yourSize * 0.06}
+                y={yourTop + Math.floor(i / yourCols) * yourSize + yourSize * 0.06}
+                width={yourSize * 0.88}
+                height={yourSize * 0.88}
+                rx={Math.min(3, yourSize * 0.08)}
+                data-kind={kind}
+                className={c("ch-mineSquare")}
+              />
+            ))}
+          </g>
+        ) : null}
       </svg>
     </figure>
   )
@@ -444,6 +529,8 @@ export const Wrong = () => {
   useTell("decisions", decision)
   const [clockAt, setClockAt] = React.useState(3)
   const [step, setStep] = React.useState(0)
+  // (with the reader's own count under her words, the step gets more room to read it in)
+  const found = Boolean(useReader().chesscom)
   const still = useStill()
   const narrow = useNarrow()
   const name = NAMES[step] || "observation"
@@ -537,7 +624,12 @@ export const Wrong = () => {
       </>
     ),
     levels: <Text name="wrong-levels" look="lead" />,
-    mine: <Text name="wrong-mine" look="lead" />,
+    mine: (
+      <>
+        <Text name="wrong-mine" look="lead" />
+        <YourQueens />
+      </>
+    ),
     "decide-king": (
       <>
         <Text name="wrong-decide-king" look="lead" />
@@ -567,7 +659,7 @@ export const Wrong = () => {
       mark="when-things-go-wrong"
       className={c("ch-wrong")}
       label="What we do when things go wrong"
-      steps={NAMES.map(n => ({ text: texts[n], ...(kindOf(n) === "outcome" ? { rest: 0.6 } : {}) }))}
+      steps={NAMES.map(n => ({ text: texts[n], ...(kindOf(n) === "outcome" ? { rest: 0.6 } : n === "mine" && found ? { rest: 0.5 } : {}) }))}
     >
       {at => {
         const now = NAMES[at] || "observation"

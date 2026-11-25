@@ -288,6 +288,10 @@ So I am not better at coming back. I just almost always stay.
 
 But it can get worse than losing the queen.
 
+<!--step:you-queens-->
+
+Lost your queen on Chess.com too? Count how often, and what you did next.
+
 <!--step:wrong-decide-king-->
 
 Now it's you. Move 40, playing White. Everything is gone but your king, and three pawns are walking towards the end of the board to become queens.
