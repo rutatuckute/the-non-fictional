@@ -59,6 +59,10 @@
 }
 /* Where a chapter is opened: a point in the page, at the top of its section. */
 .ch-mark { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; }
+/* A question of Part III that holds its own mark (the first: its box comes before its scene). */
+.ch-question { position: relative; }
+/* A jump to it stops under Part III's sticky header, so the box's first line shows. */
+.ch-question > .ch-mark { scroll-margin-top: var(--investigation-bottom, 0px); }
 /* The last chapter may be shorter than the screen: it is opened with the
    story's end at the screen's foot, so the navigation is still there. */
 .ch-method > .ch-mark { top: min(0px, calc(100% - 100vh)); top: min(0px, calc(100% - 100svh)); }
@@ -1269,4 +1273,39 @@
   .ch-story .ch-hubHer strong { font-size: 16px; }
   .ch-hubTravel { display: none; }
   .ch-hubBoards > li[data-here="true"] .ch-hubDot { display: block; position: absolute; left: 50%; bottom: -12px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--thread); box-shadow: 0 0 0 3px var(--void); }
+}
+
+/* The reader's own Chess.com username, at the start of Part III (you.js), and
+   their green dot on the rapid/bullet chart (ratings.js). Quiet: one line of
+   her words, one field, one button, and what happened, in the story's mono. */
+.ch-you { position: relative; z-index: 3; width: min(100% - 2 * var(--page-margin, 20px), 36rem); margin: 0 auto; padding: 14vh 0 12vh; background: var(--void); }
+.ch-youWords { margin-bottom: 22px; }
+.ch-youForm { display: grid; justify-items: center; gap: 10px; text-align: center; }
+.ch-story .ch-youLabel { color: var(--ink-3); font: 500 10.5px / 1.4 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; }
+.ch-youRow { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; width: 100%; }
+.ch-story .ch-youInput {
+  flex: 0 1 16rem; min-width: 0; min-height: 44px; margin: 0; padding: 8px 16px;
+  border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--void); color: var(--ink);
+  font: 400 16px / 1.2 var(--font-mono);
+  transition: border-color 200ms ease;
+}
+.ch-story .ch-youInput:hover { border-color: var(--ink-3); }
+.ch-story .ch-youInput:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.ch-story .ch-youInput[aria-invalid="true"] { border-color: var(--thread); }
+.ch-you .ch-ask { min-height: 44px; }
+.ch-you .ch-ask i { border-top-color: var(--form-data); }
+.ch-story .ch-youForget { min-height: 44px; padding: 8px 4px; border: 0; background: none; color: var(--ink-3); font: 400 13px / 1.2 var(--font-mono); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ch-story .ch-youForget:hover { color: var(--ink); }
+.ch-story .ch-youForget:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.ch-story .ch-youStatus { min-height: 1.5em; margin: 2px 0 0; color: var(--ink-2); font: 400 13px / 1.5 var(--font-mono); }
+.ch-story .ch-youStatus[data-kind="found"] { color: var(--form-data); }
+.ch-story .ch-youNote { max-width: 30rem; margin: 0; color: var(--ink-3); font: 400 12px / 1.5 var(--font-mono); }
+.ch-ratingYou circle { fill: var(--form-data); stroke: var(--void); stroke-width: 2; }
+.ch-ratingYou[data-off="true"] circle { fill: var(--void); stroke: var(--form-data); stroke-width: 1.5; }
+.ch-ratings .ch-ratingYou text { fill: var(--form-data); font-weight: 600; }
+.ch-ratingReadout .ch-ratingYouText { color: var(--form-data); }
+@media (max-width: 40rem) {
+  .ch-you { padding: 10vh 0 9vh; }
+  .ch-story .ch-youInput { flex: 1 1 100%; }
+  .ch-youRow .ch-ask { flex: 1 0 auto; justify-content: center; }
 }

@@ -162,6 +162,10 @@ So I went down the rabbit hole.
 
 Each of these questions started in my head, not in code.
 
+<!--step:you-chesscom-->
+
+Play on Chess.com too? Give your username and you'll be in the charts with me, as a green dot.
+
 <!--step:say-message-->
 
 ### What we say about ourselves

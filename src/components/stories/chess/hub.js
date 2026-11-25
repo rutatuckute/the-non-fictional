@@ -6,6 +6,7 @@ import { GROUPS, truth } from "./crowd"
 import { c, Text } from "./parts"
 import { INVESTIGATIONS, InvestigationBoard } from "./investigation-parts"
 import { useReader } from "./reader"
+import { readerGap } from "./ratings"
 import paths from "./wrong-paths.json"
 import style from "./style.json"
 
@@ -31,8 +32,14 @@ const yours = (id, said) => {
   if (id === "what-we-say") {
     const names = said.names || {}
     const answered = GROUPS.filter(g => names[g.key])
-    if (!answered.length) return "You didn’t guess the usernames."
-    return `You called ${answered.filter(g => names[g.key] === truth(g)).length} of ${answered.length} usernames.`
+    const guessed = answered.length
+      ? `You called ${answered.filter(g => names[g.key] === truth(g)).length} of ${answered.length} usernames.`
+      : "You didn’t guess the usernames."
+    // with their Chess.com ratings (you.js), their own gap too
+    const you = readerGap(said.chesscom)
+    if (!you) return guessed
+    const gap = you.gap === 0 ? "the same in both formats" : `${Math.abs(you.gap)} points ${you.gap < 0 ? "lower" : "higher"} in fast chess`
+    return `On Chess.com you’re ${gap}. ${guessed}`
   }
   if (id === "when-things-go-wrong") {
     const decision = said.decisions || {}

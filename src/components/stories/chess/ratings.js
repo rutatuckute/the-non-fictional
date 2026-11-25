@@ -6,6 +6,7 @@ import { useFollow, useStill } from "./follow"
 import data from "./ratings.json"
 import pace from "./pace.json"
 import { Message } from "./phone-scenes"
+import { useReader } from "./reader"
 import { crowdLayout, crowdStage, dotAt, CrowdMarks, GROUPS, NAMES, TYPICAL, MY_RAPID } from "./crowd"
 
 const T = data.timeline, S = data.scatter
@@ -23,6 +24,18 @@ const typicalAt = r => {
   return S.curve.at(-1).bullet
 }
 const EXPECTED = Math.round(typicalAt(S.me[0]))
+// The reader's own ratings (you.js), and where they stand against the curve:
+// a typical bullet rating is given only inside the curve's range of rapid.
+export const readerGap = you => {
+  if (!you) return null
+  const rapid = you.rapid.rating, bullet = you.bullet.rating
+  const inside = rapid >= S.curve[0].rapid && rapid <= S.curve.at(-1).rapid
+  return { rapid, bullet, gap: bullet - rapid, typical: inside ? Math.round(typicalAt(rapid)) : null }
+}
+const points = n => `${Math.abs(n).toLocaleString("en-GB")} ${Math.abs(n) === 1 ? "point" : "points"}`
+const gapWords = g => (g.gap === 0 ? "the same in both" : `${points(g.gap)} ${g.gap < 0 ? "lower" : "higher"} in fast chess`)
+// Where the reader's dot goes off the zoomed view, an arrow points to it.
+const ARROWS = { "1,-1": "↗", "1,0": "→", "1,1": "↘", "0,-1": "↑", "0,1": "↓", "-1,-1": "↖", "-1,0": "←", "-1,1": "↙" }
 const LINKED_SCATTER = new Set(pace.peers.scatterIndices.filter(i => i !== null))
 const WORLD_TICKS = Array.from({ length: 16 }, (_, i) => i * 200)
 
@@ -107,6 +120,7 @@ export const RatingStory = ({ step, revealed = {} }) => {
   const [keyboard, setKeyboard] = React.useState(false)
   const still = useStill()
   const id = React.useId().replace(/:/g, "")
+  const you = readerGap(useReader().chesscom)
   React.useLayoutEffect(() => {
     const scene = box.current.closest(`.${c("ch-scene")}`)
     const update = () => {
@@ -204,6 +218,7 @@ export const RatingStory = ({ step, revealed = {} }) => {
         : step >= 7 ? "My pace: 5 seconds per move. Typical peer: 7.7 seconds. Faster than 93% of a separate sample of peers."
       : step >= 4 ? `Normal chess rating is horizontal; fast chess is vertical. ${step >= 5 ? "87% of sampled players are rated lower in fast chess." : ""} ${step === 6 ? "My gap is about typical at my level." : ""}`
         : "My normal and fast chess ratings through 2026, shown without numerical rating labels."
+  const fullLabel = you && (step === 5 || step === 6) ? `${label} You, in green: rapid ${you.rapid}, bullet ${you.bullet}, ${gapWords(you)}.` : label
   const chartStyle = { opacity: entry }
 
 
@@ -215,7 +230,7 @@ export const RatingStory = ({ step, revealed = {} }) => {
       </div>
       <figcaption className={c("ch-ratingTitle")} style={chartStyle} aria-hidden={step < 2}>{title}</figcaption>
       <p className={c("ch-ratingSubtitle")} style={chartStyle} aria-hidden={step < 2}>{subtitle}</p>
-      <svg ref={canvas} className={c("ch-ratingCanvas")} width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={label} aria-hidden={step < 2}>
+      <svg ref={canvas} className={c("ch-ratingCanvas")} width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={fullLabel} aria-hidden={step < 2}>
         <defs>
           <g id={`${id}-player`}><circle r={w < 400 ? 1.35 : 1.8}
             transform={`scale(${(xMax - xMin) / (right - left)},${(yMax - yMin) / (bottom - top)})`} /></g>
@@ -271,6 +286,23 @@ export const RatingStory = ({ step, revealed = {} }) => {
             <path className={c("ch-ratingRef")} d={`M${sx(S.me[0])} ${sy(EXPECTED)} h${Math.min(60, w * 0.1)}`} />
             <text x={sx(S.me[0]) + Math.min(60, w * 0.1) + 5} y={sy(EXPECTED) + 4}>Typical at my level</text>
           </g>
+          {you ? (() => {
+            // The reader, in green, with the crowd. Off the view (zoomed in on
+            // my level), the dot waits at the edge with an arrow towards them.
+            const x = sx(you.rapid), y = sy(you.bullet)
+            const dx = x < left ? -1 : x > right ? 1 : 0, dy = y < top ? -1 : y > bottom ? 1 : 0
+            const off = dx || dy
+            const cx = Math.max(left + 6, Math.min(right - 6, x)), cy = Math.max(top + 6, Math.min(bottom - 6, y))
+            const flip = cx > right - 70
+            // "Me" is labelled above to the right: near it, "You" goes below.
+            const below = cy < top + 20 || Math.hypot(cx - sx(S.me[0]), cy - sy(S.me[1])) < 48
+            return <g className={c("ch-ratingYou")} opacity={crowdOpacity} data-off={off ? "true" : "false"}>
+              <circle cx={cx} cy={cy} r={off ? 4 : 6} />
+              <text x={flip ? cx - 10 : cx + 10} y={cy + (below ? 18 : -10)} textAnchor={flip ? "end" : undefined}>
+                {off ? `You ${ARROWS[`${dx},${dy}`]}` : "You"}
+              </text>
+            </g>
+          })() : null}
         </g>
         {/* Both period summaries physically become the two coordinate guides. */}
         <g opacity={guideOpacity} aria-hidden="true" data-layer="guides">
@@ -334,6 +366,12 @@ export const RatingStory = ({ step, revealed = {} }) => {
             : step === 6 ? <span>My gap is about typical at my level</span>
               : step === 5 ? <span><b>87%</b> are rated lower in fast chess</span>
                 : <span>July–September · the same period in both formats</span>}
+        {you && (step === 5 || step === 6) && !stage ? (
+          <span className={c("ch-ratingYouText")}>
+            You: {gapWords(you)}
+            {step === 6 && you.typical !== null ? ` · typical at your level: ${points(you.typical - you.rapid)} ${you.typical <= you.rapid ? "lower" : "higher"}` : ""}
+          </span>
+        ) : null}
       </div>
       <div className={c("ch-ratingTools")} style={chartStyle} inert={step < 2} aria-hidden={step < 2}>
         <div className={c("ch-ratingExplore")} inert={step !== 6} aria-hidden={step !== 6} data-visible={step === 6}>

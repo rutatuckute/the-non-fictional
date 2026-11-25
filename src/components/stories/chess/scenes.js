@@ -177,7 +177,6 @@ export const Say = () => {
   })
   return (
     <section className={c("ch-saySection")} aria-label="Claims and evidence">
-      <span id="what-we-say" className={c("ch-mark")} />
       <Pinned
         reading
         className={c("ch-sayPin")}

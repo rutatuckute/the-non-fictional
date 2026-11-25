@@ -9,6 +9,7 @@ import { People, Say } from "./scenes"
 import { Reveal } from "./reveal"
 import { Hub } from "./hub"
 import { ReaderProvider } from "./reader"
+import { YouOnChessCom } from "./you"
 import { InvestigationHeader } from "./investigation-header"
 import { Chat } from "./phone-scenes"
 import { Wrong } from "./wrong"
@@ -255,7 +256,15 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           {/* After each question, the three again, answered so far (hub.js); the
               reader's guesses and choices are carried between them (reader.js). */}
           <ReaderProvider>
-            <section data-investigation-part="what-we-say"><Say /><Hub upto={1} /></section>
+            {/* The first question opens (its mark, for the boards, the hubs and
+                the navigation) on the reader's own Chess.com ratings, if they
+                want them (you.js). */}
+            <section data-investigation-part="what-we-say" className={c("ch-question")}>
+              <span id="what-we-say" className={c("ch-mark")} />
+              <YouOnChessCom />
+              <Say />
+              <Hub upto={1} />
+            </section>
             <section data-investigation-part="when-things-go-wrong"><Wrong /><Hub upto={2} /></section>
             <section data-investigation-part="what-we-choose"><Reveal /><Hub upto={3} /></section>
           </ReaderProvider>
