@@ -4,6 +4,7 @@ import * as React from "react"
 
 import { useFollow, useStill } from "./follow"
 import { c, Guess, Pinned, PinSteps, Show, stepLine, Text, useNarrow, useUnit } from "./parts"
+import { useTell } from "./reader"
 import { CcBoard, lastMove } from "./cc-board"
 import data from "./wrong.json"
 import paths from "./wrong-paths.json"
@@ -440,6 +441,7 @@ export const Wrong = () => {
   const [revealed, setRevealed] = React.useState(both(0))
   const [played, setPlayed] = React.useState(both(false))
   const [decision, setDecision] = React.useState(both(null))
+  useTell("decisions", decision)
   const [clockAt, setClockAt] = React.useState(3)
   const [step, setStep] = React.useState(0)
   const still = useStill()

@@ -7,6 +7,8 @@ import { c, Picture, Text, Words } from "./parts"
 import { Device } from "./origin"
 import { People, Say } from "./scenes"
 import { Reveal } from "./reveal"
+import { Hub } from "./hub"
+import { ReaderProvider } from "./reader"
 import { InvestigationHeader } from "./investigation-header"
 import { Chat } from "./phone-scenes"
 import { Wrong } from "./wrong"
@@ -250,9 +252,13 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           <div className={c("ch-peopleTitle")}>
             <InvestigationHeader />
           </div>
-          <section data-investigation-part="what-we-say"><Say /></section>
-          <section data-investigation-part="when-things-go-wrong"><Wrong /></section>
-          <section data-investigation-part="what-we-choose"><Reveal /></section>
+          {/* After each question, the three again, answered so far (hub.js); the
+              reader's guesses and choices are carried between them (reader.js). */}
+          <ReaderProvider>
+            <section data-investigation-part="what-we-say"><Say /><Hub upto={1} /></section>
+            <section data-investigation-part="when-things-go-wrong"><Wrong /><Hub upto={2} /></section>
+            <section data-investigation-part="what-we-choose"><Reveal /><Hub upto={3} /></section>
+          </ReaderProvider>
         </div>
 
         <section className={c("ch-free", "ch-back")} aria-label="Back to the threads of life">

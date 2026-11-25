@@ -7,6 +7,7 @@ import { Dive } from "./dive"
 import { c, Pinned, Show, Text, useNarrow } from "./parts"
 import { RatingStory } from "./ratings"
 import { NameAsk, NameScore } from "./say"
+import { useTell } from "./reader"
 import { GROUPS, crowdStage } from "./crowd"
 
 // The pinned scenes of the chess story: the club in London (Part II), and the
@@ -169,6 +170,7 @@ const SayGraphics = ({ step, revealed }) => {
 export const Say = () => {
   // What the reader guessed for each kind of username (this reading only).
   const [guesses, setGuesses] = React.useState({})
+  useTell("names", guesses)
   const ask = g => ({
     text: <NameAsk group={g} value={guesses[g.key]} onChange={v => setGuesses(all => ({ ...all, [g.key]: v }))} />,
     rest: 0.15,

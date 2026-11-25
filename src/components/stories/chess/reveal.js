@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { c, Pinned, Show, Text, useUnit } from "./parts"
+import { useTell } from "./reader"
 import data from "./style.json"
 
 // Part III, third question: what our choices reveal. The professor said
@@ -314,6 +315,18 @@ const StepSpy = ({ at, onStep }) => {
 
 export const Reveal = () => {
   const [guesses, setGuesses] = React.useState({})
+  // for the hub: each guess as the share of players (since the switch) it places her above
+  const placed = React.useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(guesses).map(([key, v]) => {
+          const dots = data.scales[key].since.dots
+          return [key, dots.filter(d => d < v).length / dots.length]
+        })
+      ),
+    [guesses]
+  )
+  useTell("scales", placed)
   const [at, setAt] = React.useState(LAST)
   const [step, setStep] = React.useState(0)
   const walked = React.useRef(false)

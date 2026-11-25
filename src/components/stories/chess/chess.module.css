@@ -1238,3 +1238,38 @@
 /* Part II's way into the third investigation: a quiet pointer under the professor, not a line of the story. */
 .ch-story .ch-club a[href="#what-we-choose"] { display: inline-block; margin-top: 4px; color: var(--ink-2); font: 400 13px / 1.4 var(--font-mono); letter-spacing: 0.02em; text-decoration: underline; text-decoration-color: var(--rule-strong); text-underline-offset: 4px; white-space: nowrap; }
 .ch-story .ch-club a[href="#what-we-choose"]:hover, .ch-story .ch-club a[href="#what-we-choose"]:focus-visible { color: var(--ink); text-decoration-color: currentColor; }
+
+/* The three questions again after each investigation (hub.js): her answers in clay, the reader's
+   part in green, her clay dot moving on to the question just answered. */
+.ch-hub { --hub-gap: clamp(20px, 3.4vw, 48px); --hub-board: 92px; position: relative; width: min(100% - 2 * var(--page-margin, 20px), 62rem); margin: 0 auto; padding: 14vh 0 16vh; }
+.ch-hub[data-all="true"] { padding-top: 10vh; }
+.ch-hubTitle { margin-bottom: 40px; text-align: center; }
+.ch-hubRow { position: relative; }
+.ch-hubBoards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--hub-gap); margin: 0; padding: 0; list-style: none; }
+.ch-hubBoards > li { display: grid; align-content: start; justify-items: center; gap: 14px; text-align: center; transition: opacity var(--ch-fade) ease; }
+.ch-hubBoards > li[data-state="next"] { opacity: 0.55; }
+.ch-hubBoards > li[data-state="later"] { opacity: 0.32; }
+.ch-hubBoard { position: relative; display: block; width: var(--hub-board); border-radius: 4px; }
+.ch-hubBoard svg { display: block; width: 100%; height: auto; }
+.ch-hubBoard:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px; }
+.ch-hubTravel { position: absolute; top: calc(var(--hub-board) * 84 / 80 + 7px); left: calc(var(--at) * ((100% - 2 * var(--hub-gap)) / 3 + var(--hub-gap)) + (100% - 2 * var(--hub-gap)) / 6); width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--thread); box-shadow: 0 0 0 3px var(--void); transition: left 900ms cubic-bezier(0.3, 0.7, 0.2, 1) 200ms; }
+.ch-hubDot { display: none; }
+.ch-hubWords { display: grid; gap: 10px; padding-top: 16px; }
+.ch-story .ch-hubWords h4 { margin: 0; color: var(--ink); font: 400 clamp(19px, 1.7vw, 23px) / 1.2 var(--font-title); }
+.ch-story .ch-hubHer, .ch-story .ch-hubHer p { margin: 0; color: var(--ink-2); font: 400 15px / 1.5 var(--font-body, inherit); text-align: center; }
+.ch-story .ch-hubHer strong { display: block; margin-bottom: 4px; color: var(--thread); font-weight: 500; font-size: 17px; }
+.ch-story .ch-hubYou { margin: 0; color: var(--form-data); font: 400 12.5px / 1.5 var(--font-mono); }
+.ch-story .ch-hubNext { margin: 0; color: var(--ink-3); font: 400 12px / 1.4 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+@media (prefers-reduced-motion: reduce) {
+  .ch-hubTravel { transition: none; }
+}
+@media (max-width: 40rem) {
+  .ch-hub { --hub-board: 56px; padding: 10vh 0 12vh; }
+  .ch-hubBoards { grid-template-columns: 1fr; gap: 22px; }
+  .ch-hubBoards > li { grid-template-columns: var(--hub-board) 1fr; justify-items: start; align-items: start; gap: 16px; text-align: left; }
+  .ch-hubWords { padding-top: 0; gap: 6px; }
+  .ch-story .ch-hubHer, .ch-story .ch-hubHer p { text-align: left; font-size: 14px; }
+  .ch-story .ch-hubHer strong { font-size: 16px; }
+  .ch-hubTravel { display: none; }
+  .ch-hubBoards > li[data-here="true"] .ch-hubDot { display: block; position: absolute; left: 50%; bottom: -12px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--thread); box-shadow: 0 0 0 3px var(--void); }
+}

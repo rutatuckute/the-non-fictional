@@ -374,6 +374,22 @@ Maybe he saw something in me. Maybe his question changed how I played. The games
 
 And the scales describe how I play, not who I am.
 
+<!--step:hub-title-->
+
+## What the data said
+
+<!--step:hub-what-we-say-->
+
+**Soooo bad? No: ordinary.** Like 87 in 100 players, I'm worse at fast chess. And I play fast either way.
+
+<!--step:hub-when-things-go-wrong-->
+
+**I play on.** A queen down, 102 times out of 108. I saved 14.
+
+<!--step:hub-what-we-choose-->
+
+**Aggressive, since March.** Ordinary while I played the London System. Since the switch, more forcing than 93 in 100.
+
 <!--step:ending-title-->
 
 ## Back to the threads of life
