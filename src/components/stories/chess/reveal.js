@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { c, Pinned, Show, Text } from "./parts"
+import { c, Pinned, Show, Text, useUnit } from "./parts"
 import data from "./style.json"
 
 // Part III, third question: what our choices reveal. The professor said
@@ -51,6 +51,7 @@ const stackOf = (dots, x) => {
 }
 
 const Row = ({ scale, period, label, band, x, shown, guess }) => {
+  const unit = useUnit()
   const row = data.scales[scale.key][period]
   const placed = stackOf(row.dots, x)
   const tallest = Math.max(...placed.map(([, n]) => n)) + 1
@@ -61,7 +62,7 @@ const Row = ({ scale, period, label, band, x, shown, guess }) => {
       <p className={c("ch-scaleLabel")}>
         {label} <span>{band}</span>
       </p>
-      <svg viewBox={`0 0 ${W} ${H + 18}`} role="img" aria-label={shown ? `${label}: ${pct(row.her)}, more than ${inHundred(row.above)} in 100 players ${band}. Typical player ${pct(row.median)}.` : `${label}: not revealed yet.`}>
+      <svg ref={unit} viewBox={`0 0 ${W} ${H + 18}`} role="img" aria-label={shown ? `${label}: ${pct(row.her)}, more than ${inHundred(row.above)} in 100 players ${band}. Typical player ${pct(row.median)}.` : `${label}: not revealed yet.`}>
         <line x1="0" x2={W} y1={H - 3} y2={H - 3} className={c("ch-scaleAxis")} />
         <g className={c("ch-scaleDots")} data-on={shown ? "true" : "false"}>
           {placed.map(([cx, n], i) => (
@@ -133,6 +134,7 @@ const first = Date.parse(`${data.switch[0][0]}T00:00:00Z`)
 const last = Date.parse(`${data.switch.at(-1)[0]}T00:00:00Z`)
 const SWITCH_DAY = Date.parse("2026-03-23T00:00:00Z")
 const Switch = () => {
+  const unit = useUnit()
   const x = day => ((Date.parse(`${day}T00:00:00Z`) - first) / (last - first + DAY)) * W
   const d4 = data.switch.filter(([, m]) => m === "d4").length
   const e4 = data.switch.filter(([, m]) => m === "e4").length
@@ -141,7 +143,7 @@ const Switch = () => {
       <figcaption className={c("ch-scaleHead")}>
         <b>Every game I played as White</b> <span>February to November 2026, by its first move</span>
       </figcaption>
-      <svg viewBox={`0 0 ${W} 96`} role="img" aria-label={`${data.switch.length} games as White: ${d4} opened 1.d4, the London System, until 23 March 2026; ${e4} opened 1.e4, all after it.`}>
+      <svg ref={unit} viewBox={`0 0 ${W} 96`} role="img" aria-label={`${data.switch.length} games as White: ${d4} opened 1.d4, the London System, until 23 March 2026; ${e4} opened 1.e4, all after it.`}>
         {data.switch.map(([day, move], i) => (
           <line key={i} x1={x(day)} x2={x(day)} y1="18" y2="70" data-move={move === "d4" ? "d4" : move === "e4" ? "e4" : "other"} className={c("ch-switchGame")} />
         ))}

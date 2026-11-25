@@ -690,6 +690,9 @@
 .ch-diveGrey { fill: none; stroke: var(--ink-3); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 /* the part's name stays over its scenes: they give it room at their top */
 .ch-part3 .ch-pin[data-reading="true"] .ch-scene { top: 9svh; }
+/* Part III's steps count at 70% of the screen (parts.js stepLine): its second card starts lower, so
+   a jump to a question's chapter mark still lands on the first step, not the second */
+.ch-part3 .ch-pin[data-reading="true"] .ch-step[data-step="1"] { min-height: 74vh; }
 /* What our choices reveal (reveal.js): the switch, then three scales. Grey dots
    are players at her rating (one dot for ten), clay is her (pale: the London
    months), the light mark is the reader's guess. */
@@ -697,16 +700,16 @@
 .ch-revealScene { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
 .ch-layer.ch-revealLayer { inset: 0; display: grid; place-items: center; }
 .ch-switch, .ch-scales { width: min(100%, 36rem); margin: 0; }
-.ch-scales { display: grid; gap: 22px; }
+.ch-scales { display: grid; gap: 18px; }
 .ch-scaleHead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 6px; }
 .ch-scaleHead b { color: var(--ink); font: 400 clamp(19px, 1.8vw, 24px) / 1.1 var(--font-title); }
-.ch-scaleHead span { color: var(--ink-3); font: 400 11px / 1.3 var(--font-mono); }
+.ch-scaleHead span { color: var(--ink-2); font: 400 12px / 1.3 var(--font-mono); }
 .ch-scale { margin: 0; transition: opacity var(--ch-fade) ease; }
 .ch-scale[data-focus="false"] { opacity: 0.38; }
-.ch-scaleEnds { display: flex; justify-content: space-between; color: var(--ink-2); font: 400 11px / 1 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.ch-scaleEnds { display: flex; justify-content: space-between; color: var(--ink-2); font: 400 12px / 1 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
 .ch-scaleRow { margin-top: 4px; }
-.ch-story .ch-scaleLabel { color: var(--ink-2); font: 400 11px / 1.4 var(--font-mono); }
-.ch-scaleLabel span { color: var(--ink-3); }
+.ch-story .ch-scaleLabel { color: var(--ink-2); font: 400 12px / 1.4 var(--font-mono); }
+.ch-scaleLabel span { color: var(--ink-2); opacity: 0.8; }
 .ch-scaleRow svg { display: block; width: 100%; height: auto; overflow: visible; }
 .ch-scaleAxis { stroke: var(--rule-strong); stroke-width: 1; }
 .ch-scaleDots circle { fill: var(--ink-3); }
@@ -714,12 +717,12 @@
 .ch-scaleDots[data-on="true"] { opacity: 0.75; }
 .ch-scaleHer circle { fill: var(--thread); stroke: var(--void); stroke-width: 2; }
 .ch-scaleHer line { stroke: var(--thread); stroke-width: 3; stroke-linecap: round; opacity: 0.6; }
-.ch-scaleHer text { fill: var(--thread); font: 600 12px / 1 var(--font-mono); }
+.ch-scaleHer text { fill: var(--thread); font: 600 calc(12px * var(--u, 1)) / 1 var(--font-mono); }
 .ch-scaleHer[data-period="london"] circle { fill: color-mix(in srgb, var(--thread) 45%, var(--void)); }
 .ch-scaleHer[data-period="london"] text { fill: color-mix(in srgb, var(--thread) 60%, var(--ink-3)); }
-.ch-scaleGuess path { fill: var(--ink); }
-.ch-scaleAsk { display: flex; align-items: center; gap: 12px; margin-top: 6px; color: var(--ink); font: 400 11px / 1 var(--font-mono); }
-.ch-scaleAsk input { flex: 1; min-width: 0; height: 32px; accent-color: var(--ink); cursor: ew-resize; }
+.ch-scaleGuess path { fill: var(--form-data); }
+.ch-scaleAsk { display: flex; align-items: center; gap: 12px; margin-top: 6px; color: var(--ink); font: 400 12px / 1 var(--font-mono); }
+.ch-scaleAsk input { flex: 1; min-width: 0; height: 32px; accent-color: var(--form-data); cursor: ew-resize; }
 .ch-story .ch-scaleSays { margin-top: 8px; color: var(--ink); font: 400 12px / 1.5 var(--font-mono); }
 .ch-scaleSays b { font-weight: 500; }
 .ch-scaleSays span { display: block; margin-top: 4px; color: var(--ink-2); }
@@ -729,9 +732,9 @@
 .ch-switchGame[data-move="e4"] { stroke: var(--thread); }
 .ch-switchGame[data-move="other"] { stroke: var(--ink-3); }
 .ch-switchDay { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 2 3; }
-.ch-switch svg text { fill: var(--ink); font: 400 11px / 1 var(--font-mono); }
-.ch-switch svg text.ch-switchMonth { fill: var(--ink-3); }
-.ch-switchKey { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 10px; color: var(--ink-2); font: 400 11.5px / 1.3 var(--font-mono); }
+.ch-switch svg text { fill: var(--ink); font: 400 calc(12px * var(--u, 1)) / 1 var(--font-mono); }
+.ch-switch svg text.ch-switchMonth { fill: var(--ink-2); }
+.ch-switchKey { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 10px; color: var(--ink-2); font: 400 12.5px / 1.3 var(--font-mono); }
 .ch-switchKey span { display: inline-flex; align-items: center; gap: 8px; }
 .ch-switchKey span::before { content: ""; width: 14px; height: 2px; background: var(--ink-2); }
 .ch-switchKey span[data-move="e4"]::before { background: var(--thread); }
@@ -740,10 +743,12 @@
   .ch-scaleHead b { font-size: 17px; }
   .ch-scaleRow { margin-top: 0; }
   .ch-story .ch-scaleSays { font-size: 11px; }
+  /* (11 px here for now: three scales must fit a small phone; the scales are rebuilt next) */
+  .ch-scaleHead span, .ch-scaleEnds, .ch-story .ch-scaleLabel { font-size: 11px; }
 }
 /* What we do when things go wrong (wrong.js): the phone, the fork, the hundred, the charts.
    Clay is the author; data green, games saved and the reader's controls; lavender, resigning. */
-.ch-wrong { --scene: wrong; --resign: #b59dd9; --lost: #55524d; }
+.ch-wrong { --scene: wrong; --resign: #b59dd9; --lost: #55524d; --saved: var(--ink); }
 .ch-wrongScene { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
 .ch-layer.ch-wrongLayer { inset: 0; display: grid; place-items: center; }
 /* The boards of her games, as Chess.com draws them (cc-board.js), without the phone. */
@@ -766,65 +771,63 @@
   background: rgb(38 36 33 / 0.94); color: #f4f1ea; font: 600 14px / 1.2 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; box-shadow: 0 8px 22px rgb(0 0 0 / 0.45);
 }
 .ch-wrongPlay { display: grid; place-items: center; width: 100%; }
-.ch-wrongFork { display: flex; gap: clamp(12px, 2.4vw, 32px); align-items: flex-start; justify-content: center; }
-.ch-story .ch-wrongWay {
-  display: grid; justify-items: center; gap: 4px; padding: 10px 10px 12px; border: 1px solid transparent; border-radius: 18px;
-  background: none; color: var(--ink-3); font: 400 11px / 1.3 var(--font-mono); cursor: pointer; pointer-events: auto; transition: border-color var(--ch-fade) ease;
-}
-.ch-wrongWay > b { margin-top: 8px; color: var(--ink); font: 400 clamp(17px, 1.6vw, 21px) / 1.15 var(--font-title); letter-spacing: -0.01em; }
-.ch-wrongWay .ch-cc { transition: opacity var(--ch-fade) ease; }
-.ch-wrongWay[aria-pressed="false"] .ch-cc { opacity: 0.5; }
-.ch-wrongWay[aria-pressed="true"] { border-color: var(--form-data); }
-.ch-story .ch-wrongWay:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .ch-wrongRange { display: grid; gap: 6px; max-width: 22rem; margin-top: 16px; color: var(--ink-3); font: 400 12px / 1.2 var(--font-mono); }
 .ch-wrongRange b { color: var(--ink); font: 400 30px / 1 var(--font-title); }
 .ch-wrongRange input { width: 100%; accent-color: var(--form-data); pointer-events: auto; }
 .ch-hundred, .ch-levels, .ch-mine { width: min(100%, 34rem); margin: 0; }
-.ch-lever { display: grid; justify-items: start; width: min(100%, 22rem); margin: 0; }
-.ch-lever .ch-hundredTitle { width: 100%; }
 .ch-hundred svg, .ch-levels svg, .ch-mine svg { display: block; width: 100%; height: auto; overflow: visible; }
 .ch-hundred svg { max-height: 66svh; pointer-events: auto; }
 .ch-hundredTitle { margin-bottom: 16px; color: var(--ink); font: 400 clamp(20px, 2.1vw, 27px) / 1.15 var(--font-title); letter-spacing: -0.02em; }
-.ch-hundredTitle small { display: block; margin-top: 6px; color: var(--ink-3); font: 400 11.5px / 1.4 var(--font-mono); letter-spacing: 0; }
+.ch-hundredTitle small { display: block; margin-top: 6px; color: var(--ink-2); font: 400 12.5px / 1.4 var(--font-mono); letter-spacing: 0; }
 .ch-hBoard { transition: transform 900ms cubic-bezier(0.2, 0.7, 0.2, 1), opacity 300ms ease; }
 .ch-hTint { fill: none; stroke: none; transition: fill 300ms ease, stroke 300ms ease; }
-.ch-hBoard[data-state="guessed"] .ch-hTint { stroke: var(--ink); stroke-width: 3; }
-.ch-hBoard[data-state="saved"] .ch-hTint { fill: var(--form-data); fill-opacity: 0.22; stroke: var(--form-data); stroke-width: 3; }
+.ch-hBoard[data-state="guessed"] .ch-hTint { stroke: var(--form-data); stroke-width: 3; }
+.ch-hBoard[data-state="saved"] .ch-hTint { fill: var(--saved); fill-opacity: 0.18; stroke: var(--saved); stroke-width: 3; }
 .ch-hBoard[data-state="lost"] { opacity: 0.3; }
-.ch-hBoard[data-state="saved-mark"] .ch-hTint { fill: var(--form-data); }
+.ch-hBoard[data-state="saved-mark"] .ch-hTint { fill: var(--saved); }
 .ch-hBoard[data-state="lost-mark"] .ch-hTint { fill: var(--lost); }
 .ch-miniWhite { fill: #efe8dc; }
 .ch-miniBlack { fill: #151413; stroke: #8d867b; stroke-width: 0.6; }
 .ch-payoff { opacity: 0; transition: opacity var(--ch-fade) ease; }
 .ch-payoff[data-on="true"] { opacity: 1; transition: opacity var(--ch-fade) ease 500ms; }
 .ch-payoffGrid { stroke: var(--rule); stroke-width: 1; }
-.ch-payoffTick { fill: var(--ink-3); font: 400 11px / 1 var(--font-mono); }
+.ch-payoffTick { fill: var(--ink-2); font: 400 calc(12px * var(--u, 1)) / 1 var(--font-mono); }
 .ch-payoffResign { stroke: var(--resign); stroke-width: 2; stroke-dasharray: 6 5; }
 .ch-payoffLine { fill: none; stroke: var(--ink); stroke-width: 2; }
-.ch-payoffNote { fill: var(--ink-2); font: 400 12.5px / 1 var(--font-mono); }
+.ch-payoffNote { fill: var(--ink-2); font: 400 calc(12.5px * var(--u, 1)) / 1 var(--font-mono); }
 .ch-payoffNote[data-kind="resign"] { fill: var(--resign); }
-.ch-payoffNote[data-kind="saved"] { fill: var(--form-data); }
-.ch-payoffNote[data-kind="dim"], .ch-payoffNote[data-kind="none"] { fill: var(--ink-3); }
-.ch-payoffPrice { fill: var(--rule-strong); }
-.ch-story .ch-hundredSum { margin-top: 10px; color: var(--ink-2); font: 400 12px / 1.4 var(--font-mono); }
+.ch-payoffNote[data-kind="saved"] { fill: var(--saved); }
+.ch-payoffNote[data-kind="none"] { fill: var(--ink-2); }
+.ch-story .ch-hundredSum { margin-top: 10px; color: var(--ink-2); font: 400 12.5px / 1.5 var(--font-mono); }
 .ch-hundredSum b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
-.ch-levelsHead { fill: var(--ink); font: 400 12px / 1 var(--font-mono); }
-.ch-levelsBand { fill: var(--ink-2); font: 400 11.5px / 1 var(--font-mono); }
+/* the hundred's outcome is told once they have played out (wrong.js) */
+.ch-afterPlay { transition: opacity var(--ch-fade) ease; }
+.ch-afterPlay[data-on="false"] { opacity: 0; visibility: hidden; }
+.ch-story .ch-guessReply { margin: 0 0 14px; color: var(--ink); font: 400 13px / 1.4 var(--font-mono); }
+.ch-guessReply b { color: var(--form-data); font-weight: 500; font-variant-numeric: tabular-nums; }
+.ch-guessReply strong { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+.ch-story .ch-youChose { color: var(--form-data); }
+.ch-hundredBig { fill: var(--ink); font: 400 calc(56px * var(--u, 1)) / 1 var(--font-title); font-variant-numeric: tabular-nums; }
+.ch-story .ch-meetGuess { margin: 8px 0 0; color: var(--ink-2); font: 400 12.5px / 1.3 var(--font-mono); }
+.ch-meetGuess b { color: var(--form-data); font-weight: 500; }
+@media (prefers-reduced-motion: reduce) { .ch-afterPlay { transition: none; } }
+.ch-levelsHead { fill: var(--ink); font: 400 calc(12.5px * var(--u, 1)) / 1 var(--font-mono); }
+.ch-levelsBand { fill: var(--ink-2); font: 400 calc(12px * var(--u, 1)) / 1 var(--font-mono); }
 .ch-levels g[data-mine="true"] .ch-levelsBand { fill: var(--thread); }
 .ch-levelsResign { fill: var(--resign); opacity: 0.85; }
-.ch-levelsSaved { fill: var(--form-data); stroke: var(--void); stroke-width: 2; }
+.ch-levelsSaved { fill: var(--saved); stroke: var(--void); stroke-width: 2; }
 .ch-story .ch-bigShare { margin: 4px 0 16px; color: var(--ink); font: 400 clamp(42px, 5vw, 66px) / 1 var(--font-title); font-variant-numeric: tabular-nums; }
-.ch-bigShare span { margin-left: 4px; color: var(--ink-3); font: 400 12px / 1 var(--font-mono); }
+.ch-bigShare span { margin-left: 4px; color: var(--ink-2); font: 400 12.5px / 1 var(--font-mono); }
 .ch-waffle { display: block; width: 100%; max-width: 17rem; height: auto; }
 .ch-waffle circle { fill: #2b2927; transition: fill 300ms ease; }
-.ch-waffle circle[data-on="true"] { fill: var(--form-data); }
+.ch-waffle circle[data-on="true"] { fill: var(--saved); }
 .ch-mineSquare { fill: color-mix(in srgb, var(--thread) 28%, var(--void)); }
-.ch-mineSquare[data-kind="saved"] { fill: var(--form-data); }
+.ch-mineSquare[data-kind="saved"] { fill: var(--thread); }
 .ch-mineSquare[data-kind="gave"] { fill: none; stroke: var(--thread); stroke-width: 1.5; stroke-dasharray: 3 2; }
 .ch-meet { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px clamp(18px, 3vw, 40px); width: min(100%, 34rem); margin: 0; }
 .ch-story .ch-meetTitle { margin: 0; color: var(--ink); font: 400 12px / 1.3 var(--font-mono); transition: color var(--ch-fade) ease; }
-.ch-meet > div[data-on="false"] .ch-meetTitle { color: var(--ink-3); }
-.ch-meet figcaption { grid-column: 1 / -1; color: var(--ink-3); font: 400 11.5px / 1.4 var(--font-mono); }
+.ch-meet > div[data-on="false"] .ch-meetTitle { color: var(--ink-2); }
+.ch-meet figcaption { grid-column: 1 / -1; color: var(--ink-2); font: 400 12.5px / 1.4 var(--font-mono); }
 @media (max-width: 60rem) {
   .ch-diveTitle { top: calc(var(--bar) + 1.2svh); left: var(--page-margin); right: var(--page-margin); }
   .ch-diveThree { padding: calc(var(--bar) + 10svh) var(--page-margin) 4svh; gap: 4svh; }
@@ -837,6 +840,7 @@
   .ch-story .ch-ccNote { margin-bottom: 6px; font-size: 10.5px; }
   .ch-story p.ch-ccNote { margin: 6px 0 0; }
   .ch-hundred svg { max-height: 44svh; }
+  .ch-story .ch-payoffSum { display: none; }
   .ch-story .ch-bigShare { font-size: 40px; margin-bottom: 10px; }
   .ch-waffle { max-width: 12rem; }
   /* Part III's sentences run longer: its pictures start lower, the words on their own ground */
@@ -844,8 +848,6 @@
   .ch-part3 .ch-told > div { padding-bottom: 14px; background: linear-gradient(var(--void) 82%, transparent); }
   .ch-hundred, .ch-levels, .ch-mine, .ch-meet { width: 100%; }
   .ch-hundredTitle { font-size: 19px; margin-bottom: 10px; }
-  .ch-payoffTick, .ch-levelsBand, .ch-levelsHead { font-size: 18px; }
-  .ch-payoffNote { font-size: 17px; }
 }
 /* Part III: the investigation. */
 .ch-turn {
@@ -865,7 +867,7 @@
 .ch-ratingTitle { font: 400 clamp(22px, 2.2vw, 29px) / 1.15 var(--font-title); letter-spacing: -0.02em; }
 .ch-story .ch-ratingSubtitle { margin: 8px 0 6px; color: var(--ink-2); font: 400 12px / 1.4 var(--font-mono); }
 .ch-ratings svg { display: block; overflow: visible; max-width: 100%; }
-.ch-ratings svg text { fill: var(--ink-2); font: 400 11px / 1 var(--font-mono); }
+.ch-ratings svg text { fill: var(--ink-2); font: 400 12px / 1 var(--font-mono); }
 .ch-ratingGrid { stroke: var(--rule); stroke-width: 1; }
 .ch-ratingRef { fill: none; stroke: var(--ink-3); stroke-dasharray: 3 5; stroke-width: 1; opacity: 0.7; }
 .ch-ratingRapid, .ch-ratingBullet, .ch-ratingTypical { fill: none; stroke: var(--ink-2); stroke-width: 1.8; stroke-linejoin: round; }
@@ -912,7 +914,7 @@
   .ch-sayGraphics:has(.ch-messagePhone) { max-height: 100%; }
   .ch-sayGraphics .ch-panel { max-height: 100%; }
   .ch-ratingReadout { font-size: 12px; }
-  .ch-ratings svg text { font-size: 10px; }
+  .ch-ratings svg text { font-size: 11px; }
   .ch-ratingViews button { font-size: 11px; padding-inline: 7px; }
   .ch-ratingExplore { gap: 4px; }
   .ch-ratingOverview { width: 52px; }
@@ -939,12 +941,12 @@
 .ch-crowdTag rect { fill: var(--raised); stroke: var(--rule-strong); }
 .ch-crowdTag line { stroke: var(--ink-3); }
 .ch-ratings .ch-crowdTag text { fill: var(--ink); }
-.ch-ratings .ch-crowdUnknown { fill: var(--ink-3); }
+.ch-ratings .ch-crowdUnknown { fill: var(--ink-2); }
 .ch-crowdTypical { stroke: var(--ink-2); stroke-dasharray: 3 4; stroke-width: 1; }
 .ch-crowdMarks text { paint-order: stroke; stroke: var(--void); stroke-width: 4px; stroke-linejoin: round; }
 .ch-ratings .ch-crowdLabel { fill: var(--ink-2); }
 .ch-ratings .ch-crowdLabelLit { fill: var(--ink); }
-.ch-ratings .ch-crowdExample { fill: var(--ink-3); }
+.ch-ratings .ch-crowdExample { fill: var(--ink-2); opacity: 0.8; }
 .ch-crowdMedian line { stroke: var(--ink); stroke-width: 2; }
 .ch-ratings .ch-crowdMedian text { fill: var(--ink); }
 .ch-crowdMe { stroke: var(--thread); stroke-width: 1.5; }
@@ -987,7 +989,7 @@
   color: var(--ink); font: 500 13px / 1 var(--font-mono); transition: background-color 150ms ease, color 150ms ease;
 }
 .ch-guess button:hover { border-color: var(--ink); }
-.ch-guess button[aria-pressed="true"] { background: var(--ink); color: var(--void); }
+.ch-guess button[aria-pressed="true"] { background: var(--form-data); border-color: var(--form-data); color: var(--void); }
 .ch-unknown { z-index: 3; border-top: 1px solid var(--rule); background: var(--void); }
 .ch-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 8vh; }
 .ch-two > * { max-width: none; padding: 18px 20px; border: 1px solid var(--rule-strong); }
@@ -1177,9 +1179,6 @@
 }
 
 @media (max-width: 60rem) {
-  .ch-part3 .ch-wrongFork { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; gap: 8px; }
-  .ch-part3 .ch-wrongWay { min-width: 0; padding: 4px 4px 8px; }
-  .ch-part3 .ch-wrongWay .ch-cc { --cc: min(100%, max(52px, calc(var(--investigation-graphic-height) - 156px))); }
 }
 
 /* One stage carries the message into the evidence, then into the next question. */

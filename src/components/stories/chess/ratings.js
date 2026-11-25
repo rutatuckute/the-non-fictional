@@ -127,14 +127,14 @@ export const RatingStory = ({ step, revealed = {} }) => {
   useFollow(() => {
     // Read the same DOM thresholds as Pinned, without waiting a React render
     // for its new step prop. A stopped scroll must settle at the correct frame.
-    const line = stepLine()
     const nodes = steps?.current || []
+    const line = stepLine(nodes.find(Boolean))
     let current = 0
     nodes.forEach((node, index) => { if (node?.firstElementChild.getBoundingClientRect().top < line) current = index })
     if (!current) return 0
     if (still) return current + 1
     const node = nodes[current]?.firstElementChild
-    const progress = node ? clamp((stepLine() - node.getBoundingClientRect().top) / (window.innerHeight * 0.42)) : 1
+    const progress = node ? clamp((stepLine(node) - node.getBoundingClientRect().top) / (window.innerHeight * 0.42)) : 1
     return current + progress
   }, setAt, { still, follow: 100, watch: box })
   const focus = useCamera(at < 6 || view === null ? null : view === "all" ? 0 : 1,

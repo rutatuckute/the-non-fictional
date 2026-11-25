@@ -16,8 +16,12 @@ export const InvestigationHeader = () => {
       const rect = header.current.getBoundingClientRect()
       const height = `${Math.ceil(rect.height)}px`
       if (root.style.getPropertyValue("--investigation-header-height") !== height) root.style.setProperty("--investigation-header-height", height)
+      // A section takes the title once it fills most of the screen below the
+      // header (its top past 45% of the screen), not only when it reaches the
+      // header: the new words and picture never stand under the old title.
+      const line = Math.max(rect.bottom + 12, window.innerHeight * 0.45)
       let current = sections[0]?.dataset.investigationPart
-      for (const section of sections) if (section.getBoundingClientRect().top <= rect.bottom + 12) current = section.dataset.investigationPart
+      for (const section of sections) if (section.getBoundingClientRect().top <= line) current = section.dataset.investigationPart
       if (current) { setActive(current); root.dataset.activeInvestigation = current }
     }
     const wake = () => { if (!frame) frame = requestAnimationFrame(update) }

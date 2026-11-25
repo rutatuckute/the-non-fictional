@@ -144,9 +144,6 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
     () => Object.fromEntries(names.map((name, index) => [name, steps[index]]).filter(([name]) => name)),
     [names, steps],
   )
-  // What the reader answered, kept for the step that shows the result.
-  const [guesses, setGuesses] = React.useState({})
-  const guess = key => ({ value: guesses[key], onChange: value => setGuesses(all => ({ ...all, [key]: value })) })
   const opening = React.useRef(null)
   // Has the reader kept a thread of their own? (only for this reading)
   const [yours, setYours] = React.useState(false)
@@ -254,7 +251,7 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             <InvestigationHeader />
           </div>
           <section data-investigation-part="what-we-say"><Say /></section>
-          <section data-investigation-part="when-things-go-wrong"><Wrong guess={guess("resign")} /></section>
+          <section data-investigation-part="when-things-go-wrong"><Wrong /></section>
           <section data-investigation-part="what-we-choose"><Reveal /></section>
         </div>
 

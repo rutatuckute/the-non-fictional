@@ -180,7 +180,7 @@ My rating in fast chess dropped below my usual rating, as expected. But was I re
 
 <!--step:say-crowd-->
 
-For **87%** players, the bullet rating is indeed lower than the rapid rating.
+For **87%** of players, the bullet rating is indeed lower than the rapid rating.
 
 <!--step:say-perspective-->
 
@@ -188,7 +188,7 @@ And that's me. My supposedly bad performance is the most ordinary.
 
 <!--step:say-pace-->
 
-There is one funny detail, though. In 10 minute games, I take just **5 seconds per move**.
+There is one funny detail, though. In ten-minute games, I take just **5 seconds per move**.
 
 <!--step:say-hurry-->
 
@@ -206,7 +206,7 @@ Four kinds of claims. Before I show you their ratings: higher or lower than a ty
 
 <!--step:say-surprise-->
 
-The chessmasters are rated below average. So are the ones who say they're bad, and the two are barely apart: about one bad afternoon.
+The ones who say they're good, the chessmasters, are rated below average. So are the ones who say they're bad, and the two are barely apart: about one bad afternoon.
 
 <!--step:say-road-->
 
@@ -226,23 +226,11 @@ Calling yourself bad doesn't make you worse. It does make you quicker to give up
 
 Over the board, I kept noticing the same thing: an opponent loses their queen, and a few seconds later, they resign.
 
-Of 107 opponents who lost their queen against me, 62 resigned. 38 of them straight away.
-
-<!--step:wrong-fork-->
-
-There are two ways a game goes badly wrong. You lose your queen in the middle of it. Or you end up with nothing but your king.
-
-Pick one. You can walk the other one at the end.
+Of 100 opponents who lost their queen against me, 60 resigned. 38 of them straight away.
 
 <!--step:wrong-decide-->
 
 Now it's you. Move 9, playing White. Your queen is gone, and the engine agrees: you are lost.
-
-Would you resign?
-
-<!--step:wrong-decide-king-->
-
-Now it's you. Move 40, playing White. Everything is gone but your king, and three pawns are walking towards the end of the board to become queens.
 
 Would you resign?
 
@@ -252,21 +240,9 @@ I didn't.
 
 Thirty-seven moves later, it was my opponent who resigned.
 
-<!--step:wrong-outcome-king-->
-
-I didn't.
-
-All three pawns became queens. Eighteen moves later, my king had nowhere left to go: stalemate.
-
 <!--step:wrong-guess-->
 
 Here are 100 real games. In each, a player rated 600–799 lost their queen in an even position, and played on.
-
-How many of them do you think did not lose?
-
-<!--step:wrong-guess-king-->
-
-Here are 100 real games. In each, a player rated 600–799 was left with only their king, and the other side could still checkmate. They played on.
 
 How many of them do you think did not lose?
 
@@ -275,12 +251,6 @@ How many of them do you think did not lose?
 15 did not lose: 11 won and 4 drew. More wins than draws: the other player gave it back.
 
 Every 100 games played on cost 558 rating points. Resigning them all would have cost 767.
-
-<!--step:wrong-play-king-->
-
-27 did not lose. None won: a king alone cannot. 14 were stalemates; the others were draws when the other clock ran out, or when the king took the last pieces.
-
-Every 100 games played on cost 549 rating points. Resigning them all would have cost 766.
 
 <!--step:wrong-payoff-->
 
@@ -292,11 +262,11 @@ Everything above that line is a chance. The writer Nassim Taleb calls this optio
 
 In chess the upside is small too, a draw or a win. But staying costs only time: about 13 more moves.
 
-<!--step:wrong-taleb-king-->
+<!--step:wrong-clock-->
 
-Everything above that line is a chance. The writer Nassim Taleb calls this optionality: a small, known downside, and an upside you keep for free.
+One thing changes the odds more than anything else: the other player's clock.
 
-With a king alone the upside is the smallest chess has: a draw, never a win. Still worth it. Staying costs about 8 more moves.
+From 18 in 100 to 53 in 100, for players under 800.
 
 <!--step:wrong-levels-->
 
@@ -304,39 +274,45 @@ The stronger the player, the more often they resign: half of them above 2000.
 
 Yet those strong players who stay are the most likely to be saved: 28%, against 13% at 1000–1199.
 
-<!--step:wrong-levels-king-->
-
-With a lone king, few give up at once: 9% under 400, never more than a quarter.
-
-And those who stay escape more often at both ends: 39% under 400, 36% above 2000, a quarter in between.
-
-<!--step:wrong-clock-->
-
-One thing changes the odds more than anything else: the other player's clock.
-
-From 18 in 100 to 53 in 100, for players under 800.
-
-<!--step:wrong-clock-king-->
-
-One thing changes the odds more than anything else: the other player's clock.
-
-From 30 in 100 to 83 in 100, for players under 800.
-
 <!--step:wrong-mine-->
 
 I lost my queen like this 108 times and stayed 102 times. I saved 14 games; players in exactly my situations would have saved 15.
 
 So I am not better at coming back. I just almost always stay.
 
+But it can get worse than losing the queen.
+
+<!--step:wrong-decide-king-->
+
+Now it's you. Move 40, playing White. Everything is gone but your king, and three pawns are walking towards the end of the board to become queens.
+
+Would you resign?
+
+<!--step:wrong-outcome-king-->
+
+I didn't.
+
+All three pawns became queens. Eighteen moves later, my king had nowhere left to go: stalemate.
+
+<!--step:wrong-guess-king-->
+
+Here are 100 real games. In each, a player rated 600–799 was left with only their king, and the other side could still checkmate. They played on.
+
+How many of them do you think did not lose?
+
+<!--step:wrong-play-king-->
+
+27 did not lose. None won: a king alone cannot. 14 were stalemates; the others were draws when the other clock ran out, or when the king took the last pieces.
+
+Every 100 games played on cost 549 rating points. Resigning them all would have cost 766.
+
+<!--step:wrong-payoff-king-->
+
+The same price as before: resigning costs 8 points, staying costs at most the same 8. But a king alone cannot win, so the only upside is a draw. 27 in 100 still found one, for about 8 more moves.
+
 <!--step:wrong-mine-king-->
 
-I have been left with only my king 314 times. I gave up 5 times. 71 times I did not lose, 44 of them by stalemate.
-
-<!--step:wrong-stalemate-->
-
-A game can always end in a stalemate, and that is a better outcome than losing. 58 of mine did.
-
-This is one of them: my lone king against three queens.
+In rapid, only my king was left 260 times. I gave up 5 times. 62 times I did not lose, 43 of them by stalemate.
 
 <!--step:wrong-meet-->
 
@@ -348,7 +324,7 @@ The worse it looked, the more often staying saved the game.
 
 I never resign. Not out of overconfidence (if anything, I'm the opposite), but because I believe in uncertainty, and in the beauty of it.
 
-A queen down, I played on in 119 games. I saved 15.
+A queen down, I played on 102 times out of 108. I saved 14.
 
 <!--step:reveal-professor-->
 
@@ -429,8 +405,8 @@ Is yours still there?
 - **Rapid and bullet.** July–September median ratings of 1,388 players with at least 20 games in each.
 - **Pace in rapid.** My 267 ten-minute games in July–September, compared with 1,252 players within 100 points of my median rapid rating, each with at least 20 such games. For each game lasting at least 10 moves, seconds used divided by moves played; then the median across games for each player. My 5.0 seconds against a peer median of 7.7; faster than 92.6% of peers, rounded to 93%.
 - **Usernames.** Names sorted into groups by 47 hand-checked rules; each group's ratings set against a typical opponent's, with 95% ranges from resampling.
-- **Losing the queen.** Every rapid game of the sample (and 1 in 5 blitz and bullet games): the first queen lost from an even position, counted by material, 389,170 cases; a Stockfish 19 check (depth 12) on 1 in 45 found 96% of them lost. Rating points are Chess.com's usual ±8 between equal ratings, adjusted for the rating gap.
-- **Only the king left.** All 4.65 million games: 337,234 in which one side had only its king left and the other could still checkmate.
+- **Losing the queen.** Every rapid game of the sample (and 1 in 5 blitz and bullet games): the first queen lost from an even position, counted by material, 389,170 cases; a Stockfish 19 check (depth 12) on 1 in 45 found 96% of them lost. Rating points are Chess.com's usual ±8 between equal ratings, adjusted for the rating gap. My own games (and my opponents') are counted by the same rules: rapid, to 15 November.
+- **Only the king left.** All 4.65 million games: 337,234 in which one side had only its king left and the other could still checkmate. My own: rapid games.
 - **Style.** The three scales were defined before they were computed: 10-minute games only, against players at my rating with at least 30 such games.
 
 <!--/story-->

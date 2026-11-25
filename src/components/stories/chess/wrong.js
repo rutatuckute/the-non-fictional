@@ -3,36 +3,39 @@
 import * as React from "react"
 
 import { useFollow, useStill } from "./follow"
-import { c, Guess, Pinned, PinSteps, Show, stepLine, Text } from "./parts"
+import { c, Guess, Pinned, PinSteps, Show, stepLine, Text, useNarrow, useUnit } from "./parts"
 import { CcBoard, lastMove } from "./cc-board"
 import data from "./wrong.json"
 import paths from "./wrong-paths.json"
 
 // Part III, second question: what we do when things go wrong. On a
-// Chess.com board (no phone): an opponent who loses the queen and resigns. Then the
-// reader picks one of two ways a game goes wrong, a queen down in the middle
-// of the game or only the king left at the end, and walks it:
+// Chess.com board (no phone): an opponent who loses the queen and resigns. Then
+// two ways a game goes wrong, told one after the other, the second worse than
+// the first: a queen down in the middle of the game, then only the king left.
 //   decide   the author's own game, on its board, and the reader's choice
 //   outcome  the rest of that game, as the reader scrolls
 //   guess    100 real games of players at her level (rapid, rated 600–799):
 //            how many of those who played on did not lose?
-//   play     the hundred play out, with what they cost in rating
+//   play     the hundred play out; the answer is told once they have
 //   payoff   the same hundred as a chart: resigning is −8 every time;
 //            playing on is the same −8 at worst, 0 for a draw, +8 for a win
 //   taleb    the same chart, read as optionality
+//   clock    the same hundred again, regrouped: the other player's clock
 //   levels   by rating: who gives up at once, and who is saved by staying
-//   clock    one lever, the other player's clock
 //   mine     her own games of that kind
-//   (queen)  the stalemate she counts as better than losing
-//   meet     both paths side by side
-//   you      her own words, and the way to the other path
-// (wrong-paths.json from analysis/export_wrong_paths.py; wrong.json from
-// export_wrong.py for her own games.)
+// The lone king walks decide, outcome (ending in the three-queens stalemate),
+// guess, play, payoff and mine; the ideas it shares with the queen (the price
+// of resigning, the clock) are not told twice. Then:
+//   meet     both hundreds side by side, with the reader's guesses
+//   you      her own words
+// (wrong-paths.json from analysis/export_wrong_paths.py, her own numbers in it
+// from export_wrong_her.py; wrong.json from export_wrong.py for her games.)
 //
-// Colours: clay is the author; data green, games that were saved; lavender,
-// resigning; grey, games lost; the reader's guess is light. The boards the
-// reader decides on are Chess.com's own (cc-board.js); the hundred are marks in
-// a chart, so they stay quiet.
+// Colours: clay is the author (her saved games full clay, the lost ones muted);
+// data green is only ever the reader (controls, guesses, the choice they
+// made); ivory, games saved by staying; grey, games lost; lavender, resigning.
+// The boards the reader decides on are Chess.com's own (cc-board.js); the
+// hundred are marks in a chart, so they stay quiet.
 
 const D = data.decision
 const KG = paths.kingGame
@@ -76,22 +79,6 @@ const GAMES = {
   },
 }
 
-// The two ways in, side by side; either board picks its path.
-const Fork = ({ path, onPath }) => (
-  <div className={c("ch-wrongFork")}>
-    {[
-      ["queen", "A queen down", "in the middle of the game", GAMES.queen],
-      ["king", "Only the king left", "at the end", GAMES.king],
-    ].map(([key, title, sub, g]) => (
-      <button key={key} type="button" className={c("ch-wrongWay")} aria-pressed={path === key} onClick={() => onPath(key)}>
-        <CcBoard fen={g.fens[0]} colour={g.colour} rating={g.rating} oppRating={g.oppRating} small label={`${title}: the position`} />
-        <b>{title}</b>
-        <span>{sub}</span>
-      </button>
-    ))}
-  </div>
-)
-
 // One position of the author's game, the move that led to it in yellow.
 const GameBoard = ({ game, at, say, bottom }) => (
   <CcBoard
@@ -118,7 +105,7 @@ const PlayOut = ({ during, game }) => {
     () => {
       const node = steps?.current?.[during]
       if (!node) return 0
-      return Math.max(0, Math.min(1, (stepLine() - node.getBoundingClientRect().top) / (window.innerHeight * 1.1)))
+      return Math.max(0, Math.min(1, (stepLine(node) - node.getBoundingClientRect().top) / (window.innerHeight * 1.1)))
     },
     // (kept to the game's own positions whatever the scroll reports, even after a long jump)
     p => setAt(still ? last : Math.max(0, Math.min(last, Math.round((Number.isFinite(p) ? p : 0) * last)))),
@@ -155,9 +142,9 @@ const parse = fen => {
   })
   return out
 }
-const Mini = ({ fen, flip }) => (
+const Mini = ({ fen, flip, pattern }) => (
   <>
-    <rect width={MINI} height={MINI} fill="url(#ch-wrong-check)" />
+    <rect width={MINI} height={MINI} fill={`url(#${pattern})`} />
     {parse(fen).map(([r, f, ch]) => {
       const white = ch === ch.toUpperCase()
       const kind = ch.toLowerCase()
@@ -175,34 +162,42 @@ const Mini = ({ fen, flip }) => (
   </>
 )
 
-const Board = React.memo(function Board({ fen, flip, state, x, y, scale, delay, title }) {
+const Board = React.memo(function Board({ fen, flip, pattern, state, x, y, scale, delay, title }) {
   return (
     <g className={c("ch-hBoard")} data-state={state} style={{ transform: `translate(${x}px, ${y}px) scale(${scale})`, transitionDelay: `${delay}ms` }}>
-      <title>{title}</title>
-      <Mini fen={fen} flip={flip} />
+      {title ? <title>{title}</title> : null}
+      <Mini fen={fen} flip={flip} pattern={pattern} />
       <rect width={MINI} height={MINI} className={c("ch-hTint")} />
     </g>
   )
 })
 
-const Hundred = ({ P, path, mode, guess, revealed }) => {
+const Hundred = ({ P, path, mode, guess, revealed, clockAt, choice }) => {
+  const unit = useUnit()
   const boards = React.useMemo(() => boardsOf(P), [P])
   const rank = React.useMemo(() => {
     const sorted = boards.slice().sort((a, b) => a.value - b.value || a.change - b.change)
     return new Map(sorted.map((b, k) => [b.i, k]))
   }, [boards])
   const chart = mode === "payoff"
+  const grid = mode === "clock"
   const step = (PLOT.x1 - PLOT.x0) / 100
   const scale = (step * 0.92) / MINI
   const counts = P.counts
   const lost = counts.lost
   const drew = counts.drew + counts.stalemate
-  const shown = chart ? 100 : mode === "play" ? revealed : 0
+  const shown = chart || grid ? 100 : mode === "play" ? revealed : 0
   const done = boards.filter(b => AFTER.get(b.i) < shown)
   const saved = done.filter(b => b.end !== "lost").length
   const on = Math.round(done.reduce((a, b) => a + b.change, 0))
   const res = Math.round(done.reduce((a, b) => a + b.resign, 0))
   const what = path === "queen" ? "a queen down" : "only the king left"
+  // the clock: the same hundred marks, regrouped ten by ten, as many lit as in 100 such games were saved
+  const [, share, n] = P.clock.find(g => g[0] === clockAt) || P.clock[P.clock.length - 1]
+  const lit = Math.round(share * 100)
+  const CELL = 48
+  const GRID_TOP = 120
+  const gridScale = (CELL * 0.78) / MINI
   return (
     <figure className={c("ch-hundred")} data-mode={mode}>
       <figcaption className={c("ch-hundredTitle")}>
@@ -210,6 +205,16 @@ const Hundred = ({ P, path, mode, guess, revealed }) => {
           <>
             What each game cost or earned
             <small>rating points, as on Chess.com: −8 a loss, 0 a draw, +8 a win</small>
+            {choice ? (
+              <small className={c("ch-youChose")}>
+                You chose to {choice === "Resign" ? "resign: the dashed line" : "play on: the solid line"}.
+              </small>
+            ) : null}
+          </>
+        ) : grid ? (
+          <>
+            Their clock: {P.clockLabels[clockAt]}
+            <small>players rated under 800 who stayed · {n.toLocaleString("en-GB")} games</small>
           </>
         ) : (
           <>
@@ -218,15 +223,15 @@ const Hundred = ({ P, path, mode, guess, revealed }) => {
               {mode === "guess"
                 ? `Your guess: ${guess} of 100 did not lose`
                 : shown >= 100
-                  ? `${saved} of 100 did not lose. You guessed ${guess}.`
+                  ? `${saved} of 100 did not lose`
                   : `${shown} of 100 played out · ${saved} did not lose`}
             </small>
           </>
         )}
       </figcaption>
-      <svg viewBox={`0 0 ${VIEW} ${VIEW}`} role="img" aria-label={`100 games, ${what}: ${100 - lost} did not lose, ${lost} lost.`}>
+      <svg ref={unit} viewBox={`0 0 ${VIEW} ${VIEW}`} role="img" aria-label={grid ? `${lit} in 100 did not lose when the other player had ${P.clockLabels[clockAt]} left.` : `100 games, ${what}: ${100 - lost} did not lose, ${lost} lost.`}>
         <defs>
-          <pattern id="ch-wrong-check" width={MINI / 4} height={MINI / 4} patternUnits="userSpaceOnUse">
+          <pattern id={`ch-wrong-check-${path}`} width={MINI / 4} height={MINI / 4} patternUnits="userSpaceOnUse">
             <rect width={MINI / 4} height={MINI / 4} fill="#2b2927" />
             <rect width={MINI / 8} height={MINI / 8} fill="#3a3734" />
             <rect x={MINI / 8} y={MINI / 8} width={MINI / 8} height={MINI / 8} fill="#3a3734" />
@@ -252,31 +257,32 @@ const Hundred = ({ P, path, mode, guess, revealed }) => {
           ) : (
             <text x={PLOT.x1} y={PLOT.y(8) - 16} textAnchor="end" className={c("ch-payoffNote")} data-kind="none">A lone king cannot win: no +8</text>
           )}
-          <text x={PLOT.x0} y={PLOT.y(8) + 30} className={c("ch-payoffNote")} data-kind="dim">
-            On average, playing on: {(P.ratingOn / 100).toFixed(1)} a game; resigning: {(P.ratingResign / 100).toFixed(1)}
-          </text>
-          <rect x={PLOT.x0} y={548} width={PLOT.x1 - PLOT.x0} height={5} rx={2.5} className={c("ch-payoffPrice")} />
-          <text x={PLOT.x0} y={576} className={c("ch-payoffNote")} data-kind="dim">
-            The price of staying: about {Math.round(P.moves)} more moves a game. Nothing else.
-          </text>
+        </g>
+        <g className={c("ch-payoff")} data-on={grid ? "true" : "false"} aria-hidden="true">
+          <text x={0} y={74} className={c("ch-hundredBig")}>{lit}</text>
+          <text x={lit >= 10 ? 118 : 64} y={74} className={c("ch-payoffNote")}>in 100 did not lose</text>
         </g>
         {boards.map(b => {
           const k = rank.get(b.i)
-          const x = chart ? PLOT.x0 + k * step + (step - MINI * scale) / 2 : (b.i % 10) * 60 + 4
-          const y = chart ? PLOT.y(b.value) - (MINI * scale) / 2 : Math.floor(b.i / 10) * 60 + 4
-          const over = AFTER.get(b.i) < shown
-          const state = chart ? `${b.end === "lost" ? "lost" : "saved"}-mark` : over ? (b.end === "lost" ? "lost" : "saved") : mode === "guess" && b.i < guess ? "guessed" : "open"
+          const order = AFTER.get(b.i)
+          const x = grid ? (order % 10) * CELL + (CELL - MINI * gridScale) / 2 : chart ? PLOT.x0 + k * step + (step - MINI * scale) / 2 : (b.i % 10) * 60 + 4
+          const y = grid ? GRID_TOP + Math.floor(order / 10) * CELL + (CELL - MINI * gridScale) / 2 : chart ? PLOT.y(b.value) - (MINI * scale) / 2 : Math.floor(b.i / 10) * 60 + 4
+          const over = order < shown
+          const state = grid
+            ? order < lit ? "saved-mark" : "lost-mark"
+            : chart ? `${b.end === "lost" ? "lost" : "saved"}-mark` : over ? (b.end === "lost" ? "lost" : "saved") : mode === "guess" && b.i < guess ? "guessed" : "open"
           return (
             <Board
               key={b.i}
-              fen={over || chart ? b.final : b.fen}
+              pattern={`ch-wrong-check-${path}`}
+              fen={over || chart || grid ? b.final : b.fen}
               flip={b.flip}
               state={state}
               x={x}
               y={y}
-              scale={chart ? scale : 1}
-              delay={(chart ? k : 99 - k) * 5}
-              title={`A player rated ${b.rating}, ${path === "queen" ? "queen lost" : "king left alone"} on move ${b.move}${over || chart ? `: ${b.end === "lost" ? "lost" : b.end === "won" ? "won" : b.end === "stalemate" ? "stalemate" : "drew"}, ${b.after} more moves` : ""}`}
+              scale={grid ? gridScale : chart ? scale : 1}
+              delay={grid ? order * 4 : (chart ? k : 99 - k) * 5}
+              title={grid ? "" : `A player rated ${b.rating}, ${path === "queen" ? "queen lost" : "king left alone"} on move ${b.move}${over || chart ? `: ${b.end === "lost" ? "lost" : b.end === "won" ? "won" : b.end === "stalemate" ? "stalemate" : "drew"}, ${b.after} more moves` : ""}`}
             />
           )
         })}
@@ -284,6 +290,14 @@ const Hundred = ({ P, path, mode, guess, revealed }) => {
       {mode === "play" ? (
         <p className={c("ch-hundredSum")}>
           Played on: <b>{signed(on)}</b> rating points · had they all resigned: <b>{signed(res)}</b>
+        </p>
+      ) : chart ? (
+        // (as words under the chart, not in it: at a phone's width they would not fit the drawing;
+        // on a phone the step's own words already say it, and the chart needs the room)
+        <p className={`${c("ch-hundredSum")} ${c("ch-payoffSum")}`}>
+          On average, playing on: <b>{(P.ratingOn / 100).toFixed(1)}</b> a game; resigning: <b>{(P.ratingResign / 100).toFixed(1)}</b>
+          <br />
+          The price of staying: about {Math.round(P.moves)} more moves a game. Nothing else.
         </p>
       ) : null}
     </figure>
@@ -293,10 +307,12 @@ const Hundred = ({ P, path, mode, guess, revealed }) => {
 // By rating: who gave up at once, and of those who stayed, who did not lose.
 const Levels = ({ P, path }) => {
   const R = P.byLevel
+  const unit = useUnit()
   const top = path === "queen" ? 0.3 : 0.45
-  const x0 = 96
-  const xs0 = 360
-  const x1 = 572
+  // (room for "1000–1199" and both headings at 12 px on a phone)
+  const x0 = 130
+  const xs0 = 350
+  const x1 = 540
   const rh = 40
   const bar = v => (v / 0.6) * (xs0 - 40 - x0)
   const dot = v => xs0 + (v / top) * (x1 - xs0)
@@ -306,7 +322,7 @@ const Levels = ({ P, path }) => {
         By rating
         <small>{path === "queen" ? "a queen down" : "only the king left"} · rapid games of the sample</small>
       </figcaption>
-      <svg viewBox={`0 0 600 ${R.length * rh + 70}`} role="img" aria-label={R.map(r => `${r.band}: ${pct(r.resigned)} gave up at once, ${pct(r.saved)} of those who stayed did not lose`).join("; ")}>
+      <svg ref={unit} viewBox={`0 0 600 ${R.length * rh + 70}`} role="img" aria-label={R.map(r => `${r.band}: ${pct(r.resigned)} gave up at once, ${pct(r.saved)} of those who stayed did not lose`).join("; ")}>
         <text x={x0} y={20} className={c("ch-levelsHead")}>{path === "queen" ? "Resigned at once" : "Gave up at once"}</text>
         <text x={xs0} y={20} className={c("ch-levelsHead")}>Stayed, did not lose</text>
         {[0, top / 3, (2 * top) / 3, top].map(v => (
@@ -342,23 +358,6 @@ const Waffle = ({ lit, label }) => (
   </svg>
 )
 
-const Clock = ({ P, at }) => {
-  const [, share, n] = P.clock.find(g => g[0] === at) || P.clock[P.clock.length - 1]
-  const lit = Math.round(share * 100)
-  return (
-    <figure className={c("ch-lever")}>
-      <figcaption className={c("ch-hundredTitle")}>
-        Their clock: {P.clockLabels[at]}
-        <small>players rated under 800 who stayed · {n.toLocaleString("en-GB")} games</small>
-      </figcaption>
-      <p className={c("ch-bigShare")}>
-        {lit} <span>in 100 did not lose</span>
-      </p>
-      <Waffle lit={lit} label={`${lit} in 100 did not lose`} />
-    </figure>
-  )
-}
-
 // Her own games of the path's kind, one square each.
 const Mine = ({ path }) => {
   const q = HER.queen
@@ -376,7 +375,7 @@ const Mine = ({ path }) => {
         <small>
           {path === "queen"
             ? `${q.on} times I stayed · ${q.saved} I did not lose (${q.won} won, ${q.drew} drew) · players in my exact situations: ${q.expected} · resigned ${q.resigned} (outlined)`
-            : `${k.saved} I did not lose, ${k.stalemate} of them by stalemate · gave up ${k.gaveup} (outlined) · every time control`}
+            : `${k.saved} I did not lose, ${k.stalemate} of them by stalemate · gave up ${k.gaveup} (outlined) · rapid games`}
         </small>
       </figcaption>
       <svg viewBox={`0 0 600 ${Math.ceil(kinds.length / cols) * size}`} role="img" aria-label={`${kinds.filter(x => x === "saved").length} saved of ${kinds.length}`}>
@@ -388,18 +387,23 @@ const Mine = ({ path }) => {
   )
 }
 
-// Where both paths meet.
-const Meet = ({ path }) => (
+// Where both paths meet: the two hundreds, with what the reader guessed for each.
+const Meet = ({ guesses }) => (
   <figure className={c("ch-meet")}>
     {["queen", "king"].map(key => {
       const lit = 100 - paths[key].counts.lost
       return (
-        <div key={key} data-on={key === path ? "true" : "false"}>
+        <div key={key}>
           <p className={c("ch-meetTitle")}>{key === "queen" ? "A queen down" : "Only the king left"}</p>
           <p className={c("ch-bigShare")}>
             {lit} <span>in 100</span>
           </p>
           <Waffle lit={lit} label={`${lit} in 100 did not lose`} />
+          {guesses[key] != null ? (
+            <p className={c("ch-meetGuess")}>
+              You guessed <b>{guesses[key]}</b>
+            </p>
+          ) : null}
         </div>
       )
     })}
@@ -407,123 +411,153 @@ const Meet = ({ path }) => (
   </figure>
 )
 
-const GUESS_STEP = 4
-
 // Tells the scene which step the reader is on (the controls in the texts need it too).
 const StepSpy = ({ at, onStep }) => {
   React.useEffect(() => onStep(at), [at, onStep])
   return null
 }
 
-export const Wrong = ({ guess }) => {
-  const [path, setPath] = React.useState("queen")
-  const [hundredGuess, setHundredGuess] = React.useState(30)
-  const [revealed, setRevealed] = React.useState(0)
+// The steps, in reading order: the queen, then the lone king, then both.
+const NAMES = [
+  "observation", "decide", "outcome", "guess", "play", "payoff", "taleb", "clock", "levels", "mine",
+  "decide-king", "outcome-king", "guess-king", "play-king", "payoff-king", "mine-king",
+  "meet", "you",
+]
+const pathOf = name => (name.endsWith("-king") ? "king" : "queen")
+const kindOf = name => name.replace(/-king$/, "")
+const HUNDRED = { queen: ["guess", "play", "payoff", "taleb", "clock"], king: ["guess-king", "play-king", "payoff-king"] }
+// what the hundred show at each of their steps, and once the scene has gone past them
+const modeOf = (path, now) => {
+  const k = kindOf(now)
+  if (HUNDRED[path].includes(now)) return k === "taleb" ? "payoff" : k
+  return NAMES.indexOf(now) > NAMES.indexOf(HUNDRED[path].at(-1)) ? (path === "queen" ? "clock" : "payoff") : "guess"
+}
+const both = value => ({ queen: value, king: value })
+
+export const Wrong = () => {
+  const [guess, setGuess] = React.useState(both(30))
+  const [guessed, setGuessed] = React.useState(both(false))
+  const [revealed, setRevealed] = React.useState(both(0))
+  const [played, setPlayed] = React.useState(both(false))
+  const [decision, setDecision] = React.useState(both(null))
   const [clockAt, setClockAt] = React.useState(3)
   const [step, setStep] = React.useState(0)
   const still = useStill()
-  const P = paths[path]
-  const game = GAMES[path]
-  const other = path === "queen" ? "king" : "queen"
+  const narrow = useNarrow()
+  const name = NAMES[step] || "observation"
+  const set = (setter, path, value) => setter(all => ({ ...all, [path]: typeof value === "function" ? value(all[path]) : value }))
 
-  // switching paths: the hundred start again; from further on, back to the guess
-  const choose = (key, jump = false) => {
-    if (key === path && !jump) return
-    setPath(key)
-    setRevealed(0)
-    setClockAt(3)
-    if (jump || step > GUESS_STEP) {
-      window.requestAnimationFrame(() => {
-        // a third of the way from the guess's card to the next one: past the line, whatever the screen
-        const pin = document.querySelector('section[aria-label="What we do when things go wrong"]')
-        const node = pin?.querySelector(`[data-step="${GUESS_STEP}"]`)
-        const next = pin?.querySelector(`[data-step="${GUESS_STEP + 1}"]`)
-        if (node && next) {
-          // (the step counts from its card, as the scene does)
-          const a = (node.firstElementChild || node).getBoundingClientRect().top
-          const b = (next.firstElementChild || next).getBoundingClientRect().top
-          window.scrollTo({ top: window.scrollY + a + (b - a) / 3 - stepLine(), behavior: still ? "auto" : "smooth" })
-        }
-      })
-    }
-  }
-
-  const names = [
-    "observation", "fork", "decide", "outcome", "guess", "play", "payoff", "taleb", "levels", "clock", "mine",
-    ...(path === "queen" ? ["stalemate"] : []),
-    "meet", "you",
-  ]
-  const name = names[step] || "observation"
-
-  // the hundred play out once the reader reaches them, one game at a time
+  // the hundred play out once the reader reaches them, three games a beat (each beat
+  // redraws the hundred, so fewer, larger beats keep it to about two seconds)
+  const playing = kindOf(name) === "play" ? pathOf(name) : null
   React.useEffect(() => {
-    if (name !== "play" || revealed >= 100) return
+    if (!playing || revealed[playing] >= 100) return
     if (still) {
-      setRevealed(100)
+      set(setRevealed, playing, 100)
       return
     }
-    const timer = window.setTimeout(() => setRevealed(n => Math.min(100, n + 1)), revealed ? 28 : 320)
+    const timer = window.setTimeout(() => set(setRevealed, playing, n => Math.min(100, n + 3)), revealed[playing] ? 50 : 320)
     return () => window.clearTimeout(timer)
-  }, [name, revealed, still])
+  }, [playing, revealed, still])
+  // what they came to is told once they have played out, not before (and stays told)
+  React.useEffect(() => {
+    for (const path of ["queen", "king"]) if (revealed[path] >= 100 && !played[path]) set(setPlayed, path, true)
+  }, [revealed, played])
 
-  const k = path === "king" ? "-king" : ""
+  const decide = path => (
+    <Guess label="Your decision" options={["Resign", "Play on"]} value={decision[path]} onChange={v => set(setDecision, path, v)} />
+  )
+  const askHundred = path => (
+    <label className={c("ch-wrongRange")}>
+      <span>
+        <b>{guess[path]}</b> of 100
+      </span>
+      <input
+        type="range"
+        min={0}
+        max={100}
+        value={guess[path]}
+        onChange={e => {
+          set(setGuess, path, Number(e.target.value))
+          set(setGuessed, path, true)
+        }}
+        aria-label="Your guess: how many of the 100 did not lose"
+      />
+    </label>
+  )
+  const afterPlay = (path, text) => (
+    <div>
+      <p className={c("ch-guessReply")} aria-live="polite">
+        {guessed[path] ? (
+          <>
+            You guessed <b>{guess[path]}</b>.{" "}
+          </>
+        ) : null}
+        {played[path] ? (
+          <>
+            It was <strong>{100 - paths[path].counts.lost}</strong>.
+          </>
+        ) : (
+          "Let’s see."
+        )}
+      </p>
+      <div className={c("ch-afterPlay")} data-on={played[path] ? "true" : "false"} aria-hidden={played[path] ? undefined : "true"}>
+        <Text name={text} look="lead" />
+        <div className={c("ch-guess")}>
+          <button type="button" onClick={() => set(setRevealed, path, 0)}>Play them out again</button>
+        </div>
+      </div>
+    </div>
+  )
+
   const texts = {
     observation: <Text name="wrong-observation" look="lead" />,
-    fork: (
-      <>
-        <Text name="wrong-fork" look="lead" />
-        <Guess label="Which way" options={["A queen down", "Only the king left"]} value={path === "queen" ? "A queen down" : "Only the king left"} onChange={v => choose(v === "A queen down" ? "queen" : "king")} />
-      </>
-    ),
     decide: (
       <>
-        <Text name={`wrong-decide${k}`} look="lead" />
-        <Guess label="Your decision" options={["Resign", "Play on"]} {...guess} />
+        <Text name="wrong-decide" look="lead" />
+        {decide("queen")}
       </>
     ),
-    outcome: <Text name={`wrong-outcome${k}`} look="lead" />,
+    outcome: <Text name="wrong-outcome" look="lead" />,
     guess: (
       <>
-        <Text name={`wrong-guess${k}`} look="lead" />
-        <label className={c("ch-wrongRange")}>
-          <span>
-            <b>{hundredGuess}</b> of 100
-          </span>
-          <input type="range" min={0} max={100} value={hundredGuess} onChange={e => setHundredGuess(Number(e.target.value))} aria-label="Your guess: how many of the 100 did not lose" />
-        </label>
+        <Text name="wrong-guess" look="lead" />
+        {askHundred("queen")}
       </>
     ),
-    play: (
-      <>
-        <Text name={`wrong-play${k}`} look="lead" />
-        <div className={c("ch-guess")}>
-          <button type="button" onClick={() => setRevealed(0)}>Play them out again</button>
-        </div>
-      </>
-    ),
+    play: afterPlay("queen", "wrong-play"),
     payoff: <Text name="wrong-payoff" look="lead" />,
-    taleb: <Text name={`wrong-taleb${k}`} look="lead" />,
-    levels: <Text name={`wrong-levels${k}`} look="lead" />,
+    taleb: <Text name="wrong-taleb" look="lead" />,
     clock: (
       <>
-        <Text name={`wrong-clock${k}`} look="lead" />
-        <Guess label="Their clock" options={[3, 2, 1, 0].map(i => P.clockLabels[i])} value={P.clockLabels[clockAt]} onChange={v => setClockAt(P.clockLabels.indexOf(v))} />
+        <Text name="wrong-clock" look="lead" />
+        <Guess label="Their clock" options={[3, 2, 1, 0].map(i => paths.queen.clockLabels[i])} value={paths.queen.clockLabels[clockAt]} onChange={v => setClockAt(paths.queen.clockLabels.indexOf(v))} />
       </>
     ),
-    mine: <Text name={`wrong-mine${k}`} look="lead" />,
-    stalemate: <Text name="wrong-stalemate" look="lead" />,
-    meet: <Text name="wrong-meet" look="lead" />,
-    you: (
+    levels: <Text name="wrong-levels" look="lead" />,
+    mine: <Text name="wrong-mine" look="lead" />,
+    "decide-king": (
       <>
-        <Text name="wrong-you" look="lead" />
-        <div className={c("ch-guess")}>
-          <button type="button" onClick={() => choose(other, true)}>
-            Walk the other path: {other === "queen" ? "a queen down" : "only the king left"}
-          </button>
-        </div>
+        <Text name="wrong-decide-king" look="lead" />
+        {decide("king")}
       </>
     ),
+    "outcome-king": <Text name="wrong-outcome-king" look="lead" />,
+    "guess-king": (
+      <>
+        <Text name="wrong-guess-king" look="lead" />
+        {askHundred("king")}
+      </>
+    ),
+    "play-king": afterPlay("king", "wrong-play-king"),
+    "payoff-king": <Text name="wrong-payoff-king" look="lead" />,
+    "mine-king": <Text name="wrong-mine-king" look="lead" />,
+    meet: <Text name="wrong-meet" look="lead" />,
+    you: <Text name="wrong-you" look="lead" />,
   }
+
+  // the reader's decision on the board: what it costs, said at once
+  const said = path => (decision[path] === "Resign" ? "You resigned · −8" : decision[path] === "Play on" ? "You played on" : GAMES[path].first)
 
   return (
     <Pinned
@@ -531,13 +565,12 @@ export const Wrong = ({ guess }) => {
       mark="when-things-go-wrong"
       className={c("ch-wrong")}
       label="What we do when things go wrong"
-      steps={names.map(n => ({ text: texts[n], ...(n === "outcome" ? { rest: 0.6 } : {}) }))}
+      steps={NAMES.map(n => ({ text: texts[n], ...(kindOf(n) === "outcome" ? { rest: 0.6 } : {}) }))}
     >
       {at => {
-        const now = names[at] || "observation"
-        const hundred = ["guess", "play", "payoff", "taleb"].includes(now)
+        const now = NAMES[at] || "observation"
         return (
-          <div className={c("ch-wrongScene")} data-path={path}>
+          <div className={c("ch-wrongScene")} data-path={pathOf(now)}>
             <StepSpy at={at} onStep={setStep} />
             <Show on={now === "observation"} className={c("ch-wrongLayer")}>
               <CcBoard
@@ -550,40 +583,39 @@ export const Wrong = ({ guess }) => {
                 label="The opponent, a queen down, resigned."
               />
             </Show>
-            <Show on={now === "fork"} className={c("ch-wrongLayer")}>
-              <Fork path={path} onPath={choose} />
-            </Show>
-            <Show on={now === "decide"} className={c("ch-wrongLayer")}>
-              <GameBoard game={game} at={0} bottom={game.note} say={guess.value ? `You chose: ${guess.value.toLowerCase()}` : game.first} />
-            </Show>
-            <Show on={now === "outcome"} className={c("ch-wrongLayer")}>
-              <PlayOut key={path} during={names.indexOf("outcome")} game={game} />
-            </Show>
-            <Show on={hundred} className={c("ch-wrongLayer")}>
-              <Hundred key={path} P={P} path={path} mode={now === "taleb" ? "payoff" : hundred ? now : "guess"} guess={hundredGuess} revealed={revealed} />
-            </Show>
+            {["queen", "king"].map(path => {
+              const k = path === "king" ? "-king" : ""
+              return (
+                <React.Fragment key={path}>
+                  <Show on={now === `decide${k}`} className={c("ch-wrongLayer")}>
+                    {/* (on a phone the lone king's note goes: its words just above say the same, and the board needs the room) */}
+                    <GameBoard game={GAMES[path]} at={0} bottom={narrow && path === "king" ? null : GAMES[path].note} say={said(path)} />
+                  </Show>
+                  <Show on={now === `outcome${k}`} className={c("ch-wrongLayer")}>
+                    <PlayOut during={NAMES.indexOf(`outcome${k}`)} game={GAMES[path]} />
+                  </Show>
+                  <Show on={HUNDRED[path].includes(now)} className={c("ch-wrongLayer")}>
+                    <Hundred
+                      P={paths[path]}
+                      path={path}
+                      mode={modeOf(path, now)}
+                      guess={guess[path]}
+                      revealed={revealed[path]}
+                      clockAt={clockAt}
+                      choice={decision[path]}
+                    />
+                  </Show>
+                  <Show on={now === `mine${k}`} className={c("ch-wrongLayer")}>
+                    <Mine path={path} />
+                  </Show>
+                </React.Fragment>
+              )
+            })}
             <Show on={now === "levels"} className={c("ch-wrongLayer")}>
-              <Levels P={P} path={path} />
-            </Show>
-            <Show on={now === "clock"} className={c("ch-wrongLayer")}>
-              <Clock P={P} at={clockAt} />
-            </Show>
-            <Show on={now === "mine"} className={c("ch-wrongLayer")}>
-              <Mine path={path} />
-            </Show>
-            <Show on={now === "stalemate"} className={c("ch-wrongLayer")}>
-              <CcBoard
-                fen={data.stalemate.fen}
-                colour={data.stalemate.colour}
-                rating={data.stalemate.rating}
-                oppRating={data.stalemate.oppRating}
-                top={`${day(data.stalemate.date)} · I play ${side(data.stalemate.colour)} · move ${data.stalemate.moves + 1}`}
-                say="Stalemate"
-                label="Stalemate: my lone king, three queens against it."
-              />
+              <Levels P={paths.queen} path="queen" />
             </Show>
             <Show on={now === "meet" || now === "you"} className={c("ch-wrongLayer")}>
-              <Meet path={path} />
+              <Meet guesses={{ queen: guessed.queen ? guess.queen : null, king: guessed.king ? guess.king : null }} />
             </Show>
           </div>
         )

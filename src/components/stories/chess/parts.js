@@ -69,8 +69,12 @@ export const Show = ({ on, flow = false, className = "", children, style }) => (
 
 // The line a card has to reach to count: half way down beside the graphic,
 // and near the bottom on a phone, where a card comes up under the graphic and
-// counts once it is fully in view.
-export const stepLine = () => window.innerHeight * (window.matchMedia("(max-width: 60rem)").matches ? 0.88 : 0.5)
+// counts once it is fully in view. In Part III (`node` inside it) the line on
+// a wide screen is lower, at 70%: the chart changes as its words come into
+// reading view, not after they have been read beside the old picture.
+export const stepLine = node =>
+  window.innerHeight *
+  (window.matchMedia("(max-width: 60rem)").matches ? 0.88 : node?.closest?.('[data-part="investigation"]') ? 0.7 : 0.5)
 
 // The steps of the pinned scene a graphic stands in, by number: for a graphic
 // that follows the scroll within a step (club.js) to find that step's card.
@@ -85,7 +89,7 @@ const useStep = count => {
     let frame = 0
     const update = () => {
       frame = 0
-      const line = stepLine()
+      const line = stepLine(refs.current.find(Boolean))
       const top = node => (node.firstElementChild || node).getBoundingClientRect().top
       const passed = refs.current.slice(0, count).filter(node => node && top(node) < line)
       setStep(passed.length ? Number(passed[passed.length - 1].dataset.step) : 0)
@@ -118,7 +122,7 @@ export const useSince = (step, every, most) => {
       const node = steps?.current?.[step]
       if (!node) return
       const top = (node.firstElementChild || node).getBoundingClientRect().top
-      setPart(Math.max(0, Math.min(most, Math.floor((stepLine() - top) / window.innerHeight / every))))
+      setPart(Math.max(0, Math.min(most, Math.floor((stepLine(node) - top) / window.innerHeight / every))))
     }
     const onScroll = () => {
       if (!frame) frame = window.requestAnimationFrame(update)
@@ -153,6 +157,27 @@ export const useSince = (step, every, most) => {
 // reader scrolls, as the sentences beside the wooden set do; a step with no
 // text leaves the graphic to speak alone. `open` leaves out the rule above.
 // `mark` names the scene for the chapters' navigation (chapters.js).
+// For an SVG drawn in a fixed viewBox and scaled to its box: sets `--u`, the
+// viewBox units in one screen pixel, so its labels can be sized in real
+// pixels (`font-size: calc(12px * var(--u, 1))`) at any width.
+export const useUnit = () => {
+  const ref = React.useRef(null)
+  React.useLayoutEffect(() => {
+    const svg = ref.current
+    if (!svg) return
+    const set = width => {
+      const view = svg.viewBox?.baseVal?.width
+      if (width > 0 && view) svg.style.setProperty("--u", (view / width).toFixed(4))
+    }
+    // the layout width, not the drawn one: a layer's scale transition must not change the labels
+    const observer = new ResizeObserver(([entry]) => set(entry.contentRect.width))
+    observer.observe(svg)
+    set(svg.clientWidth)
+    return () => observer.disconnect()
+  }, [])
+  return ref
+}
+
 export const useNarrow = () => {
   const [narrow, setNarrow] = React.useState(false)
   React.useEffect(() => {
