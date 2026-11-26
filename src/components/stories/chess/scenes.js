@@ -6,7 +6,7 @@ import { CLUB_REST, ClubBoard } from "./club"
 import { Dive } from "./dive"
 import { c, Pinned, Show, Text, useNarrow } from "./parts"
 import { RatingStory } from "./ratings"
-import { NameAsk, NameScore } from "./say"
+import { NameAsks, NameScore } from "./say"
 import { useReader, useTell } from "./reader"
 import { YouOnChessCom } from "./you"
 import { GROUPS, crowdStage } from "./crowd"
@@ -192,10 +192,7 @@ export const Say = () => {
   // What the reader guessed for each kind of username (this reading only).
   const [guesses, setGuesses] = React.useState({})
   useTell("names", guesses)
-  const ask = g => ({
-    text: <NameAsk group={g} value={guesses[g.key]} onChange={v => setGuesses(all => ({ ...all, [g.key]: v }))} />,
-    rest: 0.15,
-  })
+  const guess = (key, value) => setGuesses(all => ({ ...all, [key]: value }))
   return (
     <section className={c("ch-saySection")} aria-label="Claims and evidence">
       <Pinned
@@ -213,8 +210,7 @@ export const Say = () => {
           { text: <Text name="say-pace" look="lead" /> },
           { text: <Text name="say-hurry" look="lead" />, rest: 0.25 },
           { text: <Text name="say-others" look="lead" className={c("ch-messageCopy")} />, rest: 0.3, anchor: "what-names-say" },
-          { text: <Text name="say-guess" look="lead" /> },
-          ...GROUPS.map(ask),
+          { text: <><Text name="say-guess" look="lead" /><NameAsks guesses={guesses} onChange={guess} /></>, rest: 0.2 },
           { text: <><NameScore guesses={guesses} /><Text name="say-surprise" look="lead" /></>, rest: 0.1 },
           { text: <Text name="say-road" look="lead" /> },
           { text: <Text name="say-me" look="lead" />, rest: 0.15 },

@@ -392,13 +392,29 @@ From the hidden games we draw a few: the mystery games. Nine other players of th
 
 Picking blind, you'd be right one time in ten.
 
-<!--step:choose-round-->
+<!--step:choose-round-1-->
 
-Your turn, with a new mystery player and nine new cards. Which card is theirs?
+Your turn, with a new mystery player and nine new cards. From **one game**, which card is theirs?
 
-Try it from **one game**, then **ten**, then **thirty**. The computer picks too: it adds up the gaps on the four dials and takes the smallest.
+The computer picks too: it adds up the gaps on the four dials and takes the smallest.
 
-Then play again, with players drawn at random. These aren't chosen to work: sometimes even thirty games aren't enough.
+<!--step:choose-round-10-->
+
+The same player, from **ten games**.
+
+One game left two dials blank: a game that wasn't lost says nothing about giving up, and one opening is not yet a habit.
+
+<!--step:choose-round-30-->
+
+And from **thirty**.
+
+The more games, the less one odd game pulls the dials around.
+
+<!--step:choose-play-->
+
+Play again, with players drawn at random.
+
+These aren't chosen to work: sometimes even thirty games aren't enough.
 
 <!--step:choose-curve-->
 
