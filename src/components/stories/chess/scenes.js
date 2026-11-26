@@ -6,8 +6,9 @@ import { CLUB_REST, ClubBoard } from "./club"
 import { Dive } from "./dive"
 import { c, Pinned, Show, Text, useNarrow } from "./parts"
 import { RatingStory } from "./ratings"
-import { NameAsk, NameScore } from "./say"
-import { useTell } from "./reader"
+import { NameAsks, NameScore } from "./say"
+import { useReader, useTell } from "./reader"
+import { YouOnChessCom } from "./you"
 import { GROUPS, crowdStage } from "./crowd"
 
 // The pinned scenes of the chess story: the club in London (Part II), and the
@@ -30,8 +31,14 @@ const noteOf = ([day, result, how, colour, kind, rating]) =>
 const COLS = 37
 const ROWS = 27
 const MIDDLE = ((ROWS - 1) / 2) * COLS + (COLS - 1) / 2
+// Where the reader's own place goes, once they have given their username: one
+// board beside the club's, drawn over one of hers.
+const YOUR_COL = (COLS - 1) / 2 + 3
+const YOUR_ROW = (ROWS - 1) / 2 + 1
+const YOURS = YOUR_ROW * COLS + YOUR_COL
 const Boards = () => {
   const [note, setNote] = React.useState(null)
+  const found = useReader().chesscom
   const notes = React.useRef(null)
   const look = event => {
     const box = event.currentTarget.getBoundingClientRect()
@@ -39,6 +46,10 @@ const Boards = () => {
     const row = Math.floor(((event.clientY - box.top) / box.height) * ROWS)
     const place = row * COLS + col
     if (col < 0 || row < 0 || col >= COLS || row >= ROWS || place === MIDDLE) return setNote(null)
+    if (found && place === YOURS) {
+      const games = found.rapid.games + found.bullet.games
+      return setNote({ text: `You, on Chess.com · ${games.toLocaleString("en-GB")} rapid and bullet games`, x: event.clientX - box.left, y: event.clientY - box.top, w: box.width })
+    }
     const index = place > MIDDLE ? place - 1 : place
     const show = list => setNote({ text: noteOf(list[index]), x: event.clientX - box.left, y: event.clientY - box.top, w: box.width })
     if (notes.current) show(notes.current)
@@ -52,11 +63,20 @@ const Boards = () => {
     <div className={c("ch-minisBox")} onPointerMove={look} onPointerDown={look} onPointerLeave={() => setNote(null)}>
       <img
         src="/images/stories/chess/boards.webp"
-        alt="Hundreds of tiny chessboards in a grid: how the author’s last thousand games ended, her pieces in green, her opponents’ in ivory. Point at one to see the game."
+        alt="Hundreds of tiny chessboards in a grid: how the author’s last thousand games ended, her pieces in clay, her opponents’ in ivory. Point at one to see the game."
         width={1776}
         height={1296}
         decoding="async"
       />
+      {found ? (
+        <span
+          className={c("ch-yourBoard")}
+          aria-hidden="true"
+          style={{ left: `${(YOUR_COL / COLS) * 100}%`, top: `${(YOUR_ROW / ROWS) * 100}%`, width: `${100 / COLS}%`, height: `${100 / ROWS}%` }}
+        >
+          <i />
+        </span>
+      ) : null}
       {note ? (
         <span className={c("ch-boardNote")} style={{ left: Math.min(note.x, note.w - 230), top: note.y }} role="status">
           {note.text}
@@ -86,8 +106,9 @@ export const People = () => (
       {},
       { text: <Text name="professor-maybe" look="lead" /> },
       {},
-      { text: <Text name="self" look="lead" /> },
       { text: <Text name="boards" look="lead" /> },
+      // the hinge: Chess.com keeps every game, so the reader's are in there too
+      { text: <YouOnChessCom where="hinge" />, rest: 0.4 },
       { mark: "the-investigation", rest: 1.8 },
     ]}
   >
@@ -171,10 +192,7 @@ export const Say = () => {
   // What the reader guessed for each kind of username (this reading only).
   const [guesses, setGuesses] = React.useState({})
   useTell("names", guesses)
-  const ask = g => ({
-    text: <NameAsk group={g} value={guesses[g.key]} onChange={v => setGuesses(all => ({ ...all, [g.key]: v }))} />,
-    rest: 0.15,
-  })
+  const guess = (key, value) => setGuesses(all => ({ ...all, [key]: value }))
   return (
     <section className={c("ch-saySection")} aria-label="Claims and evidence">
       <Pinned
@@ -192,8 +210,7 @@ export const Say = () => {
           { text: <Text name="say-pace" look="lead" /> },
           { text: <Text name="say-hurry" look="lead" />, rest: 0.25 },
           { text: <Text name="say-others" look="lead" className={c("ch-messageCopy")} />, rest: 0.3, anchor: "what-names-say" },
-          { text: <Text name="say-guess" look="lead" /> },
-          ...GROUPS.map(ask),
+          { text: <><Text name="say-guess" look="lead" /><NameAsks guesses={guesses} onChange={guess} /></>, rest: 0.2 },
           { text: <><NameScore guesses={guesses} /><Text name="say-surprise" look="lead" /></>, rest: 0.1 },
           { text: <Text name="say-road" look="lead" /> },
           { text: <Text name="say-me" look="lead" />, rest: 0.15 },

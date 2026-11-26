@@ -9,7 +9,6 @@ import { People, Say } from "./scenes"
 import { Reveal } from "./reveal"
 import { Hub } from "./hub"
 import { ReaderProvider } from "./reader"
-import { YouOnChessCom } from "./you"
 import { InvestigationHeader } from "./investigation-header"
 import { Chat } from "./phone-scenes"
 import { Wrong } from "./wrong"
@@ -239,36 +238,35 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
         {/* The wooden set, then the same phone into Part II (wooden.js), then
             the club (scenes.js). Part II's name stays at the top of the screen
             from the moment the first stranger is found to the end of the part. */}
-        <div className={c("ch-people")} data-people="" data-titled="false">
-          <div className={c("ch-peopleTitle")}>
-            <Text name="people-title" look="partTitle" />
+        <ReaderProvider>
+          <div className={c("ch-people")} data-people="" data-titled="false">
+            <div className={c("ch-peopleTitle")}>
+              <Text name="people-title" look="partTitle" />
+            </div>
+            <Wooden lines={LINES.wooden} />
+            <People />
           </div>
-          <Wooden lines={LINES.wooden} />
-          <People />
-        </div>
 
-        {/* Part III: the parent label and each question's board/title stay at
-            the top while its investigation is read, including its sub-sections. */}
-        <div className={c("ch-people", "ch-part3")} data-part="investigation" data-titled="true">
-          <div className={c("ch-peopleTitle")}>
-            <InvestigationHeader />
-          </div>
-          {/* After each question, the three again, answered so far (hub.js); the
-              reader's guesses and choices are carried between them (reader.js). */}
-          <ReaderProvider>
-            {/* The first question opens (its mark, for the boards, the hubs and
-                the navigation) on the reader's own Chess.com ratings, if they
-                want them (you.js). */}
+          {/* Part III: the parent label and each question's board/title stay at
+              the top while its investigation is read, including its sub-sections. */}
+          <div className={c("ch-people", "ch-part3")} data-part="investigation" data-titled="true">
+            <div className={c("ch-peopleTitle")}>
+              <InvestigationHeader />
+            </div>
+            {/* After each question, the three again, answered so far (hub.js); the
+                reader's guesses and choices are carried between them (reader.js). */}
+            {/* The first question opens with its mark, for the boards, the hubs
+                and the navigation. The reader's Chess.com username was asked at
+                the hinge before it (scenes.js, you.js). */}
             <section data-investigation-part="what-we-say" className={c("ch-question")}>
               <span id="what-we-say" className={c("ch-mark")} />
-              <YouOnChessCom />
               <Say />
               <Hub upto={1} />
             </section>
             <section data-investigation-part="when-things-go-wrong"><Wrong /><Hub upto={2} /></section>
             <section data-investigation-part="what-we-choose"><Reveal /><Hub upto={3} /></section>
-          </ReaderProvider>
-        </div>
+          </div>
+        </ReaderProvider>
 
         <section className={c("ch-free", "ch-back")} aria-label="Back to the threads of life">
           <Mark id="the-ending" />

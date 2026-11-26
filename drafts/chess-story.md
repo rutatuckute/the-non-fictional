@@ -90,7 +90,7 @@ And thus, more questions.
 
 <!--step:people-bridge-->
 
-Thought most of them, weren't really about chess.
+Though most of them weren't really about chess.
 
 <!--step:people-title-->
 
@@ -144,10 +144,6 @@ Or maybe he saw something.
 <!--step:central-->
 
 How much can we understand about another person from such little information?
-
-<!--step:self-->
-
-I do it too. And sometimes I catch something about myself: after a loss, I rush into a new game, as if a win were due.
 
 <!--step:boards-->
 

@@ -9,7 +9,7 @@ import { countQueens } from "./queens"
 import { useReader, useTell } from "./reader"
 import paths from "./wrong-paths.json"
 
-// At the start of Part III, an optional box: a reader who plays on Chess.com
+// At the hinge between Parts II and III ("Chess.com keeps every game"), an optional box: a reader who plays on Chess.com
 // gives their username and is drawn in the charts as a green dot beside hers
 // (ratings.js), and in the recap (hub.js). Only on a press of the button is
 // Chess.com asked (chesscom.js); what comes back stays in this reading.
@@ -23,7 +23,7 @@ const say = state => {
     case "asking":
       return "Asking Chess.com…"
     case "found":
-      return `Found ${state.username}: rapid ${state.rapid.rating}${old(state.rapid)}, bullet ${state.bullet.rating}${old(state.bullet)}. You’re the green dot in the first chart.`
+      return `Found ${state.username}: rapid ${state.rapid.rating}${old(state.rapid)}, bullet ${state.bullet.rating}${old(state.bullet)}. You’re the green dot in the charts, and one of the thousand boards.`
     case "invalid":
       return "Chess.com usernames are 3 to 25 letters, digits, hyphens or underscores."
     case "missing":
@@ -39,7 +39,7 @@ const say = state => {
   }
 }
 
-export const YouOnChessCom = () => {
+export const YouOnChessCom = ({ where }) => {
   const [typed, setTyped] = React.useState("")
   const [state, setState] = React.useState({ kind: "idle" })
   const pending = React.useRef(null)
@@ -70,7 +70,7 @@ export const YouOnChessCom = () => {
   // the button says so only while the box still holds the name that was found
   const current = found && typed.trim() === state.username
   return (
-    <section className={c("ch-you")} aria-labelledby={`${id}-label`} data-found={found ? "true" : "false"}>
+    <section className={c("ch-you")} aria-labelledby={`${id}-label`} data-found={found ? "true" : "false"} data-where={where}>
       <Text name="you-chesscom" look="lead" className={c("ch-youWords")} />
       <form className={c("ch-youForm")} onSubmit={submit} noValidate>
         <label id={`${id}-label`} htmlFor={`${id}-name`} className={c("ch-youLabel")}>
@@ -106,7 +106,7 @@ export const YouOnChessCom = () => {
           {say(state)}
         </p>
         <p id={`${id}-note`} className={c("ch-youNote")}>
-          Read from Chess.com’s public data, in your browser. Nothing is sent to this site or saved: it’s gone when you close the page. Any public username works.
+          Read from Chess.com’s public data, in your browser. Nothing is sent to this site or saved: it’s gone when you close the page. Any public username works. No account? Keep scrolling: the story works without one.
         </p>
       </form>
     </section>

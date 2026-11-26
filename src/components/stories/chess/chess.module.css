@@ -1063,26 +1063,26 @@
 .ch-ratings .ch-crowdResign { fill: var(--resign, #b59dd9); }
 .ch-sayPin { --resign: #b59dd9; }
 .ch-ratingReadout b.ch-crowdResignText { color: var(--resign); }
-/* the guesses, in the words beside the crowd */
-.ch-nameAsk { display: grid; justify-items: center; gap: 0; }
-.ch-nameAsk h4 { margin: 0 0 10px; color: var(--ink); font: 400 var(--t-second) / 1.1 var(--font-title); letter-spacing: var(--tracking-display); }
-.ch-story .ch-nameExamples { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; margin-bottom: 16px; color: var(--ink-2); font: 400 12px / 1.5 var(--font-mono); overflow-wrap: anywhere; }
+/* the guesses, in the words beside the crowd: all four kinds in one step */
+.ch-nameAsks { display: grid; gap: 18px; margin-top: 22px; }
+.ch-nameRow { display: grid; justify-items: center; gap: 0; }
+.ch-nameRow h4 { margin: 0 0 4px; color: var(--ink); font: 400 24px / 1.1 var(--font-title); letter-spacing: var(--tracking-display); }
+.ch-story .ch-nameExamples { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; margin-bottom: 10px; color: var(--ink-2); font: 400 12px / 1.5 var(--font-mono); overflow-wrap: anywhere; }
 .ch-nameExamples i { font-style: normal; color: var(--ink-3); }
-.ch-story .ch-namePrompt { color: var(--ink-2); font: 400 12px / 1.5 var(--font-mono); margin-bottom: 10px; }
 .ch-nameChoices { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-.ch-nameChoices .ch-ask { min-height: 44px; }
-.ch-story .ch-nameVerdict { min-height: 2.9em; margin-top: 12px; color: var(--ink-2); font: 400 12px / 1.45 var(--font-mono); opacity: 0; transition: opacity var(--ch-fade) ease; }
+.ch-nameChoices .ch-ask { min-height: 40px; }
+.ch-story .ch-nameVerdict { min-height: 1.5em; margin-top: 6px; color: var(--ink-2); font: 400 12px / 1.45 var(--font-mono); opacity: 0; transition: opacity var(--ch-fade) ease; }
 .ch-nameVerdict[data-shown="true"] { opacity: 1; }
 .ch-nameVerdict strong { color: var(--ink); font-weight: 500; }
 .ch-story .ch-nameScore { margin-bottom: 14px; color: var(--ink-2); font: 400 12px / 1.4 var(--font-mono); }
 @media (max-width: 60rem) {
-  .ch-nameAsk h4 { margin-bottom: 6px; font-size: 24px; }
-  .ch-story .ch-nameExamples { margin-bottom: 8px; font-size: 11px; }
-  .ch-story .ch-namePrompt { margin-bottom: 6px; font-size: 11px; }
+  .ch-nameAsks { gap: 8px; margin-top: 12px; }
+  .ch-nameRow h4 { margin-bottom: 4px; font-size: 20px; }
+  .ch-story .ch-nameExamples { display: none; }
   .ch-nameChoices { gap: 6px; flex-wrap: nowrap; }
-  .ch-nameChoices .ch-ask { padding-inline: 12px; font-size: 12px; }
+  .ch-nameChoices .ch-ask { min-height: 36px; padding-inline: 12px; font-size: 12px; }
   .ch-nameChoices .ch-ask i { display: none; }
-  .ch-story .ch-nameVerdict { margin-top: 6px; font-size: 11px; }
+  .ch-story .ch-nameVerdict { margin-top: 3px; min-height: 1.4em; font-size: 11px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ch-paceCloud circle, .ch-crowdDot, .ch-crowdFade, .ch-crowdMarks > g, .ch-crowdTag, .ch-ratingMe, .ch-nameVerdict { transition: none !important; }
@@ -1342,6 +1342,14 @@
    her words, one field, one button, and what happened, in the story's mono. */
 .ch-you { position: relative; z-index: 3; width: min(100% - 2 * var(--page-margin, 20px), 36rem); margin: 0 auto; padding: 14vh 0 12vh; background: var(--void); }
 .ch-youWords { margin-bottom: 22px; }
+/* asked at the hinge, in the reading column beside the thousand boards */
+.ch-you[data-where="hinge"] { width: 100%; padding: 0; background: none; }
+.ch-you[data-where="hinge"] .ch-youWords { text-align: center; }
+/* the reader's own place among the thousand boards: green, beside the club's */
+.ch-yourBoard { position: absolute; display: grid; place-items: center; box-sizing: border-box; background: var(--void); box-shadow: inset 0 0 0 2px var(--form-data); pointer-events: none; animation: ch-yours 900ms var(--ch-ease, ease) both; }
+.ch-yourBoard i { width: 22%; aspect-ratio: 1; border-radius: 50%; background: var(--form-data); }
+@keyframes ch-yours { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .ch-yourBoard { animation: none; } }
 .ch-youForm { display: grid; justify-items: center; gap: 10px; text-align: center; }
 .ch-story .ch-youLabel { color: var(--ink-3); font: 500 10.5px / 1.4 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; }
 .ch-youRow { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; width: 100%; }

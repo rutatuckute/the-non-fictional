@@ -22,13 +22,13 @@ export const RESIGN = "#b59dd9"
 
 export const truth = g => (g.high < 0.5 ? "lower" : g.low > 0.5 ? "higher" : "same")
 
-// From the steps of the "what we say" scene (scenes.js) to what the crowd shows.
-export const FIRST_NAME_STEP = 11
+// From the steps of the "what we say" scene (scenes.js) to what the crowd shows:
+// step 9 the crowd, 10 the guesses (all four kinds at once), 11 the result,
+// 12 the jokers and the road to GM, 13 me, 14 the hundred lost games.
 export const crowdStage = step =>
-  step >= 18 ? "giveup" : step >= 17 ? "me" : step >= 15 ? "all" : step >= 10 ? "rows" : step >= 9 ? "crowd" : null
+  step >= 14 ? "giveup" : step >= 13 ? "me" : step >= 11 ? "all" : step >= 10 ? "rows" : step >= 9 ? "crowd" : null
 export const activeGroups = step =>
-  step >= 11 && step <= 14 ? [GROUPS[step - FIRST_NAME_STEP].key]
-    : step === 15 ? ["bad", "good"] : step === 16 ? ["jokes", "aims"] : step === 17 ? ["bad"] : []
+  step === 10 ? GROUPS.map(g => g.key) : step === 11 ? ["bad", "good"] : step === 12 ? ["jokes", "aims"] : step === 13 ? ["bad"] : []
 
 const random = seed => () => {
   seed |= 0; seed = (seed + 0x6d2b79f5) | 0
