@@ -580,10 +580,9 @@ const STEPS = [
   ["choose-games", { view: "split", stage: "card" }],
   ["choose-split", { view: "split", stage: "split" }],
   ["choose-lineup", { view: "game", mode: "intro", stage: "lineup" }],
-  ["choose-round-1", { view: "game", mode: "rounds", round: 0 }],
-  ["choose-round-10", { view: "game", mode: "rounds", round: 1 }],
-  ["choose-round-30", { view: "game", mode: "rounds", round: 2 }],
-  ["choose-play", { view: "game", mode: "play" }],
+  // one round to play: the same mystery player from one game, ten or thirty (the
+  // reader moves between them), then "another player", drawn at random
+  ["choose-round", { view: "game", mode: "play" }],
   ["choose-curve", { view: "curve", lines: ["chance", "typical"] }],
   ["choose-me", { view: "curve", lines: ["chance", "typical", "her"] }],
   ["choose-findme", { view: "game", mode: "findme" }],
@@ -682,7 +681,7 @@ export const Reveal = () => {
   const dials = useYourDials()
   const you = dials.read
   const steps = STEPS.filter(([, v]) => !v.you || (you && (v.you !== "find" || you.find)))
-  const [game, setGame] = React.useState({ picks: {}, shown: {}, lineup: 1, round: 0 })
+  const [game, setGame] = React.useState({ picks: {}, shown: {}, lineup: 0, round: 0 })
   // a new reading of the reader's games is a new "find you"
   React.useEffect(() => {
     setGame(all => {
