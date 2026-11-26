@@ -7,6 +7,13 @@
   --thread: var(--form-essay);
   /* The estimate beside it, in the site's green for data. */
   --social: var(--form-data);
+  /* Colour roles. Clay is the author; green is the reader, and only the reader.
+     The others' side is blue (what they do, the computer, resigning) and gold
+     (what they say, the upside, games saved); the crowd itself is ivory. The
+     four were checked together on the page's dark ground (separation, contrast);
+     gold and green stay apart by labels and place, never by hue alone. */
+  --other: #3d8bff;
+  --other-2: #dba51d;
   position: relative;
   isolation: isolate;
 }
@@ -81,7 +88,7 @@
   content: ""; position: absolute; left: 0; top: 50%; z-index: 1; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%;
   background: var(--ink-3); box-shadow: 0 0 0 4px var(--void); transition: background-color 150ms ease, transform 150ms ease;
 }
-.ch-navList > li[data-on="true"] > a::before { background: var(--form-data); transform: scale(1.3); }
+.ch-navList > li[data-on="true"] > a::before { background: var(--ink); transform: scale(1.3); }
 
 /* A wide screen: the rail. The story's column gives way on the right for as
    much as the margin lacks, so the rail is never over the story; and the
@@ -99,7 +106,7 @@
   /* the line through the dots, and how much of it the reader has come */
   .ch-navList::before, .ch-navList::after { content: ""; position: absolute; left: 3px; top: var(--line-top, 0px); width: 1px; }
   .ch-navList::before { height: var(--line-long, 0px); background: var(--rule-strong); }
-  .ch-navList::after { height: var(--line-done, 0px); background: var(--form-data); }
+  .ch-navList::after { height: var(--line-done, 0px); background: var(--ink-2); }
   .ch-navList > li > a { display: block; padding-left: 24px; font: 400 13px / 1.35 var(--font-mono); }
   /* the parts of a chapter show while it is being read, or while the keyboard is in it */
   .ch-story .ch-navParts { display: none; gap: 9px; padding: 11px 0 2px 24px; }
@@ -118,11 +125,11 @@
     font: 500 13px / 1 var(--font-mono); text-align: left; cursor: pointer; pointer-events: auto; -webkit-tap-highlight-color: transparent;
   }
   .ch-navNow { display: inline-flex; align-items: center; gap: 10px; min-width: 0; white-space: nowrap; }
-  .ch-navNow::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--form-data); }
+  .ch-navNow::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--ink); }
   .ch-navAsk { display: inline-flex; flex: none; align-items: center; gap: 9px; color: var(--ink-2); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; }
   .ch-navAsk svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; }
   /* how far through the chapters the reader is, along the bar's foot */
-  .ch-navDone { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--form-data); transform-origin: 0 50%; transform: scaleX(var(--done, 0)); }
+  .ch-navDone { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--ink-2); transform-origin: 0 50%; transform: scaleX(var(--done, 0)); }
   .ch-navPanel {
     position: absolute; top: var(--bar); left: calc(-1 * var(--page-margin)); right: calc(-1 * var(--page-margin)); display: none;
     max-height: calc(100vh - var(--bar)); max-height: calc(100svh - var(--bar)); overflow-y: auto; padding: 18px var(--page-margin) 14px;
@@ -707,8 +714,8 @@
 .ch-rvLine { transition: opacity var(--ch-fade) ease; }
 .ch-rvLine[data-on="false"] { opacity: 0.3; }
 .ch-rvAxis { stroke: var(--rule-strong); stroke-width: 1; }
-.ch-rvMiddle { fill: var(--ink); opacity: 0; transition: opacity var(--ch-fade) ease; }
-.ch-rvMiddle[data-on="true"] { opacity: 0.08; }
+.ch-rvMiddle { fill: var(--other); opacity: 0; transition: opacity var(--ch-fade) ease; }
+.ch-rvMiddle[data-on="true"] { opacity: 0.14; }
 .ch-rvName { fill: var(--ink); font: 400 19px / 1 var(--font-title); }
 .ch-rvWhat { fill: var(--ink-2); font: 400 12px / 1 var(--font-mono); }
 .ch-rvEnd { fill: var(--ink-2); font: 400 12px / 1 var(--font-mono); }
@@ -809,19 +816,19 @@
 .ch-rvCard[data-truth="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
 .ch-rvCard[data-truth="her"] { border-color: var(--thread); box-shadow: inset 0 0 0 1px var(--thread); }
 .ch-rvCard[data-truth="you"] { border-color: var(--form-data); box-shadow: inset 0 0 0 1px var(--form-data); }
-.ch-rvCard[data-cpu="true"] { outline: 1.5px dashed var(--ink-2); outline-offset: 3px; }
+.ch-rvCard[data-cpu="true"] { outline: 1.5px dashed var(--other); outline-offset: 3px; }
 .ch-rvCard[data-dim="true"] { opacity: 0.4; }
 .ch-rvFlags { position: absolute; left: -8px; right: -8px; top: calc(100% + 5px); text-align: center; white-space: nowrap; font: 500 10.5px / 1 var(--font-mono); }
 .ch-rvFlags [data-kind="truth"] { color: var(--ink); }
 .ch-rvFlags [data-kind="her"] { color: var(--thread); }
 .ch-rvFlags [data-kind="you"] { color: var(--form-data); }
-.ch-rvFlags [data-kind="cpu"] { color: var(--ink-2); }
+.ch-rvFlags [data-kind="cpu"] { color: var(--other); }
 
 /* the curve */
 .ch-rvGrid0 { stroke: var(--rule); stroke-width: 1; }
 .ch-rvGrid0[data-zero="true"] { stroke: var(--rule-strong); }
 .ch-rvTick { fill: var(--ink-2); font: 400 12px / 1 var(--font-mono); }
-.ch-rvSeries { --line: var(--ink-2); }
+.ch-rvSeries { --line: var(--other); }
 .ch-rvSeries[data-kind="chance"] { --line: var(--ink-3); }
 .ch-rvSeries[data-kind="her"] { --line: var(--thread); }
 .ch-rvSeries[data-kind="you"] { --line: var(--form-data); }
@@ -831,7 +838,7 @@
 .ch-rvSeries[data-kind="disguise"] path { stroke-width: 2; }
 .ch-rvSeries circle { fill: var(--line); }
 .ch-rvSeries text, .ch-rvEndLabel { fill: var(--line); font: 500 12.5px / 1 var(--font-mono); }
-.ch-rvEndLabel { --line: var(--ink-2); }
+.ch-rvEndLabel { --line: var(--other); }
 .ch-rvEndLabel[data-kind="chance"] { --line: var(--ink-3); }
 .ch-rvEndLabel[data-kind="her"] { --line: var(--thread); }
 .ch-rvEndLabel[data-kind="you"] { --line: var(--form-data); }
@@ -858,7 +865,7 @@
 }
 /* What we do when things go wrong (wrong.js): the phone, the fork, the hundred, the charts.
    Clay is the author; data green, games saved and the reader's controls; lavender, resigning. */
-.ch-wrong { --scene: wrong; --resign: #b59dd9; --lost: #55524d; --saved: var(--ink); }
+.ch-wrong { --scene: wrong; --resign: var(--other); --lost: #55524d; --saved: var(--other-2); }
 .ch-wrongScene { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
 .ch-layer.ch-wrongLayer { inset: 0; display: grid; place-items: center; }
 /* The boards of her games, as Chess.com draws them (cc-board.js), without the phone. */
@@ -1040,11 +1047,13 @@
 .ch-paceCloud[data-crowd="true"] circle, .ch-crowdDot[data-settled="true"], .ch-crowdDot[data-tone] {
   transition: transform 1100ms var(--ch-ease), opacity 500ms ease, fill 500ms ease;
 }
-.ch-ratings circle[data-tone="quiet"] { fill: var(--ink-3); }
+.ch-ratings circle[data-tone="quiet"] { fill: var(--ink-2); }
+.ch-ratings circle[data-tone="blue"] { fill: var(--other); }
+.ch-ratings circle[data-tone="gold"] { fill: var(--other-2); }
 .ch-ratings circle[data-tone="plain"] { fill: var(--ink-2); }
 .ch-ratings circle[data-tone="lit"] { fill: var(--ink); }
-.ch-ratings circle[data-tone="resign"] { fill: var(--resign, #b59dd9); }
-.ch-ratings circle[data-tone="kept"] { fill: var(--ink-3); }
+.ch-ratings circle[data-tone="resign"] { fill: var(--resign, var(--other)); }
+.ch-ratings circle[data-tone="kept"] { fill: var(--ink-2); }
 .ch-crowdFade, .ch-crowdMarks > g, .ch-crowdTag { transition: opacity 500ms ease; }
 .ch-crowdFade:not([data-settled]) { transition: none; }
 .ch-ratingMe[data-settled="true"] { transition: transform 1100ms var(--ch-ease), opacity 500ms ease; }
@@ -1058,10 +1067,14 @@
 .ch-ratings .ch-crowdLabelLit { fill: var(--ink); }
 .ch-ratings .ch-crowdExample { fill: var(--ink-2); opacity: 0.8; }
 .ch-crowdMedian line { stroke: var(--ink); stroke-width: 2; }
+.ch-crowdMedian[data-hue="blue"] line { stroke: var(--other); }
+.ch-crowdMedian[data-hue="gold"] line { stroke: var(--other-2); }
+.ch-hueBlue { fill: var(--other); }
+.ch-hueGold { fill: var(--other-2); }
 .ch-ratings .ch-crowdMedian text { fill: var(--ink); }
 .ch-crowdMe { stroke: var(--thread); stroke-width: 1.5; }
-.ch-ratings .ch-crowdResign { fill: var(--resign, #b59dd9); }
-.ch-sayPin { --resign: #b59dd9; }
+.ch-ratings .ch-crowdResign { fill: var(--resign, var(--other)); }
+.ch-sayPin { --resign: var(--other); }
 .ch-ratingReadout b.ch-crowdResignText { color: var(--resign); }
 /* the guesses, in the words beside the crowd: all four kinds in one step */
 .ch-nameAsks { display: grid; gap: 18px; margin-top: 22px; }

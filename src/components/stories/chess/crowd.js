@@ -18,7 +18,7 @@ export const GROUPS = NAMES.groups
 export const TYPICAL = NAMES.typical
 export const MY_RAPID = say.fast.rapid
 export const RATING_MAX = 2500
-export const RESIGN = "#b59dd9"
+export const RESIGN = "#3d8bff"
 
 export const truth = g => (g.high < 0.5 ? "lower" : g.low > 0.5 ? "higher" : "same")
 
@@ -162,12 +162,14 @@ export const dotAt = (layout, index, { stage, step, revealed }) => {
   }
   const key = layout.rowOf[index]
   const active = activeGroups(step)
-  if (key === "everyone") return { ...layout.shown[index], opacity: active.length ? 0.3 : 0.45, tone: "quiet" }
-  if (!revealed[key]) return { ...layout.waiting[index], opacity: active.includes(key) ? 0.6 : 0.28, tone: "quiet" }
-  return { ...layout.shown[index], opacity: !active.length || active.includes(key) ? 0.95 : 0.3, tone: active.includes(key) ? "lit" : "plain" }
+  if (key === "everyone") return { ...layout.shown[index], opacity: active.length ? 0.38 : 0.6, tone: "quiet" }
+  if (!revealed[key]) return { ...layout.waiting[index], opacity: active.includes(key) ? 0.75 : 0.4, tone: "quiet" }
+  // the two claims have a hue: saying it is bad is blue, saying it is good is gold; the others stay ivory
+  return { ...layout.shown[index], opacity: !active.length || active.includes(key) ? 0.95 : 0.4, tone: HUE[key] || (active.includes(key) ? "lit" : "plain") }
 }
 
 const median = g => g.median
+const HUE = { bad: "blue", good: "gold" }
 
 // The words and lines drawn over the dots: the tags, the rows, the typical
 // line, the medians, me, and the two squares of the last beat.
@@ -205,13 +207,14 @@ export const CrowdMarks = ({ layout, stage, step, revealed, left, right, top, bo
           const open = !g || revealed[g.key]
           return (
             <g key={b.key} data-lit={lit ? "true" : undefined} className={c("ch-crowdRow")}>
+              {g && HUE[g.key] && !narrow ? <circle cx={left - 9} cy={b.top + 8} r={3.5} className={c(HUE[g.key] === "blue" ? "ch-hueBlue" : "ch-hueGold")} /> : null}
               {/* on a narrow frame the labels stand at the sparse right end, clear of the medians */}
               <text x={narrow ? right : left} y={b.top + 12} textAnchor={narrow ? "end" : undefined} className={c(lit ? "ch-crowdLabelLit" : "ch-crowdLabel")}>
                 {g ? <>{g.label}<tspan className={c("ch-crowdExample")}>{narrow ? "" : ` · ${g.examples[0]}…`}</tspan></> : "Everyone else"}
               </text>
               {g && !open ? <text x={b.pileEnd + 8} y={(b.bandTop + b.bandBottom) / 2 + 4} className={c("ch-crowdUnknown")}>?</text> : null}
               {g && open ? (
-                <g className={c("ch-crowdMedian")}>
+                <g className={c("ch-crowdMedian")} data-hue={HUE[g.key]}>
                   <line x1={rx(median(g))} x2={rx(median(g))} y1={b.bandTop - 3} y2={b.bandBottom + 1} />
                   <text x={rx(median(g)) + 6} y={b.top + 12}>{median(g)}</text>
                 </g>
