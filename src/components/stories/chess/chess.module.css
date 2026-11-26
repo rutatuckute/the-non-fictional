@@ -545,7 +545,8 @@
 /* What "safe" means: the London System's men, ringed in the thread's clay. */
 .ch-london { position: absolute; z-index: 1; background: var(--thread); mix-blend-mode: multiply; opacity: 0; transition: opacity var(--ch-fade) ease; pointer-events: none; }
 .ch-london[data-on="true"] { opacity: 0.75; }
-.ch-firstMove.ch-clubMove { left: 0; width: 100%; bottom: -12%; }
+/* at the board's left, clear of the hand that plays from below, and above the hands */
+.ch-firstMove.ch-clubMove { left: 0; width: 70%; text-align: left; white-space: nowrap; bottom: -12%; z-index: 9; }
 
 /* The strangers: the phone, and beside it who is on the other side. As it
    goes, the phone comes towards us, into its board. */
