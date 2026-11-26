@@ -20,6 +20,13 @@
 /* The site's paragraphs carry their own line spacing; here a text's box sets it. */
 .ch-story :where(p) { margin: 0; line-height: inherit; }
 
+/* the cue under the title: the story is a scroll */
+.ch-story .ch-cue { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 34px; color: var(--ink-3); font: 500 10.5px / 1 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; }
+.ch-cue i { display: block; width: 1px; height: 28px; background: linear-gradient(to bottom, var(--ink-3), transparent); transform-origin: top; animation: ch-cue 2200ms var(--ch-ease, ease) infinite; }
+@media (max-width: 60rem) { .ch-story .ch-cue { align-items: center; margin-top: 22px; } }
+@keyframes ch-cue { 0% { transform: scaleY(0); opacity: 0; } 40% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ch-cue i { animation: none; } }
+
 /* ── the threads ──
    All of one weight. The story's is told apart by its colour alone, and it is
    grey like the rest until the memory begins. */
@@ -1090,14 +1097,21 @@
 .ch-nameVerdict[data-shown="true"] { opacity: 1; }
 .ch-nameVerdict strong { color: var(--ink); font-weight: 500; }
 .ch-story .ch-nameScore { margin-bottom: 14px; color: var(--ink-2); font: 400 12px / 1.4 var(--font-mono); }
+.ch-nameShort { display: none; }
 @media (max-width: 60rem) {
-  .ch-nameAsks { gap: 8px; margin-top: 12px; }
-  .ch-nameRow h4 { margin-bottom: 4px; font-size: 20px; }
+  /* one line a kind: its name and the verdict at the left, the three choices at the right */
+  .ch-nameAsks { gap: 2px; margin-top: 8px; }
+  .ch-nameRow { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: 1fr 1fr; justify-items: start; align-items: center; column-gap: 8px; }
+  .ch-nameRow h4 { grid-column: 1; grid-row: 1; align-self: end; margin: 0; font-size: 18px; }
   .ch-story .ch-nameExamples { display: none; }
-  .ch-nameChoices { gap: 6px; flex-wrap: nowrap; }
-  .ch-nameChoices .ch-ask { min-height: 36px; padding-inline: 12px; font-size: 12px; }
+  .ch-nameChoices { grid-column: 2; grid-row: 1 / span 2; flex-wrap: nowrap; gap: 4px; }
+  .ch-nameChoices .ch-ask { min-height: 38px; padding-inline: 9px; font-size: 12px; }
   .ch-nameChoices .ch-ask i { display: none; }
-  .ch-story .ch-nameVerdict { margin-top: 3px; min-height: 1.4em; font-size: 11px; }
+  .ch-nameChoices .ch-nameShort { display: inline; }
+  .ch-nameChoices .ch-nameLong { display: none; }
+  .ch-nameChoices .ch-ask { white-space: nowrap; }
+  .ch-story .ch-nameVerdict { grid-column: 1; grid-row: 2; align-self: start; margin: 0; min-height: 1.3em; font-size: 11px; text-align: left; }
+  .ch-nameMore { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ch-paceCloud circle, .ch-crowdDot, .ch-crowdFade, .ch-crowdMarks > g, .ch-crowdTag, .ch-ratingMe, .ch-nameVerdict { transition: none !important; }
@@ -1360,6 +1374,10 @@
 /* asked at the hinge, in the reading column beside the thousand boards */
 .ch-you[data-where="hinge"] { width: 100%; padding: 0; background: none; }
 .ch-you[data-where="hinge"] .ch-youWords { text-align: center; }
+@media (max-width: 60rem) {
+  /* over the thousand boards: a soft scrim keeps the words readable */
+  .ch-you[data-where="hinge"] { padding: 14px 8px; border-radius: 18px; background: color-mix(in srgb, var(--void) 88%, transparent); box-shadow: 0 0 30px 24px color-mix(in srgb, var(--void) 88%, transparent); }
+}
 /* the reader's own place among the thousand boards: green, beside the club's */
 .ch-yourBoard { position: absolute; display: grid; place-items: center; box-sizing: border-box; background: var(--void); box-shadow: inset 0 0 0 2px var(--form-data); pointer-events: none; animation: ch-yours 900ms var(--ch-ease, ease) both; }
 .ch-yourBoard i { width: 22%; aspect-ratio: 1; border-radius: 50%; background: var(--form-data); }

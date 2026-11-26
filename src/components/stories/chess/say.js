@@ -8,7 +8,8 @@ import { GROUPS, TYPICAL, truth } from "./crowd"
 // The usernames, asked about in the words beside the crowd (crowd.js). The
 // story never waits for an answer; rows not guessed are shown, without a
 // verdict, once the reader scrolls on to the result.
-const OPTIONS = [["lower", "Lower"], ["same", "About the same"], ["higher", "Higher"]]
+// (on a phone the middle choice is shortened: its `short`)
+const OPTIONS = [["lower", "Lower"], ["same", "About the same", "Same"], ["higher", "Higher"]]
 
 // All four kinds at once, one compact row each: the guess places that row's
 // dots on the rating line, and every row can be answered in any order.
@@ -24,16 +25,24 @@ export const NameAsks = ({ guesses, onChange }) => (
             {group.examples.map(name => <span key={name}>{name}<i aria-hidden="true">…</i></span>)}
           </p>
           <div className={c("ch-nameChoices")} role="group" aria-label={`Your guess: ${group.label.toLowerCase()}`}>
-            {OPTIONS.map(([key, text]) => (
+            {OPTIONS.map(([key, text, short]) => (
               <button key={key} type="button" className={c("ch-ask")} aria-pressed={value === key} onClick={() => onChange(group.key, key)}>
-                {text}
+                {short ? (
+                  <>
+                    <span className={c("ch-nameLong")}>{text}</span>
+                    <span className={c("ch-nameShort")}>{short}</span>
+                  </>
+                ) : (
+                  text
+                )}
               </button>
             ))}
           </div>
           <p className={c("ch-nameVerdict")} role="status" data-shown={value ? "true" : "false"}>
             {value ? (
               <>
-                <strong>{value === right ? "You called it." : "Not quite."}</strong> Median {group.median}, against {TYPICAL} for a typical opponent.
+                <strong>{value === right ? "You called it." : "Not quite."}</strong>
+                <span className={c("ch-nameMore")}> Median {group.median}, against {TYPICAL} for a typical opponent.</span>
               </>
             ) : null}
           </p>
