@@ -121,6 +121,10 @@ const LINES = {
     "other-1": [[62, 0.5, 14, 0.3], [82, 1.6, OFF_LEFT, 2.2], [OFF_RIGHT, 2.9, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
     "other-3": [[16, 0.8, 8, 0.2], [OFF_LEFT, 3.1, OFF_LEFT, 2], [OFF_LEFT, 7, OFF_LEFT, 30]],
   },
+  // the first stretch of Part IV, above its title: the thread comes in from the recap
+  arrive: {
+    b: [[14, "7vh", 6, "7vh"]],
+  },
   encounter: {
     b: [[3, 30, -3, 2], [6, 60, -3, 50], [8, 104, -3, 99]],
   },
@@ -270,6 +274,8 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
 
         <section className={c("ch-free", "ch-back")} aria-label="Back to the threads of life">
           <Mark id="the-ending" />
+          {/* the thread arrives from the last recap, clear of the title */}
+          <Knots of={LINES.arrive} />
           <Text name="ending-title" look="partTitle" className={c("ch-endingTitle")} />
           <div className={c("ch-row", "ch-encounter")}>
             {/* the message that started it, and her answer (phone-scenes.js) */}

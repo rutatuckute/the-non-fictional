@@ -7,6 +7,7 @@ import { c, Text } from "./parts"
 import { INVESTIGATIONS, InvestigationBoard } from "./investigation-parts"
 import { useReader } from "./reader"
 import { readerGap } from "./ratings"
+import { Knots } from "./thread"
 import paths from "./wrong-paths.json"
 
 // The three questions of Part III, come back to after each investigation:
@@ -87,6 +88,19 @@ export const Hub = ({ upto }) => {
       {all ? <Text name="hub-title" look="partTitle" className={c("ch-hubTitle")} /> : null}
       <div className={c("ch-hubRow")} style={{ "--at": at }}>
       <span className={c("ch-hubTravel")} aria-hidden="true" />
+      {/* after the last question the story's thread leaves from the last dot, on into Part IV */}
+      {all ? (
+        <Knots
+          of={{
+            b: [
+              ["calc(100% * 5 / 6)", "calc(var(--hub-board) * 84 / 80 + 13px)", 8, "100%"],
+              ["97%", "calc(var(--hub-board) * 84 / 80 + 7px)", 8, "100%"],
+              ["104%", "calc(var(--hub-board) * 84 / 80 + 90px)", 8, "100%"],
+              ["104%", "100%", 8, "100%"],
+            ],
+          }}
+        />
+      ) : null}
       <ol className={c("ch-hubBoards")}>
         {INVESTIGATIONS.map((q, i) => {
           const state = i < upto ? "done" : i === upto ? "next" : "later"

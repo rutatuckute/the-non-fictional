@@ -675,6 +675,13 @@
    each question, each a way into its part. */
 .ch-games { position: absolute; inset: 0; display: grid; place-items: center; transform: scale(calc(1 + var(--dive, 0) * 7)); opacity: calc(1 - var(--boards, 0)); }
 .ch-dive { position: absolute; inset: 0; z-index: 7; pointer-events: none; }
+/* the one colour moment of the story: as the thousand boards fall back and the three
+   questions come up, the ground warms to the author's clay, then is gone again by the
+   first chart (the stage is left, and the page's own ground is back) */
+.ch-dive::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: var(--boards, 0);
+  background: radial-gradient(closest-side ellipse at 50% 50%, color-mix(in srgb, var(--thread) 36%, var(--void)) 0%, color-mix(in srgb, var(--thread) 17%, var(--void)) 50%, var(--void) 100%);
+}
 .ch-diveTitle { position: absolute; top: calc(var(--bar) + 5svh); left: 0; right: 0; opacity: var(--boards, 0); }
 .ch-people[data-diving="true"] > .ch-peopleTitle { opacity: 0; }
 .ch-club .ch-step { position: relative; }
@@ -687,10 +694,11 @@
 .ch-text.ch-diveWords { max-width: 30em; text-align: center; }
 .ch-diveWords p { text-align: center; }
 .ch-diveBoards { display: grid; grid-template-columns: repeat(3, minmax(0, 210px)); gap: clamp(20px, 4vw, 60px); justify-content: center; width: 100%; margin: 0; padding: 0; list-style: none; }
-.ch-diveBoards a { display: grid; gap: 14px; color: var(--ink-2); text-align: center; text-decoration: none; font: 400 13px / 1.35 var(--font-mono); transition: color 200ms ease; }
+.ch-diveBoards a { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 14px; color: var(--ink-2); text-align: center; text-decoration: none; font: 400 13px / 1.35 var(--font-mono); transition: color 200ms ease; }
 .ch-diveBoards a:hover, .ch-diveBoards a:focus-visible { color: var(--ink); }
 .ch-diveBoards a:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px; }
 .ch-diveBoards b { display: block; margin-bottom: 4px; color: var(--ink-3); font-weight: 400; }
+.ch-diveBoards > li { min-width: 0; }
 .ch-diveBoards svg { display: block; width: 100%; height: auto; }
 .ch-diveBoards svg text { fill: #fff8ef; font: 600 8px / 1 var(--font-mono); }
 .ch-diveBoards svg text.ch-diveSmall { fill: var(--ink-2); font-size: 7px; font-weight: 400; }
@@ -1321,7 +1329,7 @@
   }
 
 /* Part II's way into the third investigation: a quiet pointer under the professor, not a line of the story. */
-.ch-story .ch-club a[href="#what-we-choose"] { display: inline-block; margin-top: 4px; color: var(--ink-2); font: 400 13px / 1.4 var(--font-mono); letter-spacing: 0.02em; text-decoration: underline; text-decoration-color: var(--rule-strong); text-underline-offset: 4px; white-space: nowrap; }
+.ch-story .ch-club .ch-text a[href="#what-we-choose"] { display: inline-block; margin-top: 4px; color: var(--ink-2); font: 400 13px / 1.4 var(--font-mono); letter-spacing: 0.02em; text-decoration: underline; text-decoration-color: var(--rule-strong); text-underline-offset: 4px; white-space: nowrap; }
 .ch-story .ch-club a[href="#what-we-choose"]:hover, .ch-story .ch-club a[href="#what-we-choose"]:focus-visible { color: var(--ink); text-decoration-color: currentColor; }
 
 /* The three questions again after each investigation (hub.js): her answers in clay, the reader's
