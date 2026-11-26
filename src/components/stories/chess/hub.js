@@ -6,7 +6,9 @@ import { GROUPS, truth } from "./crowd"
 import { c, Text } from "./parts"
 import { INVESTIGATIONS, InvestigationBoard } from "./investigation-parts"
 import { useReader } from "./reader"
+import { useStill } from "./follow"
 import { readerGap } from "./ratings"
+import { zoomInto } from "./zoom"
 import { Knots } from "./thread"
 import paths from "./wrong-paths.json"
 
@@ -72,10 +74,40 @@ const yours = (id, said) => {
 export const Hub = ({ upto }) => {
   const said = useReader()
   const root = React.useRef(null)
+  const stick = React.useRef(null)
+  const still = useStill()
   // the dot sets off from the question before once the hub is in view
   const [arrived, setArrived] = React.useState(false)
+  // After the first and second questions the recap holds the screen, and as the reader
+  // goes on without choosing, the next question's board is zoomed into until it fills
+  // the screen and the question is there (zoom.js). After the last there is nothing to enter.
+  const gate = upto < INVESTIGATIONS.length && !still
   React.useEffect(() => {
+    if (!gate) return
     const node = root.current
+    let frame = 0
+    const update = () => {
+      frame = 0
+      const box = node.getBoundingClientRect()
+      const run = box.height - window.innerHeight
+      const p = run > 0 ? Math.max(0, Math.min(1, -box.top / run)) : 0
+      const into = Math.max(0, Math.min(1, (p - 0.4) / 0.55))
+      zoomInto(node, node.querySelector('li[data-state="next"]'), stick.current, into)
+    }
+    const wake = () => {
+      if (!frame) frame = window.requestAnimationFrame(update)
+    }
+    update()
+    window.addEventListener("scroll", wake, { passive: true })
+    window.addEventListener("resize", wake)
+    return () => {
+      window.removeEventListener("scroll", wake)
+      window.removeEventListener("resize", wake)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
+  }, [gate])
+  React.useEffect(() => {
+    const node = stick.current
     if (!node) return
     const seen = new IntersectionObserver(([entry]) => entry.isIntersecting && setArrived(true), { threshold: 0.5 })
     seen.observe(node)
@@ -84,7 +116,8 @@ export const Hub = ({ upto }) => {
   const at = arrived || upto === 1 ? upto - 1 : upto - 2
   const all = upto === INVESTIGATIONS.length
   return (
-    <section ref={root} className={c("ch-hub")} data-all={all ? "true" : "false"} aria-label={all ? "What the data said" : `${upto} of ${INVESTIGATIONS.length} questions answered`}>
+    <section ref={root} className={c("ch-hub")} data-all={all ? "true" : "false"} data-gate={gate ? "true" : undefined} aria-label={all ? "What the data said" : `${upto} of ${INVESTIGATIONS.length} questions answered`}>
+      <div ref={stick} className={c("ch-hubStick")}>
       {all ? <Text name="hub-title" look="partTitle" className={c("ch-hubTitle")} /> : null}
       <div className={c("ch-hubRow")} style={{ "--at": at }}>
       <span className={c("ch-hubTravel")} aria-hidden="true" />
@@ -125,6 +158,7 @@ export const Hub = ({ upto }) => {
           )
         })}
       </ol>
+      </div>
       </div>
     </section>
   )

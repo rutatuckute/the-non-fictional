@@ -90,7 +90,10 @@ const Boards = () => {
 // London, where the London System is set up and the professor leans in; his
 // question, the story's turn, alone and quiet; what it might have meant; the
 // question the rest of the story asks; and the thousand games the data holds.
-export const People = () => (
+export const People = () => {
+  // (on a phone the last step stands taller, so it needs less rest after the zoom)
+  const narrow = useNarrow()
+  return (
   <Pinned
     open
     reading
@@ -109,7 +112,7 @@ export const People = () => (
       { text: <Text name="boards" look="lead" /> },
       // the hinge: Chess.com keeps every game, so the reader's are in there too
       { text: <YouOnChessCom where="hinge" />, rest: 0.4 },
-      { mark: "the-investigation", rest: 1.8 },
+      { mark: "the-investigation", rest: narrow ? 1.7 : 2.6 },
     ]}
   >
     {step => (
@@ -161,7 +164,8 @@ export const People = () => (
       </>
     )}
   </Pinned>
-)
+  )
+}
 
 // Part III, first question: what we say about ourselves. Her own prediction
 // against her games, then what usernames say against the ratings of the

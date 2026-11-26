@@ -679,10 +679,10 @@
    questions come up, the ground warms to the author's clay, then is gone again by the
    first chart (the stage is left, and the page's own ground is back) */
 .ch-dive::before {
-  content: ""; position: absolute; inset: 0; z-index: -1; opacity: var(--boards, 0);
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: calc(var(--boards, 0) * (1 - var(--zoom, 0)));
   background: radial-gradient(closest-side ellipse at 50% 50%, color-mix(in srgb, var(--thread) 36%, var(--void)) 0%, color-mix(in srgb, var(--thread) 17%, var(--void)) 50%, var(--void) 100%);
 }
-.ch-diveTitle { position: absolute; top: calc(var(--bar) + 5svh); left: 0; right: 0; opacity: var(--boards, 0); }
+.ch-diveTitle { position: absolute; top: calc(var(--bar) + 5svh); left: 0; right: 0; opacity: calc(var(--boards, 0) * (1 - min(1, var(--zoom, 0) * 2.4))); }
 .ch-people[data-diving="true"] > .ch-peopleTitle { opacity: 0; }
 .ch-club .ch-step { position: relative; }
 .ch-stepMark { position: absolute; left: 0; top: 80vh; width: 0; height: 0; }
@@ -700,6 +700,15 @@
 .ch-diveBoards b { display: block; margin-bottom: 4px; color: var(--ink-3); font-weight: 400; }
 .ch-diveBoards > li { min-width: 0; }
 .ch-diveBoards svg { display: block; width: 100%; height: auto; }
+/* if the reader goes on without choosing, the first question is zoomed into: its board
+   grows (zoom.js) as the others, the words and the title go, until it fills the stage
+   and the question itself is there */
+.ch-diveWords, .ch-diveBoards > li:not(:first-child), .ch-diveBoards > li:first-child span { opacity: calc(1 - min(1, var(--zoom, 0) * 2.4)); }
+.ch-diveBoards > li:first-child svg {
+  position: relative; z-index: 3; transform-origin: 50% 50%;
+  transform: translate(calc(var(--dx, 0px) * var(--zoom, 0)), calc(var(--dy, 0px) * var(--zoom, 0))) scale(calc(1 + var(--zoom, 0) * var(--zoom, 0) * (var(--zmax, 8) - 1)));
+  filter: blur(calc(var(--zoom, 0) * var(--zoom, 0) * 5px)); opacity: calc(1 - max(0, var(--zoom, 0) - 0.78) * 4.5);
+}
 .ch-diveBoards svg text { fill: #fff8ef; font: 600 8px / 1 var(--font-mono); }
 .ch-diveBoards svg text.ch-diveSmall { fill: var(--ink-2); font-size: 7px; font-weight: 400; }
 .ch-diveClay { fill: var(--thread); }
@@ -1336,6 +1345,18 @@
    part in green, her clay dot moving on to the question just answered. */
 .ch-hub { --hub-gap: clamp(20px, 3.4vw, 48px); --hub-board: 92px; position: relative; width: min(100% - 2 * var(--page-margin, 20px), 62rem); margin: 0 auto; padding: 14vh 0 16vh; }
 .ch-hub[data-all="true"] { padding-top: 10vh; }
+/* A recap between two questions holds the screen (the stick), and as the reader goes on
+   the next question's board is zoomed into, until it fills the screen (zoom.js). */
+.ch-hubStick { position: relative; }
+.ch-hub[data-gate="true"] { height: 260svh; padding: 0; }
+.ch-hub[data-gate="true"] .ch-hubStick { position: sticky; top: 0; min-height: 100svh; display: grid; align-content: center; padding: 6svh 0; }
+.ch-hub[data-gate="true"] li[data-state="next"] > a svg {
+  position: relative; z-index: 6; transform-origin: 50% 50%;
+  transform: translate(calc(var(--dx, 0px) * var(--zoom, 0)), calc(var(--dy, 0px) * var(--zoom, 0))) scale(calc(1 + var(--zoom, 0) * var(--zoom, 0) * (var(--zmax, 8) - 1)));
+  filter: blur(calc(var(--zoom, 0) * var(--zoom, 0) * 5px)); opacity: calc(1 - max(0, var(--zoom, 0) - 0.78) * 4.5);
+}
+.ch-hub[data-gate="true"] li[data-state="next"] { opacity: calc(0.55 + var(--zoom, 0) * 0.45); }
+.ch-hub[data-gate="true"] li[data-state="next"] .ch-hubWords, .ch-hub[data-gate="true"] li:not([data-state="next"]), .ch-hub[data-gate="true"] .ch-hubTravel { opacity: calc(1 - min(1, var(--zoom, 0) * 2.4)); }
 .ch-hubTitle { margin-bottom: 40px; text-align: center; }
 .ch-hubRow { position: relative; }
 .ch-hubBoards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--hub-gap); margin: 0; padding: 0; list-style: none; }
