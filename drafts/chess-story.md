@@ -286,7 +286,7 @@ But it can get worse than losing the queen.
 
 <!--step:you-queens-->
 
-Lost your queen on Chess.com too? Count how often, and what you did next.
+Lost your queen on Chess.com too? Here is how often, and what you did next.
 
 <!--step:wrong-king-->
 
@@ -342,7 +342,7 @@ Can you hide who you are at the board? First I needed a way to describe how some
 
 <!--step:you-dials-->
 
-Play on Chess.com? Put your own ten-minute games on these lines.
+Play on Chess.com? Your own ten-minute games are on these lines too.
 
 <!--step:choose-contact-->
 

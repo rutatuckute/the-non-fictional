@@ -20,13 +20,6 @@
 /* The site's paragraphs carry their own line spacing; here a text's box sets it. */
 .ch-story :where(p) { margin: 0; line-height: inherit; }
 
-/* the cue under the title: the story is a scroll */
-.ch-story .ch-cue { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 34px; color: var(--ink-3); font: 500 10.5px / 1 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; }
-.ch-cue i { display: block; width: 1px; height: 28px; background: linear-gradient(to bottom, var(--ink-3), transparent); transform-origin: top; animation: ch-cue 2200ms var(--ch-ease, ease) infinite; }
-@media (max-width: 60rem) { .ch-story .ch-cue { align-items: center; margin-top: 22px; } }
-@keyframes ch-cue { 0% { transform: scaleY(0); opacity: 0; } 40% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .ch-cue i { animation: none; } }
-
 /* ── the threads ──
    All of one weight. The story's is told apart by its colour alone, and it is
    grey like the rest until the memory begins. */
@@ -95,7 +88,7 @@
   content: ""; position: absolute; left: 0; top: 50%; z-index: 1; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%;
   background: var(--ink-3); box-shadow: 0 0 0 4px var(--void); transition: background-color 150ms ease, transform 150ms ease;
 }
-.ch-navList > li[data-on="true"] > a::before { background: var(--ink); transform: scale(1.3); }
+.ch-navList > li[data-on="true"] > a::before { background: var(--form-data); transform: scale(1.3); }
 
 /* A wide screen: the rail. The story's column gives way on the right for as
    much as the margin lacks, so the rail is never over the story; and the
@@ -113,7 +106,7 @@
   /* the line through the dots, and how much of it the reader has come */
   .ch-navList::before, .ch-navList::after { content: ""; position: absolute; left: 3px; top: var(--line-top, 0px); width: 1px; }
   .ch-navList::before { height: var(--line-long, 0px); background: var(--rule-strong); }
-  .ch-navList::after { height: var(--line-done, 0px); background: var(--ink-2); }
+  .ch-navList::after { height: var(--line-done, 0px); background: var(--form-data); }
   .ch-navList > li > a { display: block; padding-left: 24px; font: 400 13px / 1.35 var(--font-mono); }
   /* the parts of a chapter show while it is being read, or while the keyboard is in it */
   .ch-story .ch-navParts { display: none; gap: 9px; padding: 11px 0 2px 24px; }
@@ -132,11 +125,11 @@
     font: 500 13px / 1 var(--font-mono); text-align: left; cursor: pointer; pointer-events: auto; -webkit-tap-highlight-color: transparent;
   }
   .ch-navNow { display: inline-flex; align-items: center; gap: 10px; min-width: 0; white-space: nowrap; }
-  .ch-navNow::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--ink); }
+  .ch-navNow::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--form-data); }
   .ch-navAsk { display: inline-flex; flex: none; align-items: center; gap: 9px; color: var(--ink-2); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; }
   .ch-navAsk svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; }
   /* how far through the chapters the reader is, along the bar's foot */
-  .ch-navDone { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--ink-2); transform-origin: 0 50%; transform: scaleX(var(--done, 0)); }
+  .ch-navDone { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--form-data); transform-origin: 0 50%; transform: scaleX(var(--done, 0)); }
   .ch-navPanel {
     position: absolute; top: var(--bar); left: calc(-1 * var(--page-margin)); right: calc(-1 * var(--page-margin)); display: none;
     max-height: calc(100vh - var(--bar)); max-height: calc(100svh - var(--bar)); overflow-y: auto; padding: 18px var(--page-margin) 14px;
@@ -1085,33 +1078,26 @@
 .ch-ratings .ch-crowdResign { fill: var(--resign, var(--other)); }
 .ch-sayPin { --resign: var(--other); }
 .ch-ratingReadout b.ch-crowdResignText { color: var(--resign); }
-/* the guesses, in the words beside the crowd: all four kinds in one step */
-.ch-nameAsks { display: grid; gap: 18px; margin-top: 22px; }
-.ch-nameRow { display: grid; justify-items: center; gap: 0; }
-.ch-nameRow h4 { margin: 0 0 4px; color: var(--ink); font: 400 24px / 1.1 var(--font-title); letter-spacing: var(--tracking-display); }
-.ch-story .ch-nameExamples { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; margin-bottom: 10px; color: var(--ink-2); font: 400 12px / 1.5 var(--font-mono); overflow-wrap: anywhere; }
+/* the guesses, in the words beside the crowd */
+.ch-nameAsk { display: grid; justify-items: center; gap: 0; }
+.ch-nameAsk h4 { margin: 0 0 10px; color: var(--ink); font: 400 var(--t-second) / 1.1 var(--font-title); letter-spacing: var(--tracking-display); }
+.ch-story .ch-nameExamples { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; margin-bottom: 16px; color: var(--ink-2); font: 400 12px / 1.5 var(--font-mono); overflow-wrap: anywhere; }
 .ch-nameExamples i { font-style: normal; color: var(--ink-3); }
+.ch-story .ch-namePrompt { color: var(--ink-2); font: 400 12px / 1.5 var(--font-mono); margin-bottom: 10px; }
 .ch-nameChoices { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-.ch-nameChoices .ch-ask { min-height: 40px; }
-.ch-story .ch-nameVerdict { min-height: 1.5em; margin-top: 6px; color: var(--ink-2); font: 400 12px / 1.45 var(--font-mono); opacity: 0; transition: opacity var(--ch-fade) ease; }
+.ch-nameChoices .ch-ask { min-height: 44px; }
+.ch-story .ch-nameVerdict { min-height: 2.9em; margin-top: 12px; color: var(--ink-2); font: 400 12px / 1.45 var(--font-mono); opacity: 0; transition: opacity var(--ch-fade) ease; }
 .ch-nameVerdict[data-shown="true"] { opacity: 1; }
 .ch-nameVerdict strong { color: var(--ink); font-weight: 500; }
 .ch-story .ch-nameScore { margin-bottom: 14px; color: var(--ink-2); font: 400 12px / 1.4 var(--font-mono); }
-.ch-nameShort { display: none; }
 @media (max-width: 60rem) {
-  /* one line a kind: its name and the verdict at the left, the three choices at the right */
-  .ch-nameAsks { gap: 2px; margin-top: 8px; }
-  .ch-nameRow { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: 1fr 1fr; justify-items: start; align-items: center; column-gap: 8px; }
-  .ch-nameRow h4 { grid-column: 1; grid-row: 1; align-self: end; margin: 0; font-size: 18px; }
-  .ch-story .ch-nameExamples { display: none; }
-  .ch-nameChoices { grid-column: 2; grid-row: 1 / span 2; flex-wrap: nowrap; gap: 4px; }
-  .ch-nameChoices .ch-ask { min-height: 38px; padding-inline: 9px; font-size: 12px; }
+  .ch-nameAsk h4 { margin-bottom: 6px; font-size: 24px; }
+  .ch-story .ch-nameExamples { margin-bottom: 8px; font-size: 11px; }
+  .ch-story .ch-namePrompt { margin-bottom: 6px; font-size: 11px; }
+  .ch-nameChoices { gap: 6px; flex-wrap: nowrap; }
+  .ch-nameChoices .ch-ask { padding-inline: 12px; font-size: 12px; }
   .ch-nameChoices .ch-ask i { display: none; }
-  .ch-nameChoices .ch-nameShort { display: inline; }
-  .ch-nameChoices .ch-nameLong { display: none; }
-  .ch-nameChoices .ch-ask { white-space: nowrap; }
-  .ch-story .ch-nameVerdict { grid-column: 1; grid-row: 2; align-self: start; margin: 0; min-height: 1.3em; font-size: 11px; text-align: left; }
-  .ch-nameMore { display: none; }
+  .ch-story .ch-nameVerdict { margin-top: 6px; font-size: 11px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ch-paceCloud circle, .ch-crowdDot, .ch-crowdFade, .ch-crowdMarks > g, .ch-crowdTag, .ch-ratingMe, .ch-nameVerdict { transition: none !important; }

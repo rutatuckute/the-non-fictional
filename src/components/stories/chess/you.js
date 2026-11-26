@@ -5,7 +5,7 @@ import * as React from "react"
 import { lookUp, MIN_GAMES } from "./chesscom"
 import { curveOf, MIN_DIALS, readDials } from "./dials"
 import { c, Text } from "./parts"
-import { countQueens } from "./queens"
+import { countQueens, readRapid } from "./queens"
 import { useReader, useTell } from "./reader"
 import paths from "./wrong-paths.json"
 
@@ -67,6 +67,25 @@ export const YouOnChessCom = ({ where }) => {
   }
 
   const found = state.kind === "found"
+  // Once a name is found, their last year of rapid games is read, once, for the lost
+  // queens and the four dials later on (queens.js keeps it for this reading); the
+  // later steps then need no button. Progress is told here.
+  const [reading, setReading] = React.useState({ kind: "idle" })
+  const name = found ? state.username : null
+  React.useEffect(() => {
+    if (!name) {
+      setReading({ kind: "idle" })
+      return
+    }
+    const working = new AbortController()
+    setReading({ kind: "reading", month: null })
+    readRapid(name, working.signal, month => !working.signal.aborted && setReading({ kind: "reading", month }))
+      .then(result => !working.signal.aborted && setReading({ kind: "done", games: result.kind === "ok" ? result.games.length : null }))
+      .catch(() => {})
+    return () => working.abort()
+  }, [name])
+  // (the later steps start once the read has been tried, whatever it came to)
+  useTell("rapidRead", reading.kind === "done" ? name : null)
   // the button says so only while the box still holds the name that was found
   const current = found && typed.trim() === state.username
   return (
@@ -105,8 +124,19 @@ export const YouOnChessCom = ({ where }) => {
         <p id={`${id}-status`} className={c("ch-youStatus")} role="status" data-kind={state.kind}>
           {say(state)}
         </p>
+        {found ? (
+          <p className={c("ch-youStatus")} role="status" data-kind={reading.kind === "done" ? "counted" : "asking"}>
+            {reading.kind === "done"
+              ? reading.games == null
+                ? "Couldn’t read your games just now: the later steps will say so."
+                : `Read ${reading.games.toLocaleString("en-GB")} of your rapid games.`
+              : reading.month
+                ? `Reading your rapid games… ${MONTH.format(reading.month)}`
+                : "Reading your rapid games…"}
+          </p>
+        ) : null}
         <p id={`${id}-note`} className={c("ch-youNote")}>
-          Read from Chess.com’s public data, in your browser. Nothing is sent to this site or saved: it’s gone when you close the page. Any public username works. No account? Keep scrolling: the story works without one.
+          Read from Chess.com’s public data, in your browser. Nothing is sent to this site or saved: it’s gone when you close the page. Any public username works. It reads your rapid games of the last 12 months (up to 1,000: a few megabytes) to count your lost queens and your dials later. No account? Keep scrolling: the story works without one.
         </p>
       </form>
     </section>
@@ -153,7 +183,6 @@ export const YourQueens = () => {
   const [state, setState] = React.useState({ kind: "idle" })
   const [month, setMonth] = React.useState(null)
   const pending = React.useRef(null)
-  const id = React.useId()
   // (a count belongs to the name it was made for: a new name or none clears it)
   const name = found?.username || null
   React.useEffect(() => {
@@ -162,34 +191,26 @@ export const YourQueens = () => {
   }, [name])
   React.useEffect(() => () => pending.current?.abort(), [])
   useTell("queens", state.kind === "counted" ? state : null)
-  if (!found) return null
-
-  const count = async () => {
-    pending.current?.abort()
+  // counted on its own once the games have been read at the hinge (no button)
+  const ready = Boolean(name) && said.rapidRead === name
+  React.useEffect(() => {
+    if (!ready || state.kind !== "idle") return
     const asking = new AbortController()
     pending.current = asking
     setMonth(null)
     setState({ kind: "asking" })
-    try {
-      const result = await countQueens(found.username, paths.queen.byLevel, asking.signal, date => setMonth(date))
-      if (!asking.signal.aborted) setState(result)
-    } catch {
-      // a newer count, or a new name, took over
-    }
-  }
-  const counted = state.kind === "counted"
+    countQueens(name, paths.queen.byLevel, asking.signal, date => setMonth(date))
+      .then(result => !asking.signal.aborted && setState(result))
+      .catch(() => {
+        // a new name took over
+      })
+  }, [ready, state.kind, name])
+  if (!found) return null
   return (
     <div className={c("ch-youQueens")} data-kind={state.kind}>
       <Text name="you-queens" look="lead" className={c("ch-youQueensWords")} />
-      <button type="button" className={c("ch-ask")} onClick={count} aria-pressed={counted} disabled={state.kind === "asking" || counted} aria-describedby={`${id}-note`}>
-        <i aria-hidden="true" />
-        {counted ? "Counted" : state.kind === "asking" ? "Counting…" : "Count my lost queens"}
-      </button>
       <p className={c("ch-youStatus")} role="status" data-kind={state.kind}>
         {sayQueens(state, month)}
-      </p>
-      <p id={`${id}-note`} className={c("ch-youNote")}>
-        Reads your rapid games of the last 12 months (up to 1,000) from Chess.com’s public data, in your browser: a few megabytes. Only the counts are kept, until you close the page.
       </p>
     </div>
   )
@@ -234,21 +255,21 @@ export const useYourDials = () => {
   )
   useTell("dials", told)
 
-  const ask = async () => {
-    if (!found) return
-    pending.current?.abort()
+  // read on its own once the games have been read at the hinge (no button)
+  const ready = Boolean(name) && said.rapidRead === name
+  React.useEffect(() => {
+    if (!ready || state.kind !== "idle") return
     const asking = new AbortController()
     pending.current = asking
     setMonth(null)
     setState({ kind: "asking" })
-    try {
-      const result = await readDials(found.username, asking.signal, date => setMonth(date))
-      if (!asking.signal.aborted) setState(result)
-    } catch {
-      // a newer reading, or a new name, took over
-    }
-  }
-  return { found, state, month, read, curve, ask }
+    readDials(name, asking.signal, date => setMonth(date))
+      .then(result => !asking.signal.aborted && setState(result))
+      .catch(() => {
+        // a new name took over
+      })
+  }, [ready, state.kind, name])
+  return { found, state, month, read, curve }
 }
 
 const sayDials = (state, month) => {
@@ -273,22 +294,13 @@ const sayDials = (state, month) => {
   }
 }
 
-export const YourDials = ({ found, state, month, ask }) => {
-  const id = React.useId()
+export const YourDials = ({ found, state, month }) => {
   if (!found) return null
-  const read = state.kind === "read"
   return (
     <div className={c("ch-youQueens", "ch-youDials")} data-kind={state.kind}>
       <Text name="you-dials" look="lead" className={c("ch-youQueensWords")} />
-      <button type="button" className={c("ch-ask")} onClick={ask} aria-pressed={read} disabled={state.kind === "asking" || read} aria-describedby={`${id}-note`}>
-        <i aria-hidden="true" />
-        {read ? "In the charts" : state.kind === "asking" ? "Reading…" : "Put my games in"}
-      </button>
       <p className={c("ch-youStatus")} role="status" data-kind={state.kind}>
         {sayDials(state, month)}
-      </p>
-      <p id={`${id}-note`} className={c("ch-youNote")}>
-        Uses your rated ten-minute games among your rapid games of the last 12 months (up to 1,000), read from Chess.com’s public data in your browser, as for the lost queens. Nothing is kept once you close the page.
       </p>
     </div>
   )

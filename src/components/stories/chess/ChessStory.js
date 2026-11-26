@@ -168,11 +168,6 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
               {title}
             </h1>
             <Text name="intro" look="lead" className={c("ch-intro")} />
-            {/* a quiet cue: the story is a scroll */}
-            <p className={c("ch-cue")} aria-hidden="true">
-              Scroll
-              <i />
-            </p>
           </div>
           {/* the threads come out from under the cover's lower edge */}
           <div className={c("ch-coverWrap")} data-thread-floor="">
