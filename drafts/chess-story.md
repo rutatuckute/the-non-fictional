@@ -336,51 +336,131 @@ I never resign. Not out of overconfidence (if anything, I'm the opposite), but b
 
 A queen down, I played on 102 times out of 108. I saved 14.
 
-<!--step:reveal-professor-->
+<!--step:choose-question-->
 
 ### What our *choices* reveal
 
-He said it in early 2026, while I was still playing the London System.
+He watched me for a few moves. I was playing the London System: the safest opening I knew, and the opposite of me.
 
-On 23 March, I stopped. I haven't played it since.
+He still saw it.
 
-<!--step:reveal-guess-->
+Can you hide who you are at the board? First I needed a way to describe how someone plays.
 
-You've seen a little of how I play. Where would you place me?
+<!--step:you-dials-->
 
-<!--step:reveal-initiative-->
+Play on Chess.com? Put your own ten-minute games on these lines.
 
-**Initiative.** How often my moves force something: a check, a capture, a threat.
+<!--step:choose-contact-->
 
-Since the switch, my moves are more forcing than those of 93 in 100 players at my level.
+**Contact.** How often a move forces something: a check, a capture, a threat. Builders rarely; attackers often.
 
-<!--step:reveal-safety-->
+Each grey dot is a player rated 600–900. I'm more forcing than 93 in 100.
 
-**Safety.** How early I castle.
+<!--step:choose-pace-->
 
-Careful then, careful now. And I do trade queens more often than not, earlier than almost anyone at my level.
+**Pace.** How often a move is made in under two seconds. Deep thinkers rarely; blitz thinkers often.
 
-<!--step:reveal-tempo-->
+Whatever I say about fast chess, I play fast: quicker than 85 in 100.
 
-**Tempo.** How often I move in under two seconds.
+<!--step:choose-persistence-->
 
-In life I'm impulsive, and on the board I sometimes move fast without thinking too much. Since the switch, faster than 86 in 100 players.
+**Persistence.** Of the games lost, how many are played to the end instead of resigned.
 
-Oddly, my fast moves are rarely my mistakes.
+I keep going, more than 99 in 100.
 
-<!--step:reveal-verdict-->
+<!--step:choose-habit-->
 
-So he was right. Just not yet.
+**Habit.** How often the same first three moves come back. Explorers vary; creatures of habit repeat.
 
-When he said it, my games didn't show it: in the London months, my moves were ordinary. A few weeks later, they did.
+I repeat myself more than 87 in 100.
 
-Move through the months and watch it happen.
+<!--step:choose-all-->
 
-<!--step:reveal-limits-->
+The shaded bands hold the middle half of players at my level.
 
-Maybe he saw something in me. Maybe his question changed how I played. The games can't tell which.
+I'm outside them on all four: further from typical than 96 in 100.
 
-And the scales describe how I play, not who I am.
+<!--step:choose-games-->
+
+So could a stranger recognise a player from their games alone? Here's the game.
+
+Take one player: sixty of their ten-minute games.
+
+<!--step:choose-split-->
+
+Thirty are what we know about them: they make the player's card, the four dials.
+
+The other thirty are hidden.
+
+<!--step:choose-lineup-->
+
+From the hidden games we draw a few: the mystery games. Nine other players of the same level join, with their own cards.
+
+Picking blind, you'd be right one time in ten.
+
+<!--step:choose-round-1-->
+
+Your turn, with a new mystery player and nine new cards. From **one game**, which card is theirs?
+
+The computer picks too: it adds up the gaps on the four dials and takes the smallest.
+
+<!--step:choose-round-10-->
+
+The same player, from **ten games**.
+
+One game left two dials blank: a game that wasn't lost says nothing about giving up, and one opening is not yet a habit.
+
+<!--step:choose-round-30-->
+
+And from **thirty**.
+
+The more games, the less one odd game pulls the dials around.
+
+<!--step:choose-play-->
+
+Play again, with players drawn at random.
+
+These aren't chosen to work: sometimes even thirty games aren't enough.
+
+<!--step:choose-curve-->
+
+The computer played this game 41,280 times.
+
+From one game, it finds the right player 19 times in 100, barely better than a blind pick. From thirty, 58.
+
+<!--step:choose-me-->
+
+Me: 29 from one game, 89 from thirty.
+
+The further from typical, the sooner you're found.
+
+<!--step:choose-findme-->
+
+You've seen my dials. Find me: five of my games, nine players of my level, and me.
+
+<!--step:choose-findyou-->
+
+Now you. Thirty of your games make your card; five others are the mystery. Can you find yourself among nine players of your level?
+
+<!--step:choose-you-->
+
+And how soon a stranger would find you.
+
+<!--step:choose-club-->
+
+Back to the club. I don't know what he saw: a few moves are too few to measure.
+
+And I wasn't playing like me.
+
+<!--step:choose-disguise-->
+
+But I can play the game with my London games. From one, the computer can't find me at all: 10 in 100, a blind pick. From thirty, 42, and only through my persistence and my habits. Never through contact, the attacker he named.
+
+<!--step:choose-end-->
+
+The London System hid it from the numbers. Not from him.
+
+The dials describe how I play, not who I am.
 
 <!--step:hub-title-->
 
@@ -396,7 +476,7 @@ And the scales describe how I play, not who I am.
 
 <!--step:hub-what-we-choose-->
 
-**Aggressive, since March.** Ordinary while I played the London System. Since the switch, more forcing than 93 in 100.
+**Recognisable, even in disguise.** Further from typical than 96 in 100 players at my level: from thirty games, a stranger finds me 89 times in 100. From my London games, 42, and never through contact.
 
 <!--step:ending-title-->
 
@@ -435,6 +515,8 @@ Is yours still there?
 - **Usernames.** Names sorted into groups by 47 hand-checked rules; each group's ratings set against a typical opponent's, with 95% ranges from resampling.
 - **Losing the queen.** Every rapid game of the sample (and 1 in 5 blitz and bullet games): the first queen lost from an even position, counted by material, 389,170 cases; a Stockfish 19 check (depth 12) on 1 in 45 found 96% of them lost. Rating points are Chess.com's usual ±8 between equal ratings, adjusted for the rating gap. My own games (and my opponents') are counted by the same rules: rapid, to 15 November.
 - **Only the king left.** All 4.65 million games: 337,234 in which one side had only its king left and the other could still checkmate. My own: rapid games.
-- **Style.** The three scales were defined before they were computed: 10-minute games only, against players at my level with at least 30 such games.
+- **The four dials.** Ten-minute rapid games of at least 20 half-moves. Contact: the share of moves 5 to 25 that check, capture or directly threaten a piece. Pace: the share of moves from move 8 made in under 2 seconds with at least a minute on the clock. Persistence: the share of lost games not ended by resigning or leaving. Habit: the share of games in a player's most common first three moves, per colour, in draws of 30 games. Mine are from my games since 23 March 2026, against the 1,635 sample players rated 600–900 with at least 30 such games.
+- **The game.** 5,160 sample players with at least 60 ten-minute games: 30 at random describe them, the mystery games come from the other 30. Ten players within 75 rating points; the computer picks the smallest distance across the four dials, each measured against all players' spread; 8 trials per player for each number of games (41,280 in all). Mine: 3,000 trials each, from my games since 23 March, and from my 157 London-months games (1 February to 23 March). The first lineup shown was chosen to show the idea; the others are drawn at random.
+- **Your dials.** If you put your games in, the same rules run in your browser on your rated ten-minute games among your last 12 months' rapid games (up to 1,000; at least 30 needed). "Your level" is the sample players within 150 rating points of your average rating in those games (wider where players are few). "Find you" draws 30 of your games for your card and 5 others as the mystery, among nine players within 75 points, not chosen to work. Your line is 1,000 trials at each number of games, as far as your games allow (30 for the card, plus the mystery games). The port to the browser was checked against my games, game by game.
 
 <!--/story-->

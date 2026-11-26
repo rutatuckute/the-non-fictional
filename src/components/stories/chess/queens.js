@@ -3,8 +3,10 @@
 // browser from Chess.com's public data, only when they ask: the list of months
 // they played (/pub/player/<name>/games/archives), then one month at a time,
 // newest first (/pub/player/<name>/games/YYYY/MM). Each month comes with every
-// game in full; of those, only counts are kept, in memory, for this reading.
-// Nothing is sent to the site, stored, or put in the address bar.
+// game in full; the rapid games are kept in memory for this reading only, so
+// that "What our choices reveal" (dials.js) need not read them again, and of
+// them only counts are shown. Nothing is sent to the site, stored, or put in
+// the address bar.
 //
 // The rules are the sample's, ported line for line so the reader's numbers
 // compare like with like (scripts/stories/chess/check-queens.mjs checks this
@@ -62,7 +64,7 @@ export const decode = tcn => {
 
 // ── The board, as 64 squares holding FEN letters (upper case White).
 const VALUE = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 }
-const startBoard = () => {
+export const startBoard = () => {
   const b = Array(64).fill(null)
   "RNBQKBNR".split("").forEach((p, f) => {
     b[f] = p
@@ -73,7 +75,7 @@ const startBoard = () => {
   return b
 }
 // Plays one move; false when it cannot be right (no piece to move).
-const play = (b, [from, to, promo]) => {
+export const play = (b, [from, to, promo]) => {
   const piece = b[from]
   if (!piece) return false
   const kind = piece.toLowerCase()
@@ -255,13 +257,19 @@ const get = async (url, signal) => {
   }
 }
 
-// Counts the reader's lost queens. Returns { kind: "counted", username, games,
-// since, ...tally } or { kind: "few" (fewer than MIN_CASES), "none" (no rapid
-// games), "missing", "busy", "unreachable", "invalid", ... }. onMonth(date,
-// done, of) reports progress. Never throws, except when aborted by the caller.
-export const countQueens = async (typed, byLevel, signal, onMonth = () => {}) => {
+// The reader's rapid games of the last 12 months, newest first: at most 1,000,
+// and no more than 5,000 games of any kind read. Read once per name and kept
+// in memory for this reading, so the lost-queen count and the four dials of
+// "What our choices reveal" (dials.js) share one reading. Returns { kind: "ok",
+// username, games, since } or { kind: "missing" | "busy" | "unreachable" |
+// "invalid", username }. onMonth(date, done, of) reports progress. Never
+// throws, except when aborted by the caller.
+const READ = new Map()
+export const readRapid = async (typed, signal, onMonth = () => {}) => {
   const username = String(typed || "").trim()
   if (!USERNAME.test(username)) return { kind: "invalid", username }
+  const kept = READ.get(username.toLowerCase())
+  if (kept) return { ...kept, username }
   const base = `https://api.chess.com/pub/player/${encodeURIComponent(username.toLowerCase())}/games`
   const list = await get(`${base}/archives`, signal)
   if (list.status !== "ok") return { kind: list.status, username }
@@ -274,11 +282,10 @@ export const countQueens = async (typed, byLevel, signal, onMonth = () => {}) =>
     .map(([, y, m]) => [Number(y), Number(m)])
     .filter(([y, m]) => m >= 1 && m <= 12 && y * 12 + m - 1 >= oldest)
     .sort((a, b) => b[0] - a[0] || b[1] - a[1])
-  const cases = []
-  let rapid = 0
+  const rapid = []
   let read = 0
   let since = null
-  for (let i = 0; i < months.length && rapid < MAX_RAPID && read < MAX_READ; i++) {
+  for (let i = 0; i < months.length && rapid.length < MAX_RAPID && read < MAX_READ; i++) {
     const [y, m] = months[i]
     onMonth(Date.UTC(y, m - 1, 1), i, months.length)
     const month = await get(`${base}/${y}/${String(m).padStart(2, "0")}`, signal)
@@ -288,16 +295,32 @@ export const countQueens = async (typed, byLevel, signal, onMonth = () => {}) =>
     const games = (Array.isArray(month.data?.games) ? month.data.games : []).slice().sort((a, b) => (b?.end_time || 0) - (a?.end_time || 0))
     read += games.length
     for (const game of games) {
-      if (rapid >= MAX_RAPID) break
+      if (rapid.length >= MAX_RAPID) break
       if (game?.rules !== "chess" || game?.time_class !== "rapid") continue
-      rapid++
+      rapid.push(game)
       if (Number.isInteger(game.end_time)) since = game.end_time * 1000
-      const found = readGame(game, username)
-      if (found) cases.push(found)
     }
   }
-  if (!rapid) return { kind: "none", username }
+  const result = { kind: "ok", games: rapid, since }
+  READ.set(username.toLowerCase(), result)
+  return { ...result, username }
+}
+
+// Counts the reader's lost queens. Returns { kind: "counted", username, games,
+// since, ...tally } or { kind: "few" (fewer than MIN_CASES), "none" (no rapid
+// games), "missing", "busy", "unreachable", "invalid", ... }. onMonth(date,
+// done, of) reports progress. Never throws, except when aborted by the caller.
+export const countQueens = async (typed, byLevel, signal, onMonth = () => {}) => {
+  const read = await readRapid(typed, signal, onMonth)
+  if (read.kind !== "ok") return { kind: read.kind, username: read.username }
+  const { username, games, since } = read
+  const cases = []
+  for (const game of games) {
+    const found = readGame(game, username)
+    if (found) cases.push(found)
+  }
+  if (!games.length) return { kind: "none", username }
   const counts = tally(cases, byLevel)
-  if (counts.cases < MIN_CASES) return { kind: "few", username, games: rapid, cases: counts.cases }
-  return { kind: "counted", username, games: rapid, since, ...counts }
+  if (counts.cases < MIN_CASES) return { kind: "few", username, games: games.length, cases: counts.cases }
+  return { kind: "counted", username, games: games.length, since, ...counts }
 }

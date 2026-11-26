@@ -8,7 +8,6 @@ import { INVESTIGATIONS, InvestigationBoard } from "./investigation-parts"
 import { useReader } from "./reader"
 import { readerGap } from "./ratings"
 import paths from "./wrong-paths.json"
-import style from "./style.json"
 
 // The three questions of Part III, come back to after each investigation:
 // the boards of the choice screen (dive.js), each answered one in turn with
@@ -21,12 +20,6 @@ const pathRate = key => {
   const p = paths[key]
   return { resign: inHundred(p.resigned), on: inHundred(1 - p.resigned - p.left) }
 }
-const SCALES = [
-  ["initiative", "initiative"],
-  ["safety", "safety"],
-  ["tempo", "tempo"],
-]
-const list = items => (items.length < 2 ? items.join("") : `${items.slice(0, -1).join(", ")} and ${items.at(-1)}`)
 
 const yours = (id, said) => {
   if (id === "what-we-say") {
@@ -58,12 +51,21 @@ const yours = (id, said) => {
     const decided = told.length ? told.join(" ") : "You didn’t decide."
     return q ? `${decided} On Chess.com you lost your queen like this ${q.cases} times, stayed ${q.on} and saved ${q.saved}.` : decided
   }
-  const placed = said.scales || {}
-  const guessed = SCALES.filter(([key]) => placed[key] != null)
-  if (!guessed.length) return "You didn’t place me."
-  return `You placed me above ${list(guessed.map(([key]) => inHundred(placed[key])))} in 100 for ${list(guessed.map(([, name]) => name))}. The games say ${list(
-    guessed.map(([key]) => inHundred(style.scales[key].since.above))
-  )}.`
+  // the game (reveal.js): the three rounds, the random lineups, her, and
+  // themselves; with their own games read (you.js), how soon they are found
+  const game = said.choose
+  const dials = said.dials && said.chesscom && said.dials.username === said.chesscom.username ? said.dials : null
+  const at30 = dials?.curve?.at(-1)
+  const known = at30 == null ? "" : ` From thirty of your games, the computer finds you ${Math.round(at30 * 100)} times in 100.`
+  if (!game) return dials ? `You didn’t play the game.${known}` : "You didn’t play the game."
+  const rounds = game.rounds.map((hit, i) => (hit == null ? null : [["one game", "ten games", "thirty games"][i], hit])).filter(Boolean)
+  const found = rounds.filter(([, hit]) => hit).map(([n]) => n)
+  const parts = []
+  if (rounds.length) parts.push(found.length ? `You found the stranger from ${found.join(" and ")}.` : "You didn’t find the stranger.")
+  if (game.played.n) parts.push(`With players drawn at random, you found ${game.played.you} of ${game.played.n}; the computer, ${game.played.cpu}.`)
+  if (game.findme != null) parts.push(game.findme ? "And you found me." : "And you missed me.")
+  if (game.findyou != null) parts.push(game.findyou ? "You found yourself." : "You didn’t find yourself.")
+  return parts.join(" ") + known
 }
 
 export const Hub = ({ upto }) => {

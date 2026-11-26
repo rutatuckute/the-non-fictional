@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { lookUp, MIN_GAMES } from "./chesscom"
+import { curveOf, MIN_DIALS, readDials } from "./dials"
 import { c, Text } from "./parts"
 import { countQueens } from "./queens"
 import { useReader, useTell } from "./reader"
@@ -189,6 +190,105 @@ export const YourQueens = () => {
       </p>
       <p id={`${id}-note`} className={c("ch-youNote")}>
         Reads your rapid games of the last 12 months (up to 1,000) from Chess.com’s public data, in your browser: a few megabytes. Only the counts are kept, until you close the page.
+      </p>
+    </div>
+  )
+}
+
+// In "What our choices reveal", at its first step: once the reader has been
+// found above, their four dials and their own recognition game, from their
+// ten-minute games (dials.js), again only on a press of the button. The games
+// are the lost-queen count's: read once for both, so after that count this is
+// at once. reveal.js draws the reader in green on the strips, in "find you"
+// and on the curve; hub.js says it in the recap. The curve is worked out in
+// the browser after the dials, a little at a time.
+export const useYourDials = () => {
+  const said = useReader()
+  const found = said.chesscom
+  const name = found?.username || null
+  const [state, setState] = React.useState({ kind: "idle" })
+  const [month, setMonth] = React.useState(null)
+  const [curve, setCurve] = React.useState(null)
+  const pending = React.useRef(null)
+  React.useEffect(() => {
+    pending.current?.abort()
+    setState({ kind: "idle" })
+    setCurve(null)
+  }, [name])
+  React.useEffect(() => () => pending.current?.abort(), [])
+  const read = state.kind === "read" ? state : null
+  // the curve, once the dials are in
+  React.useEffect(() => {
+    if (!read) return
+    const working = new AbortController()
+    setCurve(read.P.ns.map(() => null))
+    curveOf(read.rows, read.rating, read.P, read.seed + 2, {
+      signal: working.signal,
+      onPoint: (i, v) => !working.signal.aborted && setCurve(all => all.map((x, j) => (j === i ? v : x))),
+    })
+    return () => working.abort()
+  }, [read])
+  const told = React.useMemo(
+    () => (read ? { username: read.username, games: read.games, above: read.above, outside: read.outside, distAbove: read.distAbove, curve } : null),
+    [read, curve],
+  )
+  useTell("dials", told)
+
+  const ask = async () => {
+    if (!found) return
+    pending.current?.abort()
+    const asking = new AbortController()
+    pending.current = asking
+    setMonth(null)
+    setState({ kind: "asking" })
+    try {
+      const result = await readDials(found.username, asking.signal, date => setMonth(date))
+      if (!asking.signal.aborted) setState(result)
+    } catch {
+      // a newer reading, or a new name, took over
+    }
+  }
+  return { found, state, month, read, curve, ask }
+}
+
+const sayDials = (state, month) => {
+  switch (state.kind) {
+    case "asking":
+      return month ? `Reading your games on Chess.com… ${MONTH.format(month)}` : "Asking Chess.com…"
+    case "read":
+      return `Read ${state.games.toLocaleString("en-GB")} of your ten-minute games. You’re the green dot on every line.`
+    case "few":
+      return state.games
+        ? `Only ${state.games} rated ten-minute games in your last 12 months on Chess.com: the dials need ${MIN_DIALS}.`
+        : "No rated ten-minute games in your last 12 months on Chess.com, so no dials to draw."
+    case "missing":
+      return `Chess.com has no games for “${state.username}”.`
+    case "busy":
+      return "Chess.com is busy. Try again in a minute."
+    case "unreachable":
+    case "invalid":
+      return "Couldn’t read your games just now. Try again in a moment."
+    default:
+      return ""
+  }
+}
+
+export const YourDials = ({ found, state, month, ask }) => {
+  const id = React.useId()
+  if (!found) return null
+  const read = state.kind === "read"
+  return (
+    <div className={c("ch-youQueens", "ch-youDials")} data-kind={state.kind}>
+      <Text name="you-dials" look="lead" className={c("ch-youQueensWords")} />
+      <button type="button" className={c("ch-ask")} onClick={ask} aria-pressed={read} disabled={state.kind === "asking" || read} aria-describedby={`${id}-note`}>
+        <i aria-hidden="true" />
+        {read ? "In the charts" : state.kind === "asking" ? "Reading…" : "Put my games in"}
+      </button>
+      <p className={c("ch-youStatus")} role="status" data-kind={state.kind}>
+        {sayDials(state, month)}
+      </p>
+      <p id={`${id}-note`} className={c("ch-youNote")}>
+        Uses your rated ten-minute games among your rapid games of the last 12 months (up to 1,000), read from Chess.com’s public data in your browser, as for the lost queens. Nothing is kept once you close the page.
       </p>
     </div>
   )

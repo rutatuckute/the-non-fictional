@@ -4,7 +4,7 @@ import * as React from "react"
 
 // What the reader has said and chosen in Part III, for this reading only:
 // the usernames guessed (scenes.js), the two decisions and two guesses of
-// "When things go wrong" (wrong.js), the three scale guesses (reveal.js).
+// "When things go wrong" (wrong.js), their picks in the recognition game (reveal.js).
 // Nothing leaves the page. The hubs (hub.js) read it back to them, in green.
 
 const Reader = React.createContext({ said: {}, tell: () => {} })
