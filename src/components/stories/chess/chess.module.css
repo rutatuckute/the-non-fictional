@@ -865,6 +865,7 @@
 }
 /* What we do when things go wrong (wrong.js): the phone, the fork, the hundred, the charts.
    Clay is the author; data green, games saved and the reader's controls; lavender, resigning. */
+.ch-kingBeat { display: grid; gap: 1.1em; }
 .ch-wrong { --scene: wrong; --resign: var(--other); --lost: #55524d; --saved: var(--other-2); }
 .ch-wrongScene { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
 .ch-layer.ch-wrongLayer { inset: 0; display: grid; place-items: center; }

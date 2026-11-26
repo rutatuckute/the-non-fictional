@@ -288,11 +288,9 @@ But it can get worse than losing the queen.
 
 Lost your queen on Chess.com too? Count how often, and what you did next.
 
-<!--step:wrong-decide-king-->
+<!--step:wrong-king-->
 
-Now it's you. Move 40, playing White. Everything is gone but your king, and three pawns are walking towards the end of the board to become queens.
-
-Would you resign?
+Another time, I was left with only my king, and three pawns were walking towards the end of the board.
 
 <!--step:wrong-outcome-king-->
 

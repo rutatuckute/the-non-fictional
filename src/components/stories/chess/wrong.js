@@ -26,9 +26,11 @@ import paths from "./wrong-paths.json"
 //   levels   by rating: who gives up at once, and who is saved by staying
 //   mine     her own games of that kind (and, if the reader asks, theirs:
 //            you.js counts them from Chess.com, in green beside hers)
-// The lone king walks decide, outcome (ending in the three-queens stalemate),
-// guess, play, payoff and mine; the ideas it shares with the queen (the price
-// of resigning, the clock) are not told twice. Then:
+// The lone king is one beat (`king`): her game played out to the three-queens
+// stalemate, with her own counts. Whoever wants more can open it ("go deeper"):
+// the hundred real lone-king games, guess, play and payoff, come in after the
+// beat; the ideas it shares with the queen (the price of resigning, the clock)
+// are not told twice. Then:
 //   meet     both hundreds side by side, with the reader's guesses
 //   you      her own words
 // (wrong-paths.json from analysis/export_wrong_paths.py, her own numbers in it
@@ -106,7 +108,7 @@ const GameBoard = ({ game, at, say, bottom }) => (
 )
 
 // The rest of the author's game, a position per stretch of scrolling.
-const PlayOut = ({ during, game }) => {
+const PlayOut = ({ during, game, note }) => {
   const steps = React.useContext(PinSteps)
   const still = useStill()
   const [at, setAt] = React.useState(0)
@@ -124,7 +126,7 @@ const PlayOut = ({ during, game }) => {
   )
   return (
     <div ref={box} className={c("ch-wrongPlay")}>
-      <GameBoard game={game} at={Math.min(at, last)} say={at >= last ? game.end : null} />
+      <GameBoard game={game} at={Math.min(at, last)} bottom={note && at === 0 ? game.note : null} say={at >= last ? game.end : null} />
     </div>
   )
 }
@@ -503,20 +505,20 @@ const StepSpy = ({ at, onStep }) => {
   return null
 }
 
-// The steps, in reading order: the queen, then the lone king, then both.
-const NAMES = [
+// The steps, in reading order: the queen, then the lone king as one beat (and,
+// if the reader opens it, its hundred games), then both.
+const namesOf = deeper => [
   "observation", "decide", "outcome", "guess", "play", "payoff", "taleb", "clock", "levels", "mine",
-  "decide-king", "outcome-king", "guess-king", "play-king", "payoff-king", "mine-king",
+  "king", ...(deeper ? ["guess-king", "play-king", "payoff-king"] : []),
   "meet", "you",
 ]
-const pathOf = name => (name.endsWith("-king") ? "king" : "queen")
+const pathOf = name => (name === "king" || name.endsWith("-king") ? "king" : "queen")
 const kindOf = name => name.replace(/-king$/, "")
 const HUNDRED = { queen: ["guess", "play", "payoff", "taleb", "clock"], king: ["guess-king", "play-king", "payoff-king"] }
-// what the hundred show at each of their steps, and once the scene has gone past them
+// what the hundred show at each of their steps
 const modeOf = (path, now) => {
   const k = kindOf(now)
-  if (HUNDRED[path].includes(now)) return k === "taleb" ? "payoff" : k
-  return NAMES.indexOf(now) > NAMES.indexOf(HUNDRED[path].at(-1)) ? (path === "queen" ? "clock" : "payoff") : "guess"
+  return k === "taleb" ? "payoff" : k
 }
 const both = value => ({ queen: value, king: value })
 
@@ -529,6 +531,9 @@ export const Wrong = () => {
   useTell("decisions", decision)
   const [clockAt, setClockAt] = React.useState(3)
   const [step, setStep] = React.useState(0)
+  // the lone king's hundred games come in after its beat only if the reader asks
+  const [deeper, setDeeper] = React.useState(false)
+  const NAMES = React.useMemo(() => namesOf(deeper), [deeper])
   // (with the reader's own count under her words, the step gets more room to read it in)
   const found = Boolean(useReader().chesscom)
   const still = useStill()
@@ -630,13 +635,18 @@ export const Wrong = () => {
         <YourQueens />
       </>
     ),
-    "decide-king": (
-      <>
-        <Text name="wrong-decide-king" look="lead" />
-        {decide("king")}
-      </>
+    king: (
+      <div className={c("ch-kingBeat")}>
+        <Text name="wrong-king" look="lead" />
+        <Text name="wrong-outcome-king" look="lead" />
+        <Text name="wrong-mine-king" look="lead" />
+        <div className={c("ch-guess")}>
+          <button type="button" disabled={deeper} onClick={() => setDeeper(true)}>
+            {deeper ? "The hundred games are below" : "Go deeper: 100 real lone-king games"}
+          </button>
+        </div>
+      </div>
     ),
-    "outcome-king": <Text name="wrong-outcome-king" look="lead" />,
     "guess-king": (
       <>
         <Text name="wrong-guess-king" look="lead" />
@@ -645,7 +655,6 @@ export const Wrong = () => {
     ),
     "play-king": afterPlay("king", "wrong-play-king"),
     "payoff-king": <Text name="wrong-payoff-king" look="lead" />,
-    "mine-king": <Text name="wrong-mine-king" look="lead" />,
     meet: <Text name="wrong-meet" look="lead" />,
     you: <Text name="wrong-you" look="lead" />,
   }
@@ -659,7 +668,7 @@ export const Wrong = () => {
       mark="when-things-go-wrong"
       className={c("ch-wrong")}
       label="What we do when things go wrong"
-      steps={NAMES.map(n => ({ text: texts[n], ...(kindOf(n) === "outcome" ? { rest: 0.6 } : n === "mine" && found ? { rest: 0.5 } : {}) }))}
+      steps={NAMES.map(n => ({ text: texts[n], ...(kindOf(n) === "outcome" || n === "king" ? { rest: 0.6 } : n === "mine" && found ? { rest: 0.5 } : {}) }))}
     >
       {at => {
         const now = NAMES[at] || "observation"
@@ -677,34 +686,33 @@ export const Wrong = () => {
                 label="The opponent, a queen down, resigned."
               />
             </Show>
-            {["queen", "king"].map(path => {
-              const k = path === "king" ? "-king" : ""
-              return (
-                <React.Fragment key={path}>
-                  <Show on={now === `decide${k}`} className={c("ch-wrongLayer")}>
-                    {/* (on a phone the lone king's note goes: its words just above say the same, and the board needs the room) */}
-                    <GameBoard game={GAMES[path]} at={0} bottom={narrow && path === "king" ? null : GAMES[path].note} say={said(path)} />
-                  </Show>
-                  <Show on={now === `outcome${k}`} className={c("ch-wrongLayer")}>
-                    <PlayOut during={NAMES.indexOf(`outcome${k}`)} game={GAMES[path]} />
-                  </Show>
-                  <Show on={HUNDRED[path].includes(now)} className={c("ch-wrongLayer")}>
-                    <Hundred
-                      P={paths[path]}
-                      path={path}
-                      mode={modeOf(path, now)}
-                      guess={guess[path]}
-                      revealed={revealed[path]}
-                      clockAt={clockAt}
-                      choice={decision[path]}
-                    />
-                  </Show>
-                  <Show on={now === `mine${k}`} className={c("ch-wrongLayer")}>
-                    <Mine path={path} />
-                  </Show>
-                </React.Fragment>
-              )
-            })}
+            {/* the queen: the author's game, then the hundred, then her own games */}
+            <Show on={now === "decide"} className={c("ch-wrongLayer")}>
+              <GameBoard game={GAMES.queen} at={0} bottom={GAMES.queen.note} say={said("queen")} />
+            </Show>
+            <Show on={now === "outcome"} className={c("ch-wrongLayer")}>
+              <PlayOut during={NAMES.indexOf("outcome")} game={GAMES.queen} />
+            </Show>
+            <Show on={now === "mine"} className={c("ch-wrongLayer")}>
+              <Mine path="queen" />
+            </Show>
+            {/* the lone king: her game played out to the stalemate, in one beat */}
+            <Show on={now === "king"} className={c("ch-wrongLayer")}>
+              <PlayOut during={NAMES.indexOf("king")} game={GAMES.king} note={!narrow} />
+            </Show>
+            {["queen", "king"].map(path => (
+              <Show key={path} on={HUNDRED[path].includes(now)} className={c("ch-wrongLayer")}>
+                <Hundred
+                  P={paths[path]}
+                  path={path}
+                  mode={modeOf(path, now)}
+                  guess={guess[path]}
+                  revealed={revealed[path]}
+                  clockAt={clockAt}
+                  choice={decision[path]}
+                />
+              </Show>
+            ))}
             <Show on={now === "levels"} className={c("ch-wrongLayer")}>
               <Levels P={paths.queen} path="queen" />
             </Show>
