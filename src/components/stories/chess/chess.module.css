@@ -1031,7 +1031,7 @@
 .ch-sayBubbleText::before { content: ""; position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 600ms ease;
   background: repeating-linear-gradient(to bottom, transparent 0, transparent 0.4em, rgba(255, 248, 239, 0.34) 0.4em, rgba(255, 248, 239, 0.34) 1.02em, transparent 1.02em, transparent 1.42em); }
 /* the message she answers: a quiet grey bubble, words held back */
-.ch-sayTheirs { display: grid; gap: 0.6em; align-content: center; box-sizing: border-box; width: 86%; margin: 0 0 8px; padding: 18px 22px; border-radius: 22px 22px 22px 6px; background: #34322f; font-size: clamp(15px, 1.4vw, 20px); }
+.ch-sayTheirs { position: relative; display: grid; gap: 0.6em; align-content: center; box-sizing: border-box; width: 86%; margin: 0 0 8px; padding: 18px 22px; border-radius: 22px 22px 22px 6px; background: #34322f; font-size: clamp(15px, 1.4vw, 20px); }
 .ch-sayTheirs i { display: block; height: 0.62em; background: rgba(240, 233, 223, 0.16); }
 .ch-sayTheirs i:last-child { width: 62%; }
 .ch-sayBubble[data-revealed="false"] .ch-sayBubbleText > span { opacity: 0; }
@@ -1439,6 +1439,10 @@
 .ch-dotMark { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
 .ch-dotInline { margin-right: 8px; vertical-align: -1px; }
 .ch-dotBeside { position: absolute; left: -24px; top: 50%; margin-top: -6px; }
+/* his dot at the end (Part IV): no dot travels there, so this one is drawn */
+.ch-dotYou { background: var(--form-data); }
+/* on a phone his bubble is nearly as wide as the screen: the dot comes in to stay on it */
+@media (max-width: 40rem) { .ch-chatPop .ch-dotYou { left: -15px; } }
 .ch-investigationTab svg { transform-origin: 50% 50%; }
 /* a question's board is out, large, while it opens (opening.js): its place here waits */
 .ch-investigationHeader[data-fly1="true"] .ch-investigationTab:nth-child(2),

@@ -251,7 +251,6 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             <section data-investigation-part="when-things-go-wrong" className={c("ch-next")}><Wrong /><Hub upto={2} /></section>
             <section data-investigation-part="what-we-choose" className={c("ch-next")}><Reveal /><Hub upto={3} /></section>
           </div>
-        </ReaderProvider>
 
         <section className={c("ch-free", "ch-back")} aria-label="Back to the threads of life">
           <Mark id="the-ending" />
@@ -278,6 +277,7 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
             <Knots of={LINES.onward} />
           </div>
         </section>
+        </ReaderProvider>
 
         <section className={c("ch-method")} aria-label="Method and data">
           <Mark id="method-and-data" />

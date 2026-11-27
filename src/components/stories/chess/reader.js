@@ -18,6 +18,27 @@ export const ReaderProvider = ({ children }) => {
 
 export const useReader = () => React.useContext(Reader).said
 
+// One reader is expected: the one who sent the message that starts the first question
+// (and is revealed in Part IV). Given his Chess.com username, his green dot waits
+// beside that message, at both ends. Only a SHA-256 of the lower-cased name is kept
+// here, so the public code does not name him.
+const HIM = "04b1c1fd95295155febc01ba1660b2bb541305451aa61deecc15310cc8f042d2"
+export const useIsHim = () => {
+  const name = useReader().chesscom?.username?.toLowerCase() || null
+  const [him, setHim] = React.useState(false)
+  React.useEffect(() => {
+    setHim(false)
+    if (!name || !globalThis.crypto?.subtle) return
+    let live = true
+    crypto.subtle.digest("SHA-256", new TextEncoder().encode(name)).then(buffer => {
+      const hex = Array.from(new Uint8Array(buffer), b => b.toString(16).padStart(2, "0")).join("")
+      if (live) setHim(hex === HIM)
+    })
+    return () => { live = false }
+  }, [name])
+  return him
+}
+
 // A section reports what the reader has done, whenever it changes.
 export const useTell = (key, value) => {
   const { tell } = React.useContext(Reader)

@@ -3,6 +3,7 @@
 import * as React from "react"
 import { c, PinSteps } from "./parts"
 import { useFollow, useStill } from "./follow"
+import { useIsHim } from "./reader"
 
 // Illustrative legal positions for the invented opponents, not records of
 // particular games. Opening, developed opening, opposite-side castling, and
@@ -102,6 +103,7 @@ export const PhonePosition = ({ game }) => {
 // of the same size, so the message does not jump when it is read; then it
 // collapses into the point on the rating line where it was sent.
 export const Message = ({ collapse = 0, target, revealed = true }) => {
+  const him = useIsHim()
   const box = React.useRef(null),
     bubble = React.useRef(null)
   const steps = React.useContext(PinSteps)
@@ -133,7 +135,11 @@ export const Message = ({ collapse = 0, target, revealed = true }) => {
       {/* the day it was sent: no hour */}
       <p className={c("ch-sayMessageDay")} style={{ opacity: 1 - Math.min(1, collapse * 2) }}>18 May 2026</p>
       {/* the message mine answers: its words are kept for the end (Part IV) */}
-      <p className={c("ch-sayTheirs")} style={{ opacity: 1 - Math.min(1, collapse * 2) }} aria-hidden="true"><i /><i /></p>
+      <p className={c("ch-sayTheirs")} style={{ opacity: 1 - Math.min(1, collapse * 2) }} aria-hidden="true">
+        <i /><i />
+        {/* his dot, if he is the one reading (reader.js) */}
+        {him ? <b className={c("ch-dotMark", "ch-dotBeside")} data-dot="you" /> : null}
+      </p>
       <p className={c("ch-sayBubble")} ref={bubble} data-revealed={revealed ? "true" : "false"}>
         {/* my dot waits beside my message (travellers.js) */}
         <b className={c("ch-dotMark", "ch-dotBeside")} data-dot="me" />
@@ -149,6 +155,7 @@ export const Message = ({ collapse = 0, target, revealed = true }) => {
 // phone as the page's own text (not a screenshot of any app): her bubble in
 // the thread's clay, his in a quiet grey, the day above them.
 export const Chat = () => {
+  const him = useIsHim()
   const box = React.useRef(null)
   const bubble = React.useRef(null)
   const still = useStill()
@@ -170,7 +177,11 @@ export const Chat = () => {
           <p className={c("ch-chatMine")}>Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀</p>
         </div>
       </div>
-      <p className={c("ch-messagePop", "ch-chatPop")} ref={bubble} aria-hidden="true">heyy, do you play on chess.com? what’s your rating on blitz? xd</p>
+      <p className={c("ch-messagePop", "ch-chatPop")} ref={bubble} aria-hidden="true">
+        {/* his green dot again, now beside his words (no dot travels in Part IV: it simply waits here) */}
+        {him ? <b className={c("ch-dotMark", "ch-dotBeside", "ch-dotYou")} /> : null}
+        heyy, do you play on chess.com? what’s your rating on blitz? xd
+      </p>
     </div>
   )
 }
