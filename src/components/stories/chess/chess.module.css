@@ -1213,7 +1213,9 @@
   .ch-text.ch-yearsText { top: 18%; }
   .ch-text.ch-yearsNone { top: 55%; }
   .ch-open .ch-text, .ch-text.ch-aside, .ch-hold { max-width: none; }
-  .ch-hero { grid-template-columns: minmax(0, 1fr); row-gap: 28px; min-height: 0; padding: calc(var(--bar) + 4svh) 0 4svh; }
+  /* the first screen is the title and the cover alone: the opening question
+     waits below it (60px: the site's masthead above the story) */
+  .ch-hero { grid-template-columns: minmax(0, 1fr); row-gap: 28px; min-height: calc(100svh - 60px); align-content: center; padding: calc(var(--bar) + 4svh) 0 4svh; }
   .ch-text.ch-intro { font-size: clamp(17px, 4.9vw, 24px); }
   .ch-cover { max-height: none; }
   .ch-memory { row-gap: 22px; padding-bottom: 5vh; }
