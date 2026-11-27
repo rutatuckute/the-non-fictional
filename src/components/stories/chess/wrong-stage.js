@@ -108,8 +108,9 @@ const BigBoard = ({ fen, flip, at, cell, caption }) => {
   )
 }
 
-// The stage's own words above the drawing: a title, its colours as chips, a big number.
-const Head = ({ head, num }) => (
+// The stage's own words above the drawing: a title, its colours as chips, a big number,
+// and (only where a scene gives one, as Q3 does) a caption under the number.
+const Head = ({ head, num, cap }) => (
   <div className={c("ch-stageHead")}>
     <p className={c("ch-ratingTitle", "ch-stageTitle")}>
       {/* (a mark for the travelling dot, travellers.js, beside the title of her own games) */}
@@ -133,6 +134,11 @@ const Head = ({ head, num }) => (
         " "
       )}
     </p>
+    {cap === undefined ? null : (
+      <p className={c("ch-stageCap")} data-on={cap ? "true" : "false"} aria-live="polite">
+        {cap || " "}
+      </p>
+    )}
   </div>
 )
 
@@ -182,7 +188,7 @@ export const Stage = ({ scene, cell, label }) => {
   const board = scene.board || { at: "off" }
   return (
     <figure className={c("ch-stage2")}>
-      <Head head={scene.head} num={scene.num} />
+      <Head head={scene.head} num={scene.num} cap={scene.cap} />
       <svg ref={room} viewBox={`0 0 ${w.toFixed(0)} ${h.toFixed(0)}`} preserveAspectRatio="xMinYMin meet" role="img" aria-label={label || scene.label || scene.head?.title}>
         <defs>
           <pattern id={pattern} width={MINI / 4} height={MINI / 4} patternUnits="userSpaceOnUse">
