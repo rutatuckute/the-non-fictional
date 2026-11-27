@@ -82,10 +82,10 @@ export const TimeChart = ({ social: showSocial = true }) => {
           </svg>
         )}
         <span className={c("ch-estimateLabel")} data-on={showSocial ? "true" : "false"} style={{ left: "30%", top: `${yOf(social.points[0][1]) * 100}%` }} aria-hidden="true">
-          time on social media, estimate
+          time on social media, approx
         </span>
-        <div className={c("ch-timePeak")}>
-          <span>Around 100 minutes a day<small>at the peak</small></span>
+        <div className={c("ch-timePeak")} style={{ left: `${(peak[0] / (time.days - 1)) * 100}%` }}>
+          <span>~100 minutes a day<small>at the peak</small></span>
         </div>
         {size && <svg className={c("ch-peakPointer")} width={size.width} height={size.height} aria-hidden="true"><path d={`M${(peak[0] / (time.days - 1) * size.width).toFixed(1)},${(yOf(peak[1]) * size.height).toFixed(1)} v-${(yOf(peak[1]) * size.height + 8).toFixed(1)}`} /><circle cx={peak[0] / (time.days - 1) * size.width} cy={yOf(peak[1]) * size.height} r="3" /></svg>}
       </div>

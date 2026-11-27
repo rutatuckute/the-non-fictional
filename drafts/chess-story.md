@@ -72,20 +72,26 @@ It's far from being a defining part of who I am.
 
 <!--step:chess-com-->
 
-Then came **Chess.com**.\
-After one move my opponent resigned.\
+Then came Chess.com.\
+My opponent resigned instantly.
+
+<!--step:chess-com-aside-->
+
 Beginner's luck?
 
 <!--step:obsession-->
 
-It brought faster dopamine, to the point of overtaking social media in screen time.\
+And yet it brought faster dopamine, to the point of overtaking social media in screen time.
+
+<!--step:obsession-aside-->
+
 A winning trade-off?
 
 <!--step:obsession-questions-->
 
-More games,\
-more mistakes,\
-yet, more determination.\
+More games.\
+More mistakes.\
+Yet, more persistence.\
 And thus, more questions.
 
 <!--step:people-bridge-->
@@ -110,7 +116,7 @@ Where are they now?
 
 <!--step:strangers-moment-->
 
-In which random moment of their lives do they find themselves in?
+Which random moment of their lives do they find themselves in?
 
 <!--step:people-many-->
 

@@ -199,6 +199,44 @@ export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, r
   // the picture holds the top of the screen and the words come up under it.
   const plain = plainOnly
   const scrolling = reading
+  // On a phone only the card being read is in focus (27 Nov, owner: as beside
+  // the data on a wide screen): the one across the middle of the screen, or
+  // nearest it within a fifth of a screen. The cards coming up from below and
+  // going up above are dimmed and blurred (data-focus, in the CSS).
+  React.useEffect(() => {
+    if (!narrow || !scrolling) return
+    const pin = root.current
+    // (read again each time: a scene may add steps as it is read)
+    const cards = () => [...pin.querySelectorAll(`.${c("ch-step")}[data-step]`)].filter(step => step.dataset.bare !== "true")
+    let frame = 0
+    const update = () => {
+      frame = 0
+      const steps = cards()
+      const middle = window.innerHeight / 2
+      let best = null
+      let gap = Infinity
+      for (const step of steps) {
+        const card = step.querySelector(`.${c("ch-card")}`)
+        if (!card) continue
+        const box = card.getBoundingClientRect()
+        const away = box.top > middle ? box.top - middle : box.bottom < middle ? middle - box.bottom : 0
+        if (away < gap) [best, gap] = [step, away]
+      }
+      for (const step of steps) step.dataset.focus = step === best && gap < window.innerHeight * 0.2 ? "true" : "false"
+    }
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update)
+    }
+    update()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll)
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+      if (frame) window.cancelAnimationFrame(frame)
+      for (const step of cards()) delete step.dataset.focus
+    }
+  }, [narrow, scrolling])
   React.useLayoutEffect(() => {
     const pin = root.current
     if (!plain || !pin.closest('[data-part="investigation"]')) return

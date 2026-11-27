@@ -17,8 +17,12 @@
 const HIGHLIGHTS = {
   // Part I: the thread takes the story's clay here; the time chart's grey estimate
   mine: [["This is mine", "me"]],
+  // Chess.com in green, the owner's choice (27 Nov), though green is otherwise the reader's
+  "chess-com": [["Chess.com", "you"]],
+  "not-a-player": [["who I am", "me"]],
   obsession: [["social media", "faint"]],
   // Part II: the London System's squares turn clay on the club board
+  "people-intro": [["randomly matched stranger", "faint"]],
   club: [["the London System", "me"]],
 
   "say-crowd": [["bullet rating is indeed lower", "crowd"]],

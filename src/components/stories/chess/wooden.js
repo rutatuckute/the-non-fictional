@@ -137,14 +137,15 @@ const MANY_AT = MET[2] + 0.55
 // Read all three statistics before this same thread field begins to weave.
 const WEAVE_AT = MANY_AT + 1.9
 export const SCREENS = WEAVE_AT + 1.4
-// The words, each at its moment (screens into the scene) and in its look.
+// The words, each at its moment (screens into the scene) and in its look; a
+// fourth name is a note said in passing under them, in the smaller note size.
 const WORDS = [
   ["board", 0.05],
   ["same-game", FIRST_AT + 0.1],
   ["possibilities", FIRST_AT + 3 * EVERY + 0.1],
-  ["chess-com", PHONE_AT + 0.35],
+  ["chess-com", PHONE_AT + 0.35, "lead", "chess-com-aside"],
   ["not-a-player", CLAIM_AT + 0.05],
-  ["obsession", DRAW_AT + 0.05],
+  ["obsession", DRAW_AT + 0.05, "lead", "obsession-aside"],
   ["obsession-questions", ASK_AT + 0.05],
   ["people-bridge", HANDOFF_AT + 0.25],
   ["people-intro", TITLE_AT + 0.1],
@@ -152,7 +153,14 @@ const WORDS = [
   ["strangers-where", MET[1] + 0.12, "question"],
   ["strangers-moment", MET[2] + 0.12, "question"],
 ]
-const THREAD_WORDS = new Set(WORDS.slice(0, 7).map(([name]) => name))
+// All of them stand in one column, a little left of the right edge (27 Nov,
+// owner: the words after the chart as the ones before it).
+const THREAD_WORDS = new Set(WORDS.map(([name]) => name))
+// On a phone, only the box being read is in focus: the one nearest the middle
+// of the screen, within this many screens of it; the boxes coming up from
+// below and going up above are dimmed and blurred, as beside the data on a
+// wide screen.
+const FOCUS = 0.22
 // Of a move: the hand comes to the piece, carries it, and leaves.
 const TAKES = 0.32
 const LEAVES = 0.72
@@ -273,10 +281,14 @@ export const Wooden = ({ lines }) => {
   const paint = scrolled => {
     // Desktop copy keeps its natural scroll, with a fully readable pause
     // near the centre and a soft exit before the following paragraph arrives.
+    const small = phoneWide()
+    const nearest = WORDS.reduce((best, [name, at]) => (Math.abs(scrolled - at) < best[1] ? [name, Math.abs(scrolled - at)] : best), ["", Infinity])
     WORDS.forEach(([name, at]) => {
       const copy = readingCopy.current[name]
-      // (on a phone the boxes stay whole all the way up the screen)
-      if (copy) copy.style.opacity = String(still || phoneWide() ? 1 : 1 - within(Math.abs(scrolled - at), 0.24, 0.42))
+      if (!copy) return
+      // (on a phone the boxes stay whole all the way up the screen, dimmed out of focus by the CSS)
+      copy.style.opacity = still || small ? "" : String(1 - within(Math.abs(scrolled - at), 0.24, 0.42))
+      copy.dataset.focus = !small || (name === nearest[0] && nearest[1] < FOCUS) ? "true" : "false"
     })
     // one unit of the board's picture, in the screen's pixels
     const k = scene.current.clientWidth / BOARD.width
@@ -546,9 +558,10 @@ export const Wooden = ({ lines }) => {
       {/* They scroll past, each in the middle of the screen at its moment:
           beside the scene on a wide screen, over it in a box on a phone. */}
       <div className={c("ch-woodenWords")}>
-        {WORDS.map(([name, at, look]) => (
+        {WORDS.map(([name, at, look, aside]) => (
           <div key={name} ref={node => { if (THREAD_WORDS.has(name)) readingCopy.current[name] = node }} data-thread-copy={THREAD_WORDS.has(name) ? name : undefined} style={{ top: `calc(${(at + 0.5).toFixed(3)} * 100svh)` }}>
             <Text name={name} look={look || "lead"} />
+            {aside ? <Text name={aside} look="aside" className={c("ch-wordsAside")} /> : null}
           </div>
         ))}
       </div>

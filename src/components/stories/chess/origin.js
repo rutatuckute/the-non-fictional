@@ -10,7 +10,8 @@ import { c, Picture } from "./parts"
 // edge, mostly hidden; as soon as the reader scrolls on, it glides to its
 // place and the memory's words come in. On a phone it waits low, its top
 // showing at the screen's foot, and rises into place as the question leaves.
-// It folds shut on its outer cover as "Years went by." comes up: childhood
+// It folds shut on its outer cover while still in view, before "Life went
+// on." has come half way up: childhood
 // closes, and the thread goes grey.
 //
 // It always lies in the page and scrolls with it; only the glide, the rise
@@ -195,7 +196,10 @@ export const Device = ({ opening, run = 0, onState = () => {} }) => {
       const small = window.matchMedia("(max-width: 60rem)").matches
       // a phone: once the question has gone up past the upper third
       const placed = small ? words.bottom < screen * 0.34 : open.top < -screen * GO
-      const closed = years ? years.getBoundingClientRect().top < screen * (small ? 0.6 : 0.55) : false
+      // It folds while still in view (27 Nov, owner: sooner): once its middle
+      // has gone up past the upper third, or "Life went on." is half way up.
+      const device = slot.current.getBoundingClientRect()
+      const closed = placed && ((device.top + device.bottom) / 2 < screen * 0.3 || (years ? years.getBoundingClientRect().top < screen * 0.55 : false))
       pocket.current.dataset.side = placed ? "home" : small ? "low" : "peek"
       row.dataset.arrived = placed ? "true" : "false"
       pocket.current.dataset.closed = closed ? "true" : "false"

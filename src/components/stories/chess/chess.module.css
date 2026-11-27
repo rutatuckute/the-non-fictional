@@ -326,14 +326,14 @@
 .ch-device { grid-column: 2 / 6; grid-row: 2; }
 .ch-memory .ch-col { grid-column: 7 / 13; grid-row: 2; align-self: center; }
 /* The years between: the thread as a timeline, the decades named behind it. */
-.ch-years { position: relative; height: 105vh; height: 105svh; }
+.ch-years { position: relative; height: 72vh; height: 72svh; }
 /* the chapter's largest words, at the left as the opening's are */
 .ch-text.ch-yearsText {
-  position: absolute; left: 0; top: 18%; max-width: none;
+  position: absolute; left: 0; top: 20%; max-width: none;
   font-size: var(--t-display); line-height: 0.98; letter-spacing: var(--tracking-display);
 }
 /* "No chess.": apart from it, at the lower right */
-.ch-text.ch-yearsNone { left: auto; right: 0; top: 58%; }
+.ch-text.ch-yearsNone { left: auto; right: 0; top: 56%; }
 .ch-story[data-live="true"] .ch-years .ch-yearsText[data-reveal] {
   transform: translateY(10px); transition: opacity 420ms var(--ch-ease), transform 420ms var(--ch-ease);
 }
@@ -413,6 +413,8 @@
 .ch-woodenWords [data-thread-copy] .ch-text.ch-lead {
   max-width: 26ch; margin-inline: auto; font-size: clamp(27px, 2.55vw, 37px); line-height: 1.3; text-wrap: pretty;
 }
+/* a note said in passing under the words, as "Nothing major…" at the opening */
+.ch-woodenWords .ch-text.ch-wordsAside { max-width: 26ch; margin: 0.55em auto 0; }
 /* A question asked of the strangers: a statement's size. */
 .ch-text.ch-question { font-size: var(--t-second); line-height: 1.12; letter-spacing: var(--tracking-display); text-wrap: balance; }
 /* The words beside the scene share one place, each there for its part of it. */
@@ -466,7 +468,8 @@
   font: 400 11px / 1 var(--font-mono); font-style: italic; opacity: 0; transition: opacity var(--ch-fade) ease;
 }
 .ch-estimateLabel[data-on="true"] { opacity: 1; }
-.ch-timePeak { position: absolute; right: 0; bottom: calc(100% + 12px); opacity: var(--peak, 1); color: var(--ink); font: 400 12px / 1.4 var(--font-mono); text-align: right; }
+/* the note stands centred over the peak (its left is set at the peak) */
+.ch-timePeak { position: absolute; bottom: calc(100% + 12px); transform: translateX(-50%); opacity: var(--peak, 1); color: var(--ink); font: 400 12px / 1.4 var(--font-mono); text-align: center; white-space: nowrap; }
 .ch-timePeak small { display: block; color: var(--ink-2); font-size: 10px; }
 .ch-peakPointer { position: absolute; inset: 0; overflow: visible; opacity: var(--peak, 1); pointer-events: none; }
 .ch-peakPointer path { fill: none; stroke: var(--thread); stroke-width: 1; }
@@ -1209,9 +1212,9 @@
   .ch-knot { left: var(--px); top: var(--py); }
   .ch-row { grid-template-columns: minmax(0, 1fr); row-gap: 5vh; }
   .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-mine, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-device, .ch-row > .ch-chat, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
-  .ch-years { height: 105vh; height: 105svh; }
-  .ch-text.ch-yearsText { top: 18%; }
-  .ch-text.ch-yearsNone { top: 55%; }
+  .ch-years { height: 72vh; height: 72svh; }
+  .ch-text.ch-yearsText { top: 6%; }
+  .ch-text.ch-yearsNone { top: 46%; }
   .ch-open .ch-text, .ch-text.ch-aside, .ch-hold { max-width: none; }
   /* the first screen is the title and the cover alone: the opening question
      waits below it (60px: the site's masthead above the story) */
@@ -1261,7 +1264,7 @@
   .ch-timePeak small { font-size: 9px; }
   .ch-woodenAfter { left: var(--page-margin); right: var(--page-margin); top: calc(var(--bar) + 2svh); transform: none; }
   .ch-firstMove { width: 100%; bottom: 4svh; }
-  .ch-decade { right: 0; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: 46px; }
+  .ch-decade { right: 0; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: clamp(72px, 22vw, 120px); }
   .ch-people { padding-top: 8vh; }
   .ch-peopleTitle { top: calc(var(--bar) + 1.2svh); }
   /* Part II's words stand under its name, the scene under them */
@@ -1588,4 +1591,17 @@
   .ch-story .ch-woodenWords > div,
   .ch-story .ch-woodenWords > [data-thread-copy] { left: 50%; right: auto; transform: translate(-50%, -50%); }
   .ch-story .ch-woodenWords [data-thread-copy] .ch-text.ch-lead { max-width: none; margin-inline: auto; }
+  .ch-story .ch-woodenWords .ch-text.ch-wordsAside { max-width: none; }
+  /* only the box being read is in focus (parts.js, wooden.js: data-focus); the
+     ones coming up from below and going up above are dimmed and blurred, and
+     their highlights wait, as beside the data on a wide screen */
+  .ch-story .ch-pin[data-reading="true"] .ch-step:not([data-bare="true"]) .ch-card,
+  .ch-story .ch-woodenWords > div { transition: opacity 380ms ease, filter 380ms ease; }
+  .ch-story .ch-pin[data-reading="true"] .ch-step[data-focus="false"] .ch-card,
+  .ch-story .ch-woodenWords > div[data-focus="false"] { opacity: 0.26; filter: blur(2px); }
+  .ch-story .ch-pin[data-reading="true"] .ch-step[data-focus="false"] mark.ch-hl,
+  .ch-story .ch-woodenWords > div[data-focus="false"] mark.ch-hl { --hl: transparent; box-shadow: none; color: inherit; }
+}
+@media (max-width: 60rem) and (prefers-reduced-motion: reduce) {
+  .ch-story .ch-pin[data-reading="true"] .ch-step .ch-card, .ch-story .ch-woodenWords > div { transition: none; }
 }
