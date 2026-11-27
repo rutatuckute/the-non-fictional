@@ -204,7 +204,10 @@ export const Say = () => {
         className={c("ch-sayPin")}
         label="What we say about ourselves"
         steps={[
-          { text: <Text name="say-message" look="lead" className={c("ch-messageCopy")} /> },
+          // its line ("Before judging others…") opens the question under its name,
+          // at the end of the dive (dive.js), over this scene, dimmed: the question
+          // starts two screens early, under the dive, and the message then stands alone
+          { rest: 2 },
           { text: <Text name="say-claim" look="lead" />, rest: 0.25 },
           { text: <Text name="say-isolation" look="lead" /> },
           { text: <Text name="say-prediction" look="lead" /> },

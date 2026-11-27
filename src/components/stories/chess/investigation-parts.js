@@ -8,6 +8,10 @@ export const INVESTIGATIONS = [
   { id: "what-we-choose", label: "What our choices reveal" },
 ]
 
+// A question's name, as it is written everywhere: the third with "choices" in italics.
+export const InvestigationName = ({ id }) =>
+  id === "what-we-choose" ? <>What our <em>choices</em> reveal</> : INVESTIGATIONS.find(q => q.id === id)?.label
+
 export const InvestigationBoard = ({ id, compact = false }) => (
   <svg viewBox="0 0 80 84" aria-hidden="true" data-board={id} className={c("ch-investigationBoard")}>
     {Array.from({ length: 64 }, (_, i) => <rect key={i} x={(i % 8) * 10} y={Math.floor(i / 8) * 10} width={10} height={10} fill={(i % 8 + Math.floor(i / 8)) % 2 ? "#1c1b19" : "#2c2a27"} />)}
@@ -18,9 +22,9 @@ export const InvestigationBoard = ({ id, compact = false }) => (
       <path d="M52 47 l6 9 l-14 -9 z" className={c("ch-diveClay")} />
       {!compact && <text x={40} y={42} textAnchor="middle">soooo bad</text>}
     </g> : id === "when-things-go-wrong" ? <g>
-      <image href="/images/stories/chess/club-wk.webp" x={26} y={19} width={28} height={46} transform="rotate(72 40 42)" />
+      <image href="/images/stories/chess/club-wk.webp" x={26} y={19} width={28} height={46} transform="rotate(48 40 42)" />
     </g> : <g>
-      <image href="/images/stories/chess/professor-300.webp" x={18} y={9} width={44} height={66} />
+      <image href="/images/stories/chess/professor-300.webp" x={18} y={14} width={44} height={66} />
     </g>}
   </svg>
 )

@@ -605,7 +605,8 @@ export const Wrong = () => {
   )
 
   const texts = {
-    observation: <Text name="wrong-observation" look="lead" />,
+    // (its first line opens the question under its name, opening.js; the rest is here)
+    observation: <Text name="wrong-observation" look="lead" className={c("ch-afterFirst")} />,
     decide: (
       <>
         <Text name="wrong-decide" look="lead" />

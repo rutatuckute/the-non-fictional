@@ -690,41 +690,51 @@
    each question, each a way into its part. */
 .ch-games { position: absolute; inset: 0; display: grid; place-items: center; transform: scale(calc(1 + var(--dive, 0) * 7)); opacity: calc(1 - var(--boards, 0)); }
 .ch-dive { position: absolute; inset: 0; z-index: 7; pointer-events: none; }
-/* the one colour moment of the story: as the thousand boards fall back and the three
-   questions come up, the ground warms to the author's clay, then is gone again by the
-   first chart (the stage is left, and the page's own ground is back) */
-.ch-dive::before {
-  content: ""; position: absolute; inset: 0; z-index: -1; opacity: calc(var(--boards, 0) * (1 - var(--zoom, 0)));
-  background: radial-gradient(closest-side ellipse at 50% 50%, color-mix(in srgb, var(--thread) 36%, var(--void)) 0%, color-mix(in srgb, var(--thread) 17%, var(--void)) 50%, var(--void) 100%);
-}
-.ch-diveTitle { position: absolute; top: calc(var(--bar) + 5svh); left: 0; right: 0; opacity: calc(var(--boards, 0) * (1 - min(1, var(--zoom, 0) * 2.4))); }
 .ch-people[data-diving="true"] > .ch-peopleTitle { opacity: 0; }
 .ch-club .ch-step { position: relative; }
 .ch-stepMark { position: absolute; left: 0; top: 80vh; width: 0; height: 0; }
+/* The part opens on one centred group, as the prototype's opener: its name large, one
+   quiet line under it, and the three questions. */
 .ch-diveThree {
-  position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; gap: 5svh; padding: calc(var(--bar) + 12svh) 0 6svh;
+  position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; padding: calc(var(--bar) + 4svh) 0 6svh;
   opacity: var(--boards, 0); transform: translateY(calc((1 - var(--boards, 0)) * 4svh)); pointer-events: none;
 }
-.ch-dive[data-boards="true"] .ch-diveThree { pointer-events: auto; }
-.ch-text.ch-diveWords { max-width: 30em; text-align: center; }
+.ch-dive[data-boards="true"]:not([data-into="true"]) .ch-diveThree { pointer-events: auto; }
+.ch-text.ch-diveTitle { max-width: 100%; margin: 0; text-align: center; }
+.ch-story .ch-diveTitle.ch-partTitle h2 { max-width: 14em; margin: 0 auto; white-space: normal; text-wrap: balance; font-size: clamp(40px, 5.6vw, 76px); line-height: 1.02; letter-spacing: -0.015em; }
+.ch-text.ch-diveWords { max-width: 30em; margin: clamp(14px, 2.2svh, 24px) 0 0; text-align: center; color: var(--ink-3); }
 .ch-diveWords p { text-align: center; }
-.ch-diveBoards { display: grid; grid-template-columns: repeat(3, minmax(0, 210px)); gap: clamp(20px, 4vw, 60px); justify-content: center; width: 100%; margin: 0; padding: 0; list-style: none; }
+.ch-diveBoards { display: grid; grid-template-columns: repeat(3, minmax(0, 200px)); gap: clamp(20px, 4vw, 60px); justify-content: center; width: 100%; margin: clamp(32px, 6svh, 64px) 0 0; padding: 0; list-style: none; }
 .ch-diveBoards a { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 14px; color: var(--ink-2); text-align: center; text-decoration: none; font: 400 13px / 1.35 var(--font-mono); transition: color 200ms ease; }
 .ch-diveBoards a:hover, .ch-diveBoards a:focus-visible { color: var(--ink); }
 .ch-diveBoards a:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px; }
 .ch-diveBoards b { display: block; margin-bottom: 4px; color: var(--ink-3); font-weight: 400; }
 .ch-diveBoards > li { min-width: 0; }
 .ch-diveBoards svg { display: block; width: 100%; height: auto; }
-/* if the reader goes on without choosing, the first question is zoomed into: its board
-   grows (zoom.js) as the others, the words and the title go, until it fills the stage
-   and the question itself is there */
-.ch-diveWords, .ch-diveBoards > li:not(:first-child), .ch-diveBoards > li:first-child span { opacity: calc(1 - min(1, var(--zoom, 0) * 2.4)); }
+/* if the reader goes on without choosing, the name, the line and the other two go, and
+   the first board glides to the middle (dive.js), sharp all the way; the question's
+   name comes up under it, large, and stays until the stage leaves */
+.ch-diveTitle, .ch-diveWords, .ch-diveBoards > li:not(:first-child), .ch-diveBoards > li:first-child span { opacity: calc(1 - min(1, var(--into, 0) * 1.8)); }
 .ch-diveBoards > li:first-child svg {
   position: relative; z-index: 3; transform-origin: 50% 50%;
-  transform: translate(calc(var(--dx, 0px) * var(--zoom, 0)), calc(var(--dy, 0px) * var(--zoom, 0))) scale(calc(1 + var(--zoom, 0) * var(--zoom, 0) * (var(--zmax, 8) - 1)));
-  filter: blur(calc(var(--zoom, 0) * var(--zoom, 0) * 5px)); opacity: calc(1 - max(0, var(--zoom, 0) - 0.78) * 4.5);
+  transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--ts, 1));
 }
-.ch-diveBoards svg text { fill: #fff8ef; font: 600 8px / 1 var(--font-mono); }
+/* once it has reached its place at the top left, the board there takes over */
+.ch-dive[data-docked="true"] .ch-diveBoards > li:first-child svg { opacity: 0; }
+.ch-diveNext {
+  position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; gap: 0; padding: calc(var(--bar) + 4svh) var(--page-margin, 20px) 6svh;
+  text-align: center; pointer-events: none;
+}
+.ch-diveSpot { display: block; width: min(250px, 28svh); aspect-ratio: 80 / 84; margin-bottom: clamp(22px, 4svh, 40px); }
+.ch-diveName { opacity: var(--named, 0); transform: translateY(calc((1 - var(--named, 0)) * 14px)); }
+.ch-text.ch-diveSaid { max-width: 30em; margin: clamp(16px, 2.6svh, 26px) 0 0; color: var(--ink-2); text-align: center; opacity: var(--said, 0); transform: translateY(calc((1 - var(--said, 0)) * 10px)); }
+.ch-diveSaid p { margin: 0; text-align: center; }
+/* the question's name is already above it, large */
+.ch-diveSaid h3 { display: none; }
+/* the first question follows its name with no rule between: one continuous scroll */
+.ch-part3 .ch-question .ch-sayPin { border-top: 0; }
+.ch-story .ch-diveName { color: var(--ink); font: 400 clamp(40px, 5.4vw, 76px) / 1.02 var(--font-title); letter-spacing: -0.015em; text-wrap: balance; max-width: 14em; }
+.ch-investigationBoard text { fill: #fff8ef; font: 600 8px / 1 var(--font-mono); }
 .ch-diveBoards svg text.ch-diveSmall { fill: var(--ink-2); font-size: 7px; font-weight: 400; }
 .ch-diveClay { fill: var(--thread); }
 .ch-diveLine { fill: none; stroke: var(--thread); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
@@ -980,9 +990,11 @@
 .ch-meet > div[data-on="false"] .ch-meetTitle { color: var(--ink-2); }
 .ch-meet figcaption { grid-column: 1 / -1; color: var(--ink-2); font: 400 12.5px / 1.4 var(--font-mono); }
 @media (max-width: 60rem) {
-  .ch-diveTitle { top: calc(var(--bar) + 1.2svh); left: var(--page-margin); right: var(--page-margin); }
-  .ch-diveThree { padding: calc(var(--bar) + 10svh) var(--page-margin) 4svh; gap: 4svh; }
-  .ch-diveBoards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .ch-diveThree { padding: calc(var(--bar) + 2svh) var(--page-margin) 4svh; }
+  .ch-story .ch-diveTitle.ch-partTitle h2 { font-size: clamp(36px, 10vw, 52px); }
+  .ch-diveBoards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 5svh; }
+  .ch-story .ch-diveName { font-size: clamp(34px, 9.6vw, 52px); }
+  .ch-diveSpot { width: min(200px, 26svh, 52vw); }
   .ch-diveBoards a { font-size: 11px; gap: 10px; }
   .ch-cc { --cc: min(100%, 44svh); }
   .ch-cc[data-small="true"] { --cc: min(40vw, 28svh); }
@@ -1325,39 +1337,101 @@
   .ch-people .ch-woodenText .ch-text.ch-lead, .ch-people .ch-woodenTold .ch-text.ch-lead, .ch-told .ch-text.ch-lead { font-size: 19px; line-height: 1.4; }
 }
 
-/* The investigation's parent label stays quiet; its current question is the
-   reading title. The same boards identify the choices and the active part. */
-.ch-part3 { --investigation-top: calc(var(--bar) + 2svh); --investigation-bottom: calc(var(--investigation-top) + var(--investigation-header-height, 64px)); }
-.ch-part3 > .ch-peopleTitle { top: var(--investigation-top); }
-.ch-investigationHeader { position: relative; box-sizing: border-box; width: min(64%, 44rem); padding: 4px 12px 10px 60px; background: var(--void); box-shadow: 0 0 16px 10px var(--void); }
-/* words that scroll up under the header fade out before they reach it */
-.ch-investigationHeader::after { content: ""; position: absolute; left: -16px; right: -16px; top: 100%; height: 36px; background: linear-gradient(var(--void), transparent); pointer-events: none; }
-.ch-peopleTitle .ch-investigationEyebrow { display: block; margin: 0 0 4px; padding: 0; background: none; box-shadow: none; }
-.ch-story .ch-investigationEyebrow h2 { margin: 0; padding: 0; border: 0; color: var(--ink-3); font: 400 12px / 1.35 var(--font-mono); letter-spacing: 0; text-transform: none; white-space: normal; text-align: left; }
-.ch-investigationStates { display: grid; }
-.ch-investigationState { position: relative; grid-area: 1 / 1; opacity: 0; visibility: hidden; transform: translateY(4px); transition: opacity 200ms ease, transform 220ms cubic-bezier(0.19, 1, 0.22, 1), visibility 0s linear 220ms; }
-.ch-investigationState[data-active="true"] { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
-.ch-investigationState > .ch-investigationBoard { position: absolute; left: -60px; top: calc(50% - 12px); transform: translateY(-50%); width: 48px; height: 50px; }
-.ch-story .ch-investigationState h3 { margin: 0; padding: 0; border: 0; color: var(--ink); font: 400 clamp(23px, 2.1vw, 28px) / 1.12 var(--font-title); letter-spacing: -0.02em; white-space: normal; }
+/* Where the reader is in Part III (investigation-header.js): the three questions'
+   boards, small, at the top left of the story's column, the one being read lit and
+   ringed, those read and to come quiet. The first arrives from the dive (--dock, 0..1,
+   and data-docked, from dive.js); the other two appear beside it as it comes. Each is
+   named under it on hover or focus. */
+.ch-part3 { --investigation-top: var(--bar); --investigation-bottom: calc(var(--investigation-top) + var(--investigation-header-height, 72px)); }
+/* The first question starts under the dive (dive.js), so its name stands over the
+   question's own scene, dimmed (--under), as in the prototype: Part III is drawn up
+   by the dive's last two screens; the question's first step rests two screens to make
+   up for it. The dive stays above it, and is see-through only while it is named. */
+.ch-story .ch-part3 { margin-top: -215svh; padding-top: 0; }
+.ch-part3 .ch-question :is(.ch-saySection, .ch-sayPin) { z-index: 2; }
+.ch-pin[data-under="true"], .ch-pin[data-under="true"] > .ch-stage { background: transparent; }
+/* each question's scene, dimmed under its name while it opens (--under, opening.js) */
+.ch-part3 [data-investigation-part] .ch-pin > .ch-stage > .ch-scene { opacity: var(--under, 1); }
+/* The second and third questions start under the recap before them (hub.js): drawn up
+   by 220svh, their pins below the recap, with no rule; their first step comes once
+   the name has gone up (60svh later than before), and a jump to them lands on their name. */
+.ch-story .ch-part3 .ch-next { position: relative; margin-top: -220svh; }
+.ch-part3 .ch-next > .ch-pin { z-index: 2; border-top: 0; }
+.ch-part3 .ch-next > .ch-pin > .ch-steps > .ch-step:first-child { margin-top: 280svh; }
+.ch-part3 .ch-next > .ch-pin > .ch-mark { top: 55svh; }
+/* a question's first line under its name; the rest of its first step stays in the step */
+.ch-diveSaid.ch-firstOnly p:not(:first-of-type) { display: none; }
+.ch-afterFirst p:first-of-type { display: none; }
+/* a jump to the first question lands on its name, not halfway through the glide */
+.ch-question > .ch-mark { top: 60svh; }
+/* (its holder is the boards' stacking context: above the rail's margin on wide screens) */
+.ch-part3 > .ch-peopleTitle { top: var(--investigation-top); z-index: 21; }
+.ch-investigationHeader {
+  --icon: 50px; --icons-top: 12px;
+  position: fixed; top: calc(var(--bar) + var(--icons-top)); left: max(var(--page-margin), (100vw - var(--page-max)) / 2); z-index: 21;
+  display: flex; gap: 12px; pointer-events: auto; transition: opacity 300ms ease, visibility 0s linear 300ms;
+}
+/* what scrolls up under the boards fades out on the page's ground before it gets there */
+.ch-investigationHeader::before {
+  content: ""; position: fixed; z-index: -1; top: var(--bar); left: 0; right: 0; height: calc(var(--icons-top) + var(--icon) * 84 / 80 + 30px);
+  background: linear-gradient(var(--void) 62%, transparent); pointer-events: none; opacity: 0; transition: opacity 300ms ease;
+}
+.ch-investigationHeader[data-docked="true"]::before { opacity: 1; }
+.ch-investigationHeader[data-on="false"] { opacity: 0; visibility: hidden; }
+.ch-investigationHeader[data-on="true"] { transition-delay: 0s; }
+.ch-investigationHeader[data-docked="false"] { pointer-events: none; }
+.ch-story .ch-investigationTab { position: relative; display: block; width: var(--icon); color: var(--ink-2); text-decoration: none; border-radius: 3px; }
+.ch-investigationTab .ch-investigationBoard { display: block; width: 100%; height: auto; border-radius: 2px; opacity: 0.45; filter: grayscale(0.7); transition: opacity 300ms ease, filter 300ms ease; }
+.ch-investigationTab[data-state="done"] .ch-investigationBoard { opacity: 0.6; }
+.ch-investigationTab[data-state="now"] .ch-investigationBoard { opacity: 1; filter: none; }
+.ch-story .ch-investigationTab:hover .ch-investigationBoard { opacity: 0.9; filter: none; }
+/* the one being read: a thin ring of the page's ink */
+.ch-investigationTab::after { content: ""; position: absolute; inset: -3px -3px 1px; border: 1px solid var(--ink); border-radius: 3px; opacity: 0; transition: opacity 300ms ease; pointer-events: none; }
+.ch-investigationTab[data-state="now"]::after { opacity: 0.9; }
+.ch-story .ch-investigationTab:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.ch-investigationTab svg { transform-origin: 50% 50%; }
+/* a question's board is out, large, while it opens (opening.js): its place here waits */
+.ch-investigationHeader[data-fly1="true"] .ch-investigationTab:nth-child(2),
+.ch-investigationHeader[data-fly2="true"] .ch-investigationTab:nth-child(3) { opacity: 0; }
+.ch-investigationHeader[data-fly1="true"] .ch-investigationTab:nth-child(2)::after,
+.ch-investigationHeader[data-fly2="true"] .ch-investigationTab:nth-child(3)::after { opacity: 0; }
+/* after the last question the three come down into the last recap (hub.js), in full */
+.ch-investigationHeader[data-returning="true"] .ch-investigationBoard { opacity: 1; filter: none; }
+.ch-investigationHeader[data-returning="true"]::before, .ch-investigationHeader[data-returning="true"] .ch-investigationTab::after { opacity: 0; }
+.ch-investigationHeader[data-returned="true"] { opacity: 0; visibility: hidden; }
+/* while the first is still on its way, the others come in beside it */
+.ch-investigationHeader[data-docked="false"] .ch-investigationTab { opacity: var(--dock, 0); }
+.ch-investigationHeader[data-docked="false"] .ch-investigationTab:first-child { opacity: 0; }
+.ch-investigationHeader[data-docked="false"] .ch-investigationTab::after { opacity: 0; }
+/* its name, under it, on hover or focus */
+.ch-investigationName {
+  position: absolute; left: 0; top: calc(100% + 10px); padding: 5px 8px; border-radius: 3px; background: var(--void); border: 1px solid var(--rule);
+  color: var(--ink); font: 400 13px / 1.2 var(--font-mono); white-space: nowrap; opacity: 0; visibility: hidden; transform: translateY(-3px);
+  transition: opacity 160ms ease, transform 160ms ease, visibility 0s linear 160ms; pointer-events: none;
+}
+.ch-investigationNumber { color: var(--ink-3); }
+.ch-investigationTab:is(:hover, :focus-visible) .ch-investigationName { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+@media (max-width: 74.99rem) {
+  /* under the chapters' bar, and under its open panel */
+  .ch-part3 > .ch-peopleTitle { z-index: 19; }
+}
+@media (max-width: 60rem) {
+  .ch-investigationHeader { --icon: 40px; --icons-top: 10px; left: var(--page-margin); gap: 10px; }
+  /* no hover on a phone: the boards stay quiet and the bar above names the part */
+  .ch-investigationName { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ch-investigationHeader, .ch-investigationTab .ch-investigationBoard, .ch-investigationTab::after { transition: none; }
+}
 .ch-part3 .ch-card .ch-text > h3, .ch-part3 .ch-told .ch-text > h3 { display: none; }
 .ch-part3 .ch-pin[data-reading="true"] .ch-scene { top: calc(var(--investigation-bottom) + 16px); bottom: 16px; }
-.ch-diveTitle .ch-partTitle h2 { white-space: normal; }
 @media (max-width: 60rem) {
-  .ch-part3 { --investigation-top: calc(var(--bar) + 1.2svh); }
-  .ch-investigationHeader { width: 100%; padding-left: 48px; padding-right: 4px; }
-  .ch-peopleTitle .ch-investigationEyebrow { margin-bottom: 3px; }
-  .ch-story .ch-investigationEyebrow h2 { font-size: 11px; }
-  .ch-story .ch-investigationState h3 { font-size: 18px; line-height: 1.2; }
-  .ch-investigationState > .ch-investigationBoard { left: -48px; top: calc(50% - 8px); width: 36px; height: 38px; }
   .ch-part3 .ch-pin[data-plain="true"] { --investigation-graphic-height: calc(100svh - var(--investigation-bottom) - var(--investigation-copy-height, 120px) - 40px); }
   .ch-part3 .ch-told { top: calc(var(--investigation-bottom) + 12px); }
   .ch-part3 .ch-pin[data-plain="true"] .ch-scene { top: calc(var(--investigation-bottom) + var(--investigation-copy-height, 120px) + 24px); bottom: 16px; height: var(--investigation-graphic-height); }
   .ch-part3 .ch-sayPin[data-plain="true"] .ch-scene { top: calc(var(--investigation-bottom) + var(--say-copy, 130px) + 24px); height: calc(100svh - var(--investigation-bottom) - var(--say-copy, 130px) - 40px); }
   .ch-part3 .ch-wrong .ch-cc { --cc: min(100%, 44svh, max(80px, calc(var(--investigation-graphic-height) - 112px))); }
   .ch-part3 .ch-wrong :is(.ch-hundred, .ch-levels, .ch-mine) > svg { max-height: max(96px, calc(var(--investigation-graphic-height) - 110px)); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ch-investigationState { transform: none; transition: opacity 160ms ease, visibility 0s linear 160ms; }
 }
 
 @media (max-width: 60rem) {
@@ -1370,12 +1444,9 @@
 .ch-ratingLegend span { display: flex; align-items: baseline; gap: 7px; }
 .ch-ratingLegend i { flex: 0 0 16px; border-top: 2px solid color-mix(in srgb, var(--thread) 45%, var(--ink)); }
 .ch-ratingLegend span + span i { border-color: var(--thread); }
-.ch-story .ch-story .ch-investigationEyebrow h2 { color: var(--ink-2); font-size: clamp(15px, 1.5vw, 20px); line-height: 1.25; }
-.ch-peopleTitle .ch-investigationEyebrow { margin-bottom: 7px; }
 @media (max-width: 60rem) {
   .ch-ratingLegend { font-size: 11px; }
   .ch-ratingPhone .ch-messagePhone { height: min(100%, 48svh); }
-  .ch-story .ch-investigationEyebrow h2 { font-size: 14px; }
   }
 
 /* Part II's way into the third investigation: a quiet pointer under the professor, not a line of the story. */
@@ -1389,16 +1460,27 @@
 /* A recap between two questions holds the screen (the stick), and as the reader goes on
    the next question's board is zoomed into, until it fills the screen (zoom.js). */
 .ch-hubStick { position: relative; }
-.ch-hub[data-gate="true"] { height: 260svh; padding: 0; }
-.ch-hub[data-gate="true"] .ch-hubStick { position: sticky; top: 0; min-height: 100svh; display: grid; align-content: center; padding: 6svh 0; }
+.ch-hub[data-gate="true"] { z-index: 3; height: 360svh; padding: 0; }
+/* (on the page's ground, over the next question's scene, until that question is named) */
+.ch-hub[data-gate="true"] .ch-hubStick { position: sticky; top: 0; min-height: 100svh; display: grid; align-content: center; padding: 6svh 0; background: var(--void); }
+.ch-hub[data-gate="true"] .ch-hubStick[data-under="true"] { background: transparent; }
+/* as the recap goes, the next question's board glides to the middle and then up to the top
+   left (opening.js), sharp all the way; the rest of the recap goes */
 .ch-hub[data-gate="true"] li[data-state="next"] > a svg {
   position: relative; z-index: 6; transform-origin: 50% 50%;
-  transform: translate(calc(var(--dx, 0px) * var(--zoom, 0)), calc(var(--dy, 0px) * var(--zoom, 0))) scale(calc(1 + var(--zoom, 0) * var(--zoom, 0) * (var(--zmax, 8) - 1)));
-  filter: blur(calc(var(--zoom, 0) * var(--zoom, 0) * 5px)); opacity: calc(1 - max(0, var(--zoom, 0) - 0.78) * 4.5);
+  transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--ts, 1));
 }
-.ch-hub[data-gate="true"] li[data-state="next"] { opacity: calc(0.55 + var(--zoom, 0) * 0.45); }
-.ch-hub[data-gate="true"] li[data-state="next"] .ch-hubWords, .ch-hub[data-gate="true"] li:not([data-state="next"]), .ch-hub[data-gate="true"] .ch-hubTravel { opacity: calc(1 - min(1, var(--zoom, 0) * 2.4)); }
+.ch-hub[data-gate="true"][data-docked="true"] li[data-state="next"] > a svg { opacity: 0; }
+.ch-hub[data-gate="true"] li[data-state="next"] { opacity: calc(0.55 + var(--into, 0) * 0.45); }
+.ch-hub[data-gate="true"] li[data-state="next"] .ch-hubWords, .ch-hub[data-gate="true"] li:not([data-state="next"]), .ch-hub[data-gate="true"] .ch-hubTravel { opacity: calc(1 - min(1, var(--into, 0) * 1.8)); }
+.ch-hub[data-gate="true"][data-into="true"] a { pointer-events: none; }
+/* the last recap's boards are the three from the top left, once they have come down (hub.js) */
+.ch-hub[data-all="true"] .ch-hubBoard svg { opacity: 0; }
+.ch-hub[data-all="true"][data-returned="true"] .ch-hubBoard svg { opacity: 1; }
 .ch-hubTitle { margin-bottom: 40px; text-align: center; }
+/* the part closes as it opened: its last recap's name as large as "Looking for answers in the data" */
+.ch-story .ch-hubTitle.ch-partTitle h2 { white-space: normal; text-wrap: balance; font-size: clamp(40px, 5.6vw, 76px); line-height: 1.02; letter-spacing: -0.015em; }
+@media (max-width: 60rem) { .ch-story .ch-hubTitle.ch-partTitle h2 { font-size: clamp(36px, 10vw, 52px); } }
 .ch-hubRow { position: relative; }
 .ch-hubBoards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--hub-gap); margin: 0; padding: 0; list-style: none; }
 .ch-hubBoards > li { display: grid; align-content: start; justify-items: center; gap: 14px; text-align: center; transition: opacity var(--ch-fade) ease; }

@@ -244,8 +244,10 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
               <Say />
               <Hub upto={1} />
             </section>
-            <section data-investigation-part="when-things-go-wrong"><Wrong /><Hub upto={2} /></section>
-            <section data-investigation-part="what-we-choose"><Reveal /><Hub upto={3} /></section>
+            {/* the second and third start under the recap before them, so each is named
+                over its own scene, dimmed (opening.js, hub.js) */}
+            <section data-investigation-part="when-things-go-wrong" className={c("ch-next")}><Wrong /><Hub upto={2} /></section>
+            <section data-investigation-part="what-we-choose" className={c("ch-next")}><Reveal /><Hub upto={3} /></section>
           </div>
         </ReaderProvider>
 

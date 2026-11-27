@@ -712,7 +712,8 @@ export const Reveal = () => {
         return {
           text: (
             <>
-              <Text name={name} look="lead" />
+              {/* (the question's first line opens it under its name, opening.js; the rest is here) */}
+              <Text name={name} look="lead" className={name === "choose-question" ? c("ch-afterFirst") : ""} />
               {green ? <p className={c("ch-rvSaid")}>{green}</p> : null}
               {name === "choose-question" ? <YourDials {...dials} /> : null}
             </>

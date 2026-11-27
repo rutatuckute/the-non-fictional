@@ -8,7 +8,7 @@ import { INVESTIGATIONS, InvestigationBoard } from "./investigation-parts"
 import { useReader } from "./reader"
 import { useStill } from "./follow"
 import { readerGap } from "./ratings"
-import { zoomInto } from "./zoom"
+import { gently, header, Opening, paintOpening, pinOf, timeline, UNPINS, within } from "./opening"
 import { Knots } from "./thread"
 import paths from "./wrong-paths.json"
 
@@ -71,6 +71,14 @@ const yours = (id, said) => {
   return parts.join(" ") + known
 }
 
+// Each question opens with its first line under its name (opening.js); where its
+// first step says more, the rest stays in the step.
+const FIRST = { "when-things-go-wrong": "wrong-observation", "what-we-choose": "choose-question" }
+// A recap between two questions holds the screen for GATE - 1 screens: about one to
+// read it, then the next question opens, ending as the hold does.
+const GATE = 3.6
+const GLIDE_AT = GATE - 1 - UNPINS
+
 export const Hub = ({ upto }) => {
   const said = useReader()
   const root = React.useRef(null)
@@ -78,21 +86,46 @@ export const Hub = ({ upto }) => {
   const still = useStill()
   // the dot sets off from the question before once the hub is in view
   const [arrived, setArrived] = React.useState(false)
+  const spot = React.useRef(null)
   // After the first and second questions the recap holds the screen, and as the reader
-  // goes on without choosing, the next question's board is zoomed into until it fills
-  // the screen and the question is there (zoom.js). After the last there is nothing to enter.
-  const gate = upto < INVESTIGATIONS.length && !still
+  // goes on, the next question opens (opening.js). After the last, the three small
+  // boards at the top left come down into the recap's three instead.
+  const gate = upto < INVESTIGATIONS.length
+  const all = upto === INVESTIGATIONS.length
   React.useEffect(() => {
-    if (!gate) return
     const node = root.current
+    const next = INVESTIGATIONS[upto]
     let frame = 0
     const update = () => {
       frame = 0
-      const box = node.getBoundingClientRect()
-      const run = box.height - window.innerHeight
-      const p = run > 0 ? Math.max(0, Math.min(1, -box.top / run)) : 0
-      const into = Math.max(0, Math.min(1, (p - 0.4) / 0.55))
-      zoomInto(node, node.querySelector('li[data-state="next"]'), stick.current, into)
+      if (gate) {
+        // screens scrolled since the recap filled the screen
+        const s = Math.max(0, Math.min(GATE + 0.4, -node.getBoundingClientRect().top / window.innerHeight))
+        paintOpening({ scope: node, item: node.querySelector('li[data-state="next"]'), spot: spot.current, index: upto, pin: pinOf(next.id), holder: stick.current, t: timeline(s - GLIDE_AT, still) })
+        return
+      }
+      // the last recap: the three come down from the top left as its row comes up
+      // (from 95% of the screen to 55%), each into its own board here
+      const top = header()
+      if (!top) return
+      const y = node.querySelector("ol").getBoundingClientRect().top / window.innerHeight
+      const q = still ? (y < 0.75 ? 1 : 0) : gently(within(0.95 - y, 0, 0.4))
+      const targets = node.querySelectorAll("li a svg")
+      top.querySelectorAll("a").forEach((tab, i) => {
+        const svg = tab.querySelector("svg")
+        const to = targets[i]?.getBoundingClientRect()
+        if (!svg || !to) return
+        // (measured on the link, which does not move, not on the board, which does)
+        const from = tab.getBoundingClientRect()
+        const x = (to.left + to.width / 2 - (from.left + from.width / 2)) * q
+        const yy = (to.top + to.height / 2 - (from.top + from.height / 2)) * q
+        svg.style.transform = q > 0 ? `translate(${x.toFixed(1)}px, ${yy.toFixed(1)}px) scale(${(1 + (to.width / from.width - 1) * q).toFixed(4)})` : ""
+      })
+      const returning = q > 0.001 ? "true" : "false"
+      const returned = q > 0.999 ? "true" : "false"
+      if (top.dataset.returning !== returning) top.dataset.returning = returning
+      if (top.dataset.returned !== returned) top.dataset.returned = returned
+      node.dataset.returned = returned
     }
     const wake = () => {
       if (!frame) frame = window.requestAnimationFrame(update)
@@ -105,7 +138,7 @@ export const Hub = ({ upto }) => {
       window.removeEventListener("resize", wake)
       if (frame) window.cancelAnimationFrame(frame)
     }
-  }, [gate])
+  }, [gate, upto, still])
   React.useEffect(() => {
     const node = stick.current
     if (!node) return
@@ -114,7 +147,6 @@ export const Hub = ({ upto }) => {
     return () => seen.disconnect()
   }, [])
   const at = arrived || upto === 1 ? upto - 1 : upto - 2
-  const all = upto === INVESTIGATIONS.length
   return (
     <section ref={root} className={c("ch-hub")} data-all={all ? "true" : "false"} data-gate={gate ? "true" : undefined} aria-label={all ? "What the data said" : `${upto} of ${INVESTIGATIONS.length} questions answered`}>
       <div ref={stick} className={c("ch-hubStick")}>
@@ -140,7 +172,7 @@ export const Hub = ({ upto }) => {
           return (
             <li key={q.id} data-state={state} data-here={i === at ? "true" : "false"}>
               <a href={`#${q.id}`} className={c("ch-hubBoard")} aria-label={q.label}>
-                <InvestigationBoard id={q.id} compact />
+                <InvestigationBoard id={q.id} />
                 <span className={c("ch-hubDot")} aria-hidden="true" />
               </a>
               <div className={c("ch-hubWords")}>
@@ -159,6 +191,8 @@ export const Hub = ({ upto }) => {
         })}
       </ol>
       </div>
+      {/* the next question opens here, as the recap goes (opening.js) */}
+      {gate ? <Opening id={INVESTIGATIONS[upto].id} said={FIRST[INVESTIGATIONS[upto].id]} first ref={spot} /> : null}
       </div>
     </section>
   )
