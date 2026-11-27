@@ -137,11 +137,13 @@ const Head = ({ head, num }) => (
 )
 
 // The camera: each scene says which part of the drawing it uses (`box`, in the
-// drawing's 600 units), and the stage fits that part to the room it has, as large
-// as it will go, left-aligned under the title. The camera moves with the marks, so
-// one chart still turns into the next. Labels keep their size on screen (--u).
+// drawing's 600 units), and the stage fits that part to the room it has, centred
+// under the title, as Q1's charts are. It never draws larger than MOST times the
+// drawing, so the marks keep about the size of Q1's (the board about 320 px, a
+// hundred dots about 400 px) from one scene to the next. The camera moves with the
+// marks, so one chart still turns into the next. Labels keep their size on screen (--u).
 const FULL = [0, 0, VIEW, VIEW]
-const MOST = 1.6 // never more than 1.6 times the drawing's own size
+const MOST = 0.66
 const useRoom = () => {
   const ref = React.useRef(null)
   const [room, setRoom] = React.useState({ w: VIEW, h: VIEW })
@@ -157,13 +159,16 @@ const useRoom = () => {
   return [ref, room]
 }
 
-// One scene: { head, num, board: { fen, flip, at, caption }, atoms: i => spec | null, labels, label }
+// One scene: { head, num, board: { fen, flip, at, caption }, atoms: i => spec | null, labels, label, most }
 export const Stage = ({ scene, cell, label }) => {
   const [room, { w, h }] = useRoom()
   const [x0, y0, x1, y1] = scene.box || FULL
   // (on a wide screen a little air before the words' column)
-  const k = Math.min((w - (w > 500 ? 28 : 0)) / (x1 - x0), h / (y1 - y0), MOST)
-  const camera = { transform: `translate(${(-x0 * k).toFixed(1)}px, ${(-y0 * k).toFixed(1)}px) scale(${k.toFixed(4)})`, "--u": (1 / k).toFixed(4) }
+  const room_ = w - (w > 500 ? 28 : 0)
+  // (the charts with axes and words, the price and the ratings, may take more: scene.most)
+  const k = Math.min(room_ / (x1 - x0), h / (y1 - y0), scene.most ?? MOST)
+  const dx = Math.max(0, (room_ - (x1 - x0) * k) / 2)
+  const camera = { transform: `translate(${(dx - x0 * k).toFixed(1)}px, ${(-y0 * k).toFixed(1)}px) scale(${k.toFixed(4)})`, "--u": (1 / k).toFixed(4) }
   const pattern = `ch-stage-check-${React.useId().replace(/:/g, "")}`
   const specs = React.useMemo(() => Array.from({ length: ATOMS }, (_, i) => scene.atoms?.(i) || null), [scene])
   // a mark that is not in the scene fades where it is (it keeps its last place)

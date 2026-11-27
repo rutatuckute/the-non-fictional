@@ -210,7 +210,7 @@ const PayoffLabels = ({ path, up }) => {
         <>
           {won ? <T x={PX0 + won * PSTEP + 10} y={ROW[8] + 4}>won</T> : <T x={PX0} y={ROW[8] + 4}>a lone king cannot win</T>}
           <T x={PX0 + (P.counts.drew + P.counts.stalemate) * PSTEP + 10} y={ROW[0] + 4}>drew</T>
-          <T x={VIEW - 20} y={(ROW[8] + ROW[0]) / 2 + 6} anchor="end" kind="big">above the line: a chance, for free</T>
+          <T x={VIEW - 20} y={(ROW[8] + ROW[0]) / 2 + 6} anchor="end" kind="note">above the line: a chance, for free</T>
         </>
       ) : null}
     </>
@@ -274,13 +274,14 @@ const YourGames = ({ you }) => {
     </g>
   )
 }
+// read as Q1's squares: whose (here, which game), then how many in 100, then the dots
 const MeetLabels = ({ guesses }) =>
   ["queen", "king"].map((path, k) => {
-    const x = k ? 318 + 136 : 10 + 136
+    const x = (k ? 318 : 10) + 4
     return (
       <g key={path}>
-        <T x={x} y={92} anchor="middle" kind="huge">{PREP[path].lit}</T>
-        <T x={x} y={126} anchor="middle">{WHAT[path]}</T>
+        <T x={x} y={100} kind="name">{WHAT[path][0].toUpperCase() + WHAT[path].slice(1)}</T>
+        <T x={x} y={142} kind="num">{PREP[path].lit}<tspan className={c("ch-stageUnit")}> in 100</tspan></T>
         {guesses[path] != null ? <Ring guess={guesses[path]} at={i => MEET(i, k === 1)} r={13} /> : null}
       </g>
     )
@@ -456,6 +457,7 @@ export const Wrong = () => {
       },
       atoms: hidden,
       box: [BOARD.x, BOARD.y, BOARD.x + BOARD.size, BOARD.y + BOARD.size + 40],
+      most: 0.72, // the board about 345 px
     })
     const out = (() => {
       switch (kind) {
@@ -513,6 +515,7 @@ export const Wrong = () => {
             head: { title: "The price, game by game", chips: [["faint", "Played on, lost"], ["ivory", "Did not lose"], ...chose] },
             num: up ? { n: Math.round(paths[path].moves), unit: "more moves: the price of staying" } : { n: "−8", unit: "rating points, resigning or losing" },
             box: [14, ROW[8] - 62, VIEW, ROW[-8] + 110],
+            most: 0.95,
             atoms: i => {
               if (i >= 100) return null
               const { j, k, row } = pay[i]
@@ -542,6 +545,7 @@ export const Wrong = () => {
           const R = paths.queen.byLevel
           return {
             box: [44, 18, 630, LV.y(R.length - (you ? 0 : 1)) + 60],
+            most: 0.95,
             head: { title: "By rating, a queen down", chips: [["faint", "Resigned at once"], ["ivory", "Stayed, did not lose"], ["me", "My level"], ...(you ? [["you", "You"]] : [])] },
             atoms: i => {
               if (i >= R.length) return null
@@ -572,7 +576,8 @@ export const Wrong = () => {
         }
         case "meet":
           return {
-            box: [10, 48, 590, 168 + 10 * 27.2 + 30],
+            box: [10, 70, 590, 168 + 10 * 27.2 + 30],
+            most: 0.95, // two squares side by side, as Q1's give-up squares
             head: { title: "Played on and did not lose", chips: [["ivory", "Did not lose"], ["dim", "Lost"], ...(guessed.queen || guessed.king ? [["you", "Your guesses"]] : [])] },
             atoms: i => {
               const right = i >= 100

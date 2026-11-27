@@ -1685,12 +1685,18 @@
 .ch-stage2 { position: absolute; inset: 0; display: flex; flex-direction: column; margin: 0; color: var(--ink); }
 .ch-stageHead { flex: none; }
 .ch-story .ch-stageTitle { margin: 0; min-height: 1.15em; }
-.ch-story .ch-stageNum { margin: 2px 0 10px; min-height: 1em; color: var(--ink); font: 400 clamp(34px, 3.6vw, 50px) / 1 var(--font-title); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; transition: opacity 350ms ease; }
+/* the big number, as Q1's ("52 in 100"): the same type and size */
+.ch-story .ch-stageNum { margin: 2px 0 10px; min-height: 1em; color: var(--ink); font: 500 clamp(26px, 3.2vw, 40px) / 1 var(--font-sans, ui-sans-serif); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; transition: opacity 350ms ease; }
 .ch-stageNum[data-on="false"] { opacity: 0; }
 .ch-stageNum[data-tone="you"] { color: var(--form-data); }
 .ch-stageNum[data-tone="me"] { color: var(--thread); }
-.ch-stageNum small { margin-left: 10px; color: var(--ink-2); font: 400 13px / 1 var(--font-mono); letter-spacing: 0; }
+.ch-stageNum small { margin-left: 8px; color: var(--ink-2); font: 400 15px / 1 var(--font-mono); letter-spacing: 0; }
 .ch-stage2 svg { flex: 1 1 auto; min-height: 0; width: 100%; overflow: visible; }
+/* on a wide screen, Q1's frame: as tall as Q1's figure (title, keys, at most 600 px of
+   chart) and centred the same way, so the title sits where Q1's titles do */
+@media (min-width: 60.01rem) {
+  .ch-stage2 { inset: auto 0; top: 50%; height: min(677px, calc(100% - 73px)); transform: translateY(-50%); }
+}
 .ch-ratingChip[data-tone="ivory"] { background: var(--them); color: #0d1219; }
 .ch-ratingChip[data-tone="faint"] { background: var(--them-mid); color: #eef2f8; }
 /* keys that are a mark, not a colour: a dot for the lit, a ring for the rest */
@@ -1720,8 +1726,11 @@
 .ch-stageLabels { opacity: 0; transition: opacity 350ms ease; pointer-events: none; }
 .ch-stageLabels[data-on="true"] { opacity: 1; transition: opacity 600ms ease 500ms; }
 .ch-stageText { fill: var(--ink-3); font: 400 calc(12px * var(--u, 1)) / 1 var(--font-mono); }
-.ch-stageText[data-kind="big"] { fill: var(--ink); font: 400 calc(16px * var(--u, 1)) / 1 var(--font-title); }
-.ch-stageText[data-kind="huge"] { fill: var(--ink); font: 400 calc(48px * var(--u, 1)) / 1 var(--font-title); }
+/* as Q1's: notes in the small mono, a square's name in the serif, its number as "52 in 100" */
+.ch-stageText[data-kind="note"] { fill: var(--ink-2); }
+.ch-stageText[data-kind="name"] { fill: var(--ink-2); font: 400 calc(17px * var(--u, 1)) / 1 var(--font-title); }
+.ch-stageText[data-kind="num"] { fill: var(--ink); font: 500 calc(34px * var(--u, 1)) / 1 var(--font-sans, ui-sans-serif); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.ch-stageText .ch-stageUnit { fill: var(--ink-2); font: 400 calc(15px * var(--u, 1)) / 1 var(--font-mono); letter-spacing: 0; }
 .ch-stageText[data-kind="me"] { fill: var(--thread); }
 .ch-stageText[data-kind="you"] { fill: var(--form-data); }
 .ch-stageLine { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 5 4; }
