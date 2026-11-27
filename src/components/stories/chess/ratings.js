@@ -5,6 +5,7 @@ import { c, PinSteps, stepLine } from "./parts"
 import { useFollow, useStill } from "./follow"
 import data from "./ratings.json"
 import pace from "./pace.json"
+import paceLevels from "./pace-levels.json"
 import { Message } from "./phone-scenes"
 import { useReader } from "./reader"
 import { crowdLayout, crowdStage, dotAt, CrowdMarks, GROUPS, TYPICAL, MY_RAPID, MY_RESIGN, resignedOf } from "./crowd"
@@ -78,26 +79,51 @@ const OverviewCloud = React.memo(function OverviewCloud() {
 // Deterministic beeswarm: x is the recorded pace, y only prevents collisions.
 // Source-linked identities are retained for the players shared by both cohorts.
 const packPace = (width, left, right, top, bottom) => {
+  const packed = packSeconds(pace.peers.seconds, width, left, right, top, bottom)
+  return { ...packed, points: packed.points.map(q => ({ ...q, scatterIndex: pace.peers.scatterIndices[q.index] })) }
+}
+// The players at the reader's level, for "Your level" on the pace chart
+// (pace-levels.json, export_pace_levels.py): within 100 points of their rapid
+// rating, widened by 50 at a time until there are at least 40.
+export const paceLevelOf = rapid => {
+  const { halfWidth, minPlayers } = paceLevels.level
+  for (let half = halfWidth; half <= 3000; half += 50) {
+    const seconds = paceLevels.seconds.filter((_, i) => Math.abs(paceLevels.rating[i] - rapid) <= half)
+    if (seconds.length >= minPlayers || half >= 3000) {
+      const sorted = seconds.slice().sort((a, b) => a - b)
+      return { seconds, half, from: rapid - half, to: rapid + half, median: sorted[Math.floor(sorted.length / 2)] }
+    }
+  }
+  return null
+}
+const packSeconds = (all, width, left, right, top, bottom) => {
   const radius = width < 400 ? 1 : 1.65
   const diameter = radius * 2 + 0.5
   const points = []
   const centre = (top + bottom) / 2
-  for (const { seconds, index } of pace.peers.seconds.map((seconds, index) => ({ seconds, index })).sort((a, b) => a.seconds - b.seconds)) {
+  for (const { seconds, index } of all.map((seconds, index) => ({ seconds, index })).sort((a, b) => a.seconds - b.seconds)) {
     const x = scale(seconds, 0, 18, left, right)
     const neighbours = []
     for (let i = points.length - 1; i >= 0 && x - points[i].x < diameter; i--) neighbours.push(points[i])
     let offset = 0
-    for (let k = 0; k < pace.peers.players * 2; k++) {
+    for (let k = 0; k < all.length * 2; k++) {
       offset = k === 0 ? 0 : Math.ceil(k / 2) * diameter * (k % 2 ? 1 : -1)
       if (neighbours.every(q => (x - q.x) ** 2 + (centre + offset - q.y) ** 2 >= diameter ** 2 - 0.01)) break
     }
-    points.push({ x, y: centre + offset, seconds, index, scatterIndex: pace.peers.scatterIndices[index] })
+    points.push({ x, y: centre + offset, seconds, index })
   }
   // Compress the packing vertically if needed; x continues to encode exact pace.
   const extent = Math.max(...points.map(q => Math.abs(q.y - centre)), 1)
   const compression = Math.min(1, ((bottom - top) / 2 - radius) / extent)
   return { radius, points: points.map(q => ({ ...q, y: centre + (q.y - centre) * compression })) }
 }
+// The players at the reader's level, drawn in place of mine while "Your level" is on.
+const YourPaceCloud = React.memo(function YourPaceCloud({ swarm, mine }) {
+  return <g className={c("ch-paceCloud")}>
+    {swarm.points.map(q => <circle key={q.index} cx={q.x} cy={q.y} r={swarm.radius} data-slower={q.seconds > mine} />)}
+  </g>
+})
+
 // From the "others" beat on, every dot is drawn where its stage puts it
 // (crowd.js); CSS carries it there, so the change reads as one movement.
 const crowdStyle = (target, x, y, i) => target ? {
@@ -205,6 +231,13 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
   const medianOpacity = smooth((period - 0.4) / 0.4) * (1 - bridge)
   const guideOpacity = medianOpacity * (1 - smooth(out / 0.7))
   const swarm = React.useMemo(() => packPace(w, left, right, 68, bottom - 12), [w, left, right, bottom])
+  // "Your level" on the pace chart: the same chart with the players at the reader's level
+  const level = React.useMemo(() => (you ? paceLevelOf(you.rapid) : null), [you?.rapid])
+  const yourSwarm = React.useMemo(() => (level ? packSeconds(level.seconds, w, left, right, 68, bottom - 12) : null), [level, w, left, right, bottom])
+  const paceStep = step >= 7 && !stage
+  const atYours = Boolean(level) && view === "yours" && paceStep
+  const typicalPace = atYours ? level.median : pace.peers.median
+  const yourShare = level && yourPace !== null ? Math.round((level.seconds.filter(v => v > yourPace).length / level.seconds.length) * 100) : null
   const paceY = (68 + bottom - 12) / 2
   const narrow = w < 560
   const withYou = Boolean(yourResign)
@@ -234,14 +267,14 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
   const chips = mode === "giveup" ? [["crowd", "Resigned"], ["dim", "Ended otherwise"], ...(stage === "us" ? [["me", "Me"], ...(yourResign ? [youChip] : [])] : [])]
     : mode === "names" ? []
       : mode === "crowd" ? []
-        : mode === "pace" ? [["me", "Me"], ["crowd", "Players at my level"], ...(yourPace !== null ? [youChip] : [])]
+        : mode === "pace" ? [["me", "Me"], ["crowd", atYours ? "Players at your level" : "Players at my level"], ...(yourPace !== null ? [youChip] : [])]
           : step >= 5 ? [["me", "Me"], ["crowd", "Other players"], ...(you ? [youChip] : [])]
             : [["rapid", "10-minute games"], ["bullet", "1-minute games", at >= 2.35]]
   const resignWords = key => `${resignedOf(key, yourResign)} in 100`
   const label = mode === "giveup" ? `Of 100 lost rapid games, players whose names say they are bad resigned ${resignWords("bad")}; everyone else ${resignWords("everyone")}.${stage === "us" ? ` Me: ${MY_RESIGN.resigned} of my ${MY_RESIGN.losses} losses.${yourResign ? ` You: ${yourResign.resigned} of your ${yourResign.losses}.` : ""}` : ""}`
     : mode === "names" ? `Rapid ratings by what usernames say, against a typical opponent at ${TYPICAL}. ${GROUPS.filter(g => revealed[g.key]).map(g => `${g.label}: median ${g.median}`).join(". ")}`
       : mode === "crowd" ? "The pace chart's axis goes; its dots become a crowd of other players, some wearing usernames."
-        : step >= 7 ? `My pace: 5 seconds per move. Typical peer: 7.7 seconds. Faster than 93% of a separate sample of peers.${yourPace !== null ? ` You, in green: ${yourPace} seconds.` : ""}`
+        : step >= 7 ? `My pace: 5 seconds per move. Typical peer: 7.7 seconds. Faster than 93% of a separate sample of peers.${yourPace !== null ? ` You, in green: ${yourPace} seconds.` : ""}${atYours ? ` Shown: ${level.seconds.length} players rated ${level.from}–${level.to}, typical ${level.median} seconds${yourShare !== null ? `; you are faster than ${yourShare} in 100 of them` : ""}.` : ""}`
       : step >= 4 ? `10-minute rating is horizontal; 1-minute rating is vertical. ${step >= 5 ? "87% of sampled players are rated lower in 1-minute games." : ""} ${step === 6 ? "My gap is about typical at my level." : ""}`
         : "My rating through 2026, last rating each day: 10-minute games, then 1-minute games from July."
   const fullLabel = you && (step === 5 || step === 6) ? `${label} You, in green: rapid ${you.rapid}, bullet ${you.bullet}, ${gapWords(you)}.` : label
@@ -356,14 +389,17 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
           <text className={c("ch-ratingClay")} x={left + 8} y={mix(ty(S.me[1]), sy(S.me[1]), morph) - 12}>1-minute</text>
         </g>
         <g opacity={paceOpacity} aria-hidden="true" data-layer="pace-dots" data-highlight={step === 8}>
-          <PaceCloud swarm={swarm} targets={targets} />
+          <g className={c("ch-paceSwap")} style={{ opacity: atYours ? 0 : 1 }}><PaceCloud swarm={swarm} targets={targets} /></g>
+          {yourSwarm ? <g className={c("ch-paceSwap")} style={{ opacity: atYours ? 1 : 0 }} data-layer="pace-yours"><YourPaceCloud swarm={yourSwarm} mine={pace.me.seconds} /></g> : null}
         </g>
         <g aria-hidden="true" data-layer="pace" className={c("ch-crowdFade")} data-settled={step >= 8 ? "true" : undefined} style={{ opacity: stage ? 0 : paceOpacity }}>
           <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={bottom} y2={bottom} />
           {[0, 5, 10, 15].map(v => <text key={v} x={px(v)} y={bottom + 22} textAnchor="middle">{v}s</text>)}
           <text x={right} y={bottom + 22 + 16} textAnchor="end">Seconds per move →</text>
-          <line className={c("ch-ratingRef")} x1={px(pace.peers.median)} x2={px(pace.peers.median)} y1={57} y2={bottom - 8} />
-          <text x={px(pace.peers.median) + 8} y={49}>Typical · {pace.peers.median}s</text>
+          <g className={c("ch-paceTypical")} style={{ transform: `translateX(${px(typicalPace).toFixed(1)}px)` }}>
+            <line className={c("ch-ratingRef")} x1={0} x2={0} y1={57} y2={bottom - 8} />
+            <text x={8} y={49}>{atYours ? "Typical at your level" : "Typical"} · {typicalPace}s</text>
+          </g>
           <line className={c("ch-paceMeLine")} x1={px(pace.me.seconds)} x2={px(pace.me.seconds)} y1={35} y2={bottom - 8} />
           <text className={c("ch-ratingClay")} x={px(pace.me.seconds) - 8} y={27} textAnchor="end">Me · {pace.me.seconds}s</text>
         </g>
@@ -375,11 +411,20 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
           const flip = toX > right - 90
           return <g className={c("ch-ratingYou")} aria-hidden="true" data-layer="pace-you" style={{ opacity: at < 7 ? 0 : 1 }}>
             <line className={c("ch-paceYouLine")} x1={toX} x2={toX} y1={35} y2={bottom - 8} opacity={paceOpacity} />
-            <text x={toX + (flip ? -8 : 8)} y={27} textAnchor={flip ? "end" : undefined} opacity={paceOpacity}>You · {yourPace}s{px(yourPace) > right ? " →" : ""}</text>
+            {(() => {
+              // with "Your level" the label carries the result; it is pulled left to stay on the chart
+              // (shorter on a phone), and never further left than its own line
+              const words = `You · ${yourPace}s${atYours && yourShare !== null ? ` · faster than ${yourShare} in 100${narrow ? "" : " at your level"}` : ""}${px(yourPace) > right ? " →" : ""}`
+              const long = atYours && yourShare !== null
+              const width = words.length * (w < 400 ? 6.1 : 6.9)
+              const x = long ? Math.max(toX - width + 8, Math.min(toX + 8, right - width)) : toX + (flip ? -8 : 8)
+              return <text x={x} y={27} textAnchor={!long && flip ? "end" : undefined} opacity={paceOpacity}>{words}</text>
+            })()}
             <circle cx={x} cy={y} r={6} data-dot="you" />
           </g>
         })() : null}
         {/* These are the same source players in both charts, never an arbitrary pairing. */}
+        <g className={c("ch-paceSwap")} style={{ opacity: atYours ? 0 : 1 }}>
         <g clipPath={`url(#${id}-plot)`} aria-hidden="true" data-layer="linked-peers"
           opacity={smooth((morph - 0.45) / 0.55) * crowdOpacity}>
           {swarm.points.filter(q => q.scatterIndex !== null).map(q => {
@@ -397,6 +442,7 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
               cx={mix(sx(rapid), q.x, enterPace)} cy={mix(sy(bullet), q.y, enterPace)} className={c("ch-crowdDot")} data-settled={step >= 8 ? "true" : undefined} />
           })}
         </g>
+        </g>
         <CrowdMarks layout={layout} stage={stage} revealed={revealed} guesses={guesses} you={yourResign}
           left={left} right={right} top={top + 22} bottom={crowdBottom} />
         {/* One author marker, retained from the timeline through the pace plot, into the crowd, and next to the names. */}
@@ -408,18 +454,18 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
       </svg>
       <NameButtons bands={layout.bands} guesses={guesses} onGuess={onGuess} open={stage === "rows"} top={canvasTop} narrow={narrow} />
       <div className={c("ch-ratingTools")} style={chartStyle} inert={step < 2} aria-hidden={step < 2}>
-        <div className={c("ch-ratingExplore")} inert={step !== 6} aria-hidden={step !== 6} data-visible={step === 6}>
-          <div role="group" aria-label="Rating chart view" className={c("ch-ratingViews")}>
+        <div className={c("ch-ratingExplore")} inert={!(step === 6 || (paceStep && level))} aria-hidden={!(step === 6 || (paceStep && level))} data-visible={step === 6 || Boolean(paceStep && level)}>
+          <div role="group" aria-label={paceStep ? "Pace chart view" : "Rating chart view"} className={c("ch-ratingViews")}>
             <button type="button" aria-pressed={view !== "all" && view !== "yours"} onClick={e => chooseView("mine", e)}>My level</button>
             {you ? <button type="button" className={c("ch-ratingYourView")} aria-pressed={view === "yours"} onClick={e => chooseView("yours", e)}>Your level</button> : null}
-            <button type="button" aria-pressed={view === "all"} onClick={e => chooseView("all", e)}>All players</button>
+            {paceStep ? null : <button type="button" aria-pressed={view === "all"} onClick={e => chooseView("all", e)}>All players</button>}
           </div>
-          <button className={c("ch-ratingOverview")} type="button" aria-label={view === "all" ? "Zoom to my level" : "Show all players"}
+          {paceStep ? null : <button className={c("ch-ratingOverview")} type="button" aria-label={view === "all" ? "Zoom to my level" : "Show all players"}
             onClick={e => chooseView(view === "all" ? "mine" : "all", e)}>
             <svg viewBox="0 0 60 38" aria-hidden="true"><g transform="translate(2,2)"><OverviewCloud />
               <rect x={xMin / 3000 * 56} y={34 - yMax / 3000 * 34} width={(xMax - xMin) / 3000 * 56} height={(yMax - yMin) / 3000 * 34} className={c("ch-ratingFrame")} />
             </g></svg>
-          </button>
+          </button>}
         </div>
       </div>
     </figure>
