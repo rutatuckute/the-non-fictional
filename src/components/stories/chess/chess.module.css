@@ -1082,7 +1082,7 @@
 .ch-ratingMe[data-settled="true"] { transition: transform 1100ms var(--ch-ease), opacity 500ms ease; }
 .ch-crowdTag rect { fill: var(--raised); stroke: var(--rule-strong); }
 .ch-crowdTag line { stroke: var(--ink-3); }
-.ch-ratings .ch-crowdTag text { fill: var(--ink); }
+.ch-ratings .ch-crowdTag text { fill: var(--ink); font-size: 14px; }
 .ch-ratings .ch-crowdUnknown { fill: var(--ink-2); }
 .ch-crowdTypical { stroke: var(--ink-2); stroke-dasharray: 3 4; stroke-width: 1; }
 .ch-crowdMarks text { paint-order: stroke; stroke: var(--void); stroke-width: 4px; stroke-linejoin: round; }
@@ -1788,8 +1788,8 @@
 .ch-ratings [data-highlight="yours"] .ch-ratingPeers use[data-near-you="true"] { fill: var(--them); opacity: 0.9; }
 .ch-ratingViews button.ch-ratingYourView { color: var(--form-data); }
 .ch-ratingViews button.ch-ratingYourView[aria-pressed="true"] { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--form-data) 60%, transparent); }
-.ch-crowdYouMark { opacity: 0; transition: opacity 500ms ease; }
-.ch-crowdYouMark[data-on="true"] { opacity: 1; transition-delay: 400ms; }
+.ch-crowdYouMark { opacity: 0; transition: transform 1100ms var(--ch-ease), opacity 300ms ease; }
+.ch-crowdYouMark[data-on="true"] { opacity: 1; }
 .ch-ratingYou .ch-ratingExpected { fill: var(--void); stroke: var(--form-data); }
 /* "Your level" on the pace chart (ratings.js): the clouds swap, the typical line slides */
 .ch-paceSwap { transition: opacity 600ms ease; }

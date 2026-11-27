@@ -459,13 +459,21 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
           <circle r={step < 3 ? 4.5 : 6} data-dot="me" />
           <text x={10} y={-12} opacity={stage === "crowd" ? 1 : smooth(morph / 0.6) * (1 - enterPace)}>Me</text>
         </g>
-        {/* in the crowd of usernames the reader stands beside me, in green */}
-        {you ? (
-          <g className={c("ch-ratingYou", "ch-crowdYouMark")} data-on={stage === "crowd" ? "true" : "false"} aria-hidden="true">
-            <circle cx={(left + right) / 2 + 58} cy={(top + bottom) / 2 + 46} r={6} data-dot={stage === "crowd" ? "you" : undefined} />
-            <text x={(left + right) / 2 + 68} y={(top + bottom) / 2 + 64}>You</text>
-          </g>
-        ) : null}
+        {/* The reader's marker, as mine: on their pace, then it slides into the crowd of
+            usernames beside me, so their green dot (travellers.js) never loses it on the way */}
+        {you ? (() => {
+          const atCrowd = stage === "crowd"
+          const pacing = yourPace !== null && !stage && step >= 8
+          const on = atCrowd || pacing
+          const x = atCrowd ? (left + right) / 2 + 58 : Math.max(left + 4, Math.min(right - 4, px(yourPace ?? 0)))
+          const y = atCrowd ? (top + bottom) / 2 + 46 : paceY
+          return (
+            <g className={c("ch-ratingYou", "ch-crowdYouMark")} data-on={on ? "true" : "false"} style={{ transform: `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)` }} aria-hidden="true">
+              <circle r={6} data-dot={on ? "you" : undefined} />
+              <text x={10} y={18} opacity={atCrowd ? 1 : 0}>You</text>
+            </g>
+          )
+        })() : null}
       </svg>
       <NameButtons bands={layout.bands} guesses={guesses} onGuess={onGuess} open={stage === "rows"} top={canvasTop} narrow={narrow} />
     </figure>

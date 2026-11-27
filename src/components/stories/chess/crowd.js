@@ -216,13 +216,13 @@ export const CrowdMarks = ({ layout, stage, revealed, guesses = {}, you, left, r
     <g className={c("ch-crowdMarks")}>
       <g {...on(stage === "crowd")}>
         {tags.map((t, k) => {
-          const width = t.name.length * (narrow ? 6.1 : 6.7) + 44
+          const width = t.name.length * (narrow ? 7.6 : 8.6) + 18
           const x = Math.min(right - width, Math.max(left, t.x - width / 2))
           return (
             <g key={t.key} className={c("ch-crowdTag")} style={{ transitionDelay: stage === "crowd" ? `${300 + k * 260}ms` : "0ms", opacity: stage === "crowd" ? 1 : 0 }}>
               <line x1={t.x} x2={t.x} y1={t.y} y2={t.y - 14} />
-              <rect x={x} y={t.y - 34} width={width} height={20} rx={3} />
-              <text x={x + 8} y={t.y - 20}>{t.name}… <tspan className={c("ch-crowdUnknown")}>(???)</tspan></text>
+              <rect x={x} y={t.y - 38} width={width} height={24} rx={3} />
+              <text x={x + 9} y={t.y - 21}>{t.name}</text>
             </g>
           )
         })}

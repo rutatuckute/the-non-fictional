@@ -42,11 +42,6 @@ const D = data.decision
 const KG = paths.kingGame
 const HER = paths.her
 const signed = v => (v > 0 ? `+${v}` : v < 0 ? `−${Math.abs(v)}` : "0")
-const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-const day = d => {
-  const [y, m, dd] = String(d).split("-")
-  return `${Number(dd)} ${MONTHS[Number(m) - 1]} ${y}`
-}
 const side = colour => (colour === "b" ? "Black" : "White")
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v))
 const pct = v => `${Math.round(v * 100)}%`
@@ -448,7 +443,8 @@ export const Wrong = () => {
     const what = WHAT[path]
     const hidden = () => ({ x: VIEW / 2, y: 240, s: 4, o: 0 })
     const gameScene = (game, at, playing) => ({
-      head: { title: `My game · ${day(game.date)}`, chips: path === "queen" ? chose : [] },
+      // named by the case it is, the same names as in the words: a queen down, a lone king
+      head: { title: path === "queen" ? "Queen down" : "Lone king", chips: path === "queen" ? chose : [] },
       board: {
         fen: game.fens[at],
         flip: game.flip,
@@ -478,7 +474,7 @@ export const Wrong = () => {
         case "outcome":
           return gameScene(GAMES.queen, queenAt, true)
         case "king":
-          return { ...gameScene(GAMES.king, kingAt, true), head: { title: `My game · ${day(GAMES.king.date)}`, chips: [] } }
+          return { ...gameScene(GAMES.king, kingAt, true), head: { title: "Lone king", chips: [] } }
         case "guess":
           return {
             head: { title: `100 players at my level, ${what}`, chips: [] },

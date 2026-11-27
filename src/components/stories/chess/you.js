@@ -148,40 +148,10 @@ export const YouOnChessCom = ({ where }) => {
 // of the button: their rapid games of the last 12 months, counted with the
 // sample's rules (queens.js). Only the counts are kept, for this reading;
 // wrong.js draws them in green beside hers, hub.js says them in the recap.
-const times = n => (n === 1 ? "once" : n === 2 ? "twice" : `${n} times`)
-const sayQueens = (state, month) => {
-  switch (state.kind) {
-    case "asking":
-      return month ? `Reading your games on Chess.com… ${MONTH.format(month)}` : "Asking Chess.com…"
-    case "counted": {
-      const gave = state.resigned + state.left
-      const start = `In your last ${state.games.toLocaleString("en-GB")} rapid games you lost your queen like this ${times(state.cases)}.`
-      if (!state.on) return `${start} Every time, you gave up at once.`
-      return `${start} You ${gave ? `gave up at once ${times(gave)}, ` : "never gave up at once, "}stayed ${times(state.on)} and saved ${state.saved}. Players at your level who stayed would have saved about ${Math.round(state.expected)}.`
-    }
-    case "few":
-      return state.cases
-        ? `In your last ${state.games.toLocaleString("en-GB")} rapid games you lost your queen like this only ${times(state.cases)}: too few to compare yet.`
-        : `In your last ${state.games.toLocaleString("en-GB")} rapid games you never lost your queen like this.`
-    case "none":
-      return "No rapid games on Chess.com in the last 12 months, so nothing to count."
-    case "missing":
-      return `Chess.com has no games for “${state.username}”.`
-    case "busy":
-      return "Chess.com is busy. Try again in a minute."
-    case "unreachable":
-    case "invalid":
-      return "Couldn’t read your games just now. Try again in a moment."
-    default:
-      return ""
-  }
-}
-
 export const YourQueens = () => {
   const said = useReader()
   const found = said.chesscom
   const [state, setState] = React.useState({ kind: "idle" })
-  const [month, setMonth] = React.useState(null)
   const pending = React.useRef(null)
   // (a count belongs to the name it was made for: a new name or none clears it)
   const name = found?.username || null
@@ -197,23 +167,16 @@ export const YourQueens = () => {
     if (!ready || state.kind !== "idle") return
     const asking = new AbortController()
     pending.current = asking
-    setMonth(null)
     setState({ kind: "asking" })
-    countQueens(name, paths.queen.byLevel, asking.signal, date => setMonth(date))
+    countQueens(name, paths.queen.byLevel, asking.signal, () => {})
       .then(result => !asking.signal.aborted && setState(result))
       .catch(() => {
         // a new name took over
       })
   }, [ready, state.kind, name])
-  if (!found) return null
-  return (
-    <div className={c("ch-youQueens")} data-kind={state.kind}>
-      <Text name="you-queens" look="lead" className={c("ch-youQueensWords")} />
-      <p className={c("ch-youStatus")} role="status" data-kind={state.kind}>
-        {sayQueens(state, month)}
-      </p>
-    </div>
-  )
+  // (no words here any more, owner 27 Nov: the reader's count shows on the chart, in
+  // green, and in the recap)
+  return null
 }
 
 // In "What our choices reveal", at its first step: once the reader has been
