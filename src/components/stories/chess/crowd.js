@@ -82,11 +82,11 @@ const pack = (xs, radius, top, bottom) => {
   return out.map(q => ({ x: q.x, y: centre + (q.y - centre) * squeeze }))
 }
 
-// Squares of ten by ten for lost games, side by side (two by two on a narrow
-// frame when there are four).
+// Squares of ten by ten for lost games, side by side; four (with the reader's)
+// go two by two (owner, 27 Nov): the others above, me and the reader below.
 const grids = (keys, { left, right, top, bottom, narrow }) => {
   const n = keys.length
-  const cols = n === 4 && narrow ? 2 : n
+  const cols = n === 4 ? 2 : n
   const lines = Math.ceil(n / cols)
   const head = narrow ? 56 : 76, foot = 18
   // as large as the frame allows (up to Q2's dot size), the squares a little closer
