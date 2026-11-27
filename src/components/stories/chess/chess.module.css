@@ -1557,41 +1557,35 @@
 .ch-method .ch-text li strong { color: var(--ink); }
 .ch-method .ch-storyMeta { max-width: 44rem; margin-inline: auto; }
 
-/* ── A phone: the words scroll past too (27 Nov) ──
-   As on a wide screen, the words of a reading scene (the club, the three
-   questions) scroll; the picture holds the top of the screen on its own ground,
-   and the words come up from below it and pass under it as they are read. */
+/* ── A phone: the words scroll over the picture (27 Nov, owner: as on The
+   Pudding's love story) ──
+   The picture holds the whole screen; each step's words come in a small dark
+   box from the foot of the screen and scroll up over it to the top, and the
+   picture changes as a box comes up. The club, the three questions, and (in
+   wooden.js) the wooden set and the strangers. */
 @media (max-width: 60rem) {
-  .ch-pin[data-reading="true"] { --phone-scene-top: calc(var(--bar) + 7svh); --phone-scene-height: 50svh; }
-  .ch-part3 .ch-pin[data-reading="true"] { --phone-scene-top: calc(var(--investigation-bottom) + 8px); --investigation-graphic-height: var(--phone-scene-height); }
-  /* the pinned layer lies over the words (taps pass through it, except on the
-     picture), so the words go under the picture's own ground as they rise */
-  .ch-story .ch-pin[data-reading="true"] .ch-stage { z-index: 4; pointer-events: none; }
-  .ch-story .ch-pin[data-reading="true"] .ch-stage > * { pointer-events: none; }
-  /* (the club's stage keeps the weave off with its own ground; above the words it
-     would hide them, so here the ground is the scene's and the section's) */
-  .ch-story .ch-woodenPin + .ch-club[data-reading="true"] .ch-stage { background: none; }
-  .ch-story .ch-pin[data-reading="true"] .ch-scene { pointer-events: auto; }
-  .ch-story .ch-pin[data-reading="true"] .ch-scene {
-    inset: var(--phone-scene-top) var(--page-margin) auto; height: var(--phone-scene-height); z-index: 4;
-    background: var(--void); box-shadow: 0 22px 18px 4px var(--void);
+  .ch-pin[data-reading="true"] { --phone-scene-top: calc(var(--bar) + 7svh); }
+  .ch-part3 .ch-pin[data-reading="true"] {
+    --phone-scene-top: calc(var(--investigation-bottom) + 8px);
+    --investigation-graphic-height: calc(100svh - var(--investigation-bottom) - 24px);
   }
-  .ch-story .ch-pin[data-reading="true"] .ch-steps { padding-top: calc(var(--phone-scene-top) + var(--phone-scene-height) + 5svh); padding-bottom: 40vh; }
-  .ch-story .ch-pin[data-reading="true"] .ch-step { justify-content: center; align-items: flex-start; min-height: 46vh; padding-bottom: 0; }
-  .ch-story .ch-part3 .ch-pin[data-reading="true"] .ch-step[data-step="1"] { min-height: 46vh; }
-  .ch-story .ch-pin[data-reading="true"] .ch-step[data-bare="true"] { min-height: 46vh; }
-  .ch-story .ch-pin[data-reading="true"] .ch-card { width: 100%; padding: 0; border: 0; background: none; }
-  /* the turn of the story, alone over the whole screen, above the words */
+  .ch-story .ch-pin[data-reading="true"] .ch-scene { inset: var(--phone-scene-top) var(--page-margin) 12px; height: auto; }
+  .ch-story .ch-pin[data-reading="true"] .ch-steps { padding-top: 55svh; padding-bottom: 70vh; }
+  .ch-story .ch-pin[data-reading="true"] .ch-step,
+  .ch-story .ch-part3 .ch-pin[data-reading="true"] .ch-step[data-step="1"] { justify-content: center; align-items: center; min-height: 92vh; padding-bottom: 0; }
+  .ch-story .ch-pin[data-reading="true"] .ch-step[data-bare="true"] { min-height: 60vh; }
+  .ch-story .ch-pin[data-reading="true"] .ch-step:not([data-bare="true"]) .ch-card,
+  .ch-story .ch-woodenWords > div {
+    width: min(100%, 26rem); padding: 14px 16px 16px; border: 1px solid #2a2927; border-radius: 3px;
+    background: rgba(9, 9, 8, 0.94); opacity: 1;
+  }
+  /* the turn of the story, alone over the whole screen */
   .ch-pin[data-reading="true"] .ch-layer.ch-big {
     top: calc(-1 * var(--phone-scene-top)); bottom: auto; height: 100svh; left: calc(-1 * var(--page-margin)); right: calc(-1 * var(--page-margin));
     padding: 0 calc(var(--page-margin) + 4%); background: var(--void);
   }
-}
-
-/* A phone, the wooden set and the strangers: the words move with the scroll in
-   their band at the top (wooden.js writes where each one is, frame by frame). */
-@media (max-width: 60rem) {
-  .ch-story .ch-woodenTold[data-moving] > div,
-  .ch-story .ch-woodenTold[data-moving] > [data-thread-copy],
-  .ch-story .ch-woodenTold[data-moving] > [data-thread-copy][data-on="true"] { transition: none; will-change: transform, opacity; }
+  /* the wooden set: its words scroll over it in the same boxes */
+  .ch-story .ch-woodenWords > div,
+  .ch-story .ch-woodenWords > [data-thread-copy] { left: 50%; right: auto; transform: translate(-50%, -50%); }
+  .ch-story .ch-woodenWords [data-thread-copy] .ch-text.ch-lead { max-width: none; margin-inline: auto; }
 }

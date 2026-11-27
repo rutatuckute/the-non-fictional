@@ -179,6 +179,7 @@ const MOVED = (() => {
   })
 })()
 
+const phoneWide = () => window.matchMedia("(max-width: 60rem)").matches
 const within = (t, from, to) => Math.max(0, Math.min(1, (t - from) / (to - from)))
 const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]
 // Every stretch of a move starts and ends at rest, and is never faster than
@@ -257,7 +258,6 @@ export const Wooden = ({ lines }) => {
   const many = React.useRef(null)
   const manyCopy = React.useRef(null)
   const readingCopy = React.useRef({})
-  const toldCopy = React.useRef({})
   const pieces = React.useRef({})
   const hands = React.useRef({})
   const still = useStill()
@@ -275,51 +275,9 @@ export const Wooden = ({ lines }) => {
     // near the centre and a soft exit before the following paragraph arrives.
     WORDS.forEach(([name, at]) => {
       const copy = readingCopy.current[name]
-      if (copy) copy.style.opacity = String(still ? 1 : 1 - within(Math.abs(scrolled - at), 0.24, 0.42))
+      // (on a phone the boxes stay whole all the way up the screen)
+      if (copy) copy.style.opacity = String(still || phoneWide() ? 1 : 1 - within(Math.abs(scrolled - at), 0.24, 0.42))
     })
-    // On a phone the words move with the scroll in their band at the top, at
-    // the scroll's own pace: each rises in from just below the band, rests
-    // while it is read, and rises out as the next one rises in. None while the
-    // board becomes the phone, and none once the threads gather.
-    if (window.matchMedia("(max-width: 60rem)").matches) {
-      const RISE = 0.16
-      const gap = [PHONE_AT + 0.05, PHONE_AT + 0.25]
-      const starts = WORDS.map(([, at]) => {
-        const start = at - 0.3
-        return start >= gap[0] && start < gap[1] ? gap[1] : start
-      })
-      const ends = WORDS.map((_, index) => {
-        const end = index + 1 < WORDS.length ? starts[index + 1] : MANY_AT
-        return starts[index] < gap[0] && end > gap[0] ? gap[0] : end
-      })
-      const tall = WORDS.map(([name]) => toldCopy.current[name]?.offsetHeight || 0)
-      // a sentence leaving and the next arriving move as one column, a whole
-      // sentence apart, so they never cover each other
-      const apart = (one, two) => Math.max(tall[one] || 0, tall[two] || 0) + 28
-      WORDS.forEach(([name], index) => {
-        const node = toldCopy.current[name]
-        if (!node) return
-        const start = starts[index]
-        const end = ends[index]
-        const joinedIn = index > 0 && Math.abs(ends[index - 1] - start) < 1e-6
-        const joinedOut = index + 1 < WORDS.length && Math.abs(starts[index + 1] - end) < 1e-6
-        let y = 0
-        let shown = 0
-        if (still) shown = scrolled >= start && scrolled < end ? 1 : 0
-        else if (scrolled >= start - RISE && scrolled < start) {
-          const left = (start - scrolled) / RISE
-          y = left * (joinedIn ? apart(index - 1, index) : tall[index] + 28)
-          shown = 1 - left
-        } else if (scrolled >= start && scrolled < end - RISE) shown = 1
-        else if (scrolled >= end - RISE && scrolled < end) {
-          const gone = (scrolled - (end - RISE)) / RISE
-          y = -gone * (joinedOut ? apart(index, index + 1) : tall[index] + 28)
-          shown = 1 - gone
-        }
-        node.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`
-        node.style.opacity = shown.toFixed(3)
-      })
-    }
     // one unit of the board's picture, in the screen's pixels
     const k = scene.current.clientWidth / BOARD.width
     const now = sceneAt(scrolled, still)
@@ -581,31 +539,19 @@ export const Wooden = ({ lines }) => {
           </div>
         </div>
         <Pictured who={stage.who} ref={pictured} />
-        {/* On a phone the words stand at the top, one after another. */}
-        {stage.narrow ? (
-          <div className={c("ch-woodenTold")} data-moving="">
-            {WORDS.map(([name, , look]) => (
-              <div key={name} ref={node => (toldCopy.current[name] = node)} data-thread-copy={THREAD_WORDS.has(name) ? name : undefined} data-on={stage.words === name ? "true" : "false"}>
-                <Text name={name} look={look || "lead"} />
-              </div>
-            ))}
-          </div>
-        ) : null}
         <div className={c("ch-manyCopy")} ref={manyCopy} style={{ opacity: 0 }}>
           <Text name="people-many" look="question" />
         </div>
       </div>
-      {/* On a wide screen they scroll past beside it, each in the middle of
-          the screen at its moment. */}
-      {!stage.narrow ? (
-        <div className={c("ch-woodenWords")}>
-          {WORDS.map(([name, at, look]) => (
-            <div key={name} ref={node => { if (THREAD_WORDS.has(name)) readingCopy.current[name] = node }} data-thread-copy={THREAD_WORDS.has(name) ? name : undefined} style={{ top: `calc(${(at + 0.5).toFixed(3)} * 100svh)` }}>
-              <Text name={name} look={look || "lead"} />
-            </div>
-          ))}
-        </div>
-      ) : null}
+      {/* They scroll past, each in the middle of the screen at its moment:
+          beside the scene on a wide screen, over it in a box on a phone. */}
+      <div className={c("ch-woodenWords")}>
+        {WORDS.map(([name, at, look]) => (
+          <div key={name} ref={node => { if (THREAD_WORDS.has(name)) readingCopy.current[name] = node }} data-thread-copy={THREAD_WORDS.has(name) ? name : undefined} style={{ top: `calc(${(at + 0.5).toFixed(3)} * 100svh)` }}>
+            <Text name={name} look={look || "lead"} />
+          </div>
+        ))}
+      </div>
       {/* where the chapters' navigation opens Part II */}
       <span id="the-people" className={c("ch-mark")} data-chapter-at-mark="" style={{ top: `calc(${(TITLE_AT + 0.08).toFixed(3)} * 100svh)` }} />
       <Knots of={lines} />
