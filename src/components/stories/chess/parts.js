@@ -75,7 +75,7 @@ export const Show = ({ on, flow = false, className = "", children, style }) => (
 // reading view, not after they have been read beside the old picture.
 export const stepLine = node =>
   window.innerHeight *
-  (window.matchMedia("(max-width: 60rem)").matches ? 0.88 : node?.closest?.('[data-part="investigation"]') ? 0.7 : 0.5)
+  (window.matchMedia("(max-width: 60rem)").matches ? 0.8 : node?.closest?.('[data-part="investigation"]') ? 0.7 : 0.5)
 
 // The steps of the pinned scene a graphic stands in, by number: for a graphic
 // that follows the scroll within a step (club.js) to find that step's card.
@@ -195,8 +195,10 @@ export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, r
   const root = React.useRef(null)
   const [step, stepRef, refs] = useStep(steps.length)
   const narrow = useNarrow()
-  const plain = plainOnly || (reading && narrow)
-  const scrolling = reading && !narrow
+  // On a phone too, the words of a reading scene scroll past (27 Nov, owner):
+  // the picture holds the top of the screen and the words come up under it.
+  const plain = plainOnly
+  const scrolling = reading
   React.useLayoutEffect(() => {
     const pin = root.current
     if (!plain || !pin.closest('[data-part="investigation"]')) return
