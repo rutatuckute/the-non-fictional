@@ -7,7 +7,9 @@ import data from "./ratings.json"
 import pace from "./pace.json"
 import { Message } from "./phone-scenes"
 import { useReader } from "./reader"
-import { crowdLayout, crowdStage, dotAt, CrowdMarks, GROUPS, NAMES, TYPICAL, MY_RAPID } from "./crowd"
+import { crowdLayout, crowdStage, dotAt, CrowdMarks, GROUPS, TYPICAL, MY_RAPID, MY_RESIGN, resignedOf } from "./crowd"
+import { NameButtons, NameScore } from "./say"
+import { useYourSay } from "./you-say"
 
 const T = data.timeline, S = data.scatter
 const time = day => Date.parse(`${day}T00:00:00Z`)
@@ -111,7 +113,15 @@ const PaceCloud = React.memo(function PaceCloud({ swarm, targets }) {
   </g>
 })
 
-export const RatingStory = ({ step, revealed = {} }) => {
+// The chart's legend: coloured tags under its title, one look for every chart.
+const Chips = ({ chips, extra }) => (
+  <div className={c("ch-ratingChips")} aria-hidden="true">
+    {chips.map(([tone, text, shown = true]) => <span key={tone + text} className={c("ch-ratingChip")} data-tone={tone} data-shown={shown ? "true" : "false"}>{text}</span>)}
+    {extra}
+  </div>
+)
+
+export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () => {} }) => {
   const box = React.useRef(null), canvas = React.useRef(null), steps = React.useContext(PinSteps)
   const [canvasTop, setCanvasTop] = React.useState(64)
   const [size, setSize] = React.useState({ width: 680, height: 460 })
@@ -121,6 +131,9 @@ export const RatingStory = ({ step, revealed = {} }) => {
   const still = useStill()
   const id = React.useId().replace(/:/g, "")
   const you = readerGap(useReader().chesscom)
+  // the reader's pace and resigning, from the games read at the hinge (you-say.js)
+  const yours = useYourSay()
+  const yourPace = yours?.pace?.seconds ?? null, yourResign = yours?.resign ?? null
   React.useLayoutEffect(() => {
     const scene = box.current.closest(`.${c("ch-scene")}`)
     const update = () => {
@@ -131,8 +144,9 @@ export const RatingStory = ({ step, revealed = {} }) => {
       // subtitle and readout (the words above say the same), so the rows stay
       // readable. The charts before them keep their size and legend.
       const compact = window.matchMedia("(max-width: 60rem)").matches && scene.clientHeight < 440
-      const fit = less => Math.min(520, Math.max(100, scene.clientHeight - less))
-      if (width) setSize({ width, compact, height: fit(218), tall: compact ? fit(112) : fit(218) })
+      const fit = (less, most = 600) => Math.min(most, Math.max(100, scene.clientHeight - less))
+      // the names and the lost games take the taller frame; the charts before them keep theirs
+      if (width) setSize({ width, compact, height: fit(150), tall: compact ? fit(112, 700) : fit(150, 700) })
     }
     const observer = new ResizeObserver(update)
     observer.observe(scene); observer.observe(box.current); update()
@@ -162,7 +176,10 @@ export const RatingStory = ({ step, revealed = {} }) => {
   // names beats take the taller frame; only the crowd uses the extra room.
   const left = w < 400 ? 35 : 44, right = w - 20, top = 36, bottom = size.height - 40, crowdBottom = h - 40
   const period = smooth(at - 3), morph = smooth(at - 4), out = smooth(at - 5)
-  const bridge = smooth((at - 7) / 0.4), enterPace = smooth((at - 7.4) / 0.6)
+  // scatter to pace, in one movement: first the other players go (7–7.3) and only the
+  // ones at my level stay, on the scatter's axes; they travel to their pace (7.1–7.85)
+  // as the scatter's axes go (7.3–7.6) and the pace chart's come in (7.45–7.85)
+  const bridge = smooth((at - 7.3) / 0.3), enterPace = smooth((at - 7.1) / 0.75), others = 1 - smooth((at - 7) / 0.3)
   const entry = smooth(at - 2)
   const zoomTime = smooth(period / 0.65)
   const minTime = mix(START, JULY, zoomTime), maxTime = mix(END, OCTOBER, zoomTime)
@@ -177,17 +194,18 @@ export const RatingStory = ({ step, revealed = {} }) => {
   const timelineOpacity = entry * (1 - smooth(morph / 0.45))
   const scatterOpacity = smooth((morph - 0.45) / 0.55) * (1 - smooth(bridge / 0.5))
   const crowdOpacity = smooth(out / 0.65)
-  const paceOpacity = smooth((enterPace - 0.2) / 0.6)
+  const paceOpacity = smooth((at - 7.45) / 0.4)
   const medianOpacity = smooth((period - 0.4) / 0.4) * (1 - bridge)
   const guideOpacity = medianOpacity * (1 - smooth(out / 0.7))
   const swarm = React.useMemo(() => packPace(w, left, right, 68, bottom - 12), [w, left, right, bottom])
   const paceY = (68 + bottom - 12) / 2
   const narrow = w < 560
-  const layout = React.useMemo(() => crowdLayout({ total: pace.peers.players, left, right, top: top + 14, bottom: crowdBottom, width: w }), [w, left, right, crowdBottom])
+  const withYou = Boolean(yourResign)
+  const layout = React.useMemo(() => crowdLayout({ total: pace.peers.players, left, right, top: top + 22, bottom: crowdBottom, width: w, you: withYou }), [w, left, right, crowdBottom, withYou])
   const revealKey = GROUPS.map(g => (revealed[g.key] ? 1 : 0)).join("")
-  const targets = React.useMemo(() => stage ? Array.from({ length: pace.peers.players }, (_, i) => dotAt(layout, i, { stage, step, revealed })) : null,
+  const targets = React.useMemo(() => stage ? Array.from({ length: pace.peers.players }, (_, i) => dotAt(layout, i, { stage, revealed, you: yourResign })) : null,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [layout, stage, step, revealKey])
+    [layout, stage, revealKey, yourResign])
   const revealDate = mix(time(T.bulletFirst), END, smooth((at - 2.35) / 0.65))
   const rapid = T.rapid.filter(q => time(q[0]) <= revealDate).at(-1)
   const bullet = T.bullet.filter(q => time(q[0]) <= revealDate).at(-1)
@@ -195,29 +213,32 @@ export const RatingStory = ({ step, revealed = {} }) => {
   let meX = mix(tx(bullet?.[0] || T.bulletFirst), medianX, period)
   let meY = mix(ty(bullet?.[1] || 700), ty(S.me[1]), period)
   meX = mix(meX, sx(S.me[0]), morph); meY = mix(meY, sy(S.me[1]), morph)
-  meX = mix(meX, (left + right) / 2, bridge); meY = mix(meY, (top + bottom) / 2, bridge)
   meX = mix(meX, px(pace.me.seconds), enterPace); meY = mix(meY, paceY, enterPace)
   // From the crowd on, the marker is placed by stage and carried by CSS.
   let meOpacity = entry
   if (stage === "crowd") { meX = (left + right) / 2; meY = (top + bottom) / 2 + 10 }
-  else if (stage === "me") { meX = layout.rx(MY_RAPID); meY = top + 4 }
-  else if (stage) { meX = stage === "giveup" ? meX : layout.rx(MY_RAPID); meY = stage === "giveup" ? meY : top + 4; meOpacity = 0 }
+  else if (stage === "me") { meX = layout.rx(MY_RAPID); meY = top + 20 }
+  else if (stage) { meX = layout.rx(MY_RAPID); meY = top + 20; meOpacity = 0 }
 
-  const mode = stage === "giveup" ? "giveup" : stage && stage !== "crowd" ? "names" : stage ? "crowd" : step >= 7 ? "pace" : step >= 4 ? "scatter" : "timeline"
-  const title = mode === "giveup" ? "How their games end" : mode === "names" ? "What their names say" : mode === "crowd" ? "The names across the board"
+  const mode = stage === "giveup" || stage === "us" ? "giveup" : stage && stage !== "crowd" ? "names" : stage ? "crowd" : step >= 7 ? "pace" : step >= 4 ? "scatter" : "timeline"
+  const title = stage === "us" ? "How our games end" : mode === "giveup" ? "How their games end" : mode === "names" ? "What their names say" : mode === "crowd" ? "The names across the board"
     : step === 3 ? "The same three months" : step === 4 ? "Two ratings. One player."
     : step === 5 ? "Me, among other players" : step === 6 ? "About where you'd expect"
-      : step === 7 ? "How fast do I actually move?" : step >= 8 ? "Ten-minute games" : "My ratings, on their own"
-  const subtitle = mode === "giveup" ? "Rapid games they lost · July–September" : mode === "names" ? "Rapid rating of opponents met · July–September"
-    : mode === "crowd" ? "Opponents met in rapid games · July–September" : step === 3 ? "July–September · median rating in each format" : step === 4 ? "Normal chess across. Fast chess up."
-    : step === 5 || step === 6 ? `${S.players.toLocaleString("en-GB")} players · July–September medians`
-      : step >= 7 ? `${pace.peers.players.toLocaleString("en-GB")} players at my level · July–September` : "2026 · last rating each day played"
-  const label = mode === "giveup" ? `Of 100 lost games, players whose names say they are bad resigned ${Math.round(GROUPS[0].resigned * 100)}; everyone else ${Math.round(NAMES.everyoneResigned * 100)}.`
+      : step >= 7 ? "How fast do I actually move?" : "My chess ratings"
+  const youChip = ["you", "You"]
+  const chips = mode === "giveup" ? [["crowd", "Resigned"], ["dim", "Ended otherwise"], ...(stage === "us" ? [["me", "Me"], ...(yourResign ? [youChip] : [])] : [])]
+    : mode === "names" ? (stage === "me" ? [["me", "Me"], ...(you ? [youChip] : [])] : [])
+      : mode === "crowd" ? []
+        : mode === "pace" ? [["me", "Me"], ["crowd", "Players at my level"], ...(yourPace !== null ? [youChip] : [])]
+          : step >= 5 ? [["me", "Me"], ["crowd", "Other players"], ...(you ? [youChip] : [])]
+            : [["rapid", "10-minute games"], ["bullet", "1-minute games", at >= 2.35]]
+  const resignWords = key => `${resignedOf(key, yourResign)} in 100`
+  const label = mode === "giveup" ? `Of 100 lost rapid games, players whose names say they are bad resigned ${resignWords("bad")}; everyone else ${resignWords("everyone")}.${stage === "us" ? ` Me: ${MY_RESIGN.resigned} of my ${MY_RESIGN.losses} losses.${yourResign ? ` You: ${yourResign.resigned} of your ${yourResign.losses}.` : ""}` : ""}`
     : mode === "names" ? `Rapid ratings by what usernames say, against a typical opponent at ${TYPICAL}. ${GROUPS.filter(g => revealed[g.key]).map(g => `${g.label}: median ${g.median}`).join(". ")}${stage === "me" ? ". My own rating sits next to the group that says it is bad." : ""}`
       : mode === "crowd" ? "The pace chart's axis goes; its dots become a crowd of other players, some wearing usernames."
-        : step >= 7 ? "My pace: 5 seconds per move. Typical peer: 7.7 seconds. Faster than 93% of a separate sample of peers."
-      : step >= 4 ? `Normal chess rating is horizontal; fast chess is vertical. ${step >= 5 ? "87% of sampled players are rated lower in fast chess." : ""} ${step === 6 ? "My gap is about typical at my level." : ""}`
-        : "My normal and fast chess ratings through 2026, shown without numerical rating labels."
+        : step >= 7 ? `My pace: 5 seconds per move. Typical peer: 7.7 seconds. Faster than 93% of a separate sample of peers.${yourPace !== null ? ` You, in green: ${yourPace} seconds.` : ""}`
+      : step >= 4 ? `10-minute rating is horizontal; 1-minute rating is vertical. ${step >= 5 ? "87% of sampled players are rated lower in 1-minute games." : ""} ${step === 6 ? "My gap is about typical at my level." : ""}`
+        : "My rating through 2026, last rating each day: 10-minute games, then 1-minute games from July."
   const fullLabel = you && (step === 5 || step === 6) ? `${label} You, in green: rapid ${you.rapid}, bullet ${you.bullet}, ${gapWords(you)}.` : label
   const chartStyle = { opacity: entry }
 
@@ -226,10 +247,12 @@ export const RatingStory = ({ step, revealed = {} }) => {
     <figure ref={box} className={c("ch-ratings")} data-mode={mode} data-compact={size.compact && stage ? "true" : undefined} data-still={still} data-rating-step={step}
       data-progress={at.toFixed(3)} data-focus={focus.toFixed(3)}>
       <div className={c("ch-ratingPhone")} aria-hidden={step >= 3} style={{ visibility: entry >= 1 ? "hidden" : "visible" }}>
-        <Message collapse={entry} target={{ x: tx(T.claim), y: top + canvasTop }} />
+        <Message collapse={entry} revealed={step >= 1} target={{ x: tx(T.claim), y: top + canvasTop }} />
       </div>
       <figcaption className={c("ch-ratingTitle")} style={chartStyle} aria-hidden={step < 2}>{title}</figcaption>
-      <p className={c("ch-ratingSubtitle")} style={chartStyle} aria-hidden={step < 2}>{subtitle}</p>
+      <div style={chartStyle}>
+        <Chips chips={chips} extra={mode === "names" ? <NameScore guesses={guesses} /> : null} />
+      </div>
       <svg ref={canvas} className={c("ch-ratingCanvas")} width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={fullLabel} aria-hidden={step < 2}>
         <defs>
           <g id={`${id}-player`}><circle r={w < 400 ? 1.35 : 1.8}
@@ -238,7 +261,8 @@ export const RatingStory = ({ step, revealed = {} }) => {
           <clipPath id={`${id}-reveal`}><rect x={left} y={top - 10} width={Math.max(0, Math.min(right, tx(revealDate)) - left)} height={bottom - top + 10} /></clipPath>
         </defs>
         <g opacity={timelineOpacity} aria-hidden="true" data-layer="timeline">
-          {[200, 400, 600, 800, 1000].map(v => <g key={v}><line className={c("ch-ratingGrid")} x1={left} x2={right} y1={ty(v)} y2={ty(v)} /></g>)}
+          {/* no grid and no rating numbers: the two lines and the gap between them are the point */}
+          <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={bottom} y2={bottom} />
           <g clipPath={`url(#${id}-plot)`}>
             <rect className={c("ch-ratingWindow")} opacity={period * 0.14} x={tx(JULY)} y={top} width={tx(OCTOBER) - tx(JULY)} height={bottom - top} />
             <g clipPath={`url(#${id}-reveal)`} opacity={1 - period * 0.85}>
@@ -253,11 +277,11 @@ export const RatingStory = ({ step, revealed = {} }) => {
           </g>
           {[1, 3, 5, 7, 8, 9, 10, 11].map(m => {
             const x = tx(`2026-${String(m).padStart(2, "0")}-01`)
-            return x >= left - 2 && x <= right + 2 && (period > 0.3 || m % 2) ? <text key={m} x={x} y={bottom + 22} textAnchor="middle">{["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov"][m - 1]}</text> : null
+            return x >= left - 2 && x <= right + 2 && (period > 0.3 || m % 2) ? <text key={m} x={x} y={bottom + 22} textAnchor="middle">{["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov"][m - 1]}{m === 1 ? " 2026" : ""}</text> : null
           })}
           <g opacity={1 - period}>
-            {rapid && <text x={right} y={ty(rapid[1]) - 11} textAnchor="end" className={c("ch-ratingPale")}>Normal chess (rapid)</text>}
-            {bullet && <text x={right} y={ty(bullet[1]) + 18} textAnchor="end" className={c("ch-ratingClay")}>Fast chess (bullet)</text>}
+            {rapid && <text x={right} y={ty(rapid[1]) - 11} textAnchor="end" className={c("ch-ratingPale")}>10-minute</text>}
+            {bullet && <text x={right} y={ty(bullet[1]) + 18} textAnchor="end" className={c("ch-ratingClay")}>1-minute</text>}
             <path className={c("ch-ratingGap")} opacity={smooth(at - 2)} d={`M${right - 18} ${ty(T.rapid.at(-1)[1])} h8 V${ty(T.bullet.at(-1)[1])} h-8`} />
           </g>
         </g>
@@ -271,17 +295,17 @@ export const RatingStory = ({ step, revealed = {} }) => {
               {y >= top - 1 && y <= bottom + 1 && <g opacity={yAlpha}><line className={c("ch-ratingGrid")} x1={left} x2={right} y1={y} y2={y} /><text x={left - 8} y={y + 4} textAnchor="end">{v}</text></g>}
             </g>
           })}
-          <text x={left} y={16}>Fast chess (bullet)</text><text x={(left + right) / 2} y={h - 1} textAnchor="middle">Normal chess (rapid)</text>
+          <text x={left} y={16}>1-minute rating ↑</text><text x={right} y={bottom + 22 + 16} textAnchor="end">10-minute rating →</text>
           <g clipPath={`url(#${id}-plot)`}>
             <g transform={`matrix(${(right - left) / (xMax - xMin)},0,0,${(bottom - top) / (yMax - yMin)},${left - xMin * (right - left) / (xMax - xMin)},${bottom + yMin * (bottom - top) / (yMax - yMin)})`}>
               <line x1={0} y1={0} x2={3000} y2={-3000} className={c("ch-ratingRef")} vectorEffect="non-scaling-stroke" />
-              <g opacity={crowdOpacity} data-highlight={step === 5 ? "lower" : step === 6 ? "near" : "none"}><RatingCloud dot={`${id}-player`} /></g>
-              <path className={c("ch-ratingTypical")} opacity={focus} vectorEffect="non-scaling-stroke" pathLength={1}
+              <g opacity={crowdOpacity * others} data-highlight={step === 5 ? "lower" : step >= 6 ? "near" : "none"}><RatingCloud dot={`${id}-player`} /></g>
+              <path className={c("ch-ratingTypical")} opacity={focus * others} vectorEffect="non-scaling-stroke" pathLength={1}
                 strokeDasharray="1 1" strokeDashoffset={1 - focus} d={path(S.curve.map(q => [q.rapid, -q.bullet]))} />
             </g>
           </g>
-          <text opacity={crowdOpacity * (1 - focus)} x={sx(1800)} y={sy(1800) - 12} textAnchor="middle">Same in both</text>
-          <g opacity={focus}>
+          <text opacity={crowdOpacity * (1 - focus) * others} x={sx(1800)} y={sy(1800) - 12} textAnchor="middle">Same in both</text>
+          <g opacity={focus * others}>
             <circle cx={sx(S.me[0])} cy={sy(EXPECTED)} r={4} className={c("ch-ratingExpected")} />
             <path className={c("ch-ratingRef")} d={`M${sx(S.me[0])} ${sy(EXPECTED)} h${Math.min(60, w * 0.1)}`} />
             <text x={sx(S.me[0]) + Math.min(60, w * 0.1) + 5} y={sy(EXPECTED) + 4}>Typical at my level</text>
@@ -296,7 +320,7 @@ export const RatingStory = ({ step, revealed = {} }) => {
             const flip = cx > right - 70
             // "Me" is labelled above to the right: near it, "You" goes below.
             const below = cy < top + 20 || Math.hypot(cx - sx(S.me[0]), cy - sy(S.me[1])) < 48
-            return <g className={c("ch-ratingYou")} opacity={crowdOpacity} data-off={off ? "true" : "false"}>
+            return <g className={c("ch-ratingYou")} opacity={crowdOpacity * (yourPace !== null ? 1 - smooth((at - 7) / 0.15) : 1)} data-off={off ? "true" : "false"}>
               <circle cx={cx} cy={cy} r={off ? 4 : 6} data-dot="you" />
               <text x={flip ? cx - 10 : cx + 10} y={cy + (below ? 18 : -10)} textAnchor={flip ? "end" : undefined}>
                 {off ? `You ${ARROWS[`${dx},${dy}`]}` : "You"}
@@ -309,41 +333,53 @@ export const RatingStory = ({ step, revealed = {} }) => {
           <line className={c("ch-ratingRapid")} x1={mix(left, sx(S.me[0]), morph)} x2={mix(right, sx(S.me[0]), morph)}
             y1={mix(ty(S.me[0]), bottom, morph)} y2={mix(ty(S.me[0]), top, morph)} />
           <line className={c("ch-ratingBullet")} x1={left} x2={right} y1={mix(ty(S.me[1]), sy(S.me[1]), morph)} y2={mix(ty(S.me[1]), sy(S.me[1]), morph)} />
-          <text className={c("ch-ratingPale")} x={mix(left + 8, sx(S.me[0]) + 8, morph)} y={mix(ty(S.me[0]) - 12, bottom - 12, morph)}>Normal chess</text>
-          <text className={c("ch-ratingClay")} x={left + 8} y={mix(ty(S.me[1]), sy(S.me[1]), morph) - 12}>Fast chess</text>
+          <text className={c("ch-ratingPale")} x={mix(left + 8, sx(S.me[0]) + 8, morph)} y={mix(ty(S.me[0]) - 12, bottom - 12, morph)}>10-minute</text>
+          <text className={c("ch-ratingClay")} x={left + 8} y={mix(ty(S.me[1]), sy(S.me[1]), morph) - 12}>1-minute</text>
         </g>
         <g opacity={paceOpacity} aria-hidden="true" data-layer="pace-dots" data-highlight={step === 8}>
           <PaceCloud swarm={swarm} targets={targets} />
         </g>
         <g aria-hidden="true" data-layer="pace" className={c("ch-crowdFade")} data-settled={step >= 8 ? "true" : undefined} style={{ opacity: stage ? 0 : paceOpacity }}>
-          <text x={left} y={16}>Seconds per move · one dot, one peer</text>
           <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={bottom} y2={bottom} />
           {[0, 5, 10, 15].map(v => <text key={v} x={px(v)} y={bottom + 22} textAnchor="middle">{v}s</text>)}
-          <text x={left} y={h - 1}>Faster</text><text x={right} y={h - 1} textAnchor="end">Slower</text>
+          <text x={right} y={bottom + 22 + 16} textAnchor="end">Seconds per move →</text>
           <line className={c("ch-ratingRef")} x1={px(pace.peers.median)} x2={px(pace.peers.median)} y1={57} y2={bottom - 8} />
-          <text x={px(pace.peers.median) + 8} y={49}>Typical · 7.7s</text>
+          <text x={px(pace.peers.median) + 8} y={49}>Typical · {pace.peers.median}s</text>
           <line className={c("ch-paceMeLine")} x1={px(pace.me.seconds)} x2={px(pace.me.seconds)} y1={35} y2={bottom - 8} />
-          <text className={c("ch-ratingClay")} x={px(pace.me.seconds) - 8} y={27} textAnchor="end">Me · 5.0s</text>
+          <text className={c("ch-ratingClay")} x={px(pace.me.seconds) - 8} y={27} textAnchor="end">Me · {pace.me.seconds}s</text>
         </g>
+        {yourPace !== null && !stage ? (() => {
+          // the reader, travelling from their place on the scatter to their pace
+          const fromX = Math.max(left + 6, Math.min(right - 6, sx(you?.rapid ?? 0))), fromY = Math.max(top + 6, Math.min(bottom - 6, sy(you?.bullet ?? 0)))
+          const toX = Math.max(left + 4, Math.min(right - 4, px(yourPace)))
+          const x = mix(fromX, toX, enterPace), y = mix(fromY, paceY, enterPace)
+          const flip = toX > right - 90
+          return <g className={c("ch-ratingYou")} aria-hidden="true" data-layer="pace-you" style={{ opacity: at < 7 ? 0 : 1 }}>
+            <line className={c("ch-paceYouLine")} x1={toX} x2={toX} y1={35} y2={bottom - 8} opacity={paceOpacity} />
+            <text x={toX + (flip ? -8 : 8)} y={27} textAnchor={flip ? "end" : undefined} opacity={paceOpacity}>You · {yourPace}s{px(yourPace) > right ? " →" : ""}</text>
+            <circle cx={x} cy={y} r={6} data-dot="you" />
+          </g>
+        })() : null}
         {/* These are the same source players in both charts, never an arbitrary pairing. */}
         <g clipPath={`url(#${id}-plot)`} aria-hidden="true" data-layer="linked-peers"
           opacity={smooth((morph - 0.45) / 0.55) * crowdOpacity}>
           {swarm.points.filter(q => q.scatterIndex !== null).map(q => {
             const [rapid, bullet] = S.points[q.scatterIndex]
             const alpha = step >= 8 ? (q.seconds > pace.me.seconds ? 1 : 0.3)
-              : step >= 7 ? 0.7 : step === 6 ? (Math.abs(rapid - S.me[0]) <= 100 ? 0.85 : 0.2)
+              : step >= 7 ? 0.85 : step === 6 ? (Math.abs(rapid - S.me[0]) <= 100 ? 0.85 : 0.2)
                 : step === 5 ? (bullet < rapid ? 0.9 : 0.18) : 0.65
             const t = targets?.[q.index]
             if (t) return <circle key={q.scatterIndex} data-linked-peer="true" data-scatter-index={q.scatterIndex} data-pace-index={q.index}
               className={c("ch-crowdDot")} data-tone={t.tone} r={t.r ?? swarm.radius} cx={q.x} cy={q.y} style={crowdStyle(t, q.x, q.y, q.index)} />
             const fill = step >= 8 && q.seconds > pace.me.seconds ? "var(--ink)"
-              : step === 6 && Math.abs(rapid - S.me[0]) <= 100 || step === 5 && bullet < rapid ? "var(--ink-2)" : "var(--ink-3)"
+              : step === 7 || step === 6 && Math.abs(rapid - S.me[0]) <= 100 || step === 5 && bullet < rapid ? "var(--ink-2)" : "var(--ink-3)"
             return <circle key={q.scatterIndex} data-linked-peer="true" data-scatter-index={q.scatterIndex} data-pace-index={q.index}
               r={mix(w < 400 ? 1.35 : 1.8, swarm.radius, enterPace)} fill={fill} opacity={alpha}
               cx={mix(sx(rapid), q.x, enterPace)} cy={mix(sy(bullet), q.y, enterPace)} className={c("ch-crowdDot")} data-settled={step >= 8 ? "true" : undefined} />
           })}
         </g>
-        <CrowdMarks layout={layout} stage={stage} step={step} revealed={revealed} left={left} right={right} top={top + 14} bottom={crowdBottom} h={h} narrow={narrow} />
+        <CrowdMarks layout={layout} stage={stage} revealed={revealed} guesses={guesses} you={yourResign} yourRating={you?.rapid}
+          left={left} right={right} top={top + 22} bottom={crowdBottom} />
         {/* One author marker, retained from the timeline through the pace plot, into the crowd, and next to the names. */}
         <g className={c("ch-ratingMe")} data-author-marker="true" data-settled={step >= 8 ? "true" : undefined}
           style={{ transform: `translate(${meX}px, ${meY}px)`, opacity: meOpacity }} aria-hidden="true">
@@ -352,27 +388,7 @@ export const RatingStory = ({ step, revealed = {} }) => {
             opacity={stage === "crowd" || stage === "me" ? 1 : smooth(morph / 0.6) * (1 - enterPace)}>Me</text>
         </g>
       </svg>
-      <div className={c("ch-ratingLegend")} aria-hidden={step < 2 || step >= 7} style={{ ...chartStyle, visibility: step >= 7 ? "hidden" : undefined }}>
-        <span><i />Normal chess (rapid) — 10 minutes per player.</span>
-        <span><i />Fast chess (bullet) — 1 minute per player.</span>
-      </div>
-      <div className={c("ch-ratingReadout")} style={chartStyle} aria-hidden={step < 2}>
-        {mode === "giveup" ? <span><b className={c("ch-crowdResignText")}>{Math.round(GROUPS[0].resigned * 100)}</b> against {Math.round(NAMES.everyoneResigned * 100)} resigned, in every 100 losses</span>
-          : stage === "me" ? <span><b>Me</b>, right next to badatchess…</span>
-          : mode === "names" ? <span>A typical opponent is rated {TYPICAL}: half above, half below</span>
-          : mode === "crowd" ? <span>Usernames come with claims</span>
-          : step >= 8 ? <span>Faster than <b>9 in 10</b> players at my level</span>
-          : step === 7 ? <span>Me <b>5 seconds</b> · typical peer 7.7 seconds per move</span>
-            : step === 6 ? <span>My gap is about typical at my level</span>
-              : step === 5 ? <span><b>87%</b> are rated lower in fast chess</span>
-                : <span>July–September · the same period in both formats</span>}
-        {you && (step === 5 || step === 6) && !stage ? (
-          <span className={c("ch-ratingYouText")}>
-            You: {gapWords(you)}
-            {step === 6 && you.typical !== null ? ` · typical at your level: ${points(you.typical - you.rapid)} ${you.typical <= you.rapid ? "lower" : "higher"}` : ""}
-          </span>
-        ) : null}
-      </div>
+      <NameButtons bands={layout.bands} guesses={guesses} onGuess={onGuess} open={stage === "rows"} top={canvasTop} narrow={narrow} />
       <div className={c("ch-ratingTools")} style={chartStyle} inert={step < 2} aria-hidden={step < 2}>
         <div className={c("ch-ratingExplore")} inert={step !== 6} aria-hidden={step !== 6} data-visible={step === 6}>
           <div role="group" aria-label="Rating chart view" className={c("ch-ratingViews")}>

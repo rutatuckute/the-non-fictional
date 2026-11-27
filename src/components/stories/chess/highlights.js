@@ -30,9 +30,8 @@ const HIGHLIGHTS = {
   "say-pace": [["5 seconds per move", "me"]],
   "say-hurry": [["9 in 10", "crowd"]],
   "say-guess": [["higher or lower", "you"]],
-  "say-surprise": [["say they’re good", "other2"], ["say they’re bad", "other"]],
   "say-me": [["And me?", "me"]],
-  "say-giveup": [["quicker to give up", "other"]],
+  "say-giveup": [["quicker to give up", "crowd"]],
 
   "wrong-decide": [["Would you resign?", "you"]],
   "wrong-guess": [["you think", "you"]],

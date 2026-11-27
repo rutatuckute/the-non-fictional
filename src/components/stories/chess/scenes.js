@@ -6,7 +6,6 @@ import { CLUB_REST, ClubBoard } from "./club"
 import { Dive } from "./dive"
 import { c, Pinned, Show, Text, useNarrow } from "./parts"
 import { RatingStory } from "./ratings"
-import { NameAsks, NameScore } from "./say"
 import { useReader, useTell } from "./reader"
 import { YouOnChessCom } from "./you"
 import { GROUPS, crowdStage } from "./crowd"
@@ -173,7 +172,7 @@ export const People = () => {
 // graphic, as everywhere since Part I.
 // Reserve the tallest passage above the chart on phones. Measuring all passages
 // keeps the graphic in one place as the words change, including at larger text sizes.
-const SayGraphics = ({ step, revealed }) => {
+const SayGraphics = ({ step, revealed, guesses, onGuess }) => {
   const box = React.useRef(null)
   const narrow = useNarrow()
   React.useLayoutEffect(() => {
@@ -187,7 +186,7 @@ const SayGraphics = ({ step, revealed }) => {
   }, [narrow])
   return (
     <div ref={box} className={c("ch-stack", "ch-sayGraphics")}>
-      <RatingStory step={step} revealed={revealed} />
+      <RatingStory step={step} revealed={revealed} guesses={guesses} onGuess={onGuess} />
     </div>
   )
 }
@@ -217,18 +216,19 @@ export const Say = () => {
           { text: <Text name="say-pace" look="lead" /> },
           { text: <Text name="say-hurry" look="lead" />, rest: 0.25 },
           { text: <Text name="say-others" look="lead" className={c("ch-messageCopy")} />, rest: 0.3, anchor: "what-names-say" },
-          { text: <><Text name="say-guess" look="lead" /><NameAsks guesses={guesses} onChange={guess} /></>, rest: 0.2 },
-          { text: <><NameScore guesses={guesses} /><Text name="say-surprise" look="lead" /></>, rest: 0.1 },
-          { text: <Text name="say-road" look="lead" /> },
+          // the guesses are on the chart itself (say.js), beside each row
+          { text: <Text name="say-guess" look="lead" />, rest: 0.6 },
           { text: <Text name="say-me" look="lead" />, rest: 0.15 },
-          { text: <Text name="say-giveup" look="lead" />, rest: 0.35 },
+          { text: <Text name="say-giveup" look="lead" />, rest: 0.2 },
+          // the hundred lost games become hers, and the reader's (words: the owner's, to come)
+          { text: <Text name="say-giveup-us" look="lead" />, rest: 0.35 },
         ]}
       >
         {step => {
           // A row opens when its guess is made, and every row once the result is read.
-          const all = ["all", "me", "giveup"].includes(crowdStage(step))
+          const all = ["me", "giveup", "us"].includes(crowdStage(step))
           const revealed = Object.fromEntries(GROUPS.map(g => [g.key, all || Boolean(guesses[g.key])]))
-          return <SayGraphics step={step} revealed={revealed} />
+          return <SayGraphics step={step} revealed={revealed} guesses={guesses} onGuess={guess} />
         }}
       </Pinned>
     </section>

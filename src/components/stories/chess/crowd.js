@@ -6,29 +6,29 @@ import { c } from "./parts"
 import say from "./say.json"
 
 // After the pace chart, its 1,252 dots stay on stage. They first lose their
-// axis and become a crowd of other players, then sort into rows by what their
-// usernames say, then (the last beat) a hundred of them become lost games.
+// axis and become a crowd of other players, then four rows of them sort out by
+// what their usernames say (a guessing game: each row waits as a pile on the
+// typical opponent's line until the reader says lower or higher), then the
+// lost games: a hundred for those who say they are bad, a hundred for everyone
+// else, and last, hers and the reader's.
 // The dots of the pace chart are not the people of the username rows: the
 // axis goes first, so a dot means nothing in particular before it means
-// something new. Groups are drawn at one dot for ten players; "everyone else"
-// is the shape of 1.4 million players, drawn with the dots that are left.
+// something new. Rows are drawn at one dot for ten players.
 
 export const NAMES = say.names
 export const GROUPS = NAMES.groups
 export const TYPICAL = NAMES.typical
 export const MY_RAPID = say.fast.rapid
+export const MY_RESIGN = NAMES.me
 export const RATING_MAX = 2500
-export const RESIGN = "#3d8bff"
 
-export const truth = g => (g.high < 0.5 ? "lower" : g.low > 0.5 ? "higher" : "same")
+// Every kind is clearly lower or clearly higher than a typical opponent.
+export const truth = g => (g.high < 0.5 ? "lower" : "higher")
 
 // From the steps of the "what we say" scene (scenes.js) to what the crowd shows:
-// step 9 the crowd, 10 the guesses (all four kinds at once), 11 the result,
-// 12 the jokers and the road to GM, 13 me, 14 the hundred lost games.
+// step 9 the crowd, 10 the guesses, 11 every row and me, 12 the lost games, 13 ours.
 export const crowdStage = step =>
-  step >= 14 ? "giveup" : step >= 13 ? "me" : step >= 11 ? "all" : step >= 10 ? "rows" : step >= 9 ? "crowd" : null
-export const activeGroups = step =>
-  step === 10 ? GROUPS.map(g => g.key) : step === 11 ? ["bad", "good"] : step === 12 ? ["jokes", "aims"] : step === 13 ? ["bad"] : []
+  step >= 13 ? "us" : step >= 12 ? "giveup" : step >= 11 ? "me" : step >= 10 ? "rows" : step >= 9 ? "crowd" : null
 
 const random = seed => () => {
   seed |= 0; seed = (seed + 0x6d2b79f5) | 0
@@ -43,8 +43,9 @@ const between = (spread, p) => {
 // n evenly spaced values with the group's shape: nobody's rating, the group's spread.
 const sample = (spread, n) => Array.from({ length: n }, (_, i) => between(spread, (i + 0.5) / n))
 
-// Which pace dot goes to which row: a fixed shuffle, so each row is drawn from
-// the whole swarm and the sorting reads as a crowd pulling apart.
+// Which pace dot goes where: a fixed shuffle, so each row is drawn from the
+// whole swarm and the sorting reads as a crowd pulling apart. The dots no row
+// takes wait, unseen, for the lost games.
 export const assignRows = total => {
   const order = Array.from({ length: total }, (_, i) => i)
   const next = random(2026)
@@ -56,8 +57,7 @@ export const assignRows = total => {
     rows.push({ key: g.key, group: g, indices: order.slice(at, at + n) })
     at += n
   }
-  rows.unshift({ key: "everyone", group: null, indices: order.slice(at) })
-  return rows
+  return { rows, spare: order.slice(at) }
 }
 
 // A beeswarm in a band: x is the value, y only keeps dots apart.
@@ -81,11 +81,32 @@ const pack = (xs, radius, top, bottom) => {
   return out.map(q => ({ x: q.x, y: centre + (q.y - centre) * squeeze }))
 }
 
+// Squares of ten by ten for lost games, side by side (two by two on a narrow
+// frame when there are four).
+const grids = (keys, { left, right, top, bottom, narrow }) => {
+  const n = keys.length
+  const cols = n === 4 && narrow ? 2 : n
+  const lines = Math.ceil(n / cols)
+  const head = narrow ? 44 : 58, foot = 26
+  const cell = Math.max(5, Math.min(22, (right - left) / (cols * 10 + (cols - 1) * 3), (bottom - top - lines * (head + foot)) / (lines * 10)))
+  const gap = cell * 3
+  const width = cols * cell * 10 + (cols - 1) * gap
+  const height = lines * (head + cell * 10 + foot)
+  const x0 = (left + right) / 2 - width / 2, y0 = top + Math.max(0, (bottom - top - height) / 2)
+  return Object.fromEntries(keys.map((key, k) => {
+    const x = x0 + (k % cols) * (cell * 10 + gap), y = y0 + Math.floor(k / cols) * (head + cell * 10 + foot) + head
+    return [key, { key, x, y, cell, width: cell * 10, head }]
+  }))
+}
+const cellAt = (g, i) => ({ x: g.x + (i % 10) * g.cell + g.cell / 2, y: g.y + Math.floor(i / 10) * g.cell + g.cell / 2 })
+
 // Everything the crowd needs for a frame size: positions per pace index.
-export const crowdLayout = ({ total, left, right, top, bottom, width }) => {
-  const rows = assignRows(total)
+export const crowdLayout = ({ total, left, right, top, bottom, width, you }) => {
+  const { rows, spare } = assignRows(total)
+  const narrow = width < 560
   const radius = width < 400 ? 1 : 1.6
   const rx = v => left + (Math.min(RATING_MAX, Math.max(0, v)) / RATING_MAX) * (right - left)
+  const typicalX = rx(TYPICAL)
 
   // the crowd: a loose oval, no axis
   const next = random(7)
@@ -96,49 +117,41 @@ export const crowdLayout = ({ total, left, right, top, bottom, width }) => {
     return { x: cx + Math.cos(a) * r * ax, y: cy + Math.sin(a) * r * ay }
   })
 
-  // the rows
+  // the rows: a name above, the dots under it
   const rowH = (bottom - top) / rows.length
   const shown = new Array(total), waiting = new Array(total), rowOf = new Array(total)
   const bands = rows.map((row, k) => {
     const rowTop = top + k * rowH
-    const bandTop = rowTop + Math.min(22, rowH * 0.34), bandBottom = rowTop + rowH - 4
-    const values = sample(row.group ? row.group.spread : NAMES.everyoneSpread, row.indices.length)
+    const bandTop = rowTop + Math.min(30, rowH * 0.3), bandBottom = rowTop + rowH - 10
+    const values = sample(row.group.spread, row.indices.length)
     const spots = pack(values.map(rx), radius, bandTop, bandBottom)
-    // before a guess: a neat pile at the start of the row, saying nothing
-    // tighter on a small frame, so a pile never runs past half the row
-    let d = radius * 2 + 1.2, perColumn = 1
-    for (; d > radius * 1.3; d -= 0.1) {
-      perColumn = Math.max(1, Math.floor((bandBottom - bandTop) / d))
-      if (Math.ceil(row.indices.length / perColumn) * d <= (right - left) * 0.5) break
-    }
+    // before the guess: a tight pile on the typical opponent's line, saying nothing yet
+    const d = radius * 2 + 0.9
+    const perColumn = Math.max(1, Math.floor((bandBottom - bandTop) / d))
+    const columns = Math.ceil(row.indices.length / perColumn)
+    const pileLeft = typicalX - (columns * d) / 2
     row.indices.forEach((index, i) => {
       shown[index] = spots[i]
-      waiting[index] = { x: left + Math.floor(i / perColumn) * d + radius, y: bandTop + (i % perColumn) * d + radius }
+      waiting[index] = { x: pileLeft + Math.floor(i / perColumn) * d + radius, y: bandTop + (i % perColumn) * d + radius }
       rowOf[index] = row.key
     })
-    const pileEnd = left + Math.ceil(row.indices.length / perColumn) * d
-    return { key: row.key, group: row.group, top: rowTop, bandTop, bandBottom, pileEnd }
+    return { key: row.key, group: row.group, top: rowTop, bandTop, bandBottom, pileLeft, pileRight: pileLeft + columns * d }
   })
 
-  // the last beat: a hundred lost games each, two squares of ten by ten
-  const cell = Math.max(6, Math.min(24, (right - left) / 25, (bottom - top - 90) / 10))
-  const gap = cell * 3
-  const gridTop = top + Math.max(40, (bottom - top - cell * 10 - 40) / 2)
-  const gridLeft = [cx - gap / 2 - cell * 10, cx + gap / 2]
-  const grid = new Array(total).fill(null)
-  const giveUp = [
-    { key: "bad", label: "Says it is bad", share: GROUPS.find(g => g.key === "bad").resigned },
-    { key: "everyone", label: "Everyone else", share: NAMES.everyoneResigned },
-  ].map((g, k) => {
-    const indices = rows.find(r => r.key === g.key).indices.slice(0, 100)
-    const resigned = Math.round(g.share * 100)
-    indices.forEach((index, i) => {
-      grid[index] = { x: gridLeft[k] + (i % 10) * cell + cell / 2, y: gridTop + Math.floor(i / 10) * cell + cell / 2, resigned: i < resigned }
-    })
-    return { ...g, resigned, x: gridLeft[k], width: cell * 10 }
-  })
+  // the lost games: first two squares, then (with hers, and the reader's) three or four
+  const frame = { left, right, top, bottom, narrow }
+  const first = grids(["bad", "everyone"], frame)
+  const ours = grids(you ? ["bad", "everyone", "me", "you"] : ["bad", "everyone", "me"], frame)
+  const pools = {
+    bad: rows.find(r => r.key === "bad").indices.slice(0, 100),
+    everyone: spare.slice(0, 100),
+    me: spare.slice(100, 200),
+    you: spare.slice(200, 300),
+  }
+  const lostAt = new Array(total).fill(null)
+  for (const [key, indices] of Object.entries(pools)) indices.forEach((index, i) => { lostAt[index] = { key, i } })
 
-  // four dots wear a name in the crowd, one per group
+  // four dots wear a name in the crowd, one per kind
   const anchors = [[0.3, 0.32], [0.72, 0.3], [0.28, 0.7], [0.7, 0.72]]
   const tags = GROUPS.map((g, k) => {
     const [fx, fy] = anchors[k]
@@ -149,37 +162,51 @@ export const crowdLayout = ({ total, left, right, top, bottom, width }) => {
     return { key: g.key, name: g.examples[0], index, ...crowd[index] }
   })
 
-  return { rows, bands, crowd, shown, waiting, rowOf, grid, giveUp, gridTop, cell, tags, rx, radius }
+  return { rows, bands, crowd, shown, waiting, rowOf, lostAt, first, ours, tags, rx, radius, typicalX, narrow }
 }
+
+// How many of a hundred lost games each square lights: resigned.
+export const resignedOf = (key, you) => Math.round(
+  key === "bad" ? GROUPS.find(g => g.key === "bad").resigned * 100
+    : key === "everyone" ? NAMES.everyoneResigned * 100
+      : key === "me" ? (MY_RESIGN.resigned / MY_RESIGN.losses) * 100
+        : (you?.share ?? 0) * 100)
 
 // Where one dot is, and how it looks, at a stage.
-export const dotAt = (layout, index, { stage, step, revealed }) => {
+export const dotAt = (layout, index, { stage, revealed, you }) => {
   if (!layout || !stage) return null
   if (stage === "crowd") return { ...layout.crowd[index], opacity: 0.55, tone: "quiet" }
-  if (stage === "giveup") {
-    const g = layout.grid[index]
-    return g ? { x: g.x, y: g.y, opacity: 1, tone: g.resigned ? "resign" : "kept", r: layout.cell * 0.3 } : { ...layout.shown[index], opacity: 0, tone: "quiet" }
+  const lost = layout.lostAt[index]
+  if (stage === "giveup" || stage === "us") {
+    const squares = stage === "us" ? layout.ours : layout.first
+    const g = lost && squares[lost.key]
+    if (!g) {
+      // hers and the reader's wait, unseen, at the middle of their square-to-be
+      const later = lost && layout.ours[lost.key]
+      if (later) return { x: later.x + later.width / 2, y: later.y + later.width / 2, opacity: 0, tone: "kept", r: 0.5 }
+      const at = layout.rowOf[index] ? layout.shown[index] : layout.crowd[index]
+      return { ...at, opacity: 0, tone: "quiet" }
+    }
+    const lit = lost.i < resignedOf(lost.key, you)
+    const tone = !lit ? "kept" : lost.key === "me" ? "me" : lost.key === "you" ? "you" : "resign"
+    return { ...cellAt(g, lost.i), opacity: 1, tone, r: g.cell * 0.32 }
   }
   const key = layout.rowOf[index]
-  const active = activeGroups(step)
-  if (key === "everyone") return { ...layout.shown[index], opacity: active.length ? 0.38 : 0.6, tone: "quiet" }
-  if (!revealed[key]) return { ...layout.waiting[index], opacity: active.includes(key) ? 0.75 : 0.4, tone: "quiet" }
-  // the two claims have a hue: saying it is bad is blue, saying it is good is gold; the others stay ivory
-  return { ...layout.shown[index], opacity: !active.length || active.includes(key) ? 0.95 : 0.4, tone: HUE[key] || (active.includes(key) ? "lit" : "plain") }
+  if (!key) return { ...layout.crowd[index], opacity: 0, tone: "quiet" }
+  if (!revealed[key]) return { ...layout.waiting[index], opacity: 0.45, tone: "quiet" }
+  return { ...layout.shown[index], opacity: 0.9, tone: "plain" }
 }
 
-const median = g => g.median
-const HUE = { bad: "blue", good: "gold" }
-
 // The words and lines drawn over the dots: the tags, the rows, the typical
-// line, the medians, me, and the two squares of the last beat.
-export const CrowdMarks = ({ layout, stage, step, revealed, left, right, top, bottom, h, narrow }) => {
+// line, me and the reader, and the squares of lost games.
+export const CrowdMarks = ({ layout, stage, revealed, guesses = {}, you, yourRating, left, right, top, bottom }) => {
   if (!layout) return null
-  const { rx, bands, tags, giveUp, gridTop, cell } = layout
-  const on = (yes, extra = {}) => ({ style: { opacity: yes ? 1 : 0, ...extra.style }, "aria-hidden": "true" })
-  const rowsOn = stage === "rows" || stage === "all" || stage === "me"
-  const active = activeGroups(step)
-  const ticks = [0, 500, 1000, 1500, 2000, 2500]
+  const { rx, bands, tags, typicalX, narrow } = layout
+  const on = yes => ({ style: { opacity: yes ? 1 : 0 }, "aria-hidden": "true" })
+  const rowsOn = stage === "rows" || stage === "me"
+  const ticks = [0, 1000, 2000]
+  const squares = stage === "us" ? layout.ours : layout.first
+  const LABEL = { bad: "Says it is bad", everyone: "Everyone else", me: "Me", you: "You" }
   return (
     <g className={c("ch-crowdMarks")}>
       <g {...on(stage === "crowd")}>
@@ -197,27 +224,30 @@ export const CrowdMarks = ({ layout, stage, step, revealed, left, right, top, bo
       </g>
       <g {...on(rowsOn)}>
         {ticks.map(v => <text key={v} x={rx(v)} y={bottom + 22} textAnchor="middle">{v.toLocaleString("en-GB")}</text>)}
-        <text x={right} y={h - 1} textAnchor="end">Rapid rating</text>
+        <text x={right} y={bottom + 38} textAnchor="end">Rapid rating →</text>
         <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={bottom} y2={bottom} />
-        <line className={c("ch-crowdTypical")} x1={rx(TYPICAL)} x2={rx(TYPICAL)} y1={top - 6} y2={bottom} />
-        <text x={rx(TYPICAL) + 6} y={top - 10}>Typical opponent · {TYPICAL}</text>
+        {bands.map(b => <line key={b.key} className={c("ch-crowdTypical")} x1={typicalX} x2={typicalX} y1={b.bandTop - 6} y2={b.bandBottom + 6} />)}
+        <text x={typicalX} y={top - 26} textAnchor="middle">Typical opponent ↓</text>
         {bands.map(b => {
           const g = b.group
-          const lit = g && active.includes(g.key)
-          const open = !g || revealed[g.key]
+          const open = revealed[g.key]
+          const guess = guesses[g.key]
+          const right_ = open && guess ? guess === truth(g) : null
+          const median = rx(g.median)
           return (
-            <g key={b.key} data-lit={lit ? "true" : undefined} className={c("ch-crowdRow")}>
-              {g && HUE[g.key] && !narrow ? <circle cx={left - 9} cy={b.top + 8} r={3.5} className={c(HUE[g.key] === "blue" ? "ch-hueBlue" : "ch-hueGold")} /> : null}
-              {/* on a narrow frame the labels stand at the sparse right end, clear of the medians */}
-              <text x={narrow ? right : left} y={b.top + 12} textAnchor={narrow ? "end" : undefined} className={c(lit ? "ch-crowdLabelLit" : "ch-crowdLabel")}>
-                {g ? <>{g.label}<tspan className={c("ch-crowdExample")}>{narrow ? "" : ` · ${g.examples[0]}…`}</tspan></> : "Everyone else"}
+            <g key={b.key} className={c("ch-crowdRow")} data-open={open ? "true" : "false"}>
+              <text x={left} y={b.top + 14} className={c("ch-crowdLabelLit")}>
+                {g.label}<tspan className={c("ch-crowdExample")}>{narrow ? "" : `   ${g.examples.slice(0, 3).join(" · ")}`}</tspan>
               </text>
-              {g && !open ? <text x={b.pileEnd + 8} y={(b.bandTop + b.bandBottom) / 2 + 4} className={c("ch-crowdUnknown")}>?</text> : null}
-              {g && open ? (
-                <g className={c("ch-crowdMedian")} data-hue={HUE[g.key]}>
-                  <line x1={rx(median(g))} x2={rx(median(g))} y1={b.bandTop - 3} y2={b.bandBottom + 1} />
-                  <text x={rx(median(g)) + 6} y={b.top + 12}>{median(g)}</text>
-                </g>
+              <g className={c("ch-crowdMedian")} style={{ opacity: open ? 1 : 0 }}>
+                <line x1={median} x2={median} y1={b.bandTop - 4} y2={b.bandBottom + 2} />
+                {/* from the typical line to the row's middle: lower or higher, at a glance */}
+                <path className={c("ch-crowdShift")} d={`M${typicalX} ${(b.bandTop + b.bandBottom) / 2} H${median}`} />
+              </g>
+              {right_ !== null ? (
+                <text x={right} y={b.top + 14} textAnchor="end" className={c(right_ ? "ch-crowdRight" : "ch-crowdWrong")}>
+                  {right_ ? "✓ You called it" : `✗ It’s ${truth(g)}`}
+                </text>
               ) : null}
             </g>
           )
@@ -225,17 +255,29 @@ export const CrowdMarks = ({ layout, stage, step, revealed, left, right, top, bo
       </g>
       <g {...on(stage === "me")}>
         <line className={c("ch-crowdMe")} x1={rx(MY_RAPID)} x2={rx(MY_RAPID)} y1={top - 2} y2={bottom} />
-      </g>
-      <g {...on(stage === "giveup")}>
-        {giveUp.map(g => (
-          <g key={g.key}>
-            <text x={g.x} y={gridTop - 14} className={c(g.key === "bad" ? "ch-crowdLabelLit" : "ch-crowdLabel")}>{g.label}</text>
-            <text x={g.x} y={gridTop + cell * 10 + 22} className={c("ch-crowdResign")}>{g.resigned} resigned</text>
-            <text x={g.x} y={gridTop + cell * 10 + 38}>{100 - g.resigned} ended otherwise</text>
+        {yourRating ? (
+          <g className={c("ch-ratingYou")}>
+            <line className={c("ch-crowdYou")} x1={rx(yourRating)} x2={rx(yourRating)} y1={top - 2} y2={bottom} />
+            <circle cx={rx(yourRating)} cy={top - 2} r={6} data-dot="you" />
+            <text x={rx(yourRating) + 10} y={top - 10}>You</text>
           </g>
-        ))}
-        <text x={(left + right) / 2} y={gridTop - 36} textAnchor="middle">100 lost games each · at the same ratings</text>
+        ) : null}
       </g>
+      {[layout.first, layout.ours].map((set, s) => (
+        <g key={s} {...on(squares === set && (stage === "giveup" || stage === "us"))}>
+          {Object.values(set).map(g => {
+            const n = resignedOf(g.key, you)
+            const who = g.key === "me" || g.key === "you" ? g.key : null
+            return (
+              <g key={g.key}>
+                <text x={g.x} y={g.y - (narrow ? 12 : 16)} className={c("ch-crowdBig")} data-who={who || undefined}>{n}</text>
+                {who ? <circle cx={g.x + 4} cy={g.y + g.width + 14} r={4} className={c("ch-crowdWho")} data-who={who} data-dot={who} /> : null}
+                <text x={g.x + (who ? 14 : 0)} y={g.y + g.width + 18} className={c(who ? "ch-crowdLabelLit" : "ch-crowdLabel")}>{LABEL[g.key]}</text>
+              </g>
+            )
+          })}
+        </g>
+      ))}
     </g>
   )
 }

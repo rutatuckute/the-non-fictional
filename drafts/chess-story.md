@@ -176,11 +176,15 @@ Before *judging* others, I'll start with myself.
 
 <!--step:say-claim-->
 
-"Soooo bad at blitz", I said. Bullet, actually. Blitz, bullet, *bref*. In human terms, that's just fast chess.
+"Soooo bad at blitz", I said.\
+Bullet, actually.\
+Blitz, bullet, *bref*.\
+In human terms, that's just fast chess.
 
 <!--step:say-isolation-->
 
-Seven weeks later, I actually tried it. And now, in retrospect, I can cross-check the claims of my past self.
+Seven weeks later, I actually tried it.\
+And now, in retrospect, I can cross-check the claims of my past self.
 
 <!--step:say-prediction-->
 
@@ -212,14 +216,6 @@ That was my claim. Other people don't wait for a midnight text, they put it in t
 
 Four kinds of claims. Before I show you their ratings: higher or lower than a typical opponent?
 
-<!--step:say-surprise-->
-
-The ones who say they're good, the chessmasters, are rated below average. So are the ones who say they're bad, and the two are barely apart: about one bad afternoon.
-
-<!--step:say-road-->
-
-The ones joking about their blunders? Above average. And the road to GM? Higher than everyone. Still about 1,300 points short.
-
 <!--step:say-me-->
 
 And me? Right next to badatchess. Maybe that should have been my username.
@@ -227,6 +223,10 @@ And me? Right next to badatchess. Maybe that should have been my username.
 <!--step:say-giveup-->
 
 Calling yourself bad doesn't make you worse. It does make you quicker to give up: **52** of every 100 of their losses end with them pressing resign. Everyone else: **45**.
+
+<!--step:say-giveup-us-->
+
+[Text to come: and us? Me: 5 in 100.]
 
 <!--step:wrong-observation-->
 

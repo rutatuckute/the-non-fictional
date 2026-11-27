@@ -97,7 +97,11 @@ export const PhonePosition = ({ game }) => {
   )
 }
 
-export const Message = ({ collapse = 0, target }) => {
+// The message that starts the first question, on its own: no phone, just the day,
+// the message she answers (its words held back until Part IV) and her bubble. Until the words come (`revealed`) the bubble is a placeholder
+// of the same size, so the message does not jump when it is read; then it
+// collapses into the point on the rating line where it was sent.
+export const Message = ({ collapse = 0, target, revealed = true }) => {
   const box = React.useRef(null),
     bubble = React.useRef(null)
   const steps = React.useContext(PinSteps)
@@ -107,9 +111,12 @@ export const Message = ({ collapse = 0, target }) => {
     const node = box.current, pop = bubble.current
     const grow = still ? 1 : 0.55 + 0.45 * progress
     const rect = node.getBoundingClientRect(), parent = node.offsetParent.getBoundingClientRect()
-    const dx = target ? target.x - (rect.left - parent.left) - node.clientWidth / 2 : 0
-    const dy = target ? target.y - (rect.top - parent.top) - node.clientHeight * 0.48 : 0
-    pop.style.transform = `translate(-50%, -50%) translate(${still ? 0 : dx * collapse}px, ${still ? 0 : dy * collapse}px) scale(${still ? 1 : grow * (1 - collapse) + 10 / pop.offsetWidth * collapse}, ${still ? 1 : grow * (1 - collapse) + 10 / pop.offsetHeight * collapse})`
+    // where the bubble sits when untransformed, in the stage's own coordinates
+    const cx = rect.left - parent.left + pop.offsetLeft + pop.offsetWidth / 2
+    const cy = rect.top - parent.top + pop.offsetTop + pop.offsetHeight / 2
+    const dx = target ? target.x - cx : 0
+    const dy = target ? target.y - cy : 0
+    pop.style.transform = `translate(${still ? 0 : dx * collapse}px, ${still ? 0 : dy * collapse}px) scale(${still ? 1 : grow * (1 - collapse) + 10 / pop.offsetWidth * collapse}, ${still ? 1 : grow * (1 - collapse) + 10 / pop.offsetHeight * collapse})`
     pop.style.borderRadius = `${22 + collapse * 120}px`
     pop.style.opacity = String(1 - Math.max(0, (collapse - 0.85) / 0.15))
   }
@@ -121,21 +128,18 @@ export const Message = ({ collapse = 0, target }) => {
     }, paint, { still, watch: box },
   )
   return (
-    <div className={c("ch-messagePhone")} ref={box} data-still={still}>
-      <img
-        src="/images/stories/chess/phone-empty.webp"
-        width={800}
-        height={1704}
-        alt="A phone, with my message lifting out of its screen."
-        decoding="async"
-        style={{ opacity: 1 - Math.min(1, collapse * 2) }}
-      />
-      {/* when it was sent, as the screenshot shows it */}
-      <p className={c("ch-messageTime")} style={{ opacity: 1 - Math.min(1, collapse * 2) }}>18 May 2026</p>
-      <p className={c("ch-messagePop")} ref={bubble}>
+    <div className={c("ch-sayMessage")} ref={box} data-still={still} role="img"
+      aria-label={revealed ? "My answer to a message, 18 May 2026: “Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀”" : "A message and my answer, 18 May 2026, not yet shown."}>
+      {/* the day it was sent: no hour */}
+      <p className={c("ch-sayMessageDay")} style={{ opacity: 1 - Math.min(1, collapse * 2) }}>18 May 2026</p>
+      {/* the message mine answers: its words are kept for the end (Part IV) */}
+      <p className={c("ch-sayTheirs")} style={{ opacity: 1 - Math.min(1, collapse * 2) }} aria-hidden="true"><i /><i /></p>
+      <p className={c("ch-sayBubble")} ref={bubble} data-revealed={revealed ? "true" : "false"}>
         {/* my dot waits beside my message (travellers.js) */}
         <b className={c("ch-dotMark", "ch-dotBeside")} data-dot="me" />
-        <span style={{ opacity: 1 - Math.min(1, collapse * 3) }}>Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀</span>
+        <span className={c("ch-sayBubbleText")} style={{ opacity: 1 - Math.min(1, collapse * 3) }}>
+          <span aria-hidden="true">Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀</span>
+        </span>
       </p>
     </div>
   )
