@@ -188,7 +188,8 @@ export const Hub = ({ upto }) => {
                   </div>
                   <p className={c("ch-hubYou")}>
                     {said.chesscom ? <b className={c("ch-dotMark", "ch-hubMark")} data-dot={latest ? "you" : undefined} data-who="you" /> : null}
-                    <span>{yours(q.id, said)}</span>
+                    {/* the reader's sentence, highlighted like mine, in their green */}
+                    <span><mark className={c("ch-hl", "ch-hl-you")}>{yours(q.id, said)}</mark></span>
                   </p>
                 </div>
               </li>

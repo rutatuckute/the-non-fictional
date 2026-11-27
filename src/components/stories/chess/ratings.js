@@ -286,6 +286,10 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
           </g>
         </g>
         <g opacity={scatterOpacity} aria-hidden="true" data-layer="scatter">
+          {/* the grid and its numbers carry "Two ratings. One player."; once the other players come
+              in they go (as on the ratings chart), leaving the diagonal and the axis names */}
+          <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={bottom} y2={bottom} />
+          <g opacity={1 - smooth((at - 4.55) / 0.4)}>
           {WORLD_TICKS.map(v => {
             const x = sx(v), y = sy(v)
             const xAlpha = v % 1000 === 0 ? 1 : mix(clamp(((right - left) / (xMax - xMin) * 200 - 60) / 30), 1, focus)
@@ -295,6 +299,7 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
               {y >= top - 1 && y <= bottom + 1 && <g opacity={yAlpha}><line className={c("ch-ratingGrid")} x1={left} x2={right} y1={y} y2={y} /><text x={left - 8} y={y + 4} textAnchor="end">{v}</text></g>}
             </g>
           })}
+          </g>
           <text x={left} y={16}>1-minute rating ↑</text><text x={right} y={bottom + 22 + 16} textAnchor="end">10-minute rating →</text>
           <g clipPath={`url(#${id}-plot)`}>
             <g transform={`matrix(${(right - left) / (xMax - xMin)},0,0,${(bottom - top) / (yMax - yMin)},${left - xMin * (right - left) / (xMax - xMin)},${bottom + yMin * (bottom - top) / (yMax - yMin)})`}>
