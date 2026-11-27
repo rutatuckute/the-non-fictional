@@ -221,10 +221,9 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
   else if (stage) { meX = layout.rx(MY_RAPID); meY = top + 20; meOpacity = 0 }
 
   const mode = stage === "giveup" || stage === "us" ? "giveup" : stage && stage !== "crowd" ? "names" : stage ? "crowd" : step >= 7 ? "pace" : step >= 4 ? "scatter" : "timeline"
-  const title = stage === "us" ? "How our games end" : mode === "giveup" ? "How their games end" : mode === "names" ? "What their names say" : mode === "crowd" ? "The names across the board"
-    : step === 3 ? "The same three months" : step === 4 ? "Two ratings. One player."
-    : step === 5 ? "Me, among other players" : step === 6 ? "About where you'd expect"
-      : step >= 7 ? "How fast do I actually move?" : "My chess ratings"
+  // one title per chart, kept while the chart changes (the crowd has none)
+  const title = stage === "us" ? "How our games end" : mode === "giveup" ? "How their games end" : mode === "names" ? "What their names say" : mode === "crowd" ? "\u00a0"
+    : mode === "pace" ? "How fast do I actually play" : mode === "scatter" ? "1-minute VS 10-minute games" : "My chess ratings"
   const youChip = ["you", "You"]
   const chips = mode === "giveup" ? [["crowd", "Resigned"], ["dim", "Ended otherwise"], ...(stage === "us" ? [["me", "Me"], ...(yourResign ? [youChip] : [])] : [])]
     : mode === "names" ? (stage === "me" ? [["me", "Me"], ...(you ? [youChip] : [])] : [])
@@ -289,6 +288,7 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
           {/* the grid and its numbers carry "Two ratings. One player."; once the other players come
               in they go (as on the ratings chart), leaving the diagonal and the axis names */}
           <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={bottom} y2={bottom} />
+          <line className={c("ch-ratingGrid")} x1={left} x2={left} y1={top} y2={bottom} />
           <g opacity={1 - smooth((at - 4.55) / 0.4)}>
           {WORLD_TICKS.map(v => {
             const x = sx(v), y = sy(v)
