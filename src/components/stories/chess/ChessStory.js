@@ -83,7 +83,8 @@ const LINES = {
     you: [[98.5, 0, 101.5, 0], [99, 50, 101.5, 50], [98.5, 100, 101.5, 100]],
   },
   years: {
-    a: [[24, 0, 103.5, 0], [44, 18, 100, 18], [64, 36, 94, 32, "grey"], [58, 54, 35, 48], [34, 78, 8, 72, "grey"], [26, 100, 5, 100]],
+    // (on a phone it crosses between "Life went on." and "No chess.")
+    a: [[24, 0, 103.5, 0], [44, 18, 100, 9], [64, 36, 62, 24, "grey"], [58, 54, 10, 40], [34, 78, 5, 70, "grey"], [26, 100, 5, 100]],
     "other-1": [[-6, 0, -3, 0], [-7, 50, -3, 50], [-6, 100, -3, 100]],
     // it leaves by the right edge before "No chess."
     you: [[98.5, 0, 101.5, 0], [104, 30, 106, 26], [110, 64, 112, 56], [112, 100, 112, 100]],
@@ -205,7 +206,7 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           {/* The years between, in brief: the thread runs bare among the
               others, and the 2020s come. */}
           <div className={c("ch-years")}>
-            <span className={c("ch-decade")} data-reveal="" style={{ "--at": "90%", "--pat": "91%" }}>
+            <span className={c("ch-decade")} data-reveal="" style={{ "--at": "90%", "--pat": "92%" }}>
               2020s
             </span>
             <Text name="years" className={c("ch-yearsText")} reveal />

@@ -191,38 +191,38 @@ export const useNarrow = () => {
   return narrow
 }
 
-export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, reading = false, mark, className = "", overlay, children }) => {
-  const root = React.useRef(null)
-  const [step, stepRef, refs] = useStep(steps.length)
-  const narrow = useNarrow()
-  // On a phone too, the words of a reading scene scroll past (27 Nov, owner):
-  // the picture holds the top of the screen and the words come up under it.
-  const plain = plainOnly
-  const scrolling = reading
-  // On a phone only the card being read is in focus (27 Nov, owner: as beside
-  // the data on a wide screen): the one across the middle of the screen, or
-  // nearest it within a fifth of a screen. The cards coming up from below and
-  // going up above are dimmed and blurred (data-focus, in the CSS).
+// On a phone, only the box being read is in focus (27 Nov, owner: as beside
+// the data on a wide screen): of the boxes on the screen, the one across its
+// middle or nearest it, once it is within `NEAR` screens of the middle. The
+// boxes coming up from below and going up above are dimmed and blurred
+// (data-focus="false", in the CSS). Read from where the boxes are on the
+// screen, so it holds however the phone's browser measures its height.
+// `boxes(root)` gives [element marked, box measured] pairs, read again each
+// time, as a scene may add steps as it is read.
+const NEAR = 0.38
+export const useFocus = (root, on, boxes) => {
+  const find = React.useRef(boxes)
+  find.current = boxes
   React.useEffect(() => {
-    if (!narrow || !scrolling) return
-    const pin = root.current
-    // (read again each time: a scene may add steps as it is read)
-    const cards = () => [...pin.querySelectorAll(`.${c("ch-step")}[data-step]`)].filter(step => step.dataset.bare !== "true")
+    if (!on || !root.current) return
     let frame = 0
     const update = () => {
       frame = 0
-      const steps = cards()
-      const middle = window.innerHeight / 2
+      const screen = window.innerHeight
+      const middle = screen / 2
+      const pairs = find.current(root.current)
       let best = null
       let gap = Infinity
-      for (const step of steps) {
-        const card = step.querySelector(`.${c("ch-card")}`)
-        if (!card) continue
-        const box = card.getBoundingClientRect()
-        const away = box.top > middle ? box.top - middle : box.bottom < middle ? middle - box.bottom : 0
-        if (away < gap) [best, gap] = [step, away]
+      let off = Infinity
+      for (const [, box] of pairs) {
+        if (!box) continue
+        const r = box.getBoundingClientRect()
+        if (!r.height || r.bottom < 0 || r.top > screen) continue
+        const away = r.top > middle ? r.top - middle : r.bottom < middle ? middle - r.bottom : 0
+        const centre = Math.abs((r.top + r.bottom) / 2 - middle)
+        if (away < gap || (away === gap && centre < off)) [best, gap, off] = [box, away, centre]
       }
-      for (const step of steps) step.dataset.focus = step === best && gap < window.innerHeight * 0.2 ? "true" : "false"
+      for (const [marked, box] of pairs) marked.dataset.focus = box === best && gap < screen * NEAR ? "true" : "false"
     }
     const onScroll = () => {
       if (!frame) frame = window.requestAnimationFrame(update)
@@ -234,9 +234,25 @@ export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, r
       window.removeEventListener("scroll", onScroll)
       window.removeEventListener("resize", onScroll)
       if (frame) window.cancelAnimationFrame(frame)
-      for (const step of cards()) delete step.dataset.focus
+      for (const [marked] of find.current(root.current)) delete marked.dataset.focus
     }
-  }, [narrow, scrolling])
+  }, [root, on])
+}
+
+export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, reading = false, mark, className = "", overlay, children }) => {
+  const root = React.useRef(null)
+  const [step, stepRef, refs] = useStep(steps.length)
+  const narrow = useNarrow()
+  // On a phone too, the words of a reading scene scroll past (27 Nov, owner):
+  // the picture holds the top of the screen and the words come up under it.
+  const plain = plainOnly
+  const scrolling = reading
+  // On a phone only the card being read is in focus (useFocus).
+  useFocus(root, narrow && scrolling, pin =>
+    [...pin.querySelectorAll(`.${c("ch-step")}[data-step]`)]
+      .filter(step => step.dataset.bare !== "true")
+      .map(step => [step, step.querySelector(`.${c("ch-card")}`)]),
+  )
   React.useLayoutEffect(() => {
     const pin = root.current
     if (!plain || !pin.closest('[data-part="investigation"]')) return

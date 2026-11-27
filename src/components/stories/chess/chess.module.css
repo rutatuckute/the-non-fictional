@@ -1212,9 +1212,13 @@
   .ch-knot { left: var(--px); top: var(--py); }
   .ch-row { grid-template-columns: minmax(0, 1fr); row-gap: 5vh; }
   .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-mine, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-device, .ch-row > .ch-chat, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
-  .ch-years { height: 72vh; height: 72svh; }
-  .ch-text.ch-yearsText { top: 6%; }
-  .ch-text.ch-yearsNone { top: 46%; }
+  /* compact on a phone: the three close together, the set soon after */
+  .ch-years { height: 55vh; height: 55svh; }
+  /* and no gap of its own between the years and the wooden set */
+  .ch-free:not(.ch-back) { padding-bottom: 0; }
+  .ch-people:not(.ch-part3) { padding-top: 0; }
+  .ch-text.ch-yearsText { top: 2%; }
+  .ch-text.ch-yearsNone { top: 34%; }
   .ch-open .ch-text, .ch-text.ch-aside, .ch-hold { max-width: none; }
   /* the first screen is the title and the cover alone: the opening question
      waits below it (60px: the site's masthead above the story) */

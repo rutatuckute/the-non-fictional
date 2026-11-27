@@ -3,7 +3,7 @@
 import * as React from "react"
 
 import { useFollow, useStill } from "./follow"
-import { c, Text } from "./parts"
+import { c, Text, useFocus, useNarrow } from "./parts"
 import SIZES from "./pieces.json"
 import { Knots } from "./thread"
 import { DROP, TimeChart } from "./time-chart"
@@ -156,11 +156,6 @@ const WORDS = [
 // All of them stand in one column, a little left of the right edge (27 Nov,
 // owner: the words after the chart as the ones before it).
 const THREAD_WORDS = new Set(WORDS.map(([name]) => name))
-// On a phone, only the box being read is in focus: the one nearest the middle
-// of the screen, within this many screens of it; the boxes coming up from
-// below and going up above are dimmed and blurred, as beside the data on a
-// wide screen.
-const FOCUS = 0.22
 // Of a move: the hand comes to the piece, carries it, and leaves.
 const TAKES = 0.32
 const LEAVES = 0.72
@@ -282,13 +277,11 @@ export const Wooden = ({ lines }) => {
     // Desktop copy keeps its natural scroll, with a fully readable pause
     // near the centre and a soft exit before the following paragraph arrives.
     const small = phoneWide()
-    const nearest = WORDS.reduce((best, [name, at]) => (Math.abs(scrolled - at) < best[1] ? [name, Math.abs(scrolled - at)] : best), ["", Infinity])
     WORDS.forEach(([name, at]) => {
       const copy = readingCopy.current[name]
       if (!copy) return
       // (on a phone the boxes stay whole all the way up the screen, dimmed out of focus by the CSS)
       copy.style.opacity = still || small ? "" : String(1 - within(Math.abs(scrolled - at), 0.24, 0.42))
-      copy.dataset.focus = !small || (name === nearest[0] && nearest[1] < FOCUS) ? "true" : "false"
     })
     // one unit of the board's picture, in the screen's pixels
     const k = scene.current.clientWidth / BOARD.width
@@ -447,6 +440,9 @@ export const Wooden = ({ lines }) => {
     setStage(before => (Object.keys(next).every(key => before[key] === next[key]) ? before : next))
   }
   useFollow(goal, paint, { still, watch: scene })
+  // on a phone, only the box being read is in focus (parts.js)
+  const narrowScreen = useNarrow()
+  useFocus(pin, narrowScreen, () => Object.values(readingCopy.current).filter(Boolean).map(node => [node, node]))
 
   const share = (value, of) => `${((value / of) * 100).toFixed(3)}%`
   const label = stage.online
