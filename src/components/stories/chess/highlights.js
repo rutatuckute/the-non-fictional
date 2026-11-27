@@ -10,19 +10,19 @@
 //
 // Roles, as the stage draws them now:
 //   me      clay: my marks              you     green: your guess, your games
-//   crowd   ivory: the lit marks        faint   grey: the rest
-//   hollow  an outline: hidden games    meFaint pale clay: me in London
-//   other   blue: resigned, typical     other2  gold: saved, "says good"
-//   band    the shaded middle half
+//   crowd   slate: their lit marks      faint   mid slate: the rest of them
+//   hollow  a slate outline: hidden     meFaint pale clay: me in London
+//   other   slate: the typical player   grey    neutral: the estimate, his bubble
+//   band    the shaded middle half (an ivory wash)
 const HIGHLIGHTS = {
   // Part I: the thread takes the story's clay here; the time chart's grey estimate
   mine: [["This is mine", "me"]],
   // Chess.com in green, the owner's choice (27 Nov), though green is otherwise the reader's
   "chess-com": [["Chess.com", "you"]],
   "not-a-player": [["who I am", "me"]],
-  obsession: [["social media", "faint"]],
+  obsession: [["social media", "grey"]],
   // Part II: the London System's squares turn clay on the club board
-  "people-intro": [["randomly matched stranger", "faint"]],
+  "people-intro": [["randomly matched stranger", "crowd"]],
   club: [["the London System", "me"]],
 
   "say-crowd": [["bullet rating is indeed lower", "crowd"]],
@@ -47,7 +47,7 @@ const HIGHLIGHTS = {
   "wrong-meet": [["staying saved the game", "crowd"]],
   "wrong-you": [["I never resign", "me"]],
 
-  "choose-contact": [["Each grey dot", "faint"], ["I’m more forcing than 93 in 100", "me"]],
+  "choose-contact": [["Each grey dot", "crowd"], ["I’m more forcing than 93 in 100", "me"]],
   "choose-pace": [["I play fast", "me"]],
   "choose-persistence": [["I keep going", "me"]],
   "choose-habit": [["I repeat myself", "me"]],
@@ -66,7 +66,7 @@ const HIGHLIGHTS = {
   "hub-what-we-choose": [["Recognisable, even in disguise.", "me"]],
 
   // Part IV: his message (the grey bubble), and the reader's own thread
-  encounter: [["Hey, do you play chess?", "faint"]],
+  encounter: [["Hey, do you play chess?", "grey"]],
   yours: [["yours", "you"]],
 }
 

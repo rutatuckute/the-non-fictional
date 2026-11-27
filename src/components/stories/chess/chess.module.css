@@ -5,15 +5,20 @@
 .ch-story {
   /* The story's own thread: the site's clay, as the data lab's thread is. */
   --thread: var(--form-essay);
-  /* The estimate beside it, in the site's green for data. */
-  --social: var(--form-data);
-  /* Colour roles. Clay is the author; green is the reader, and only the reader.
-     The others' side is blue (what they do, the computer, resigning) and gold
-     (what they say, the upside, games saved); the crowd itself is ivory. The
-     four were checked together on the page's dark ground (separation, contrast);
-     gold and green stay apart by labels and place, never by hue alone. */
-  --other: #3d8bff;
-  --other-2: #dba51d;
+  /* Colour roles, the same from the first screen to the last: clay is the
+     author (me), green is the reader (you), and only the reader; slate is
+     everyone else (them): the strangers' threads, their games, the crowd in
+     every chart, the typical player. Slate comes in steps for what is lit and
+     what is not: --them for the lit marks, --them-mid for the next, --them-dim
+     and --them-faint for the rest. Greys and ivory are for words and structure
+     (axes, reference lines, the boards), not for people. Checked on the page's
+     dark ground: slate 6.8:1, and further from clay and from green, for
+     colour-blind readers too, than clay and green are from each other. */
+  --them: #7f9bcc;
+  --them-mid: #5b6b8c;
+  --them-dim: #465470;
+  --them-faint: #2a3140;
+  --other: var(--them);
   position: relative;
   isolation: isolate;
 }
@@ -30,8 +35,8 @@
 }
 /* The reader's own thread: one of the grey ones, until they keep it. */
 .ch-story[data-you="true"] .ch-thread path[data-run^="you"] { stroke: var(--form-data); opacity: 1; stroke-width: 2; }
-.ch-thread path[data-other] { stroke: var(--ink-3); opacity: 0.68; }
-.ch-tintFrom { stop-color: var(--ink-3); stop-opacity: 0.68; }
+.ch-thread path[data-other] { stroke: var(--them); opacity: 0.68; }
+.ch-tintFrom { stop-color: var(--them); stop-opacity: 0.68; }
 .ch-tintTo { stop-color: var(--thread); }
 /* Where the data ends, the thread goes on as questions. */
 .ch-thread text {
@@ -384,8 +389,8 @@
 @keyframes ch-pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
 /* Each stranger's life, a grey thread through the game; then all of them. */
 .ch-crossings { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-.ch-crossings path { fill: none; stroke: var(--ink-3); stroke-opacity: 0.75; stroke-width: 1.3; stroke-linecap: round; transition: opacity 300ms ease; }
-.ch-many { position: absolute; left: 0; top: 0; width: 64%; height: 100%; color: var(--ink-2); pointer-events: none; }
+.ch-crossings path { fill: none; stroke: var(--them); stroke-opacity: 0.75; stroke-width: 1.3; stroke-linecap: round; transition: opacity 300ms ease; }
+.ch-many { position: absolute; left: 0; top: 0; width: 64%; height: 100%; color: var(--them); pointer-events: none; }
 /* One thread field, in the original pinned stage, from the statistics to
    the pink board. Only the final club scene overlaps its last screen. */
 .ch-pin.ch-threadWeave { position: absolute; inset: 0; background: transparent; pointer-events: none; }
@@ -753,12 +758,12 @@
 .ch-rvView { inset: 0; }
 .ch-rvStrips, .ch-rvCurve { position: absolute; inset: 0; }
 .ch-rvStrips svg, .ch-rvCurve svg { position: absolute; inset: 0; overflow: visible; }
-.ch-rvCloud { position: absolute; inset: 0; color: var(--ink-2); }
+.ch-rvCloud { position: absolute; inset: 0; color: var(--them); }
 .ch-rvLine { transition: opacity var(--ch-fade) ease; }
 .ch-rvLine[data-on="false"] { opacity: 0.3; }
 .ch-rvAxis { stroke: var(--rule-strong); stroke-width: 1; }
-.ch-rvMiddle { fill: var(--other); opacity: 0; transition: opacity var(--ch-fade) ease; }
-.ch-rvMiddle[data-on="true"] { opacity: 0.14; }
+.ch-rvMiddle { fill: var(--ink); opacity: 0; transition: opacity var(--ch-fade) ease; }
+.ch-rvMiddle[data-on="true"] { opacity: 0.13; }
 .ch-rvName { fill: var(--ink); font: 400 19px / 1 var(--font-title); }
 .ch-rvWhat { fill: var(--ink-2); font: 400 12px / 1 var(--font-mono); }
 .ch-rvEnd { fill: var(--ink-2); font: 400 12px / 1 var(--font-mono); }
@@ -795,12 +800,12 @@
 .ch-rvJourney[data-stage="strips"] .ch-rvTripRow { opacity: 0; transition: transform 900ms var(--ch-ease), stroke-width 900ms ease, opacity 250ms ease 1000ms; }
 /* back up to the strips: they return once the card has unfolded into their lines */
 .ch-rvScene[data-stage="strips"][data-from="card"] .ch-rvDials[data-on="true"] { transition: opacity 500ms ease 650ms, visibility 0s; }
-.ch-rvTripDot { fill: var(--ink); transition: transform 900ms var(--ch-ease) 250ms, opacity 200ms ease; }
+.ch-rvTripDot { fill: var(--them); transition: transform 900ms var(--ch-ease) 250ms, opacity 200ms ease; }
 .ch-rvJourney[data-stage="strips"] .ch-rvTripDot { opacity: 0; transition: transform 900ms var(--ch-ease), opacity 250ms ease 1000ms; }
 /* the games */
-.ch-rvJGame { fill: var(--ink-3); stroke: transparent; stroke-width: 1; transform-box: fill-box; transform-origin: center;
+.ch-rvJGame { fill: var(--them); stroke: transparent; stroke-width: 1; transform-box: fill-box; transform-origin: center;
   transition: transform 900ms var(--ch-ease), opacity 300ms ease, fill var(--ch-fade) ease, stroke var(--ch-fade) ease; }
-.ch-rvJGame[data-hidden="true"] { fill: transparent; stroke: var(--ink-2); stroke-dasharray: 2 2; }
+.ch-rvJGame[data-hidden="true"] { fill: transparent; stroke: var(--them); stroke-dasharray: 2 2; }
 .ch-rvJourney[data-stage="strips"] .ch-rvJGame { opacity: 0; transition: opacity 200ms ease; }
 .ch-rvJourney[data-stage="card"][data-from="strips"] .ch-rvJGame { transition: transform 0s, opacity 400ms ease calc(700ms + var(--d) / 3); }
 .ch-rvJGame[data-gone="true"] { opacity: 0; }
@@ -818,7 +823,7 @@
 @keyframes ch-rvDeal { from { opacity: 0; transform: translateY(10px); } }
 
 /* a card */
-.ch-rvCardSvg { --dot: var(--ink-3); }
+.ch-rvCardSvg { --dot: var(--them); }
 .ch-rvCardSvg[data-tone="truth"] { --dot: var(--ink); }
 .ch-rvCardSvg[data-tone="her"] { --dot: var(--thread); }
 .ch-rvCardSvg[data-tone="you"] { --dot: var(--form-data); }
@@ -859,13 +864,13 @@
 .ch-rvCard[data-truth="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
 .ch-rvCard[data-truth="her"] { border-color: var(--thread); box-shadow: inset 0 0 0 1px var(--thread); }
 .ch-rvCard[data-truth="you"] { border-color: var(--form-data); box-shadow: inset 0 0 0 1px var(--form-data); }
-.ch-rvCard[data-cpu="true"] { outline: 1.5px dashed var(--other); outline-offset: 3px; }
+.ch-rvCard[data-cpu="true"] { outline: 1.5px dashed var(--ink); outline-offset: 3px; }
 .ch-rvCard[data-dim="true"] { opacity: 0.4; }
 .ch-rvFlags { position: absolute; left: -8px; right: -8px; top: calc(100% + 5px); text-align: center; white-space: nowrap; font: 500 10.5px / 1 var(--font-mono); }
 .ch-rvFlags [data-kind="truth"] { color: var(--ink); }
 .ch-rvFlags [data-kind="her"] { color: var(--thread); }
 .ch-rvFlags [data-kind="you"] { color: var(--form-data); }
-.ch-rvFlags [data-kind="cpu"] { color: var(--other); }
+.ch-rvFlags [data-kind="cpu"] { color: var(--ink); }
 
 /* the curve */
 .ch-rvGrid0 { stroke: var(--rule); stroke-width: 1; }
@@ -909,7 +914,7 @@
 /* What we do when things go wrong (wrong.js): the phone, the fork, the hundred, the charts.
    Clay is the author; data green, games saved and the reader's controls; lavender, resigning. */
 .ch-kingBeat { display: grid; gap: 1.1em; }
-.ch-wrong { --scene: wrong; --resign: var(--other); --lost: #55524d; --saved: var(--other-2); }
+.ch-wrong { --scene: wrong; }
 .ch-wrongScene { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
 /* The boards of her games, as Chess.com draws them (cc-board.js), without the phone. */
 .ch-cc { --cc: min(100%, 60svh, 540px); display: grid; gap: 0; width: var(--cc); margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
@@ -999,12 +1004,11 @@
 /* Every chart's legend: coloured tags under its title, in one row of fixed height
    (the same for every chart, so the plot under it never moves). */
 .ch-ratingChips { display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; height: 19px; margin: 10px 0 8px; pointer-events: none; overflow: hidden; }
-.ch-ratingChip { font: 500 11px / 1 var(--font-mono); padding: 4px 6px; border-radius: 2px; white-space: nowrap; background: var(--ink); color: var(--void); transition: opacity 500ms ease; }
+.ch-ratingChip { font: 500 11px / 1 var(--font-mono); padding: 4px 6px; border-radius: 2px; white-space: nowrap; background: var(--them); color: #0d1219; transition: opacity 500ms ease; }
 .ch-ratingChip[data-tone="rapid"] { background: color-mix(in srgb, var(--thread) 45%, var(--ink)); }
 .ch-ratingChip:is([data-tone="bullet"], [data-tone="me"]) { background: var(--thread); color: #fff6ee; }
 .ch-ratingChip[data-tone="you"] { background: var(--form-data); color: #0c1a0e; }
-.ch-ratingChip[data-tone="crowd"] { background: var(--ink-2); }
-.ch-ratingChip[data-tone="dim"] { background: none; box-shadow: inset 0 0 0 1px var(--rule-strong); color: var(--ink-2); }
+.ch-ratingChip[data-tone="crowd"] { background: var(--them); color: #0d1219; }
 .ch-ratingChip[data-shown="false"] { opacity: 0; }
 .ch-ratings svg { display: block; overflow: visible; max-width: 100%; }
 .ch-ratings svg text { fill: var(--ink-2); font: 400 12px / 1 var(--font-mono); }
@@ -1013,15 +1017,15 @@
 .ch-ratingRapid, .ch-ratingBullet, .ch-ratingTypical { fill: none; stroke: var(--ink-2); stroke-width: 2.4; stroke-linejoin: round; }
 .ch-ratingBullet { stroke: var(--thread); stroke-width: 2.6; }
 .ch-ratingRapid { stroke: color-mix(in srgb, var(--thread) 45%, var(--ink)); }
-.ch-ratingTypical { stroke: var(--ink); stroke-width: 2; }
+.ch-ratingTypical { stroke: var(--them); stroke-width: 2; }
 .ch-ratingWindow { fill: var(--thread); }
 .ch-ratingGap { fill: none; stroke: var(--ink-2); stroke-width: 1; }
-.ch-ratingPeers { fill: var(--ink-3); }
+.ch-ratingPeers { fill: var(--them); }
 .ch-ratingPeers use { opacity: 0.65; transition: opacity 200ms ease; }
-.ch-ratings [data-highlight="lower"] .ch-ratingPeers use[data-lower="true"] { fill: var(--ink-2); opacity: 0.9; }
+.ch-ratings [data-highlight="lower"] .ch-ratingPeers use[data-lower="true"] { fill: var(--them); opacity: 0.95; }
 .ch-ratings [data-highlight="lower"] .ch-ratingPeers use[data-lower="false"] { opacity: 0.18; }
 .ch-ratings [data-highlight="near"] .ch-ratingPeers use[data-near="false"] { opacity: 0.20; }
-.ch-ratings [data-highlight="near"] .ch-ratingPeers use[data-near="true"] { fill: var(--ink-2); opacity: 0.85; }
+.ch-ratings [data-highlight="near"] .ch-ratingPeers use[data-near="true"] { fill: var(--them); opacity: 0.9; }
 .ch-ratingExpected { fill: var(--void); stroke: var(--ink); stroke-width: 1.5; }
 .ch-ratingMe circle { fill: var(--thread); stroke: var(--void); stroke-width: 2; }
 .ch-ratings .ch-ratingMe text, .ch-ratings .ch-ratingClay, .ch-ratingClay { fill: var(--thread); color: var(--thread); }
@@ -1038,8 +1042,8 @@
 .ch-ratingOverview { width: 64px; height: 44px; padding: 2px; background: none; border: 1px solid var(--rule); border-radius: 3px; cursor: pointer; }
 .ch-ratingOverview svg { width: 100%; height: 100%; }
 .ch-ratingFrame { fill: color-mix(in srgb, var(--thread) 12%, transparent); stroke: var(--thread); stroke-width: 1; }
-.ch-paceCloud circle { fill: var(--ink-3); opacity: 0.7; transition: opacity 240ms ease; }
-.ch-ratings [data-highlight="true"] .ch-paceCloud circle[data-slower="true"] { fill: var(--ink); opacity: 1; }
+.ch-paceCloud circle { fill: var(--them); opacity: 0.7; transition: opacity 240ms ease; }
+.ch-ratings [data-highlight="true"] .ch-paceCloud circle[data-slower="true"] { fill: var(--them); opacity: 1; }
 .ch-ratings [data-highlight="true"] .ch-paceCloud circle[data-slower="false"] { opacity: 0.3; }
 .ch-paceMeLine { stroke: var(--thread); stroke-width: 1.5; }
 @media (hover: hover) and (pointer: fine) {
@@ -1065,13 +1069,14 @@
 .ch-paceCloud[data-crowd="true"] circle, .ch-crowdDot[data-settled="true"], .ch-crowdDot[data-tone] {
   transition: transform 1100ms var(--ch-ease), opacity 500ms ease, fill 500ms ease;
 }
-.ch-ratings circle[data-tone="quiet"] { fill: var(--ink-2); }
-.ch-ratings circle[data-tone="plain"] { fill: var(--ink); }
-/* lost games: the resigned ones lit in whose they are (players ivory, me clay, you green), the rest dim */
-.ch-ratings circle[data-tone="resign"] { fill: var(--ink); }
+.ch-ratings circle[data-tone="quiet"] { fill: var(--them); }
+.ch-ratings circle[data-tone="plain"] { fill: var(--them); }
+/* lost games: the resigned ones lit in whose they are (players slate, me clay, you green), the rest dim */
+.ch-ratings circle[data-tone="resign"] { fill: var(--them); }
 .ch-ratings circle[data-tone="me"] { fill: var(--thread); }
 .ch-ratings circle[data-tone="you"] { fill: var(--form-data); }
-.ch-ratings circle[data-tone="kept"] { fill: var(--rule-strong); }
+/* the lost games not resigned: the same quiet ring in every square, whoever's; only the resigned take a colour */
+.ch-ratings circle[data-tone="kept"] { fill: transparent; stroke: var(--rule-strong); stroke-width: 1; }
 .ch-crowdFade, .ch-crowdMarks > g, .ch-crowdTag { transition: opacity 500ms ease; }
 .ch-crowdFade:not([data-settled]) { transition: none; }
 .ch-ratingMe[data-settled="true"] { transition: transform 1100ms var(--ch-ease), opacity 500ms ease; }
@@ -1085,7 +1090,7 @@
 .ch-ratings .ch-crowdLabelLit { fill: var(--ink); }
 .ch-ratings .ch-crowdExample { fill: var(--ink-2); opacity: 0.8; }
 .ch-crowdMedian { transition: opacity 600ms ease 500ms; }
-.ch-crowdMedian line { stroke: var(--ink); stroke-width: 2; }
+.ch-crowdMedian line { stroke: var(--them); stroke-width: 2; }
 .ch-crowdShift { fill: none; stroke: var(--ink); stroke-width: 1; stroke-dasharray: 2 3; opacity: 0.6; }
 .ch-crowdMe { stroke: var(--thread); stroke-width: 1.5; }
 .ch-crowdYou { stroke: var(--form-data); stroke-width: 1.5; }
@@ -1095,6 +1100,7 @@
 .ch-ratings .ch-crowdBig { fill: var(--ink); font: 500 clamp(26px, 3.2vw, 40px) / 1 var(--font-sans, ui-sans-serif); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
 .ch-ratings .ch-crowdBig[data-who="me"] { fill: var(--thread); }
 .ch-ratings .ch-crowdBig[data-who="you"] { fill: var(--form-data); }
+.ch-ratings .ch-crowdBig .ch-crowdUnit { fill: var(--ink-2); font: 400 15px / 1 var(--font-mono); letter-spacing: 0; }
 .ch-crowdWho[data-who="me"] { fill: var(--thread); }
 .ch-crowdWho[data-who="you"] { fill: var(--form-data); }
 /* the usernames game, on the chart: Lower / Higher either side of each row's pile */
@@ -1601,12 +1607,12 @@
 .ch-story mark.ch-hl-me { --hl: var(--thread); color: #fff6ee; }
 .ch-story mark.ch-hl-meFaint { --hl: color-mix(in srgb, var(--thread) 45%, var(--void)); color: #fff6ee; }
 .ch-story mark.ch-hl-you { --hl: var(--form-data); color: #0c1a0e; }
-.ch-story mark.ch-hl-crowd { --hl: var(--ink); color: var(--void); }
-.ch-story mark.ch-hl-faint { --hl: #5f5a53; color: #f4efe7; }
-.ch-story mark.ch-hl-hollow { box-shadow: inset 0 0 0 1.4px var(--ink-3), 0.15em 0 0 transparent; }
+.ch-story mark.ch-hl-crowd { --hl: var(--them); color: #0d1219; }
+.ch-story mark.ch-hl-faint { --hl: var(--them-mid); color: #eef2f8; }
+.ch-story mark.ch-hl-grey { --hl: #5f5a53; color: #f4efe7; }
+.ch-story mark.ch-hl-hollow { box-shadow: inset 0 0 0 1.4px var(--them), 0.15em 0 0 transparent; }
 .ch-story mark.ch-hl-other { --hl: var(--other); color: #07142b; }
-.ch-story mark.ch-hl-other2 { --hl: var(--other-2); color: #1d1503; }
-.ch-story mark.ch-hl-band { --hl: color-mix(in srgb, var(--other) 30%, var(--void)); color: var(--ink); }
+.ch-story mark.ch-hl-band { --hl: color-mix(in srgb, var(--ink) 24%, var(--void)); color: var(--ink); }
 .ch-story mark.ch-hl strong { color: inherit; }
 /* a mark is lit with its step: in the faint steps around it, it is plain words */
 .ch-story .ch-pin[data-reading="true"] .ch-step:not([data-on="true"]) mark.ch-hl { --hl: transparent; box-shadow: none; color: inherit; }
@@ -1685,16 +1691,22 @@
 .ch-stageNum[data-tone="me"] { color: var(--thread); }
 .ch-stageNum small { margin-left: 10px; color: var(--ink-2); font: 400 13px / 1 var(--font-mono); letter-spacing: 0; }
 .ch-stage2 svg { flex: 1 1 auto; min-height: 0; width: 100%; overflow: visible; }
-.ch-ratingChip[data-tone="ivory"] { background: var(--ink); color: var(--void); }
-.ch-ratingChip[data-tone="faint"] { background: #5f5a53; color: #f4efe7; }
+.ch-ratingChip[data-tone="ivory"] { background: var(--them); color: #0d1219; }
+.ch-ratingChip[data-tone="faint"] { background: var(--them-mid); color: #eef2f8; }
+/* keys that are a mark, not a colour: a dot for the lit, a ring for the rest */
+.ch-ratingChip:is([data-tone="filled"], [data-tone="ring"], [data-tone="dim"], [data-tone="meDim"]) { display: inline-flex; align-items: center; gap: 6px; padding-left: 0; background: none; box-shadow: none; color: var(--ink-2); }
+.ch-ratingChip:is([data-tone="filled"], [data-tone="ring"], [data-tone="dim"], [data-tone="meDim"])::before { content: ""; width: 9px; height: 9px; border-radius: 50%; box-sizing: border-box; }
+.ch-ratingChip[data-tone="filled"]::before { background: var(--ink-2); }
+.ch-ratingChip:is([data-tone="ring"], [data-tone="dim"], [data-tone="meDim"])::before { border: 1px solid var(--ink-3); }
 .ch-ratingChip[data-tone="meHollow"] { background: none; box-shadow: inset 0 0 0 1.4px var(--thread); color: var(--ink); }
 /* the marks */
 .ch-atom, .ch-atomDot, .ch-atomBoard { transition: transform 1s cubic-bezier(0.65, 0, 0.25, 1), opacity 700ms ease; }
 .ch-atom { pointer-events: auto; }
 .ch-atomDot rect { transition: fill 600ms ease, stroke 600ms ease; stroke: none; }
-.ch-atomDot rect[data-role="crowd"] { fill: var(--ink); }
-.ch-atomDot rect[data-role="faint"] { fill: #5f5a53; }
-.ch-atomDot rect[data-role="dim"] { fill: #2f2d2b; }
+.ch-atomDot rect[data-role="crowd"] { fill: var(--them); }
+.ch-atomDot rect[data-role="faint"] { fill: var(--them-mid); }
+/* the unlit: an empty ring, the same for everyone (Q1's give-up squares too) */
+.ch-atomDot rect:is([data-role="dim"], [data-role="meDim"]) { fill: transparent; stroke: var(--rule-strong); stroke-width: 1px; }
 .ch-atomDot rect[data-role="me"] { fill: var(--thread); }
 .ch-atomDot rect[data-role="meHollow"] { fill: var(--void); stroke: var(--thread); stroke-width: 1.6px; }
 .ch-atomDot rect[data-role="you"] { fill: var(--form-data); }
@@ -1714,7 +1726,7 @@
 .ch-stageText[data-kind="you"] { fill: var(--form-data); }
 .ch-stageLine { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 5 4; }
 .ch-stageGrid { stroke: var(--rule); stroke-width: 1; }
-.ch-stageBar { fill: #5f5a53; }
+.ch-stageBar { fill: var(--them-mid); }
 .ch-stageChance { fill: var(--ink); opacity: 0; transition: opacity 600ms ease; }
 .ch-stageChance[data-on="true"] { opacity: 0.045; }
 .ch-stageRing { fill: none; stroke: var(--form-data); stroke-width: 2; }
@@ -1752,6 +1764,8 @@
 .ch-ratings .ch-crowdMarks text.ch-crowdRowName { font: 400 20px / 1 var(--font-title); letter-spacing: -0.01em; }
 .ch-ratings .ch-crowdMarks text.ch-crowdRowName .ch-crowdExample { font: 400 12px / 1 var(--font-mono); letter-spacing: 0; }
 @media (max-width: 40rem) { .ch-ratings .ch-crowdMarks text.ch-crowdRowName { font-size: 17px; } }
+.ch-ratings .ch-crowdMarks text.ch-crowdGridName { font-size: 17px; }
+@media (max-width: 40rem) { .ch-ratings .ch-crowdMarks text.ch-crowdGridName { font-size: 15px; } }
 
 /* each question's own board beside its name, at the opening: small, a mark, not a picture
    (27 Nov, owner: "way smaller") */
@@ -1759,7 +1773,7 @@
 @media (max-width: 60rem) { .ch-diveSpot { width: min(64px, 9svh); } }
 /* the scatter at the reader's level (ratings.js, "Your level"): players within 100 of their rapid rating */
 .ch-ratings [data-highlight="yours"] .ch-ratingPeers use[data-near-you="false"] { opacity: 0.20; }
-.ch-ratings [data-highlight="yours"] .ch-ratingPeers use[data-near-you="true"] { fill: var(--ink-2); opacity: 0.85; }
+.ch-ratings [data-highlight="yours"] .ch-ratingPeers use[data-near-you="true"] { fill: var(--them); opacity: 0.9; }
 .ch-ratingViews button.ch-ratingYourView { color: var(--form-data); }
 .ch-ratingViews button.ch-ratingYourView[aria-pressed="true"] { border-color: color-mix(in srgb, var(--form-data) 60%, transparent); }
 .ch-ratingYou .ch-ratingExpected { fill: var(--void); stroke: var(--form-data); }

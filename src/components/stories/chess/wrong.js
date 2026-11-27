@@ -558,14 +558,14 @@ export const Wrong = () => {
             head: {
               title: mine ? "Every time I lost my queen like this" : "My games, a queen down",
               dot: "me",
-              chips: mine ? [["me", "Saved"], ["meHollow", "Played on, lost"], ["dim", "Resigned"], ...(you ? [["you", "You"]] : [])] : [["me", "Played on"], ["dim", "Resigned"]],
+              chips: mine ? [["me", "Saved"], ["meHollow", "Played on, lost"], ["meDim", "Resigned"], ...(you ? [["you", "You"]] : [])] : [["me", "Played on"], ["meDim", "Resigned"]],
             },
             box: [0, 0, VIEW, mine && you ? VIEW : Math.ceil(q.cases / 12) * 50],
             num: mine ? { n: `${q.saved} of ${q.cases}`, unit: "saved", tone: "me" } : { n: `${q.on} of ${q.cases}`, unit: "played on", tone: "me" },
             atoms: i => {
               if (i >= q.cases) return null
               const [x, y] = MINE(i)
-              const role = mine ? (i < q.saved ? "me" : i < q.on ? "meHollow" : "dim") : i < q.on ? "me" : "dim"
+              const role = mine ? (i < q.saved ? "me" : i < q.on ? "meHollow" : "meDim") : i < q.on ? "me" : "meDim"
               return { x, y, s: 34, role, delay: i * 5 }
             },
           }

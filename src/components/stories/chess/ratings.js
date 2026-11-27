@@ -264,7 +264,8 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
   const title = stage === "us" ? "How our games end" : mode === "giveup" ? "How their games end" : mode === "names" ? "What their names say" : mode === "crowd" ? "\u00a0"
     : mode === "pace" ? "How fast do I actually play" : mode === "scatter" ? "1-minute VS 10-minute games" : "My chess ratings"
   const youChip = ["you", "You"]
-  const chips = mode === "giveup" ? [["crowd", "Resigned"], ["dim", "Ended otherwise"], ...(stage === "us" ? [["me", "Me"], ...(yourResign ? [youChip] : [])] : [])]
+  // the give-up squares: colour says whose, the mark says how it ended (a dot resigned, a ring did not)
+  const chips = mode === "giveup" ? [["filled", "Resigned"], ["ring", "Ended otherwise"]]
     : mode === "names" ? []
       : mode === "crowd" ? []
         : mode === "pace" ? [["me", "Me"], ["crowd", atYours ? "Players at your level" : "Players at my level"], ...(yourPace !== null ? [youChip] : [])]

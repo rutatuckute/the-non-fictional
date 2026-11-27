@@ -62,7 +62,7 @@ const Boards = () => {
     <div className={c("ch-minisBox")} onPointerMove={look} onPointerDown={look} onPointerLeave={() => setNote(null)}>
       <img
         src="/images/stories/chess/boards.webp"
-        alt="Hundreds of tiny chessboards in a grid: how the author’s last thousand games ended, her pieces in clay, her opponents’ in ivory. Point at one to see the game."
+        alt="Hundreds of tiny chessboards in a grid: how the author’s last thousand games ended, her pieces in clay, her opponents’ in slate blue. Point at one to see the game."
         width={1776}
         height={1296}
         decoding="async"
