@@ -119,8 +119,9 @@ export const crowdLayout = ({ total, left, right, top, bottom, width, you }) => 
     return { x: cx + Math.cos(a) * r * ax, y: cy + Math.sin(a) * r * ay }
   })
 
-  // the rows: a name above, the dots under it
-  const rowH = (bottom - top) / rows.length
+  // the rows: a name above, the dots under it; no taller than they need to be
+  const rowH = Math.min((bottom - top) / rows.length, narrow ? 96 : 108)
+  const rowsBottom = top + rowH * rows.length
   const shown = new Array(total), waiting = new Array(total), rowOf = new Array(total)
   const bands = rows.map((row, k) => {
     const rowTop = top + k * rowH
@@ -164,7 +165,7 @@ export const crowdLayout = ({ total, left, right, top, bottom, width, you }) => 
     return { key: g.key, name: g.examples[0], index, ...crowd[index] }
   })
 
-  return { rows, bands, crowd, shown, waiting, rowOf, lostAt, first, ours, tags, rx, radius, typicalX, narrow }
+  return { rows, bands, crowd, shown, waiting, rowOf, lostAt, first, ours, tags, rx, radius, typicalX, narrow, rowsBottom }
 }
 
 // How many of a hundred lost games each square lights: resigned.
@@ -203,7 +204,7 @@ export const dotAt = (layout, index, { stage, revealed, you }) => {
 // line, me and the reader, and the squares of lost games.
 export const CrowdMarks = ({ layout, stage, revealed, guesses = {}, you, left, right, top, bottom }) => {
   if (!layout) return null
-  const { rx, bands, tags, typicalX, narrow } = layout
+  const { rx, bands, tags, typicalX, narrow, rowsBottom } = layout
   const on = yes => ({ style: { opacity: yes ? 1 : 0 }, "aria-hidden": "true" })
   const rowsOn = stage === "rows"
   const ticks = [0, 1000, 2000]
@@ -227,9 +228,9 @@ export const CrowdMarks = ({ layout, stage, revealed, guesses = {}, you, left, r
         })}
       </g>
       <g {...on(rowsOn)}>
-        {ticks.map(v => <text key={v} x={rx(v)} y={bottom + 22} textAnchor="middle">{v.toLocaleString("en-GB")}</text>)}
-        <text x={right} y={bottom + 38} textAnchor="end">Rapid rating →</text>
-        <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={bottom} y2={bottom} />
+        {ticks.map(v => <text key={v} x={rx(v)} y={rowsBottom + 22} textAnchor="middle">{v.toLocaleString("en-GB")}</text>)}
+        <text x={right} y={rowsBottom + 38} textAnchor="end">Rapid rating →</text>
+        <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={rowsBottom} y2={rowsBottom} />
         {bands.map(b => <line key={b.key} className={c("ch-crowdTypical")} x1={typicalX} x2={typicalX} y1={b.bandTop - 6} y2={b.bandBottom + 6} />)}
         <text x={typicalX} y={top - 26} textAnchor="middle">Typical opponent ↓</text>
         {bands.map(b => {

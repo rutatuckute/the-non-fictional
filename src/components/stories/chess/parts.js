@@ -304,6 +304,7 @@ export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, r
                 className={c("ch-step")}
                 data-step={index}
                 data-bare={bare ? "true" : undefined}
+                data-place={item?.place}
                 data-on={step === index ? "true" : "false"}
                 ref={stepRef(index)}
               >

@@ -2,7 +2,6 @@
 
 import * as React from "react"
 
-import { GROUPS, truth } from "./crowd"
 import { c, Text } from "./parts"
 import { INVESTIGATIONS, InvestigationBoard, InvestigationName } from "./investigation-parts"
 import { useReader } from "./reader"
@@ -10,7 +9,9 @@ import { useStill } from "./follow"
 import { readerGap } from "./ratings"
 import { gently, header, Opening, paintOpening, pinOf, timeline, UNPINS, within } from "./opening"
 import { Knots } from "./thread"
-import paths from "./wrong-paths.json"
+import ratings from "./ratings.json"
+
+const S = ratings.scatter
 
 // The three questions of Part III, come back to after each investigation:
 // the boards of the choice screen (dive.js), each answered one in turn with
@@ -18,57 +19,26 @@ import paths from "./wrong-paths.json"
 // reader's own part in it (green; reader.js). Her clay dot moves on to the
 // question just answered. After the third, all three together, before Part IV.
 
-const inHundred = v => Math.round(v * 100)
-const pathRate = key => {
-  const p = paths[key]
-  return { resign: inHundred(p.resigned), on: inHundred(1 - p.resigned - p.left) }
-}
-
+// The reader's answer, beside mine: one short phrase from their own Chess.com
+// games, on the same measure as mine (owner, 27 Nov): their rating gap, what they
+// do a queen down, how soon the computer finds them. Nothing about the guessing
+// games, and no line (nor green dot) without their games.
+const HIGHER = Math.round((1 - S.shareLower - S.points.filter(([r, b]) => b === r).length / S.points.length) * 100)
 const yours = (id, said) => {
   if (id === "what-we-say") {
-    const names = said.names || {}
-    const answered = GROUPS.filter(g => names[g.key])
-    const guessed = answered.length
-      ? `You called ${answered.filter(g => names[g.key] === truth(g)).length} of ${answered.length} usernames.`
-      : "You didn’t guess the usernames."
-    // with their Chess.com ratings (you.js), their own gap too
     const you = readerGap(said.chesscom)
-    if (!you) return guessed
-    const gap = you.gap === 0 ? "the same in both formats" : `${Math.abs(you.gap)} points ${you.gap < 0 ? "lower" : "higher"} in fast chess`
-    return `On Chess.com you’re ${gap}. ${guessed}`
+    if (!you) return null
+    return you.gap < 0 ? "Worse at fast chess too: ordinary." : you.gap > 0 ? `Better at fast chess: like ${HIGHER} in 100.` : "The same in both: rare."
   }
   if (id === "when-things-go-wrong") {
-    const decision = said.decisions || {}
-    const told = [
-      ["queen", "A queen down"],
-      ["king", "With a lone king"],
-    ]
-      .filter(([key]) => decision[key])
-      .map(([key, when], i) => {
-        const rate = pathRate(key)
-        const who = i === 0 ? " players at my level" : ""
-        return decision[key] === "Resign" ? `${when}, you resigned, like ${rate.resign} in 100${who}.` : `${when}, you played on, like ${rate.on} in 100${who}.`
-      })
-    // with their own games counted (you.js), what they did when it happened
     const q = said.queens && said.chesscom && said.queens.username === said.chesscom.username ? said.queens : null
-    const decided = told.length ? told.join(" ") : "You didn’t decide."
-    return q ? `${decided} On Chess.com you lost your queen like this ${q.cases} times, stayed ${q.on} and saved ${q.saved}.` : decided
+    if (!q?.cases) return null
+    return q.on * 2 >= q.cases ? "You play on too." : "You mostly resign."
   }
-  // the game (reveal.js): the three rounds, the random lineups, her, and
-  // themselves; with their own games read (you.js), how soon they are found
-  const game = said.choose
   const dials = said.dials && said.chesscom && said.dials.username === said.chesscom.username ? said.dials : null
   const at30 = dials?.curve?.at(-1)
-  const known = at30 == null ? "" : ` From thirty of your games, the computer finds you ${Math.round(at30 * 100)} times in 100.`
-  if (!game) return dials ? `You didn’t play the game.${known}` : "You didn’t play the game."
-  const rounds = game.rounds.map((hit, i) => (hit == null ? null : [["one game", "ten games", "thirty games"][i], hit])).filter(Boolean)
-  const found = rounds.filter(([, hit]) => hit).map(([n]) => n)
-  const parts = []
-  if (rounds.length) parts.push(found.length ? `You found the stranger from ${found.join(" and ")}.` : "You didn’t find the stranger.")
-  if (game.played.n) parts.push(`With players drawn at random, you found ${game.played.you} of ${game.played.n}; the computer, ${game.played.cpu}.`)
-  if (game.findme != null) parts.push(game.findme ? "And you found me." : "And you missed me.")
-  if (game.findyou != null) parts.push(game.findyou ? "You found yourself." : "You didn’t find yourself.")
-  return parts.join(" ") + known
+  if (at30 == null) return null
+  return at30 >= 0.5 ? "Recognisable too." : "Hard to recognise."
 }
 
 // Each question opens with its first line under its name (opening.js); where its
@@ -203,11 +173,13 @@ export const Hub = ({ upto }) => {
                       />
                     ) : null}
                   </div>
-                  <p className={c("ch-hubYou")}>
-                    {said.chesscom ? <b className={c("ch-dotMark", "ch-hubMark")} data-dot={latest ? "you" : undefined} data-who="you" /> : null}
-                    {/* the reader's sentence, highlighted like mine, in their green */}
-                    <span><mark className={c("ch-hl", "ch-hl-you")}>{yours(q.id, said)}</mark></span>
-                  </p>
+                  {yours(q.id, said) ? (
+                    <p className={c("ch-hubYou")}>
+                      <b className={c("ch-dotMark", "ch-hubMark")} data-dot={latest ? "you" : undefined} data-who="you" />
+                      {/* the reader's answer, highlighted like mine, in their green */}
+                      <span><mark className={c("ch-hl", "ch-hl-you")}>{yours(q.id, said)}</mark></span>
+                    </p>
+                  ) : null}
                 </div>
               </li>
             )

@@ -207,7 +207,8 @@ export const Say = () => {
           // at the end of the dive (dive.js), over this scene, dimmed: the question
           // starts two screens early, under the dive, and the message then stands alone
           { rest: 2 },
-          { text: <Text name="say-claim" look="lead" />, rest: 0.25 },
+          // beside the message alone, the words come nearer the middle
+          { text: <Text name="say-claim" look="lead" />, rest: 0.25, place: "near" },
           { text: <Text name="say-isolation" look="lead" /> },
           { text: <Text name="say-prediction" look="lead" /> },
           { rest: 0.1 },

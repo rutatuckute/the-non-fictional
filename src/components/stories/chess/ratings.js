@@ -72,9 +72,6 @@ const RatingCloud = React.memo(function RatingCloud({ dot, yours }) {
       data-near-you={yours != null && Math.abs(rapid - yours) <= 100 ? "true" : "false"} />)}
   </g>
 })
-const OverviewCloud = React.memo(function OverviewCloud() {
-  return <g fill="var(--ink-3)">{S.points.map(([x, y], i) => <circle key={i} cx={x / 3000 * 56} cy={34 - y / 3000 * 34} r={0.55} />)}</g>
-})
 
 // Deterministic beeswarm: x is the recorded pace, y only prevents collisions.
 // Source-linked identities are retained for the players shared by both cohorts.
@@ -96,13 +93,15 @@ export const paceLevelOf = rapid => {
   }
   return null
 }
+// The pace chart's seconds: 2 to 17 (her level runs 2.9–16.3), a closer view than 0–18.
+const PACE_FROM = 2, PACE_TO = 17
 const packSeconds = (all, width, left, right, top, bottom) => {
-  const radius = width < 400 ? 1 : 1.65
+  const radius = width < 400 ? 1.2 : 2.1
   const diameter = radius * 2 + 0.5
   const points = []
   const centre = (top + bottom) / 2
   for (const { seconds, index } of all.map((seconds, index) => ({ seconds, index })).sort((a, b) => a.seconds - b.seconds)) {
-    const x = scale(seconds, 0, 18, left, right)
+    const x = scale(seconds, PACE_FROM, PACE_TO, left, right)
     const neighbours = []
     for (let i = points.length - 1; i >= 0 && x - points[i].x < diameter; i--) neighbours.push(points[i])
     let offset = 0
@@ -201,7 +200,7 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
   const chooseView = (next, event) => { setKeyboard(event.detail === 0); setView(next) }
 
   const stage = crowdStage(step)
-  const w = size.width, h = stage ? size.tall ?? size.height : size.height
+  const w = size.width, h = stage && size.compact ? size.tall ?? size.height : size.height
   // The earlier charts keep the base height, so their dots never move when the
   // names beats take the taller frame; only the crowd uses the extra room.
   const left = w < 400 ? 35 : 44, right = w - 20, top = 36, bottom = size.height - 40, crowdBottom = h - 40
@@ -223,7 +222,7 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
   const yMin = mix(0, mix(100, yourY, pan), focus), yMax = mix(worldMax, mix(850, yourY + 750, pan), focus)
   const sx = value => scale(value, xMin, xMax, left, right)
   const sy = value => scale(value, yMin, yMax, bottom, top)
-  const px = value => scale(value, 0, 18, left, right)
+  const px = value => scale(value, PACE_FROM, PACE_TO, left, right)
   const timelineOpacity = entry * (1 - smooth(morph / 0.45))
   const scatterOpacity = smooth((morph - 0.45) / 0.55) * (1 - smooth(bridge / 0.5))
   const crowdOpacity = smooth(out / 0.65)
@@ -289,8 +288,16 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
         <Message collapse={entry} revealed={step >= 1} target={{ x: tx(T.claim), y: top + canvasTop }} />
       </div>
       <figcaption className={c("ch-ratingTitle")} style={chartStyle} aria-hidden={step < 2}>{title}</figcaption>
-      <div style={chartStyle}>
+      {/* the legend, and at its right the view switch (where a chart has one), close to the chart */}
+      <div className={c("ch-ratingHeadRow")} style={chartStyle} inert={step < 2} aria-hidden={step < 2}>
         <Chips chips={chips} extra={mode === "names" ? <NameScore guesses={guesses} /> : null} />
+        <div className={c("ch-ratingExplore")} inert={!(step === 6 || (paceStep && level))} aria-hidden={!(step === 6 || (paceStep && level))} data-visible={step === 6 || Boolean(paceStep && level)}>
+          <div role="group" aria-label={paceStep ? "Pace chart view" : "Rating chart view"} className={c("ch-ratingViews")}>
+            <button type="button" aria-pressed={view !== "all" && view !== "yours"} onClick={e => chooseView("mine", e)}>My level</button>
+            {you ? <button type="button" className={c("ch-ratingYourView")} aria-pressed={view === "yours"} onClick={e => chooseView("yours", e)}>Your level</button> : null}
+            {paceStep ? null : <button type="button" aria-pressed={view === "all"} onClick={e => chooseView("all", e)}>All players</button>}
+          </div>
+        </div>
       </div>
       <svg ref={canvas} className={c("ch-ratingCanvas")} width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={fullLabel} aria-hidden={step < 2}>
         <defs>
@@ -395,7 +402,7 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
         </g>
         <g aria-hidden="true" data-layer="pace" className={c("ch-crowdFade")} data-settled={step >= 8 ? "true" : undefined} style={{ opacity: stage ? 0 : paceOpacity }}>
           <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={bottom} y2={bottom} />
-          {[0, 5, 10, 15].map(v => <text key={v} x={px(v)} y={bottom + 22} textAnchor="middle">{v}s</text>)}
+          {[5, 10, 15].map(v => <text key={v} x={px(v)} y={bottom + 22} textAnchor="middle">{v}s</text>)}
           <text x={right} y={bottom + 22 + 16} textAnchor="end">Seconds per move →</text>
           <g className={c("ch-paceTypical")} style={{ transform: `translateX(${px(typicalPace).toFixed(1)}px)` }}>
             <line className={c("ch-ratingRef")} x1={0} x2={0} y1={57} y2={bottom - 8} />
@@ -436,8 +443,8 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
             const t = targets?.[q.index]
             if (t) return <circle key={q.scatterIndex} data-linked-peer="true" data-scatter-index={q.scatterIndex} data-pace-index={q.index}
               className={c("ch-crowdDot")} data-tone={t.tone} r={t.r ?? swarm.radius} cx={q.x} cy={q.y} style={crowdStyle(t, q.x, q.y, q.index)} />
-            const fill = step >= 8 && q.seconds > pace.me.seconds ? "var(--ink)"
-              : step === 7 || step === 6 && Math.abs(rapid - S.me[0]) <= 100 || step === 5 && bullet < rapid ? "var(--ink-2)" : "var(--ink-3)"
+            // the same players as the rest of the cloud, so the same slate; their opacity says which are lit
+            const fill = "var(--them)"
             return <circle key={q.scatterIndex} data-linked-peer="true" data-scatter-index={q.scatterIndex} data-pace-index={q.index}
               r={mix(w < 400 ? 1.35 : 1.8, swarm.radius, enterPace)} fill={fill} opacity={alpha}
               cx={mix(sx(rapid), q.x, enterPace)} cy={mix(sy(bullet), q.y, enterPace)} className={c("ch-crowdDot")} data-settled={step >= 8 ? "true" : undefined} />
@@ -452,23 +459,15 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
           <circle r={step < 3 ? 4.5 : 6} data-dot="me" />
           <text x={10} y={-12} opacity={stage === "crowd" ? 1 : smooth(morph / 0.6) * (1 - enterPace)}>Me</text>
         </g>
+        {/* in the crowd of usernames the reader stands beside me, in green */}
+        {you ? (
+          <g className={c("ch-ratingYou", "ch-crowdYouMark")} data-on={stage === "crowd" ? "true" : "false"} aria-hidden="true">
+            <circle cx={(left + right) / 2 + 58} cy={(top + bottom) / 2 + 46} r={6} data-dot={stage === "crowd" ? "you" : undefined} />
+            <text x={(left + right) / 2 + 68} y={(top + bottom) / 2 + 64}>You</text>
+          </g>
+        ) : null}
       </svg>
       <NameButtons bands={layout.bands} guesses={guesses} onGuess={onGuess} open={stage === "rows"} top={canvasTop} narrow={narrow} />
-      <div className={c("ch-ratingTools")} style={chartStyle} inert={step < 2} aria-hidden={step < 2}>
-        <div className={c("ch-ratingExplore")} inert={!(step === 6 || (paceStep && level))} aria-hidden={!(step === 6 || (paceStep && level))} data-visible={step === 6 || Boolean(paceStep && level)}>
-          <div role="group" aria-label={paceStep ? "Pace chart view" : "Rating chart view"} className={c("ch-ratingViews")}>
-            <button type="button" aria-pressed={view !== "all" && view !== "yours"} onClick={e => chooseView("mine", e)}>My level</button>
-            {you ? <button type="button" className={c("ch-ratingYourView")} aria-pressed={view === "yours"} onClick={e => chooseView("yours", e)}>Your level</button> : null}
-            {paceStep ? null : <button type="button" aria-pressed={view === "all"} onClick={e => chooseView("all", e)}>All players</button>}
-          </div>
-          {paceStep ? null : <button className={c("ch-ratingOverview")} type="button" aria-label={view === "all" ? "Zoom to my level" : "Show all players"}
-            onClick={e => chooseView(view === "all" ? "mine" : "all", e)}>
-            <svg viewBox="0 0 60 38" aria-hidden="true"><g transform="translate(2,2)"><OverviewCloud />
-              <rect x={xMin / 3000 * 56} y={34 - yMax / 3000 * 34} width={(xMax - xMin) / 3000 * 56} height={(yMax - yMin) / 3000 * 34} className={c("ch-ratingFrame")} />
-            </g></svg>
-          </button>}
-        </div>
-      </div>
     </figure>
   )
 }

@@ -749,6 +749,8 @@
 /* Part III's steps count at 70% of the screen (parts.js stepLine): its second card starts lower, so
    a jump to a question's chapter mark still lands on the first step, not the second */
 .ch-part3 .ch-pin[data-reading="true"] .ch-step[data-step="1"] { min-height: 74vh; }
+/* a step whose scene is small (the message) keeps its words nearer the middle, as in Parts I and II */
+@media (min-width: 60.01rem) { .ch-pin[data-reading="true"] .ch-step[data-place="near"] .ch-card { margin-right: 8%; } }
 /* What our choices reveal (reveal.js): one stage, four views. The dials (four strips: grey
    players rated 600-900, her in clay, the middle half shaded), the split (one player's
    sixty games), the game (ten cards, the mystery games as rings laid over each, the gap as
@@ -1004,6 +1006,9 @@
 /* Every chart's legend: coloured tags under its title, in one row of fixed height
    (the same for every chart, so the plot under it never moves). */
 .ch-ratingChips { display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; height: 19px; margin: 10px 0 8px; pointer-events: none; overflow: hidden; }
+/* the legend's row; a chart's view switch sits at its right end */
+.ch-ratingHeadRow { display: flex; align-items: center; gap: 12px; min-height: 26px; margin: 10px 0 8px; padding-right: 20px; }
+.ch-ratingHeadRow .ch-ratingChips { flex: 1 1 auto; min-width: 0; margin: 0; }
 .ch-ratingChip { font: 500 11px / 1 var(--font-mono); padding: 4px 6px; border-radius: 2px; white-space: nowrap; background: var(--them); color: #0d1219; transition: opacity 500ms ease; }
 .ch-ratingChip[data-tone="rapid"] { background: color-mix(in srgb, var(--thread) 45%, var(--ink)); }
 .ch-ratingChip:is([data-tone="bullet"], [data-tone="me"]) { background: var(--thread); color: #fff6ee; }
@@ -1033,31 +1038,26 @@
 /* line-end labels stay readable where the line runs under them */
 .ch-ratings .ch-ratingPale, .ch-ratings .ch-ratingClay { paint-order: stroke; stroke: var(--void); stroke-width: 4px; stroke-linejoin: round; }
 .ch-ratingMe text { font-weight: 600; }
-.ch-ratingTools { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; margin-top: 4px; }
-.ch-ratingExplore { display: flex; align-items: center; gap: 8px; visibility: hidden; }
-.ch-ratingExplore[data-visible="true"] { visibility: visible; }
-.ch-ratingViews { display: flex; gap: 2px; }
-.ch-ratingViews button { min-height: 44px; padding: 6px 10px; background: none; border: 1px solid transparent; border-radius: 4px; color: var(--ink-2); font: 400 12px / 1.2 var(--font-mono); cursor: pointer; }
-.ch-ratingViews button[aria-pressed="true"] { color: var(--ink); border-color: var(--rule-strong); }
-.ch-ratingOverview { width: 64px; height: 44px; padding: 2px; background: none; border: 1px solid var(--rule); border-radius: 3px; cursor: pointer; }
-.ch-ratingOverview svg { width: 100%; height: 100%; }
-.ch-ratingFrame { fill: color-mix(in srgb, var(--thread) 12%, transparent); stroke: var(--thread); stroke-width: 1; }
+/* the view switch: one small pill of two or three choices */
+.ch-ratingExplore { display: none; flex: none; }
+.ch-ratingExplore[data-visible="true"] { display: flex; }
+.ch-ratingViews { display: flex; padding: 2px; border: 1px solid var(--rule-strong); border-radius: 999px; }
+.ch-ratingViews button { min-height: 24px; padding: 3px 10px; background: none; border: 0; border-radius: 999px; color: var(--ink-2); font: 400 11px / 1 var(--font-mono); white-space: nowrap; cursor: pointer; transition: background-color 150ms ease, color 150ms ease; }
+.ch-ratingViews button[aria-pressed="true"] { background: var(--raised); color: var(--ink); box-shadow: inset 0 0 0 1px var(--rule-strong); }
 .ch-paceCloud circle { fill: var(--them); opacity: 0.7; transition: opacity 240ms ease; }
 .ch-ratings [data-highlight="true"] .ch-paceCloud circle[data-slower="true"] { fill: var(--them); opacity: 1; }
 .ch-ratings [data-highlight="true"] .ch-paceCloud circle[data-slower="false"] { opacity: 0.3; }
 .ch-paceMeLine { stroke: var(--thread); stroke-width: 1.5; }
 @media (hover: hover) and (pointer: fine) {
   .ch-ratingViews button:hover { color: var(--ink); }
-  .ch-ratingOverview:hover { border-color: var(--thread); }
 }
 @media (max-width: 60rem) {
   .ch-part3 .ch-sayPin[data-plain="true"] .ch-scene { top: calc(var(--bar) + 7svh + var(--say-copy, 180px) + 18px); bottom: 12px; height: auto; }
   .ch-part3 .ch-sayPin .ch-told > div { padding-bottom: 0; background: none; }
   .ch-sayGraphics .ch-panel { max-height: 100%; }
   .ch-ratings svg text { font-size: 11px; }
-  .ch-ratingViews button { font-size: 11px; padding-inline: 7px; }
-  .ch-ratingExplore { gap: 4px; }
-  .ch-ratingOverview { width: 52px; }
+  .ch-ratingViews button { padding-inline: 8px; }
+  .ch-ratingHeadRow { padding-right: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ch-ratingPeers use, .ch-paceCloud circle { transition: none; }
@@ -1477,9 +1477,9 @@
 .ch-hubMark:not([data-dot])[data-who="you"] { background: var(--form-data); }
 /* only the first, bold sentence of my conclusion is shown */
 .ch-story.ch-story.ch-story .ch-hubHer, .ch-story.ch-story.ch-story .ch-hubHer p { margin: 0; font-size: 0; line-height: 0; text-align: left; }
-.ch-story.ch-story.ch-story .ch-hubHer strong { color: var(--ink); font: 400 clamp(18px, 1.6vw, 22px) / 1.25 var(--font-title); letter-spacing: -0.01em; }
+.ch-story.ch-story.ch-story .ch-hubHer strong { color: var(--ink); font: 400 clamp(16px, 1.3vw, 19px) / 1.25 var(--font-title); letter-spacing: -0.01em; }
 /* the reader's sentence: the same highlighted look as mine, in green, a step smaller */
-.ch-story .ch-hubYou { display: inline-flex; align-items: center; gap: 12px; margin: 0; color: var(--ink); font: 400 clamp(16px, 1.35vw, 19px) / 1.3 var(--font-title); letter-spacing: -0.005em; text-align: left; }
+.ch-story .ch-hubYou { display: inline-flex; align-items: center; gap: 12px; margin: 0; color: var(--ink); font: 400 clamp(15px, 1.2vw, 17px) / 1.3 var(--font-title); letter-spacing: -0.005em; text-align: left; }
 .ch-hubYou .ch-hubMark { width: 10px; height: 10px; }
 .ch-hubYou > span { text-wrap: balance; }
 .ch-hubTitle { margin-bottom: 48px; text-align: center; }
@@ -1496,8 +1496,8 @@
   .ch-hubAll { grid-template-columns: minmax(0, 1fr); gap: 26px; }
   .ch-hubOne { grid-template-columns: var(--hub-board) minmax(0, 1fr); justify-items: start; gap: 16px; text-align: left; }
   .ch-hubWords { justify-items: start; gap: 8px; }
-  .ch-story.ch-story.ch-story .ch-hubHer strong { font-size: 18px; }
-  .ch-story .ch-hubYou { font-size: 15.5px; }
+  .ch-story.ch-story.ch-story .ch-hubHer strong { font-size: 16px; }
+  .ch-story .ch-hubYou { font-size: 14.5px; }
   .ch-story .ch-hubTitle.ch-partTitle h2 { font-size: clamp(36px, 10vw, 52px); }
 }
 
@@ -1752,6 +1752,9 @@
   .ch-story .ch-diveName { max-width: min(16em, 100%); text-align: right; }
   .ch-story.ch-story.ch-story .ch-text.ch-diveSaid { justify-self: end; width: 32%; max-width: none; text-align: left; }
   .ch-story.ch-story .ch-diveSaid p { text-align: left; }
+  /* Q1's line ("Before judging others, I'll start with myself.") stands on one row,
+     a little smaller, right under the name (owner, 27 Nov) */
+  .ch-story.ch-story.ch-story .ch-text.ch-diveSaid:not(.ch-firstOnly) { width: auto; white-space: nowrap; font-size: min(var(--t-narr), 1.9vw); }
 }
 /* the stage's camera (wrong-stage.js): each chart fitted to the room it has */
 .ch-stageCamera { transition: transform 1s cubic-bezier(0.65, 0, 0.25, 1); }
@@ -1775,7 +1778,9 @@
 .ch-ratings [data-highlight="yours"] .ch-ratingPeers use[data-near-you="false"] { opacity: 0.20; }
 .ch-ratings [data-highlight="yours"] .ch-ratingPeers use[data-near-you="true"] { fill: var(--them); opacity: 0.9; }
 .ch-ratingViews button.ch-ratingYourView { color: var(--form-data); }
-.ch-ratingViews button.ch-ratingYourView[aria-pressed="true"] { border-color: color-mix(in srgb, var(--form-data) 60%, transparent); }
+.ch-ratingViews button.ch-ratingYourView[aria-pressed="true"] { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--form-data) 60%, transparent); }
+.ch-crowdYouMark { opacity: 0; transition: opacity 500ms ease; }
+.ch-crowdYouMark[data-on="true"] { opacity: 1; transition-delay: 400ms; }
 .ch-ratingYou .ch-ratingExpected { fill: var(--void); stroke: var(--form-data); }
 /* "Your level" on the pace chart (ratings.js): the clouds swap, the typical line slides */
 .ch-paceSwap { transition: opacity 600ms ease; }
