@@ -25,7 +25,7 @@
    grey like the rest until the memory begins. */
 .ch-thread { position: absolute; top: 0; z-index: 1; overflow: hidden; pointer-events: none; }
 .ch-thread path {
-  fill: none; stroke: var(--thread); stroke-width: 1.3; stroke-linecap: round;
+  fill: none; stroke: var(--thread); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round;
   transition: stroke-dashoffset 700ms var(--ch-ease), stroke 650ms ease, opacity 650ms ease;
 }
 /* The reader's own thread: one of the grey ones, until they keep it. */
@@ -108,9 +108,9 @@
   .ch-navList::before { height: var(--line-long, 0px); background: var(--rule-strong); }
   .ch-navList::after { height: var(--line-done, 0px); background: var(--form-data); }
   .ch-navList > li > a { display: block; padding-left: 24px; font: 400 13px / 1.35 var(--font-mono); }
-  /* the parts of a chapter show while it is being read, or while the keyboard is in it */
+  /* Show parts in the active chapter, keeping inactive click targets stable. */
   .ch-story .ch-navParts { display: none; gap: 9px; padding: 11px 0 2px 24px; }
-  .ch-story .ch-navList > li[data-on="true"] > .ch-navParts, .ch-story .ch-navList > li:focus-within > .ch-navParts { display: grid; }
+  .ch-story .ch-navList > li[data-on="true"] > .ch-navParts { display: grid; }
   .ch-navParts a { display: block; font: 400 12px / 1.35 var(--font-mono); }
 }
 
@@ -227,7 +227,10 @@
   margin: 0; color: var(--ink); text-align: center;
   font: 400 var(--t-display) / 0.98 var(--font-title); letter-spacing: var(--tracking-display); text-transform: none;
 }
-.ch-text.ch-intro { max-width: 24em; color: var(--ink-2); }
+.ch-text.ch-intro {
+  max-width: none; justify-self: center; color: var(--ink-2);
+  font-size: clamp(16px, 1.42vw, 23px); line-height: 1.35; white-space: nowrap;
+}
 .ch-coverWrap { position: relative; }
 .ch-cover { width: 100%; max-height: calc(100svh - 76px - var(--bar) - 8svh); object-fit: contain; object-position: right center; }
 
@@ -240,9 +243,10 @@
    the threads come down; its second line a little smaller. */
 .ch-open .ch-text { max-width: min(20em, 56%); }
 .ch-open .ch-text.ch-large { font-size: var(--t-statement); line-height: 1.08; }
-.ch-text.ch-aside { max-width: min(22em, 56%); font-size: clamp(20px, 2.2vw, 30px); line-height: 1.15; letter-spacing: var(--tracking-display); text-wrap: balance; }
+.ch-text.ch-aside { max-width: min(32em, 56%); font-size: clamp(16px, 1.35vw, 20px); line-height: 1.5; letter-spacing: normal; color: var(--ink-2); }
 .ch-memory .ch-text.ch-headline { font-size: var(--t-statement); }
-.ch-memory .ch-text.ch-medium { font-size: var(--t-second); line-height: 1.15; letter-spacing: var(--tracking-display); }
+.ch-memory .ch-text.ch-medium { font-size: clamp(27px, 3vw, 42px); line-height: 1.15; letter-spacing: var(--tracking-display); }
+.ch-memory .ch-text.ch-quiet { font-size: clamp(18px, 1.5vw, 21px); line-height: 1.45; }
 /* "Hold on to it for a moment.", and the reader's choice to keep a thread */
 .ch-hold { display: grid; justify-items: start; gap: 14px; margin-top: 18px; max-width: 56%; }
 .ch-hold .ch-text { color: var(--ink-2); font-size: clamp(16px, 1.3vw, 19px); line-height: 1.4; }
@@ -320,9 +324,9 @@
 /* the memory's own words: one line, and a quieter one under it */
 .ch-told2 { display: grid; gap: 12px; }
 .ch-device { grid-column: 2 / 6; grid-row: 2; }
-.ch-memory .ch-col { grid-column: 8 / 13; grid-row: 2; align-self: center; }
+.ch-memory .ch-col { grid-column: 7 / 13; grid-row: 2; align-self: center; }
 /* The years between: the thread as a timeline, the decades named behind it. */
-.ch-years { position: relative; height: 80vh; height: 80svh; }
+.ch-years { position: relative; height: 105vh; height: 105svh; }
 /* the chapter's largest words, at the left as the opening's are */
 .ch-text.ch-yearsText {
   position: absolute; left: 0; top: 18%; max-width: none;
@@ -330,6 +334,10 @@
 }
 /* "No chess.": apart from it, at the lower right */
 .ch-text.ch-yearsNone { left: auto; right: 0; top: 58%; }
+.ch-story[data-live="true"] .ch-years .ch-yearsText[data-reveal] {
+  transform: translateY(10px); transition: opacity 420ms var(--ch-ease), transform 420ms var(--ch-ease);
+}
+.ch-story[data-live="true"] .ch-years .ch-yearsText[data-reached="true"] { transform: translateY(0); }
 .ch-decade {
   --shown: 1;
   position: absolute; right: 0; top: var(--at); z-index: 0; transform: translateY(-50%); text-align: right;
@@ -401,6 +409,10 @@
    column of their own that scrolls past the scene. */
 .ch-woodenWords { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
 .ch-woodenWords > div { position: absolute; left: 66%; right: 0; transform: translateY(-50%); }
+.ch-woodenWords > [data-thread-copy] { left: 55%; right: 2%; }
+.ch-woodenWords [data-thread-copy] .ch-text.ch-lead {
+  max-width: 26ch; margin-inline: auto; font-size: clamp(27px, 2.55vw, 37px); line-height: 1.3; text-wrap: pretty;
+}
 /* A question asked of the strangers: a statement's size. */
 .ch-text.ch-question { font-size: var(--t-second); line-height: 1.12; letter-spacing: var(--tracking-display); text-wrap: balance; }
 /* The words beside the scene share one place, each there for its part of it. */
@@ -421,7 +433,7 @@
 .ch-woodenVeil { position: absolute; inset: 0 -50vw; background: var(--void); pointer-events: none; }
 /* The chart the phone comes to rest under. It stands still; wooden.js writes
    on it how much of it shows. Room is left under it for the phone. */
-.ch-woodenChart { position: absolute; left: 22px; width: 62%; top: 44%; transform: translateY(-50%); pointer-events: none; }
+.ch-woodenChart { position: absolute; left: 22px; width: 50%; top: 44%; transform: translateY(-50%); pointer-events: none; }
 .ch-woodenChart .ch-plot { aspect-ratio: 1.8; max-height: 36svh; }
 .ch-story .ch-woodenChart .ch-timeTitle { margin-bottom: 46px; }
 /* the caption starts clear of the phone resting under the axis's beginning */
@@ -1197,11 +1209,12 @@
   .ch-knot { left: var(--px); top: var(--py); }
   .ch-row { grid-template-columns: minmax(0, 1fr); row-gap: 5vh; }
   .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-mine, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-device, .ch-row > .ch-chat, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
-  .ch-years { height: 64vh; height: 64svh; }
-  .ch-text.ch-yearsText { top: 26%; }
-  .ch-text.ch-yearsNone { top: 50%; }
+  .ch-years { height: 105vh; height: 105svh; }
+  .ch-text.ch-yearsText { top: 18%; }
+  .ch-text.ch-yearsNone { top: 55%; }
   .ch-open .ch-text, .ch-text.ch-aside, .ch-hold { max-width: none; }
   .ch-hero { grid-template-columns: minmax(0, 1fr); row-gap: 28px; min-height: 0; padding: calc(var(--bar) + 4svh) 0 4svh; }
+  .ch-text.ch-intro { font-size: clamp(17px, 4.9vw, 24px); }
   .ch-cover { max-height: none; }
   .ch-memory { row-gap: 22px; padding-bottom: 5vh; }
   .ch-device { width: 72%; }
@@ -1217,6 +1230,18 @@
   .ch-people[data-titled="true"] .ch-woodenTold { top: calc(var(--bar) + 7.5svh); }
   .ch-woodenTold > div { position: absolute; left: 0; right: 0; top: 0; padding-bottom: 18px; background: linear-gradient(var(--void) 80%, transparent); opacity: 0; transition: opacity 300ms ease; }
   .ch-woodenTold > div[data-on="true"] { opacity: 1; }
+  /* Clear the outgoing sentence before bringing in the next. Transitions
+     stay interruptible when the reader reverses or skips a scroll beat. */
+  .ch-woodenTold > [data-thread-copy] {
+    transform: translateY(8px); pointer-events: none;
+    transition: opacity 140ms ease, transform 140ms ease;
+  }
+  .ch-woodenTold > [data-thread-copy][data-on="true"] {
+    transform: translateY(0); transition: opacity 320ms var(--ch-ease) 140ms, transform 320ms var(--ch-ease) 140ms;
+  }
+  .ch-people .ch-woodenTold [data-thread-copy] .ch-text.ch-lead {
+    max-width: 28ch; margin-inline: auto; font-size: clamp(20px, 5.9vw, 24px); line-height: 1.32; text-wrap: pretty;
+  }
   .ch-manyCopy { left: var(--page-margin); right: var(--page-margin); top: calc(var(--bar) + 7.5svh); transform: none; padding-bottom: 18px; background: linear-gradient(var(--void) 80%, transparent); }
   .ch-pictured { left: 54%; top: 40%; width: 43%; }
   .ch-many { width: 100%; }
@@ -1273,6 +1298,13 @@
   .ch-boardSmall { width: min(34svh, 70%); }
   .ch-two { grid-template-columns: minmax(0, 1fr); }
   .ch-close { padding-top: 12vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ch-story[data-live="true"] .ch-years .ch-yearsText[data-reveal],
+  .ch-woodenTold > [data-thread-copy], .ch-woodenTold > [data-thread-copy][data-on="true"] {
+    transform: none; transition: opacity 120ms ease;
+  }
 }
 
 /* A phone: the chart can be taller than it is wide-ish, for its lines to read. */
@@ -1459,3 +1491,66 @@
   .ch-youDials[data-kind="read"] { padding-top: 12px; margin-top: 12px; }
   .ch-youDials .ch-youNote { display: none; }
 }
+
+/* ── The words, one system from the first screen to the last (27 Nov) ──
+   No boxes and no rails. Three sizes only, the same in every part:
+   narration (every paragraph that tells), a statement (a line that stands alone:
+   the opening question, "This is mine.", the professor, the central question,
+   "What is your chess?"), and a note (said in passing, quieter). Display type
+   (the title, the years) and the parts' names keep their own roles. Everything
+   keeps the alignment it had (centred where it was centred). Beside a pinned scene
+   only the step being read is lit. */
+.ch-story {
+  --t-narr: clamp(22px, 2.5vw, 36px);
+  --t-note: clamp(17px, 1.45vw, 21px);
+  --t-statement: clamp(32px, 4vw, 58px);
+}
+.ch-story.ch-story.ch-story .ch-text:is(.ch-lead, .ch-medium, .ch-question, .ch-cardText) {
+  font-size: var(--t-narr); line-height: 1.42; letter-spacing: normal; text-wrap: pretty;
+}
+.ch-story.ch-story.ch-story .ch-text:is(.ch-large, .ch-headline, .ch-statement, .ch-said) {
+  font-size: var(--t-statement); line-height: 1.1; letter-spacing: var(--tracking-display); text-wrap: balance;
+}
+.ch-story.ch-story.ch-story .ch-text:is(.ch-quiet, .ch-aside, .ch-intro), .ch-story.ch-story.ch-story .ch-hubHer, .ch-story.ch-story.ch-story .ch-hubHer p {
+  font-size: var(--t-note); line-height: 1.5; letter-spacing: normal; color: var(--ink-2);
+}
+/* her answer in a recap: the same highlight as everywhere, not coloured words */
+.ch-story.ch-story .ch-hubHer strong { color: var(--ink); font-size: inherit; }
+/* beside a pinned scene, the step being read is lit and the others stay faint */
+.ch-pin[data-reading="true"] .ch-step:not([data-bare="true"]) .ch-card { opacity: 0.26; transition: opacity 450ms ease; }
+.ch-pin[data-reading="true"] .ch-step[data-on="true"] .ch-card { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .ch-pin[data-reading="true"] .ch-step .ch-card { transition: none; }
+}
+/* the larger words need a wider column beside the scene on a wide screen */
+.ch-pin[data-reading="true"] .ch-card { width: 38%; }
+.ch-pin[data-reading="true"] .ch-scene { right: 40%; }
+
+/* Highlighted words: the legend inside the sentence (highlights.js). Each role is
+   the colour of the marks it names on the stage. */
+.ch-story mark.ch-hl {
+  --hl: transparent; padding: 0; border-radius: 2px; color: inherit; background: var(--hl);
+  box-shadow: 0.15em 0 0 var(--hl), -0.15em 0 0 var(--hl); -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  transition: background-color 450ms ease, color 450ms ease, box-shadow 450ms ease;
+}
+.ch-story mark.ch-hl-me { --hl: var(--thread); color: #fff6ee; }
+.ch-story mark.ch-hl-meFaint { --hl: color-mix(in srgb, var(--thread) 45%, var(--void)); color: #fff6ee; }
+.ch-story mark.ch-hl-you { --hl: var(--form-data); color: #0c1a0e; }
+.ch-story mark.ch-hl-crowd { --hl: var(--ink); color: var(--void); }
+.ch-story mark.ch-hl-faint { --hl: #5f5a53; color: #f4efe7; }
+.ch-story mark.ch-hl-hollow { box-shadow: inset 0 0 0 1.4px var(--ink-3), 0.15em 0 0 transparent; }
+.ch-story mark.ch-hl-other { --hl: var(--other); color: #07142b; }
+.ch-story mark.ch-hl-other2 { --hl: var(--other-2); color: #1d1503; }
+.ch-story mark.ch-hl-band { --hl: color-mix(in srgb, var(--other) 30%, var(--void)); color: var(--ink); }
+.ch-story mark.ch-hl strong { color: inherit; }
+/* a mark is lit with its step: in the faint steps around it, it is plain words */
+.ch-story .ch-pin[data-reading="true"] .ch-step:not([data-on="true"]) mark.ch-hl { --hl: transparent; box-shadow: none; color: inherit; }
+@media (prefers-reduced-motion: reduce) { .ch-story mark.ch-hl { transition: none; } }
+
+/* The method: a reading column, set left. */
+.ch-method .ch-text { max-width: 44rem; margin-inline: auto; }
+.ch-story .ch-method .ch-text :is(p, h2, h3, h4, li) { text-align: left; }
+.ch-method .ch-text ul { padding-left: 1.1em; }
+.ch-method .ch-text li { margin: 0 0 0.8em; font-size: 17px; line-height: 1.55; color: var(--ink-2); }
+.ch-method .ch-text li strong { color: var(--ink); }
+.ch-method .ch-storyMeta { max-width: 44rem; margin-inline: auto; }

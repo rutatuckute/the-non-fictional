@@ -48,7 +48,10 @@ export const Chapters = ({ chapters }) => {
       const lands = marks.map(topOf)
       let now = 0
       marks.forEach((mark, index) => {
-        if (index && (topOf(mark.parentElement) <= y + screen * READ_AT || lands[index] <= y + 1)) now = index
+        // A chapter inside a shared pinned scene starts at its own mark,
+        // rather than at the start of the parent that also holds Part I.
+        const entered = !mark.hasAttribute("data-chapter-at-mark") && topOf(mark.parentElement) <= y + screen * READ_AT
+        if (index && (entered || lands[index] <= y + 1)) now = index
       })
       let part = null
       for (const each of chapters[now].parts || []) {
@@ -81,6 +84,7 @@ export const Chapters = ({ chapters }) => {
       list.current.style.setProperty("--line-top", `${first}px`)
       list.current.style.setProperty("--line-long", `${last + tail - first}px`)
       list.current.style.setProperty("--line-done", `${y < lands[0] ? 0 : here + share * (next - here) - first}px`)
+
     }
     const wake = () => {
       if (!frame) frame = window.requestAnimationFrame(update)

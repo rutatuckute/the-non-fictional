@@ -61,65 +61,34 @@ const CHAPTERS = [
 // Beyond the screen's edge, whatever the window's width: the column is centred in it.
 const OFF_LEFT = "calc(50% - 60vw)"
 const OFF_RIGHT = "calc(50% + 60vw)"
-// Part I's threads, as one family. They come out from under the cover
-// together and run down the right of the opening as a loose bundle, clear of
-// the question. "a" is the story's thread: clay wherever chess is in the life,
-// grey where it is not (the knots marked "clay" and "grey" set its colour). It
-// is grey through the opening, takes its colour as it goes in behind the
-// device in its place, goes grey again through the years with no chess, and
-// is clay again as it reaches the wooden set. "you" is the reader's own: one
-// of the grey ones until they keep it (see the opening). The others leave in
-// their own time, one in the memory, the rest by the screen's edges at the set.
+// Three separated strands leave the cover. The author follows the memory;
+// the reader's strand stays at the right, another life at the left. The
+// story's original chess/no-chess tint remains.
 const LINES = {
-  // percent of the cover picture: a leaves from the author's sleeve
   cover: {
-    "other-1": [[12, 97, 14, 97]],
-    you: [[24, 97, 30, 97]],
-    "other-2": [[34, 97, 46, 97]],
+    "other-1": [[24, 97, 30, 97]],
     a: [[62, 97, 62, 97]],
-    "other-4": [[84, 97, 84, 97]],
+    you: [[84, 97, 84, 97]],
   },
-  // the question stands at the left (to 56%) from about 25% down; the device
-  // peeks in at the right edge, level with it
   open: {
-    "other-1": [[48, 0, 22, 0], [70, 20, -4, 14], [76, 56, -4, 60], [78, 100, -4, 100]],
-    you: [[56, 0, 40, 0], [64, 22, 101.5, 12], [66, 58, 101.5, 60], [64, 100, 101.5, 100]],
-    "other-2": [[62, 0, 56, 0], [84, 16, 110, 8], [86, 52, 112, 40], [86, 100, 112, 100]],
-    a: [[74, 0, 72, 0], [80, 24, 103.5, 12], [90, 52, 103.5, 56], [93, 80, 103.5, 82], [92, 100, 103.5, 100]],
-    "other-4": [[92, 0, 86, 0], [102, 14, 112, 6], [112, 30, 114, 20]],
+    "other-1": [[-6, 0, -3, 0], [-7, 50, -3, 50], [-6, 100, -3, 100]],
+    a: [[74, 0, 72, 0], [82, 28, 103.5, 16], [90, 65, 103.5, 60], [92, 100, 103.5, 100]],
+    you: [[98, 0, 112, 0], [104, 36, 112, 36], [106, 100, 112, 100]],
   },
-  // "This is mine." at the upper left (to 57% across, to 15% down), the device
-  // under it (to 44% across), the father's words at the right, level with
-  // the device's middle; on a phone, the words above and below the device
   memory: {
-    a: [[92, 0, 103.5, 0, "grey"], [76, 9, 96, 12], [52, 19, 80, 19], [36, 30, 50, 30, "clay"], [26, 62, 60, 46], [24, 100, 103.5, 60, "clay"]],
-    you: [[64, 0, 101.5, 0], [60, 16, 101.5, 30], [53, 40, 101.5, 60], [52, 72, 101.5, 80], [46, 100, 101.5, 100]],
-    "other-1": [[80, 0, -4, 0], [90, 18, -4, 40], [104, 40, -4, 70], [106, 70, -4, 90], [100, 100, -4, 100]],
-    "other-2": [[86, 0, 112, 0], [100, 12, 112, 20], [110, 34, 114, 40]],
+    a: [[92, 0, 103.5, 0, "grey"], [88, 20, 96, 12], [48, 42, 80, 19], [26, 68, 50, 30, "clay"], [24, 100, 103.5, 60, "clay"]],
+    "other-1": [[-6, 0, -3, 0], [-7, 50, -3, 50], [-6, 100, -3, 100]],
+    you: [[106, 0, 112, 0], [108, 50, 112, 50], [106, 100, 112, 100]],
   },
-  // "Years went by." at the upper left (to about 45% across, 18% to 30%
-  // down), "No chess." at the lower right (from 64% across, 58% to 70%); the
-  // threads weave between them. On a phone: 26% to 33% down across three
-  // quarters, and from 52% across, 50% to 58%.
   years: {
-    a: [[30, 0, 103.5, 0], [50, 9, 100, 12], [60, 28, 103, 24, "grey"], [50, 46, 100, 40], [38, 64, 40, 46, "grey"], [30, 84, 10, 62], [26, 100, 5, 100]],
-    you: [[44, 0, 101.5, 0], [62, 8, 101.5, 20], [72, 26, 101.5, 40], [62, 44, 70, 46], [46, 58, 30, 48], [44, 80, -4, 64], [48, 100, -6, 100]],
-    "other-1": [[60, 0, -4, 0], [78, 10, -4, 18], [86, 28, -4, 44], [80, 46, 16, 50], [56, 54, 30, 64], [52, 76, 20, 82], [62, 100, 14, 100]],
-    // one arrives in the years, from the left
-    "other-3": [[-6, 40, -8, 40], [10, 52, -6, 60], [20, 72, 4, 80], [16, 100, 8, 100]],
+    a: [[24, 0, 103.5, 0], [44, 18, 100, 18], [64, 36, 94, 32, "grey"], [58, 54, 35, 48], [34, 78, 8, 72, "grey"], [26, 100, 5, 100]],
+    "other-1": [[-6, 0, -3, 0], [-7, 50, -3, 50], [-6, 100, -3, 100]],
+    you: [[106, 0, 112, 0], [108, 50, 112, 50], [106, 100, 112, 100]],
   },
-  // The wooden set is pinned: its stretch is several screens long, and the
-  // board and the words stay on screen while the stretch passes behind them.
-  // So the other threads leave by the screen's edge in the first screen and
-  // stay out; only the story's thread is there, coming down the screen and in
-  // behind the board (on a phone, at the far left, clear of the words above
-  // the board). It ends under the scene's own ground, which comes when the phone
-  // does: from there the thread is the line that comes out of the phone.
   wooden: {
     a: [[26, 0.4, 5, 0.4, "clay"], [24, 23.5, 5, 23.5], [22, 44, 5, 44], [23, 58, 5, 58], [22, 70, 5, 70]],
-    you: [[50, 0.4, -6, 0.3], [OFF_RIGHT, 2.2, OFF_LEFT, 2.2], [OFF_RIGHT, 60, OFF_LEFT, 60]],
-    "other-1": [[62, 0.5, 14, 0.3], [82, 1.6, OFF_LEFT, 2.2], [OFF_RIGHT, 2.9, OFF_LEFT, 30], [OFF_RIGHT, 60, OFF_LEFT, 60]],
-    "other-3": [[16, 0.8, 8, 0.2], [OFF_LEFT, 3.1, OFF_LEFT, 2], [OFF_LEFT, 7, OFF_LEFT, 30]],
+    "other-1": [[-6, 0.4, -3, 0.3], [OFF_LEFT, 4, OFF_LEFT, 4], [OFF_LEFT, 60, OFF_LEFT, 60]],
+    you: [[106, 0.4, 112, 0.3], [OFF_RIGHT, 4, OFF_RIGHT, 4], [OFF_RIGHT, 60, OFF_RIGHT, 60]],
   },
   // the first stretch of Part IV, above its title: the thread comes in from the recap
   arrive: {
@@ -233,11 +202,11 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           {/* The years between, in brief: the thread runs bare among the
               others, and the 2020s come. */}
           <div className={c("ch-years")}>
-            <span className={c("ch-decade")} data-reveal="" style={{ "--at": "90%", "--pat": "80%" }}>
+            <span className={c("ch-decade")} data-reveal="" style={{ "--at": "90%", "--pat": "91%" }}>
               2020s
             </span>
-            <Text name="years" className={c("ch-yearsText")} />
-            <Text name="years-none" className={c("ch-yearsText", "ch-yearsNone")} />
+            <Text name="years" className={c("ch-yearsText")} reveal />
+            <Text name="years-none" className={c("ch-yearsText", "ch-yearsNone")} reveal />
             <Knots of={LINES.years} />
           </div>
 

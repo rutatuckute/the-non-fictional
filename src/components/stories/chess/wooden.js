@@ -152,6 +152,7 @@ const WORDS = [
   ["strangers-where", MET[1] + 0.12, "question"],
   ["strangers-moment", MET[2] + 0.12, "question"],
 ]
+const THREAD_WORDS = new Set(WORDS.slice(0, 7).map(([name]) => name))
 // Of a move: the hand comes to the piece, carries it, and leaves.
 const TAKES = 0.32
 const LEAVES = 0.72
@@ -255,12 +256,13 @@ export const Wooden = ({ lines }) => {
   const crossings = React.useRef([])
   const many = React.useRef(null)
   const manyCopy = React.useRef(null)
+  const readingCopy = React.useRef({})
   const pieces = React.useRef({})
   const hands = React.useRef({})
   const still = useStill()
   // What changes in steps, for the page to say and to style: the rest is
   // written straight onto the pieces and the hands, frame by frame.
-  const [stage, setStage] = React.useState({ turned: false, set: false, social: false, played: 0, phone: false, first: false, words: WORDS[0][0], who: -1, online: false, narrow: false })
+  const [stage, setStage] = React.useState({ turned: false, set: false, social: false, played: 0, phone: false, words: WORDS[0][0], who: -1, online: false, narrow: false })
 
   const goal = () => {
     const box = pin.current.getBoundingClientRect()
@@ -268,6 +270,12 @@ export const Wooden = ({ lines }) => {
     return Math.max(0, Math.min((box.height - screen) / screen, -box.top / screen))
   }
   const paint = scrolled => {
+    // Desktop copy keeps its natural scroll, with a fully readable pause
+    // near the centre and a soft exit before the following paragraph arrives.
+    WORDS.forEach(([name, at]) => {
+      const copy = readingCopy.current[name]
+      if (copy) copy.style.opacity = String(still ? 1 : 1 - within(Math.abs(scrolled - at), 0.24, 0.42))
+    })
     // one unit of the board's picture, in the screen's pixels
     const k = scene.current.clientWidth / BOARD.width
     const now = sceneAt(scrolled, still)
@@ -382,8 +390,10 @@ export const Wooden = ({ lines }) => {
       const endY = box.top + place[1] + tall * size * 0.58 - screen.top
       const head = (title.current ||= chart.current.querySelector("h3")).getBoundingClientRect()
       const bendY = narrow ? 32 : Math.max(24, Math.min(endY * 0.45, head.top - screen.top - 18)) * (1 - back) + Math.max(24, endY * 0.4) * back
-      const turnY = Math.max(bendY, endY - 45)
-      link.current.setAttribute("d", `M${startX.toFixed(2)},0 C${startX.toFixed(2)},${(bendY * 0.45).toFixed(2)} ${lane.toFixed(2)},${(bendY * 0.55).toFixed(2)} ${lane.toFixed(2)},${bendY.toFixed(2)} L${lane.toFixed(2)},${turnY.toFixed(2)} Q${lane.toFixed(2)},${endY.toFixed(2)} ${endX.toFixed(2)},${endY.toFixed(2)}`)
+      const turnY = Math.max(bendY, endY - Math.min(180, endY * 0.38))
+      // The long vertical tangent becomes a broad, horizontal sweep into
+      // the phone. Both cubic joins share their tangent; no elbow at the end.
+      link.current.setAttribute("d", `M${startX.toFixed(2)},0 C${startX.toFixed(2)},${(bendY * 0.45).toFixed(2)} ${lane.toFixed(2)},${(bendY * 0.55).toFixed(2)} ${lane.toFixed(2)},${bendY.toFixed(2)} C${lane.toFixed(2)},${((bendY + turnY) / 2).toFixed(2)} ${lane.toFixed(2)},${turnY.toFixed(2)} ${lane.toFixed(2)},${turnY.toFixed(2)} C${lane.toFixed(2)},${(turnY + (endY - turnY) * 0.65).toFixed(2)} ${(lane + (endX - lane) * 0.45).toFixed(2)},${endY.toFixed(2)} ${endX.toFixed(2)},${endY.toFixed(2)}`)
       link.current.parentElement.style.opacity = within(arrives, 0.04, 0.3).toFixed(3)
     }
     // the chart comes in as the phone goes to it
@@ -419,8 +429,6 @@ export const Wooden = ({ lines }) => {
       online: scrolled >= HANDOFF_AT,
       narrow: Boolean(narrow),
       phone: scrolled >= PHONE_AT + CHANGE / 2,
-      // 1. e4: as it is played on the set, and again on the phone's first game
-      first: (now.played >= 1 && scrolled < AWAY_AT) || (scrolled >= PHONE_AT + 0.3 && scrolled < CLAIM_AT),
     }
     setStage(before => (Object.keys(next).every(key => before[key] === next[key]) ? before : next))
   }
@@ -528,17 +536,12 @@ export const Wooden = ({ lines }) => {
             </div>
           </div>
         </div>
-        {/* The first move, the same on every board of Part I: the device's
-            screen shows it, the set plays it, the first game online opened with it. */}
-        <span className={c("ch-firstMove")} data-on={stage.first ? "true" : "false"} aria-hidden="true">
-          1. e4
-        </span>
         <Pictured who={stage.who} ref={pictured} />
         {/* On a phone the words stand at the top, one after another. */}
         {stage.narrow ? (
           <div className={c("ch-woodenTold")}>
             {WORDS.map(([name, , look]) => (
-              <div key={name} data-on={stage.words === name ? "true" : "false"}>
+              <div key={name} data-thread-copy={THREAD_WORDS.has(name) ? name : undefined} data-on={stage.words === name ? "true" : "false"}>
                 <Text name={name} look={look || "lead"} />
               </div>
             ))}
@@ -553,14 +556,14 @@ export const Wooden = ({ lines }) => {
       {!stage.narrow ? (
         <div className={c("ch-woodenWords")}>
           {WORDS.map(([name, at, look]) => (
-            <div key={name} style={{ top: `calc(${(at + 0.5).toFixed(3)} * 100svh)` }}>
+            <div key={name} ref={node => { if (THREAD_WORDS.has(name)) readingCopy.current[name] = node }} data-thread-copy={THREAD_WORDS.has(name) ? name : undefined} style={{ top: `calc(${(at + 0.5).toFixed(3)} * 100svh)` }}>
               <Text name={name} look={look || "lead"} />
             </div>
           ))}
         </div>
       ) : null}
       {/* where the chapters' navigation opens Part II */}
-      <span id="the-people" className={c("ch-mark")} style={{ top: `calc(${(TITLE_AT + 0.08).toFixed(3)} * 100svh)` }} />
+      <span id="the-people" className={c("ch-mark")} data-chapter-at-mark="" style={{ top: `calc(${(TITLE_AT + 0.08).toFixed(3)} * 100svh)` }} />
       <Knots of={lines} />
     </div>
   )

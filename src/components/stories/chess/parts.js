@@ -4,6 +4,7 @@ import * as React from "react"
 
 import prose from "../../../styles/blog-post.module.css"
 import styles from "./chess.module.css"
+import { highlight } from "./highlights"
 
 // What every part of the chess story is built from: the words the body gives
 // by name, the boxes that stand in for pictures and charts not made yet, and
@@ -15,13 +16,13 @@ export const Words = React.createContext({})
 
 // A named text. One that the body doesn't have yet says so while the story is
 // being built, and is simply absent on the published page.
-export const Text = ({ name, look = "", className = "", style }) => {
-  const html = React.useContext(Words)[name]
+export const Text = ({ name, look = "", className = "", style, reveal = false }) => {
+  const html = highlight(name, React.useContext(Words)[name], role => c("ch-hl", `ch-hl-${role}`))
   const classes = `${c("ch-text", look && `ch-${look}`)} ${className}`
-  if (html) return <div className={`${classes} ${prose.prose}`} style={style} dangerouslySetInnerHTML={{ __html: html }} />
+  if (html) return <div className={`${classes} ${prose.prose}`} style={style} data-text={name} data-reveal={reveal ? "" : undefined} dangerouslySetInnerHTML={{ __html: html }} />
   if (process.env.NODE_ENV === "production") return null
   return (
-    <div className={classes} style={style}>
+    <div className={classes} style={style} data-reveal={reveal ? "" : undefined}>
       <p className={c("ch-missing")}>No text named “{name}” in the body yet</p>
     </div>
   )

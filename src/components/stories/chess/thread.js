@@ -89,13 +89,30 @@ const stretches = points =>
     return [b, [b[0] + h1[0], b[1] + h1[1]], [p[0] - h2[0], p[1] - h2[1]], p]
   })
 
-const pathOf = points =>
-  points.length < 2
-    ? ""
-    : `M${points[0][0]},${points[0][1]} ` +
-      stretches(points)
+// The opening is a loose strand, not a route through mandatory corners.
+// A clamped cubic B-spline rounds the control polygon with continuous first
+// and second derivatives, including where two layout sections meet. Only
+// its ends are fixed; data traces and the ending keep their existing paths.
+const roundedStretches = points => {
+  // Neighbouring layout sections can name the same joining point twice.
+  // Keeping both pulls a broad bend into a tight turn at that boundary.
+  const route = points.filter((p, index) => !index || Math.hypot(p[0] - points[index - 1][0], p[1] - points[index - 1][1]) > 2)
+  const controls = [route[0], route[0], ...route, route[route.length - 1], route[route.length - 1]]
+  const blend = (a, b, c) => a.map((v, axis) => (v + 4 * b[axis] + c[axis]) / 6)
+  return controls.slice(0, -3).map((a, index) => {
+    const [b, c, d] = controls.slice(index + 1, index + 4)
+    return [blend(a, b, c), b.map((v, axis) => (2 * v + c[axis]) / 3), b.map((v, axis) => (v + 2 * c[axis]) / 3), blend(b, c, d)]
+  })
+}
+
+const pathFrom = segments =>
+  segments.length
+    ? `M${segments[0][0][0]},${segments[0][0][1]} ` + segments
         .map(([, c1, c2, p]) => `C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p[0].toFixed(1)},${p[1].toFixed(1)}`)
         .join(" ")
+    : ""
+
+const pathOf = points => points.length < 2 ? "" : pathFrom(stretches(points))
 
 // The same curve as points a short step apart. A point is firm when the
 // stretch it lies on runs between two points of data: those are not to be moved.
@@ -320,7 +337,11 @@ export const Thread = () => {
         // the reader's own thread is one of the others until it is chosen
         const other = name.startsWith("other") || name.startsWith("you")
         const sampled = along(points, exact)
-        const whole = wander(sampled.way, sampled.firm, name, other ? 4.5 : 2.5)
+        // The opening uses broad, separated bends. Small repeated waves can
+        // create a vibrating pattern, particularly in a phone's narrow margins.
+        const openingRun = name === "a" || name === "you" || name === "other-1"
+        const amount = openingRun ? (other ? 1.8 : 1.2) : other ? 4.5 : 2.5
+        const whole = wander(sampled.way, sampled.firm, name, amount)
         // Past the break the thread is drawn as questions, not as a line.
         const cut = breakAt === null ? whole.length - 1 : sampled.knotAt[breakAt]
         const way = whole.slice(0, cut + 1)
@@ -328,7 +349,8 @@ export const Thread = () => {
         // A bead sits on the thread as drawn, at the point nearest its knot.
         const nearest = mark =>
           way.reduce((best, p) => (Math.hypot(p[0] - mark[0], p[1] - mark[1]) < Math.hypot(best[0] - mark[0], best[1] - mark[1]) ? p : best))
-        return { name, other, traces, d: pathOf(way), asked, beads: marks.map(nearest).map(p => [Math.round(p[0]), Math.round(p[1])]) }
+        const d = openingRun && !traces.length ? pathFrom(roundedStretches(points)) : pathOf(way)
+        return { name, other, traces, d, asked, beads: marks.map(nearest).map(p => [Math.round(p[0]), Math.round(p[1])]) }
       })
       tint.sort((p, q) => p[0] - q[0])
       const next = { runs, tint: tint.length > 1 ? tint : null }
