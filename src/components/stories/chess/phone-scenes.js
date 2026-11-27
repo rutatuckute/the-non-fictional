@@ -133,6 +133,8 @@ export const Message = ({ collapse = 0, target }) => {
       {/* when it was sent, as the screenshot shows it */}
       <p className={c("ch-messageTime")} style={{ opacity: 1 - Math.min(1, collapse * 2) }}>18 May 2026</p>
       <p className={c("ch-messagePop")} ref={bubble}>
+        {/* my dot waits beside my message (travellers.js) */}
+        <b className={c("ch-dotMark", "ch-dotBeside")} data-dot="me" />
         <span style={{ opacity: 1 - Math.min(1, collapse * 3) }}>Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀</span>
       </p>
     </div>

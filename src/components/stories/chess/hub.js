@@ -4,7 +4,7 @@ import * as React from "react"
 
 import { GROUPS, truth } from "./crowd"
 import { c, Text } from "./parts"
-import { INVESTIGATIONS, InvestigationBoard } from "./investigation-parts"
+import { INVESTIGATIONS, InvestigationBoard, InvestigationName } from "./investigation-parts"
 import { useReader } from "./reader"
 import { useStill } from "./follow"
 import { readerGap } from "./ratings"
@@ -79,53 +79,59 @@ const FIRST = { "when-things-go-wrong": "wrong-observation", "what-we-choose": "
 const GATE = 3.6
 const GLIDE_AT = GATE - 1 - UNPINS
 
+// When a question ends, the questions answered so far come back: each board comes
+// down from its place at the top left, with my conclusion beside my dot and the
+// reader's sentence beside theirs (travellers.js: the travelling dots go to the
+// question just ended; the ones before keep a dot of their own). After the last,
+// all three, under "What the data said". Between two questions the recap then goes
+// back up, and the next question's board comes down from its place to open it
+// (opening.js).
+const ARRIVE = [0.95, 0.45] // the boards come down as the recap's first row rises from 95% of the screen to 45%
+const LEAVE = [0.6, 0.95] // and goes back up over these screens of the hold
+
 export const Hub = ({ upto }) => {
   const said = useReader()
   const root = React.useRef(null)
   const stick = React.useRef(null)
-  const still = useStill()
-  // the dot sets off from the question before once the hub is in view
-  const [arrived, setArrived] = React.useState(false)
+  const items = React.useRef([])
   const spot = React.useRef(null)
-  // After the first and second questions the recap holds the screen, and as the reader
-  // goes on, the next question opens (opening.js). After the last, the three small
-  // boards at the top left come down into the recap's three instead.
-  const gate = upto < INVESTIGATIONS.length
-  const all = upto === INVESTIGATIONS.length
+  const still = useStill()
+  const done = INVESTIGATIONS.slice(0, upto)
+  const next = INVESTIGATIONS[upto]
+  // between two questions the recap holds the screen; after the last it does not
+  const gate = Boolean(next)
   React.useEffect(() => {
     const node = root.current
-    const next = INVESTIGATIONS[upto]
     let frame = 0
     const update = () => {
       frame = 0
-      if (gate) {
-        // screens scrolled since the recap filled the screen
-        const s = Math.max(0, Math.min(GATE + 0.4, -node.getBoundingClientRect().top / window.innerHeight))
-        paintOpening({ scope: node, item: node.querySelector('li[data-state="next"]'), spot: spot.current, index: upto, pin: pinOf(next.id), holder: stick.current, t: timeline(s - GLIDE_AT, still) })
-        return
-      }
-      // the last recap: the three come down from the top left as its row comes up
-      // (from 95% of the screen to 55%), each into its own board here
-      const top = header()
-      if (!top) return
-      const y = node.querySelector("ol").getBoundingClientRect().top / window.innerHeight
-      const q = still ? (y < 0.75 ? 1 : 0) : gently(within(0.95 - y, 0, 0.4))
-      const targets = node.querySelectorAll("li a svg")
-      top.querySelectorAll("a").forEach((tab, i) => {
-        const svg = tab.querySelector("svg")
-        const to = targets[i]?.getBoundingClientRect()
-        if (!svg || !to) return
+      const tabs = header()?.querySelectorAll("a") || []
+      // screens scrolled since the recap filled the screen
+      const s = Math.max(0, Math.min(GATE + 0.4, -node.getBoundingClientRect().top / window.innerHeight))
+      const leave = gate ? (still ? (s > 0.8 ? 1 : 0) : gently(within(s, LEAVE[0], LEAVE[1]))) : 0
+      // the answered questions' small boards come down into the recap together, as its
+      // first row rises (on a phone the others are lower down), and go back together
+      const y = (items.current[0]?.getBoundingClientRect().top ?? window.innerHeight) / window.innerHeight
+      const arrive = still ? (y < 0.7 ? 1 : 0) : gently(within(ARRIVE[0] - y, 0, ARRIVE[0] - ARRIVE[1]))
+      const q = arrive * (1 - leave)
+      items.current.forEach((item, i) => {
+        if (!item) return
+        const board = item.querySelector("svg")
+        item.style.setProperty("--here", q.toFixed(4))
+        item.dataset.here = q > 0.999 ? "true" : "false"
+        const tab = tabs[i]
+        const svg = tab?.querySelector("svg")
+        if (!svg) return
         // (measured on the link, which does not move, not on the board, which does)
         const from = tab.getBoundingClientRect()
+        const to = board.getBoundingClientRect()
         const x = (to.left + to.width / 2 - (from.left + from.width / 2)) * q
         const yy = (to.top + to.height / 2 - (from.top + from.height / 2)) * q
-        svg.style.transform = q > 0 ? `translate(${x.toFixed(1)}px, ${yy.toFixed(1)}px) scale(${(1 + (to.width / from.width - 1) * q).toFixed(4)})` : ""
+        svg.style.transform = q > 0.001 && q < 0.999 ? `translate(${x.toFixed(1)}px, ${yy.toFixed(1)}px) scale(${(1 + (to.width / from.width - 1) * q).toFixed(4)})` : ""
+        const away = q > 0.999 ? "here" : q > 0.001 ? "going" : "home"
+        if (tab.dataset.away !== away) tab.dataset.away = away
       })
-      const returning = q > 0.001 ? "true" : "false"
-      const returned = q > 0.999 ? "true" : "false"
-      if (top.dataset.returning !== returning) top.dataset.returning = returning
-      if (top.dataset.returned !== returned) top.dataset.returned = returned
-      node.dataset.returned = returned
+      if (gate) paintOpening({ scope: node, item: spot.current, spot: spot.current, index: upto, pin: pinOf(next.id), holder: stick.current, t: timeline(s - GLIDE_AT, still), fromSlot: true })
     }
     const wake = () => {
       if (!frame) frame = window.requestAnimationFrame(update)
@@ -139,60 +145,52 @@ export const Hub = ({ upto }) => {
       if (frame) window.cancelAnimationFrame(frame)
     }
   }, [gate, upto, still])
-  React.useEffect(() => {
-    const node = stick.current
-    if (!node) return
-    const seen = new IntersectionObserver(([entry]) => entry.isIntersecting && setArrived(true), { threshold: 0.5 })
-    seen.observe(node)
-    return () => seen.disconnect()
-  }, [])
-  const at = arrived || upto === 1 ? upto - 1 : upto - 2
   return (
-    <section ref={root} className={c("ch-hub")} data-all={all ? "true" : "false"} data-gate={gate ? "true" : undefined} aria-label={all ? "What the data said" : `${upto} of ${INVESTIGATIONS.length} questions answered`}>
+    <section ref={root} className={c("ch-hub")} data-gate={gate ? "true" : undefined} data-last={gate ? undefined : "true"} aria-label={gate ? `${upto} of ${INVESTIGATIONS.length} questions answered` : "What the data said"}>
       <div ref={stick} className={c("ch-hubStick")}>
-      {all ? <Text name="hub-title" look="partTitle" className={c("ch-hubTitle")} /> : null}
-      <div className={c("ch-hubRow")} style={{ "--at": at }}>
-      <span className={c("ch-hubTravel")} aria-hidden="true" />
-      {/* after the last question the story's thread leaves from the last dot, on into Part IV */}
-      {all ? (
-        <Knots
-          of={{
-            b: [
-              ["calc(100% * 5 / 6)", "calc(var(--hub-board) * 84 / 80 + 13px)", 8, "100%"],
-              ["97%", "calc(var(--hub-board) * 84 / 80 + 7px)", 8, "100%"],
-              ["104%", "calc(var(--hub-board) * 84 / 80 + 90px)", 8, "100%"],
-              ["104%", "100%", 8, "100%"],
-            ],
-          }}
-        />
-      ) : null}
-      <ol className={c("ch-hubBoards")}>
-        {INVESTIGATIONS.map((q, i) => {
-          const state = i < upto ? "done" : i === upto ? "next" : "later"
-          return (
-            <li key={q.id} data-state={state} data-here={i === at ? "true" : "false"}>
-              <a href={`#${q.id}`} className={c("ch-hubBoard")} aria-label={q.label}>
-                <InvestigationBoard id={q.id} />
-                <span className={c("ch-hubDot")} aria-hidden="true" />
-              </a>
-              <div className={c("ch-hubWords")}>
-                <h4>{q.id === "what-we-choose" ? <>What our <em>choices</em> reveal</> : q.label}</h4>
-                {state === "done" ? (
-                  <>
+        {gate ? null : <Text name="hub-title" look="partTitle" className={c("ch-hubTitle")} />}
+        <ol className={c("ch-hubAll")} style={{ "--answered": done.length }}>
+          {done.map((q, i) => {
+            const latest = i === done.length - 1
+            return (
+              <li key={q.id} ref={node => { items.current[i] = node }} className={c("ch-hubOne")}>
+                <span className={c("ch-hubBoard")}>
+                  <InvestigationBoard id={q.id} />
+                </span>
+                <div className={c("ch-hubWords")}>
+                  <h4 className={c("ch-hubName")}><InvestigationName id={q.id} /></h4>
+                  {/* my conclusion beside my dot (only its first, bold sentence is shown); the
+                      travelling dot comes to the question just ended, the others keep their own */}
+                  <div className={c("ch-hubLine")}>
+                    <b className={c("ch-dotMark", "ch-hubMark")} data-dot={latest ? "me" : undefined} data-who="me" />
                     <Text name={`hub-${q.id}`} className={c("ch-hubHer")} />
-                    <p className={c("ch-hubYou")}>{yours(q.id, said)}</p>
-                  </>
-                ) : (
-                  <p className={c("ch-hubNext")}>{state === "next" ? "Next" : "Still to come"}</p>
-                )}
-              </div>
-            </li>
-          )
-        })}
-      </ol>
-      </div>
-      {/* the next question opens here, as the recap goes (opening.js) */}
-      {gate ? <Opening id={INVESTIGATIONS[upto].id} said={FIRST[INVESTIGATIONS[upto].id]} first ref={spot} /> : null}
+                    {/* after the last question the story's thread leaves from my dot, on into Part IV */}
+                    {!gate && latest ? (
+                      <Knots
+                        of={{
+                          b: [
+                            ["-14px", "50%", "-14px", "50%"],
+                            ["-34px", "calc(100% + 70px)", "-22px", "calc(100% + 60px)"],
+                          ],
+                        }}
+                      />
+                    ) : null}
+                  </div>
+                  <p className={c("ch-hubYou")}>
+                    {said.chesscom ? <b className={c("ch-dotMark", "ch-hubMark")} data-dot={latest ? "you" : undefined} data-who="you" /> : null}
+                    <span>{yours(q.id, said)}</span>
+                  </p>
+                </div>
+              </li>
+            )
+          })}
+        </ol>
+        {/* the next question opens here: its board comes down from its place (opening.js) */}
+        {gate ? (
+          <Opening id={next.id} said={FIRST[next.id]} first ref={spot}>
+            <InvestigationBoard id={next.id} />
+          </Opening>
+        ) : null}
       </div>
     </section>
   )

@@ -10,6 +10,7 @@ import { Reveal } from "./reveal"
 import { Hub } from "./hub"
 import { ReaderProvider } from "./reader"
 import { InvestigationHeader } from "./investigation-header"
+import { Travellers } from "./travellers"
 import { Chat } from "./phone-scenes"
 import { Wrong } from "./wrong"
 import { Knots, Thread } from "./thread"
@@ -233,6 +234,7 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           <div className={c("ch-people", "ch-part3")} data-part="investigation" data-titled="true">
             <div className={c("ch-peopleTitle")}>
               <InvestigationHeader />
+              <Travellers />
             </div>
             {/* After each question, the three again, answered so far (hub.js); the
                 reader's guesses and choices are carried between them (reader.js). */}

@@ -297,7 +297,7 @@ export const RatingStory = ({ step, revealed = {} }) => {
             // "Me" is labelled above to the right: near it, "You" goes below.
             const below = cy < top + 20 || Math.hypot(cx - sx(S.me[0]), cy - sy(S.me[1])) < 48
             return <g className={c("ch-ratingYou")} opacity={crowdOpacity} data-off={off ? "true" : "false"}>
-              <circle cx={cx} cy={cy} r={off ? 4 : 6} />
+              <circle cx={cx} cy={cy} r={off ? 4 : 6} data-dot="you" />
               <text x={flip ? cx - 10 : cx + 10} y={cy + (below ? 18 : -10)} textAnchor={flip ? "end" : undefined}>
                 {off ? `You ${ARROWS[`${dx},${dy}`]}` : "You"}
               </text>
@@ -347,7 +347,7 @@ export const RatingStory = ({ step, revealed = {} }) => {
         {/* One author marker, retained from the timeline through the pace plot, into the crowd, and next to the names. */}
         <g className={c("ch-ratingMe")} data-author-marker="true" data-settled={step >= 8 ? "true" : undefined}
           style={{ transform: `translate(${meX}px, ${meY}px)`, opacity: meOpacity }} aria-hidden="true">
-          <circle r={step < 3 ? 4.5 : 6} />
+          <circle r={step < 3 ? 4.5 : 6} data-dot="me" />
           <text x={stage === "me" ? -10 : 10} y={-12} textAnchor={stage === "me" ? "end" : undefined}
             opacity={stage === "crowd" || stage === "me" ? 1 : smooth(morph / 0.6) * (1 - enterPace)}>Me</text>
         </g>

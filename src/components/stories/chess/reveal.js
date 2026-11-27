@@ -172,7 +172,7 @@ const Strips = ({ on, middle, narrow, you }) => {
                     {yz != null ? (
                       <>
                         <line x1={yat} x2={yat} y1={ys[k] + 7} y2={ys[k] + amp + 19} />
-                        <circle cx={yat} cy={ys[k]} r={narrow ? 5 : 6} />
+                        <circle cx={yat} cy={ys[k]} r={narrow ? 5 : 6} data-dot="you" />
                         <text x={yat} y={ys[k] + amp + 31} textAnchor={yat > w * 0.62 ? "end" : "start"}>
                           {narrow ? `you · ${you.above[k]}` : `you · above ${you.above[k]} in 100 at your level`}
                         </text>
@@ -182,7 +182,7 @@ const Strips = ({ on, middle, narrow, you }) => {
                 ) : null}
                 <g className={c("ch-rvHer")} data-on={on[k] ? "true" : "false"}>
                   <line x1={at} x2={at} y1={ys[k] - 7} y2={ys[k] - amp - 2} />
-                  <circle cx={at} cy={ys[k]} r={narrow ? 5 : 6} />
+                  <circle cx={at} cy={ys[k]} r={narrow ? 5 : 6} data-dot="me" />
                   <text x={at} y={ys[k] - amp - 6} textAnchor={left ? "end" : "start"}>
                     {narrow ? `me · ${her.above[k]}` : `me · above ${her.above[k]} in 100`}
                   </text>
@@ -546,6 +546,8 @@ const Curve = ({ lines, narrow, mine }) => {
             return (
               <g key={id} className={c("ch-rvSeries")} data-kind={s.kind}>
                 <path pathLength="1" d={`M${pts.map(p => p.map(v => v.toFixed(1)).join(",")).join("L")}`} />
+                {/* where my line (or the reader's) ends, the dot (travellers.js) */}
+                {(s.kind === "her" || s.kind === "you") && pts.length ? <circle cx={pts.at(-1)[0]} cy={pts.at(-1)[1]} r="5" data-dot={s.kind === "her" ? "me" : "you"} /> : null}
                 {s.points
                   ? [0, 4, 6].filter(i => i < pts.length).map(i => (
                       <g key={i}>

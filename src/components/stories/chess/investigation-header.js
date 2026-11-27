@@ -8,8 +8,8 @@ import { INVESTIGATIONS, InvestigationBoard, InvestigationName } from "./investi
 // left of the screen, the one being read lit. Each question's board, large under its
 // name when the question opens (opening.js), flies up into its place here on the
 // reader's next scroll; the first brings the other two in beside it (the dive sets
-// --dock and data-docked here). After the last question the three fly down into the
-// last recap (hub.js: data-returning, data-returned, and each board's way there).
+// --dock and data-docked here). When a question ends, its board comes down into
+// its recap and goes back (hub.js: data-away on its link, and its way there).
 export const InvestigationHeader = () => {
   const header = React.useRef(null)
   const [active, setActive] = React.useState(INVESTIGATIONS[0].id)

@@ -52,12 +52,18 @@ const slot = index => header()?.querySelectorAll("a svg")[index]
 // line (--named, --said), the scene underneath (--under on the question's pin), and
 // the small board at the top left: hidden while its big one is out (data-fly<i>),
 // lit once it has landed (data-land<i>).
-export const paintOpening = ({ scope, item, spot, index, pin, holder, t }) => {
-  const g = toward(item, spot)
+// With fromSlot the board starts in its own place at the top left (the recaps: it
+// comes down from there and goes back up); item is then the box in the middle it
+// stands in, and it is shown only while it is out.
+export const paintOpening = ({ scope, item, spot, index, pin, holder, t, fromSlot = false }) => {
+  const g = fromSlot ? { x: 0, y: 0, s: 1 } : toward(item, spot)
   const k = toward(item, slot(index))
-  scope.style.setProperty("--tx", `${(g.x * t.into + (k.x - g.x) * t.dock).toFixed(1)}px`)
-  scope.style.setProperty("--ty", `${(g.y * t.into + (k.y - g.y) * t.dock).toFixed(1)}px`)
-  scope.style.setProperty("--ts", (1 + (g.s - 1) * t.into + (k.s - g.s) * t.dock).toFixed(4))
+  // the way: from the slot (or its place) to the middle, then up to the slot
+  const way = (a, b) => (fromSlot ? b * (1 - t.into) + b * t.dock : a * t.into + (b - a) * t.dock)
+  scope.style.setProperty("--tx", `${way(g.x, k.x).toFixed(1)}px`)
+  scope.style.setProperty("--ty", `${way(g.y, k.y).toFixed(1)}px`)
+  scope.style.setProperty("--ts", (1 + way(g.s - 1, k.s - 1)).toFixed(4))
+  scope.dataset.flying = t.into > 0.001 && t.dock < 0.999 ? "true" : "false"
   scope.style.setProperty("--into", t.into.toFixed(4))
   scope.style.setProperty("--named", t.named.toFixed(4))
   scope.style.setProperty("--said", t.said.toFixed(4))
@@ -80,9 +86,9 @@ export const paintOpening = ({ scope, item, spot, index, pin, holder, t }) => {
 export const pinOf = id => document.querySelector(`[data-investigation-part="${id}"] .${c("ch-pin")}`)
 
 // The opening's words and the box its board glides to.
-export const Opening = React.forwardRef(({ id, said, first = false }, spot) => (
+export const Opening = React.forwardRef(({ id, said, first = false, children }, spot) => (
   <div className={c("ch-diveNext")}>
-    <span className={c("ch-diveSpot")} ref={spot} />
+    <span className={c("ch-diveSpot")} ref={spot}>{children}</span>
     <span className={c("ch-diveName")} aria-hidden="true"><InvestigationName id={id} /></span>
     {/* (the question's first line; if its step says more, the rest stays in the step) */}
     <Text name={said} look="lead" className={c("ch-diveSaid", first && "ch-firstOnly")} />

@@ -45,7 +45,7 @@ export const lastMove = (before, after) => {
 
 const Bar = ({ name, rating, mine }) => (
   <div className={c("ch-ccBar")} data-mine={mine ? "true" : undefined}>
-    <i aria-hidden="true" />
+    <i aria-hidden="true" data-dot={mine ? "me" : undefined} />
     <b>{name}</b>
     {rating ? <span>({rating})</span> : null}
   </div>

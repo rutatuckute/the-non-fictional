@@ -1389,16 +1389,27 @@
 .ch-investigationTab::after { content: ""; position: absolute; inset: -3px -3px 1px; border: 1px solid var(--ink); border-radius: 3px; opacity: 0; transition: opacity 300ms ease; pointer-events: none; }
 .ch-investigationTab[data-state="now"]::after { opacity: 0.9; }
 .ch-story .ch-investigationTab:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+/* The two travelling dots (travellers.js): mine in clay, the reader's in green. Each
+   stands in for its mark (data-dot), which is hidden; marks that are not a chart's
+   own dot are empty boxes for it to sit in. */
+.ch-travellers { position: fixed; inset: 0; pointer-events: none; }
+.ch-traveller { position: fixed; left: 0; top: 0; width: 8px; height: 8px; border-radius: 50%; opacity: 0; will-change: transform; box-shadow: 0 0 0 3px var(--void); }
+.ch-traveller[data-who="me"] { background: var(--thread); }
+.ch-traveller[data-who="you"] { background: var(--form-data); }
+.ch-part3[data-travelling="true"] [data-dot] { visibility: hidden; }
+.ch-dotMark { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+.ch-dotInline { margin-right: 8px; vertical-align: -1px; }
+.ch-dotBeside { position: absolute; left: -24px; top: 50%; margin-top: -6px; }
 .ch-investigationTab svg { transform-origin: 50% 50%; }
 /* a question's board is out, large, while it opens (opening.js): its place here waits */
 .ch-investigationHeader[data-fly1="true"] .ch-investigationTab:nth-child(2),
 .ch-investigationHeader[data-fly2="true"] .ch-investigationTab:nth-child(3) { opacity: 0; }
 .ch-investigationHeader[data-fly1="true"] .ch-investigationTab:nth-child(2)::after,
 .ch-investigationHeader[data-fly2="true"] .ch-investigationTab:nth-child(3)::after { opacity: 0; }
-/* after the last question the three come down into the last recap (hub.js), in full */
-.ch-investigationHeader[data-returning="true"] .ch-investigationBoard { opacity: 1; filter: none; }
-.ch-investigationHeader[data-returning="true"]::before, .ch-investigationHeader[data-returning="true"] .ch-investigationTab::after { opacity: 0; }
-.ch-investigationHeader[data-returned="true"] { opacity: 0; visibility: hidden; }
+/* a question's board is down in its recap (hub.js): in full on its way, then gone from here */
+.ch-investigationTab:is([data-away="going"], [data-away="here"])::after { opacity: 0; }
+.ch-investigationTab[data-away="going"] .ch-investigationBoard { opacity: 1; filter: none; }
+.ch-investigationTab[data-away="here"] .ch-investigationBoard { opacity: 0; }
 /* while the first is still on its way, the others come in beside it */
 .ch-investigationHeader[data-docked="false"] .ch-investigationTab { opacity: var(--dock, 0); }
 .ch-investigationHeader[data-docked="false"] .ch-investigationTab:first-child { opacity: 0; }
@@ -1453,62 +1464,53 @@
 .ch-story .ch-club .ch-text a[href="#what-we-choose"] { display: inline-block; margin-top: 4px; color: var(--ink-2); font: 400 13px / 1.4 var(--font-mono); letter-spacing: 0.02em; text-decoration: underline; text-decoration-color: var(--rule-strong); text-underline-offset: 4px; white-space: nowrap; }
 .ch-story .ch-club a[href="#what-we-choose"]:hover, .ch-story .ch-club a[href="#what-we-choose"]:focus-visible { color: var(--ink); text-decoration-color: currentColor; }
 
-/* The three questions again after each investigation (hub.js): her answers in clay, the reader's
-   part in green, her clay dot moving on to the question just answered. */
-.ch-hub { --hub-gap: clamp(20px, 3.4vw, 48px); --hub-board: 92px; position: relative; width: min(100% - 2 * var(--page-margin, 20px), 62rem); margin: 0 auto; padding: 14vh 0 16vh; }
-.ch-hub[data-all="true"] { padding-top: 10vh; }
-/* A recap between two questions holds the screen (the stick), and as the reader goes on
-   the next question's board is zoomed into, until it fills the screen (zoom.js). */
+/* When a question ends, only it comes back (hub.js): its board comes down from its place
+   at the top left, then its name, my conclusion beside my dot, and the reader's sentence
+   beside theirs (travellers.js). Between two questions the recap holds the screen (the
+   stick); it goes back up, and the next question's board comes down to open it. */
+.ch-hub { --hub-board: 120px; position: relative; width: min(100% - 2 * var(--page-margin, 20px), 62rem); margin: 0 auto; padding: 18vh 0 22vh; }
 .ch-hubStick { position: relative; }
 .ch-hub[data-gate="true"] { z-index: 3; height: 360svh; padding: 0; }
 /* (on the page's ground, over the next question's scene, until that question is named) */
 .ch-hub[data-gate="true"] .ch-hubStick { position: sticky; top: 0; min-height: 100svh; display: grid; align-content: center; padding: 6svh 0; background: var(--void); }
 .ch-hub[data-gate="true"] .ch-hubStick[data-under="true"] { background: transparent; }
-/* as the recap goes, the next question's board glides to the middle and then up to the top
-   left (opening.js), sharp all the way; the rest of the recap goes */
-.ch-hub[data-gate="true"] li[data-state="next"] > a svg {
-  position: relative; z-index: 6; transform-origin: 50% 50%;
+/* the questions answered so far, side by side (one under another on a phone) */
+.ch-hubAll { display: grid; grid-template-columns: repeat(var(--answered, 1), minmax(0, 20rem)); justify-content: center; gap: clamp(24px, 4vw, 56px); margin: 0; padding: 0; list-style: none; }
+.ch-hubOne { display: grid; justify-items: center; align-content: start; gap: 16px; text-align: center; }
+.ch-hubWords { display: grid; justify-items: center; gap: 14px; }
+/* the words come with the board, and go with it */
+.ch-hubWords { opacity: var(--here, 0); transform: translateY(calc((1 - var(--here, 0)) * 10px)); }
+.ch-hubBoard { display: block; width: var(--hub-board); }
+.ch-hubBoard svg { display: block; width: 100%; height: auto; opacity: 0; }
+.ch-hubOne[data-here="true"] .ch-hubBoard svg { opacity: 1; }
+.ch-story .ch-hubName { margin: 0; letter-spacing: 0; color: var(--ink-2); font: 400 clamp(19px, 1.7vw, 23px) / 1.2 var(--font-title); }
+.ch-hubLine { position: relative; display: inline-flex; align-items: center; gap: 12px; max-width: 100%; }
+/* a dot of its own beside an earlier conclusion (the travelling ones are hidden marks) */
+.ch-hubMark { flex: none; }
+.ch-hubMark:not([data-dot])[data-who="me"] { background: var(--thread); }
+.ch-hubMark:not([data-dot])[data-who="you"] { background: var(--form-data); }
+/* only the first, bold sentence of my conclusion is shown */
+.ch-story.ch-story.ch-story .ch-hubHer, .ch-story.ch-story.ch-story .ch-hubHer p { margin: 0; font-size: 0; line-height: 0; text-align: left; }
+.ch-story.ch-story.ch-story .ch-hubHer strong { color: var(--ink); font: 400 clamp(22px, 2.2vw, 30px) / 1.15 var(--font-title); letter-spacing: -0.01em; }
+.ch-story .ch-hubYou { display: inline-flex; align-items: baseline; gap: 10px; margin: 0; color: var(--form-data); font: 400 13px / 1.5 var(--font-mono); text-align: left; }
+.ch-hubYou .ch-hubMark { width: 10px; height: 10px; transform: translateY(1px); }
+.ch-hubTitle { margin-bottom: 48px; text-align: center; }
+/* the part closes as it opened: "What the data said" as large as "Looking for answers in the data" */
+.ch-story .ch-hubTitle.ch-partTitle h2 { white-space: normal; text-wrap: balance; font-size: clamp(40px, 5.6vw, 76px); line-height: 1.02; letter-spacing: -0.015em; }
+/* the next question's board, out of its place while it opens (opening.js) */
+.ch-hub .ch-diveSpot svg {
+  display: block; width: 100%; height: auto; transform-origin: 50% 50%; opacity: 0;
   transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--ts, 1));
 }
-.ch-hub[data-gate="true"][data-docked="true"] li[data-state="next"] > a svg { opacity: 0; }
-.ch-hub[data-gate="true"] li[data-state="next"] { opacity: calc(0.55 + var(--into, 0) * 0.45); }
-.ch-hub[data-gate="true"] li[data-state="next"] .ch-hubWords, .ch-hub[data-gate="true"] li:not([data-state="next"]), .ch-hub[data-gate="true"] .ch-hubTravel { opacity: calc(1 - min(1, var(--into, 0) * 1.8)); }
-.ch-hub[data-gate="true"][data-into="true"] a { pointer-events: none; }
-/* the last recap's boards are the three from the top left, once they have come down (hub.js) */
-.ch-hub[data-all="true"] .ch-hubBoard svg { opacity: 0; }
-.ch-hub[data-all="true"][data-returned="true"] .ch-hubBoard svg { opacity: 1; }
-.ch-hubTitle { margin-bottom: 40px; text-align: center; }
-/* the part closes as it opened: its last recap's name as large as "Looking for answers in the data" */
-.ch-story .ch-hubTitle.ch-partTitle h2 { white-space: normal; text-wrap: balance; font-size: clamp(40px, 5.6vw, 76px); line-height: 1.02; letter-spacing: -0.015em; }
-@media (max-width: 60rem) { .ch-story .ch-hubTitle.ch-partTitle h2 { font-size: clamp(36px, 10vw, 52px); } }
-.ch-hubRow { position: relative; }
-.ch-hubBoards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--hub-gap); margin: 0; padding: 0; list-style: none; }
-.ch-hubBoards > li { display: grid; align-content: start; justify-items: center; gap: 14px; text-align: center; transition: opacity var(--ch-fade) ease; }
-.ch-hubBoards > li[data-state="next"] { opacity: 0.55; }
-.ch-hubBoards > li[data-state="later"] { opacity: 0.32; }
-.ch-hubBoard { position: relative; display: block; width: var(--hub-board); border-radius: 4px; }
-.ch-hubBoard svg { display: block; width: 100%; height: auto; }
-.ch-hubBoard:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px; }
-.ch-hubTravel { position: absolute; top: calc(var(--hub-board) * 84 / 80 + 7px); left: calc(var(--at) * ((100% - 2 * var(--hub-gap)) / 3 + var(--hub-gap)) + (100% - 2 * var(--hub-gap)) / 6); width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--thread); box-shadow: 0 0 0 3px var(--void); transition: left 900ms cubic-bezier(0.3, 0.7, 0.2, 1) 200ms; }
-.ch-hubDot { display: none; }
-.ch-hubWords { display: grid; gap: 10px; padding-top: 16px; }
-.ch-story .ch-hubWords h4 { margin: 0; color: var(--ink); font: 400 clamp(19px, 1.7vw, 23px) / 1.2 var(--font-title); }
-.ch-story .ch-hubHer, .ch-story .ch-hubHer p { margin: 0; color: var(--ink-2); font: 400 15px / 1.5 var(--font-body, inherit); text-align: center; }
-.ch-story .ch-hubHer strong { display: block; margin-bottom: 4px; color: var(--thread); font-weight: 500; font-size: 17px; }
-.ch-story .ch-hubYou { margin: 0; color: var(--form-data); font: 400 12.5px / 1.5 var(--font-mono); }
-.ch-story .ch-hubNext { margin: 0; color: var(--ink-3); font: 400 12px / 1.4 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
-@media (prefers-reduced-motion: reduce) {
-  .ch-hubTravel { transition: none; }
-}
+.ch-hub[data-flying="true"] .ch-diveSpot svg { opacity: 1; }
 @media (max-width: 40rem) {
-  .ch-hub { --hub-board: 56px; padding: 10vh 0 12vh; }
-  .ch-hubBoards { grid-template-columns: 1fr; gap: 22px; }
-  .ch-hubBoards > li { grid-template-columns: var(--hub-board) 1fr; justify-items: start; align-items: start; gap: 16px; text-align: left; }
-  .ch-hubWords { padding-top: 0; gap: 6px; }
-  .ch-story .ch-hubHer, .ch-story .ch-hubHer p { text-align: left; font-size: 14px; }
-  .ch-story .ch-hubHer strong { font-size: 16px; }
-  .ch-hubTravel { display: none; }
-  .ch-hubBoards > li[data-here="true"] .ch-hubDot { display: block; position: absolute; left: 50%; bottom: -12px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--thread); box-shadow: 0 0 0 3px var(--void); }
+  .ch-hub { --hub-board: 64px; padding: 12vh 0 16vh; }
+  .ch-hubAll { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .ch-hubOne { grid-template-columns: var(--hub-board) minmax(0, 1fr); justify-items: start; gap: 16px; text-align: left; }
+  .ch-hubWords { justify-items: start; gap: 8px; }
+  .ch-story.ch-story.ch-story .ch-hubHer strong { font-size: 21px; }
+  .ch-story .ch-hubYou { font-size: 12.5px; }
+  .ch-story .ch-hubTitle.ch-partTitle h2 { font-size: clamp(36px, 10vw, 52px); }
 }
 
 /* The reader's own Chess.com username, at the start of Part III (you.js), and
@@ -1602,11 +1604,9 @@
 .ch-story.ch-story.ch-story .ch-text:is(.ch-large, .ch-headline, .ch-statement, .ch-said) {
   font-size: var(--t-statement); line-height: 1.1; letter-spacing: var(--tracking-display); text-wrap: balance;
 }
-.ch-story.ch-story.ch-story .ch-text:is(.ch-quiet, .ch-aside, .ch-intro), .ch-story.ch-story.ch-story .ch-hubHer, .ch-story.ch-story.ch-story .ch-hubHer p {
+.ch-story.ch-story.ch-story .ch-text:is(.ch-quiet, .ch-aside, .ch-intro) {
   font-size: var(--t-note); line-height: 1.5; letter-spacing: normal; color: var(--ink-2);
 }
-/* her answer in a recap: the same highlight as everywhere, not coloured words */
-.ch-story.ch-story .ch-hubHer strong { color: var(--ink); font-size: inherit; }
 /* beside a pinned scene, the step being read is lit and the others stay faint */
 .ch-pin[data-reading="true"] .ch-step:not([data-bare="true"]) .ch-card { opacity: 0.26; transition: opacity 450ms ease; }
 .ch-pin[data-reading="true"] .ch-step[data-on="true"] .ch-card { opacity: 1; }

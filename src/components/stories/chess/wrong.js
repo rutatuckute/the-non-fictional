@@ -367,7 +367,7 @@ const Levels = ({ P, path }) => {
               <text x={x0 - 12} y={y + rh / 2 + 4} textAnchor="end" className={c("ch-levelsBand")}>{r.band}</text>
               <rect x={x0} y={y + rh * 0.24} width={bar(r.resigned)} height={rh * 0.52} rx={3} className={c("ch-levelsResign")} />
               <text x={x0 + bar(r.resigned) + 6} y={y + rh / 2 + 4} className={c("ch-payoffTick")}>{pct(r.resigned)}</text>
-              <circle cx={dot(r.saved)} cy={y + rh / 2} r={6.5} className={c("ch-levelsSaved")} />
+              <circle cx={dot(r.saved)} cy={y + rh / 2} r={6.5} className={c("ch-levelsSaved")} data-dot={mine ? "me" : undefined} />
               <text x={dot(r.saved) + 11} y={y + rh / 2 + 4} className={c("ch-payoffTick")}>{pct(r.saved)}</text>
             </g>
           )
@@ -384,7 +384,7 @@ const Levels = ({ P, path }) => {
                   <text x={x0 + Math.max(2, bar(gave)) + 6} y={y + rh / 2 + 4}>{pct(yourGave)}</text>
                   {yourSaved != null ? (
                     <>
-                      <circle cx={dot(Math.min(top, yourSaved))} cy={y + rh / 2} r={6.5} />
+                      <circle cx={dot(Math.min(top, yourSaved))} cy={y + rh / 2} r={6.5} data-dot="you" />
                       <text x={dot(Math.min(top, yourSaved)) + 11} y={y + rh / 2 + 4}>{pct(yourSaved)}</text>
                     </>
                   ) : null}
@@ -432,6 +432,7 @@ const Mine = ({ path }) => {
   return (
     <figure className={c("ch-mine")}>
       <figcaption className={c("ch-hundredTitle")}>
+        <b className={c("ch-dotMark", "ch-dotInline")} data-dot="me" />
         {path === "queen" ? `Every time I lost my queen like this: ${q.cases} games` : `Every time only my king was left: ${k.lone} games`}
         <small>
           {path === "queen"
@@ -440,6 +441,7 @@ const Mine = ({ path }) => {
         </small>
         {yours.length ? (
           <small className={c("ch-youChose")}>
+            <b className={c("ch-dotMark", "ch-dotInline")} data-dot="you" />
             Below, in green, yours: {you.cases} games · stayed {you.on} · did not lose {you.saved} · players at your level: about {Math.round(you.expected)} · gave up at once {you.resigned + you.left} (outlined)
           </small>
         ) : null}
