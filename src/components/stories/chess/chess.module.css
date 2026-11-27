@@ -911,7 +911,6 @@
 .ch-kingBeat { display: grid; gap: 1.1em; }
 .ch-wrong { --scene: wrong; --resign: var(--other); --lost: #55524d; --saved: var(--other-2); }
 .ch-wrongScene { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
-.ch-layer.ch-wrongLayer { inset: 0; display: grid; place-items: center; }
 /* The boards of her games, as Chess.com draws them (cc-board.js), without the phone. */
 .ch-cc { --cc: min(100%, 60svh, 540px); display: grid; gap: 0; width: var(--cc); margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 .ch-cc[data-small="true"] { --cc: min(40vw, 40svh, 300px); }
@@ -931,64 +930,20 @@
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 0.6em 1.1em; border-radius: 8px; white-space: nowrap;
   background: rgb(38 36 33 / 0.94); color: #f4f1ea; font: 600 14px / 1.2 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; box-shadow: 0 8px 22px rgb(0 0 0 / 0.45);
 }
-.ch-wrongPlay { display: grid; place-items: center; width: 100%; }
 .ch-wrongRange { display: grid; gap: 6px; max-width: 22rem; margin-top: 16px; color: var(--ink-3); font: 400 12px / 1.2 var(--font-mono); }
 .ch-wrongRange b { color: var(--ink); font: 400 30px / 1 var(--font-title); }
 .ch-wrongRange input { width: 100%; accent-color: var(--form-data); pointer-events: auto; }
 .ch-hundred, .ch-levels, .ch-mine { width: min(100%, 34rem); margin: 0; }
 .ch-hundred svg, .ch-levels svg, .ch-mine svg { display: block; width: 100%; height: auto; overflow: visible; }
-.ch-hundred svg { max-height: 66svh; pointer-events: auto; }
-.ch-hundredTitle { margin-bottom: 16px; color: var(--ink); font: 400 clamp(20px, 2.1vw, 27px) / 1.15 var(--font-title); letter-spacing: -0.02em; }
-.ch-hundredTitle small { display: block; margin-top: 6px; color: var(--ink-2); font: 400 12.5px / 1.4 var(--font-mono); letter-spacing: 0; }
-.ch-hBoard { transition: transform 900ms cubic-bezier(0.2, 0.7, 0.2, 1), opacity 300ms ease; }
-.ch-hTint { fill: none; stroke: none; transition: fill 300ms ease, stroke 300ms ease; }
-.ch-hBoard[data-state="guessed"] .ch-hTint { stroke: var(--form-data); stroke-width: 3; }
-.ch-hBoard[data-state="saved"] .ch-hTint { fill: var(--saved); fill-opacity: 0.18; stroke: var(--saved); stroke-width: 3; }
-.ch-hBoard[data-state="lost"] { opacity: 0.3; }
-.ch-hBoard[data-state="saved-mark"] .ch-hTint { fill: var(--saved); }
-.ch-hBoard[data-state="lost-mark"] .ch-hTint { fill: var(--lost); }
 .ch-miniWhite { fill: #efe8dc; }
 .ch-miniBlack { fill: #151413; stroke: #8d867b; stroke-width: 0.6; }
-.ch-payoff { opacity: 0; transition: opacity var(--ch-fade) ease; }
-.ch-payoff[data-on="true"] { opacity: 1; transition: opacity var(--ch-fade) ease 500ms; }
-.ch-payoffGrid { stroke: var(--rule); stroke-width: 1; }
-.ch-payoffTick { fill: var(--ink-2); font: 400 calc(12px * var(--u, 1)) / 1 var(--font-mono); }
-.ch-payoffResign { stroke: var(--resign); stroke-width: 2; stroke-dasharray: 6 5; }
-.ch-payoffLine { fill: none; stroke: var(--ink); stroke-width: 2; }
-.ch-payoffNote { fill: var(--ink-2); font: 400 calc(12.5px * var(--u, 1)) / 1 var(--font-mono); }
-.ch-payoffNote[data-kind="resign"] { fill: var(--resign); }
-.ch-payoffNote[data-kind="saved"] { fill: var(--saved); }
-.ch-payoffNote[data-kind="none"] { fill: var(--ink-2); }
-.ch-story .ch-hundredSum { margin-top: 10px; color: var(--ink-2); font: 400 12.5px / 1.5 var(--font-mono); }
-.ch-hundredSum b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
 /* the hundred's outcome is told once they have played out (wrong.js) */
 .ch-afterPlay { transition: opacity var(--ch-fade) ease; }
 .ch-afterPlay[data-on="false"] { opacity: 0; visibility: hidden; }
 .ch-story .ch-guessReply { margin: 0 0 14px; color: var(--ink); font: 400 13px / 1.4 var(--font-mono); }
 .ch-guessReply b { color: var(--form-data); font-weight: 500; font-variant-numeric: tabular-nums; }
 .ch-guessReply strong { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
-.ch-story .ch-youChose { color: var(--form-data); }
-.ch-hundredBig { fill: var(--ink); font: 400 calc(56px * var(--u, 1)) / 1 var(--font-title); font-variant-numeric: tabular-nums; }
-.ch-story .ch-meetGuess { margin: 8px 0 0; color: var(--ink-2); font: 400 12.5px / 1.3 var(--font-mono); }
-.ch-meetGuess b { color: var(--form-data); font-weight: 500; }
 @media (prefers-reduced-motion: reduce) { .ch-afterPlay { transition: none; } }
-.ch-levelsHead { fill: var(--ink); font: 400 calc(12.5px * var(--u, 1)) / 1 var(--font-mono); }
-.ch-levelsBand { fill: var(--ink-2); font: 400 calc(12px * var(--u, 1)) / 1 var(--font-mono); }
-.ch-levels g[data-mine="true"] .ch-levelsBand { fill: var(--thread); }
-.ch-levelsResign { fill: var(--resign); opacity: 0.85; }
-.ch-levelsSaved { fill: var(--saved); stroke: var(--void); stroke-width: 2; }
-.ch-story .ch-bigShare { margin: 4px 0 16px; color: var(--ink); font: 400 clamp(42px, 5vw, 66px) / 1 var(--font-title); font-variant-numeric: tabular-nums; }
-.ch-bigShare span { margin-left: 4px; color: var(--ink-2); font: 400 12.5px / 1 var(--font-mono); }
-.ch-waffle { display: block; width: 100%; max-width: 17rem; height: auto; }
-.ch-waffle circle { fill: #2b2927; transition: fill 300ms ease; }
-.ch-waffle circle[data-on="true"] { fill: var(--saved); }
-.ch-mineSquare { fill: color-mix(in srgb, var(--thread) 28%, var(--void)); }
-.ch-mineSquare[data-kind="saved"] { fill: var(--thread); }
-.ch-mineSquare[data-kind="gave"] { fill: none; stroke: var(--thread); stroke-width: 1.5; stroke-dasharray: 3 2; }
-.ch-meet { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px clamp(18px, 3vw, 40px); width: min(100%, 34rem); margin: 0; }
-.ch-story .ch-meetTitle { margin: 0; color: var(--ink); font: 400 12px / 1.3 var(--font-mono); transition: color var(--ch-fade) ease; }
-.ch-meet > div[data-on="false"] .ch-meetTitle { color: var(--ink-2); }
-.ch-meet figcaption { grid-column: 1 / -1; color: var(--ink-2); font: 400 12.5px / 1.4 var(--font-mono); }
 @media (max-width: 60rem) {
   .ch-diveThree { padding: calc(var(--bar) + 2svh) var(--page-margin) 4svh; }
   .ch-story .ch-diveTitle.ch-partTitle h2 { font-size: clamp(36px, 10vw, 52px); }
@@ -1002,15 +957,10 @@
   .ch-ccBar i { width: 20px; height: 20px; }
   .ch-story .ch-ccNote { margin-bottom: 6px; font-size: 10.5px; }
   .ch-story p.ch-ccNote { margin: 6px 0 0; }
-  .ch-hundred svg { max-height: 44svh; }
-  .ch-story .ch-payoffSum { display: none; }
-  .ch-story .ch-bigShare { font-size: 40px; margin-bottom: 10px; }
-  .ch-waffle { max-width: 12rem; }
   /* Part III's sentences run longer: its pictures start lower, the words on their own ground */
   .ch-part3 .ch-pin[data-plain="true"] .ch-scene { top: 35svh; height: 62svh; }
   .ch-part3 .ch-told > div { padding-bottom: 14px; background: linear-gradient(var(--void) 82%, transparent); }
   .ch-hundred, .ch-levels, .ch-mine, .ch-meet { width: 100%; }
-  .ch-hundredTitle { font-size: 19px; margin-bottom: 10px; }
 }
 /* Part III: the investigation. */
 .ch-turn {
@@ -1599,13 +1549,6 @@
 .ch-youQueens .ch-ask i { border-top-color: var(--form-data); }
 .ch-story .ch-youQueens .ch-youStatus[data-kind="counted"] { color: var(--form-data); }
 .ch-story .ch-youQueens .ch-youStatus:empty { display: none; }
-.ch-mineYou text { fill: var(--form-data); font: 600 calc(13px * var(--u, 1)) / 1 var(--font-mono); letter-spacing: 0.06em; }
-.ch-mineYou .ch-mineSquare { fill: color-mix(in srgb, var(--form-data) 28%, var(--void)); }
-.ch-mineYou .ch-mineSquare[data-kind="saved"] { fill: var(--form-data); }
-.ch-mineYou .ch-mineSquare[data-kind="gave"] { fill: none; stroke: var(--form-data); stroke-width: 1.5; stroke-dasharray: 3 2; }
-.ch-levelsYou rect, .ch-levelsYou circle { fill: var(--form-data); }
-.ch-levelsYou line { stroke: var(--rule); }
-.ch-levelsYou text { fill: var(--form-data); font: 400 calc(12px * var(--u, 1)) / 1 var(--font-mono); }
 /* on a phone the scene's room is the words' leftovers: once counted, the box keeps only its answer */
 @media (max-width: 60rem) {
   .ch-youQueens[data-kind="counted"] :is(.ch-youQueensWords, .ch-ask, .ch-youNote) { display: none; }
@@ -1722,3 +1665,101 @@
 @media (max-width: 60rem) and (prefers-reduced-motion: reduce) {
   .ch-story .ch-pin[data-reading="true"] .ch-step .ch-card, .ch-story .ch-woodenWords > div { transition: none; }
 }
+
+/* ── "When things go wrong" on one stage, as in the Part III prototype (wrong-stage.js):
+   the same marks are opponents, games and her own games in turn; CSS carries each
+   change, with a delay per mark. Ivory = not lost (or resigned, for her opponents),
+   grey and dark = the rest, clay = hers, green = the reader's. The big board is the
+   story's own ivory and grey. The scene sits where Q1's charts sit. */
+@media (min-width: 60.01rem) {
+  .ch-part3 .ch-wrong[data-reading="true"] .ch-scene { right: 34%; }
+  .ch-part3 .ch-wrong[data-reading="true"] .ch-card { width: 32%; }
+}
+.ch-wrongScene { display: block; }
+.ch-stage2 { position: absolute; inset: 0; display: flex; flex-direction: column; margin: 0; color: var(--ink); }
+.ch-stageHead { flex: none; }
+.ch-story .ch-stageTitle { margin: 0; min-height: 1.15em; }
+.ch-story .ch-stageNum { margin: 2px 0 10px; min-height: 1em; color: var(--ink); font: 400 clamp(34px, 3.6vw, 50px) / 1 var(--font-title); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; transition: opacity 350ms ease; }
+.ch-stageNum[data-on="false"] { opacity: 0; }
+.ch-stageNum[data-tone="you"] { color: var(--form-data); }
+.ch-stageNum[data-tone="me"] { color: var(--thread); }
+.ch-stageNum small { margin-left: 10px; color: var(--ink-2); font: 400 13px / 1 var(--font-mono); letter-spacing: 0; }
+.ch-stage2 svg { flex: 1 1 auto; min-height: 0; width: 100%; overflow: visible; }
+.ch-ratingChip[data-tone="ivory"] { background: var(--ink); color: var(--void); }
+.ch-ratingChip[data-tone="faint"] { background: #5f5a53; color: #f4efe7; }
+.ch-ratingChip[data-tone="meHollow"] { background: none; box-shadow: inset 0 0 0 1.4px var(--thread); color: var(--ink); }
+/* the marks */
+.ch-atom, .ch-atomDot, .ch-atomBoard { transition: transform 1s cubic-bezier(0.65, 0, 0.25, 1), opacity 700ms ease; }
+.ch-atom { pointer-events: auto; }
+.ch-atomDot rect { transition: fill 600ms ease, stroke 600ms ease; stroke: none; }
+.ch-atomDot rect[data-role="crowd"] { fill: var(--ink); }
+.ch-atomDot rect[data-role="faint"] { fill: #5f5a53; }
+.ch-atomDot rect[data-role="dim"] { fill: #2f2d2b; }
+.ch-atomDot rect[data-role="me"] { fill: var(--thread); }
+.ch-atomDot rect[data-role="meHollow"] { fill: var(--void); stroke: var(--thread); stroke-width: 1.6px; }
+.ch-atomDot rect[data-role="you"] { fill: var(--form-data); }
+/* the big board */
+.ch-bigBoard { transition: transform 1s cubic-bezier(0.65, 0, 0.25, 1), opacity 700ms ease; }
+.ch-bigLight { fill: #ddd6ca; }
+.ch-bigDark { fill: #8d867b; }
+.ch-stageCaption { fill: var(--ink-2); font: 400 calc(13px * var(--u, 1)) / 1 var(--font-mono); transition: opacity 350ms ease; }
+.ch-stageCaption[data-on="false"] { opacity: 0; }
+/* the labels of a scene come once its marks have moved */
+.ch-stageLabels { opacity: 0; transition: opacity 350ms ease; pointer-events: none; }
+.ch-stageLabels[data-on="true"] { opacity: 1; transition: opacity 600ms ease 500ms; }
+.ch-stageText { fill: var(--ink-3); font: 400 calc(12px * var(--u, 1)) / 1 var(--font-mono); }
+.ch-stageText[data-kind="big"] { fill: var(--ink); font: 400 calc(16px * var(--u, 1)) / 1 var(--font-title); }
+.ch-stageText[data-kind="huge"] { fill: var(--ink); font: 400 calc(48px * var(--u, 1)) / 1 var(--font-title); }
+.ch-stageText[data-kind="me"] { fill: var(--thread); }
+.ch-stageText[data-kind="you"] { fill: var(--form-data); }
+.ch-stageLine { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 5 4; }
+.ch-stageGrid { stroke: var(--rule); stroke-width: 1; }
+.ch-stageBar { fill: #5f5a53; }
+.ch-stageChance { fill: var(--ink); opacity: 0; transition: opacity 600ms ease; }
+.ch-stageChance[data-on="true"] { opacity: 0.045; }
+.ch-stageRing { fill: none; stroke: var(--form-data); stroke-width: 2; }
+.ch-stageYou rect, .ch-stageYou circle { fill: var(--form-data); }
+.ch-stageYou circle[data-kind="lost"] { fill: color-mix(in srgb, var(--form-data) 28%, var(--void)); }
+.ch-stageYou circle[data-kind="gave"] { fill: none; stroke: var(--form-data); stroke-width: 1.2; }
+@media (max-width: 60rem) {
+  .ch-story .ch-stageNum { font-size: 30px; margin-bottom: 6px; }
+  .ch-stageNum small { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ch-atom, .ch-atomDot, .ch-atomBoard, .ch-atomDot rect, .ch-bigBoard, .ch-stageLabels, .ch-stageLabels[data-on="true"], .ch-stageNum { transition: none; }
+}
+
+/* ── Each question's opening, at the right as in the prototype (27 Nov, owner): the
+   name right-aligned to the words' column edge and reaching left over the scene, the
+   first line under it in the column the steps' words use (32% of the story, left-
+   aligned). The board comes down to the right too, above the name. In a recap
+   (hub.js) the opening is widened to the story's column by --story-l / --story-r. */
+@media (min-width: 60.01rem) {
+  .ch-diveNext { justify-items: end; text-align: right; padding-inline: 0; }
+  .ch-hub .ch-diveNext { left: var(--story-l, 0px); right: var(--story-r, 0px); }
+  .ch-story .ch-diveName { max-width: min(16em, 100%); text-align: right; }
+  .ch-story.ch-story.ch-story .ch-text.ch-diveSaid { justify-self: end; width: 32%; max-width: none; text-align: left; }
+  .ch-story.ch-story .ch-diveSaid p { text-align: left; }
+}
+/* the stage's camera (wrong-stage.js): each chart fitted to the room it has */
+.ch-stageCamera { transition: transform 1s cubic-bezier(0.65, 0, 0.25, 1); }
+.ch-stage2 svg { margin-bottom: 8px; }
+@media (prefers-reduced-motion: reduce) { .ch-stageCamera { transition: none; } }
+
+/* "What their names say": each row's name large, in the story's serif, so the kinds
+   of username read at a glance; its examples stay small beside it (27 Nov, owner).
+   The squares of lost games are named the same way. */
+.ch-ratings .ch-crowdMarks text.ch-crowdRowName { font: 400 20px / 1 var(--font-title); letter-spacing: -0.01em; }
+.ch-ratings .ch-crowdMarks text.ch-crowdRowName .ch-crowdExample { font: 400 12px / 1 var(--font-mono); letter-spacing: 0; }
+@media (max-width: 40rem) { .ch-ratings .ch-crowdMarks text.ch-crowdRowName { font-size: 17px; } }
+
+/* each question's own board beside its name, at the opening: small, a mark, not a picture
+   (27 Nov, owner: "way smaller") */
+.ch-diveSpot { width: min(84px, 11svh); margin-bottom: 14px; }
+@media (max-width: 60rem) { .ch-diveSpot { width: min(64px, 9svh); } }
+/* the scatter at the reader's level (ratings.js, "Your level"): players within 100 of their rapid rating */
+.ch-ratings [data-highlight="yours"] .ch-ratingPeers use[data-near-you="false"] { opacity: 0.20; }
+.ch-ratings [data-highlight="yours"] .ch-ratingPeers use[data-near-you="true"] { fill: var(--ink-2); opacity: 0.85; }
+.ch-ratingViews button.ch-ratingYourView { color: var(--form-data); }
+.ch-ratingViews button.ch-ratingYourView[aria-pressed="true"] { border-color: color-mix(in srgb, var(--form-data) 60%, transparent); }
+.ch-ratingYou .ch-ratingExpected { fill: var(--void); stroke: var(--form-data); }

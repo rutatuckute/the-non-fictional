@@ -218,7 +218,6 @@ export const Say = () => {
           { text: <Text name="say-others" look="lead" className={c("ch-messageCopy")} />, rest: 0.3, anchor: "what-names-say" },
           // the guesses are on the chart itself (say.js), beside each row
           { text: <Text name="say-guess" look="lead" />, rest: 0.6 },
-          { text: <Text name="say-me" look="lead" />, rest: 0.15 },
           { text: <Text name="say-giveup" look="lead" />, rest: 0.2 },
           // the hundred lost games become hers, and the reader's (words: the owner's, to come)
           { text: <Text name="say-giveup-us" look="lead" />, rest: 0.35 },
@@ -226,7 +225,7 @@ export const Say = () => {
       >
         {step => {
           // A row opens when its guess is made, and every row once the result is read.
-          const all = ["me", "giveup", "us"].includes(crowdStage(step))
+          const all = ["giveup", "us"].includes(crowdStage(step))
           const revealed = Object.fromEntries(GROUPS.map(g => [g.key, all || Boolean(guesses[g.key])]))
           return <SayGraphics step={step} revealed={revealed} guesses={guesses} onGuess={guess} />
         }}

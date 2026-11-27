@@ -100,6 +100,23 @@ export const Hub = ({ upto }) => {
   const next = INVESTIGATIONS[upto]
   // between two questions the recap holds the screen; after the last it does not
   const gate = Boolean(next)
+  // the opening is as wide as the story's column, not the recap's (opening.js, CSS)
+  React.useLayoutEffect(() => {
+    const node = root.current
+    const story = node?.closest(`.${c("ch-story")}`)
+    if (!story) return
+    const fit = () => {
+      const s = story.getBoundingClientRect()
+      const r = node.getBoundingClientRect()
+      node.style.setProperty("--story-l", `${(s.left - r.left).toFixed(1)}px`)
+      node.style.setProperty("--story-r", `${(r.right - s.right).toFixed(1)}px`)
+    }
+    const observer = new ResizeObserver(fit)
+    observer.observe(story)
+    observer.observe(node)
+    fit()
+    return () => observer.disconnect()
+  }, [])
   React.useEffect(() => {
     const node = root.current
     let frame = 0

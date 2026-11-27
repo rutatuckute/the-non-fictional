@@ -26,9 +26,10 @@ export const RATING_MAX = 2500
 export const truth = g => (g.high < 0.5 ? "lower" : "higher")
 
 // From the steps of the "what we say" scene (scenes.js) to what the crowd shows:
-// step 9 the crowd, 10 the guesses, 11 every row and me, 12 the lost games, 13 ours.
+// step 9 the crowd, 10 the guesses, 11 the lost games, 12 ours. (The "And me?" beat,
+// her line and the reader's beside the rows, was taken out on 27 Nov at the owner's request.)
 export const crowdStage = step =>
-  step >= 13 ? "us" : step >= 12 ? "giveup" : step >= 11 ? "me" : step >= 10 ? "rows" : step >= 9 ? "crowd" : null
+  step >= 12 ? "us" : step >= 11 ? "giveup" : step >= 10 ? "rows" : step >= 9 ? "crowd" : null
 
 const random = seed => () => {
   seed |= 0; seed = (seed + 0x6d2b79f5) | 0
@@ -122,7 +123,7 @@ export const crowdLayout = ({ total, left, right, top, bottom, width, you }) => 
   const shown = new Array(total), waiting = new Array(total), rowOf = new Array(total)
   const bands = rows.map((row, k) => {
     const rowTop = top + k * rowH
-    const bandTop = rowTop + Math.min(30, rowH * 0.3), bandBottom = rowTop + rowH - 10
+    const bandTop = rowTop + Math.min(38, rowH * 0.34), bandBottom = rowTop + rowH - 10
     const values = sample(row.group.spread, row.indices.length)
     const spots = pack(values.map(rx), radius, bandTop, bandBottom)
     // before the guess: a tight pile on the typical opponent's line, saying nothing yet
@@ -199,11 +200,11 @@ export const dotAt = (layout, index, { stage, revealed, you }) => {
 
 // The words and lines drawn over the dots: the tags, the rows, the typical
 // line, me and the reader, and the squares of lost games.
-export const CrowdMarks = ({ layout, stage, revealed, guesses = {}, you, yourRating, left, right, top, bottom }) => {
+export const CrowdMarks = ({ layout, stage, revealed, guesses = {}, you, left, right, top, bottom }) => {
   if (!layout) return null
   const { rx, bands, tags, typicalX, narrow } = layout
   const on = yes => ({ style: { opacity: yes ? 1 : 0 }, "aria-hidden": "true" })
-  const rowsOn = stage === "rows" || stage === "me"
+  const rowsOn = stage === "rows"
   const ticks = [0, 1000, 2000]
   const squares = stage === "us" ? layout.ours : layout.first
   const LABEL = { bad: "Says it is bad", everyone: "Everyone else", me: "Me", you: "You" }
@@ -236,7 +237,7 @@ export const CrowdMarks = ({ layout, stage, revealed, guesses = {}, you, yourRat
           const median = rx(g.median)
           return (
             <g key={b.key} className={c("ch-crowdRow")} data-open={open ? "true" : "false"}>
-              <text x={left} y={b.top + 14} className={c("ch-crowdLabelLit")}>
+              <text x={left} y={b.top + 20} className={c("ch-crowdLabelLit", "ch-crowdRowName")}>
                 {g.label}<tspan className={c("ch-crowdExample")}>{narrow ? "" : `   ${g.examples.slice(0, 3).join(" · ")}`}</tspan>
               </text>
               <g className={c("ch-crowdMedian")} style={{ opacity: open ? 1 : 0 }}>
@@ -245,23 +246,13 @@ export const CrowdMarks = ({ layout, stage, revealed, guesses = {}, you, yourRat
                 <path className={c("ch-crowdShift")} d={`M${typicalX} ${(b.bandTop + b.bandBottom) / 2} H${median}`} />
               </g>
               {right_ !== null ? (
-                <text x={right} y={b.top + 14} textAnchor="end" className={c(right_ ? "ch-crowdRight" : "ch-crowdWrong")}>
+                <text x={right} y={b.top + 18} textAnchor="end" className={c(right_ ? "ch-crowdRight" : "ch-crowdWrong")}>
                   {right_ ? "✓ You called it" : `✗ It’s ${truth(g)}`}
                 </text>
               ) : null}
             </g>
           )
         })}
-      </g>
-      <g {...on(stage === "me")}>
-        <line className={c("ch-crowdMe")} x1={rx(MY_RAPID)} x2={rx(MY_RAPID)} y1={top - 2} y2={bottom} />
-        {yourRating ? (
-          <g className={c("ch-ratingYou")}>
-            <line className={c("ch-crowdYou")} x1={rx(yourRating)} x2={rx(yourRating)} y1={top - 2} y2={bottom} />
-            <circle cx={rx(yourRating)} cy={top - 2} r={6} data-dot="you" />
-            <text x={rx(yourRating) + 10} y={top - 10}>You</text>
-          </g>
-        ) : null}
       </g>
       {[layout.first, layout.ours].map((set, s) => (
         <g key={s} {...on(squares === set && (stage === "giveup" || stage === "us"))}>
@@ -272,7 +263,7 @@ export const CrowdMarks = ({ layout, stage, revealed, guesses = {}, you, yourRat
               <g key={g.key}>
                 <text x={g.x} y={g.y - (narrow ? 12 : 16)} className={c("ch-crowdBig")} data-who={who || undefined}>{n}</text>
                 {who ? <circle cx={g.x + 4} cy={g.y + g.width + 14} r={4} className={c("ch-crowdWho")} data-who={who} data-dot={who} /> : null}
-                <text x={g.x + (who ? 14 : 0)} y={g.y + g.width + 18} className={c(who ? "ch-crowdLabelLit" : "ch-crowdLabel")}>{LABEL[g.key]}</text>
+                <text x={g.x + (who ? 14 : 0)} y={g.y + g.width + 20} className={c(who ? "ch-crowdLabelLit" : "ch-crowdLabel", "ch-crowdRowName")}>{LABEL[g.key]}</text>
               </g>
             )
           })}
