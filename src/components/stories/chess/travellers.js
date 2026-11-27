@@ -45,14 +45,29 @@ const markOf = (root, who) => {
   return best
 }
 
-// Where they wait: under the lit board at the top left, side by side.
-const waiting = (header, who, two) => {
-  if (!header || header.dataset.on !== "true" || header.dataset.docked !== "true") return null
-  const tab = header.querySelector('a[aria-current="step"]') || header.querySelector("a")
-  const rect = tab?.getBoundingClientRect()
-  if (!rect) return null
+// Where they wait, side by side under a board. They always go forward: while a
+// question opens, under its board as it comes out, glides and flies up (opening.js
+// marks data-fly<i> on the header, and the board's box data-opening=<i>); as a
+// recap goes (hub.js: data-next<i>), under the next question's place; otherwise
+// under the lit board at the top left.
+const QUESTIONS = [0, 1, 2]
+const under = (el, who, two) => {
+  const rect = el?.getBoundingClientRect()
+  if (!rect || !rect.width) return null
   const gap = two ? 7 : 0
-  return { x: rect.left + rect.width / 2 + (who === "me" ? -gap : gap), y: rect.bottom + 9, size: 8, el: tab }
+  return { x: rect.left + rect.width / 2 + (who === "me" ? -gap : gap), y: rect.bottom + 9, size: 8, el }
+}
+const waiting = (header, who, two) => {
+  if (!header || header.dataset.on !== "true") return null
+  const out = QUESTIONS.find(i => header.dataset[`fly${i}`] === "true")
+  if (out !== undefined) {
+    const board = document.querySelector(`[data-opening="${out}"] svg`)
+    if (board) return under(board, who, two)
+  }
+  if (header.dataset.docked !== "true") return null
+  const tabs = header.querySelectorAll("a")
+  const next = QUESTIONS.find(i => header.dataset[`next${i}`] === "true")
+  return under(next !== undefined ? tabs[next] : header.querySelector('a[aria-current="step"]') || tabs[0], who, two)
 }
 
 export const Travellers = () => {

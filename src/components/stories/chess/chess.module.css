@@ -1408,8 +1408,8 @@
 .ch-investigationHeader[data-fly2="true"] .ch-investigationTab:nth-child(3)::after { opacity: 0; }
 /* a question's board is down in its recap (hub.js): in full on its way, then gone from here */
 .ch-investigationTab:is([data-away="going"], [data-away="here"])::after { opacity: 0; }
-.ch-investigationTab[data-away="going"] .ch-investigationBoard { opacity: 1; filter: none; }
-.ch-investigationTab[data-away="here"] .ch-investigationBoard { opacity: 0; }
+.ch-story .ch-investigationTab[data-away="going"] .ch-investigationBoard { opacity: 1; filter: none; }
+.ch-story .ch-investigationTab[data-away="here"] .ch-investigationBoard { opacity: 0; }
 /* while the first is still on its way, the others come in beside it */
 .ch-investigationHeader[data-docked="false"] .ch-investigationTab { opacity: var(--dock, 0); }
 .ch-investigationHeader[data-docked="false"] .ch-investigationTab:first-child { opacity: 0; }

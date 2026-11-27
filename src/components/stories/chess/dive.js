@@ -56,7 +56,7 @@ export const Dive = ({ during }) => {
         <Text name="data-intro" look="quiet" className={c("ch-diveWords")} />
         <ol className={c("ch-diveBoards")}>
           {INVESTIGATIONS.map((q, i) => (
-            <li key={q.id}>
+            <li key={q.id} data-opening={i === 0 ? "0" : undefined}>
               <a href={`#${q.id}`}>
                 <InvestigationBoard id={q.id} />
                 <span>

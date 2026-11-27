@@ -103,6 +103,9 @@ export const Hub = ({ upto }) => {
   React.useEffect(() => {
     const node = root.current
     let frame = 0
+    // the boards at the top left are shared by the three recaps: one only moves them
+    // while it is showing them, and puts them back once when it stops
+    let holding = false
     const update = () => {
       frame = 0
       const tabs = header()?.querySelectorAll("a") || []
@@ -114,6 +117,9 @@ export const Hub = ({ upto }) => {
       const y = (items.current[0]?.getBoundingClientRect().top ?? window.innerHeight) / window.innerHeight
       const arrive = still ? (y < 0.7 ? 1 : 0) : gently(within(ARRIVE[0] - y, 0, ARRIVE[0] - ARRIVE[1]))
       const q = arrive * (1 - leave)
+      const mine = q > 0.001
+      const touch = mine || holding
+      holding = mine
       items.current.forEach((item, i) => {
         if (!item) return
         const board = item.querySelector("svg")
@@ -121,7 +127,7 @@ export const Hub = ({ upto }) => {
         item.dataset.here = q > 0.999 ? "true" : "false"
         const tab = tabs[i]
         const svg = tab?.querySelector("svg")
-        if (!svg) return
+        if (!svg || !touch) return
         // (measured on the link, which does not move, not on the board, which does)
         const from = tab.getBoundingClientRect()
         const to = board.getBoundingClientRect()
@@ -131,6 +137,10 @@ export const Hub = ({ upto }) => {
         const away = q > 0.999 ? "here" : q > 0.001 ? "going" : "home"
         if (tab.dataset.away !== away) tab.dataset.away = away
       })
+      // as the recap goes, the dots wait for the next question, not the last (travellers.js)
+      const ahead = gate && leave > 0.001 ? "true" : "false"
+      const top = header()
+      if (top && top.dataset[`next${upto}`] !== ahead) top.dataset[`next${upto}`] = ahead
       if (gate) paintOpening({ scope: node, item: spot.current, spot: spot.current, index: upto, pin: pinOf(next.id), holder: stick.current, t: timeline(s - GLIDE_AT, still), fromSlot: true })
     }
     const wake = () => {
@@ -187,7 +197,7 @@ export const Hub = ({ upto }) => {
         </ol>
         {/* the next question opens here: its board comes down from its place (opening.js) */}
         {gate ? (
-          <Opening id={next.id} said={FIRST[next.id]} first ref={spot}>
+          <Opening id={next.id} said={FIRST[next.id]} first index={upto} ref={spot}>
             <InvestigationBoard id={next.id} />
           </Opening>
         ) : null}

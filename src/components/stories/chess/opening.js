@@ -86,9 +86,9 @@ export const paintOpening = ({ scope, item, spot, index, pin, holder, t, fromSlo
 export const pinOf = id => document.querySelector(`[data-investigation-part="${id}"] .${c("ch-pin")}`)
 
 // The opening's words and the box its board glides to.
-export const Opening = React.forwardRef(({ id, said, first = false, children }, spot) => (
+export const Opening = React.forwardRef(({ id, said, first = false, index, children }, spot) => (
   <div className={c("ch-diveNext")}>
-    <span className={c("ch-diveSpot")} ref={spot}>{children}</span>
+    <span className={c("ch-diveSpot")} ref={spot} data-opening={children ? index : undefined}>{children}</span>
     <span className={c("ch-diveName")} aria-hidden="true"><InvestigationName id={id} /></span>
     {/* (the question's first line; if its step says more, the rest stays in the step) */}
     <Text name={said} look="lead" className={c("ch-diveSaid", first && "ch-firstOnly")} />
