@@ -9,6 +9,10 @@
 - The production branch for this repository is `master`, not `main`.
 - Content lives in Payload, not in `content/`. That directory is kept as the
   migration source and is not read at build time.
+- The one exception is a piece still being written: a file in `drafts/`, shown
+  in development and on preview deployments and never on the live site. The
+  panel has no draft state, and the previews read the live database. See
+  `src/lib/drafts.ts`.
 
 ## Change Guidelines
 

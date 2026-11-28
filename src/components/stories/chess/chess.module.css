@@ -1,0 +1,1995 @@
+/* The chess story: one scroll in four parts, with threads through it. It is
+   built part by part, with boxes where pictures and charts are still to come.
+   The page's tokens (--ink, --void, --raised, --rule …) come from
+   blog-post.module.css. */
+.ch-story {
+  /* The story's own thread: the site's clay, as the data lab's thread is. */
+  --thread: var(--form-essay);
+  /* Colour roles, the same from the first screen to the last: clay is the
+     author (me), green is the reader (you), and only the reader; slate is
+     everyone else (them): the strangers' threads, their games, the crowd in
+     every chart, the typical player. Slate comes in steps for what is lit and
+     what is not: --them for the lit marks, --them-mid for the next, --them-dim
+     and --them-faint for the rest. Greys and ivory are for words and structure
+     (axes, reference lines, the boards), not for people. Checked on the page's
+     dark ground: slate 6.8:1, and further from clay and from green, for
+     colour-blind readers too, than clay and green are from each other. */
+  --them: #7f9bcc;
+  --them-mid: #5b6b8c;
+  --them-dim: #465470;
+  --them-faint: #2a3140;
+  --other: var(--them);
+  position: relative;
+  isolation: isolate;
+}
+/* The site's paragraphs carry their own line spacing; here a text's box sets it. */
+.ch-story :where(p) { margin: 0; line-height: inherit; }
+
+/* ── the threads ──
+   All of one weight. The story's is told apart by its colour alone, and it is
+   grey like the rest until the memory begins. */
+.ch-thread { position: absolute; top: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+.ch-thread path {
+  fill: none; stroke: var(--thread); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round;
+  transition: stroke-dashoffset 700ms var(--ch-ease), stroke 650ms ease, opacity 650ms ease;
+}
+/* The reader's own thread: one of the grey ones, until they keep it. */
+.ch-story[data-you="true"] .ch-thread path[data-run^="you"] { stroke: var(--form-data); opacity: 1; stroke-width: 2; }
+.ch-thread path[data-other] { stroke: var(--them); opacity: 0.68; }
+.ch-tintFrom { stop-color: var(--them); stop-opacity: 0.68; }
+.ch-tintTo { stop-color: var(--thread); }
+/* Where the data ends, the thread goes on as questions. */
+.ch-thread text {
+  fill: var(--thread); font-family: var(--font-title); text-anchor: middle; dominant-baseline: central;
+  transition: opacity 400ms ease;
+}
+/* A bead on the story's thread: a game, once in a while. */
+.ch-thread circle { fill: var(--thread); transition: opacity 500ms ease 200ms; }
+.ch-knot { position: absolute; left: var(--x); top: var(--y); width: 0; height: 0; }
+.ch-trace { position: absolute; inset: 0; }
+/* What waits for the threads: there from the start without scripts, and
+   otherwise in when their end reaches it. */
+.ch-story[data-live="true"] [data-reveal] { opacity: 0; transition: opacity 600ms ease 150ms; }
+.ch-story[data-live="true"] [data-reveal][data-reached="true"] { opacity: var(--shown, 1); }
+
+/* ── chapters (chapters.js) ──
+   Always at hand while the story is on screen: the navigation keeps to a box
+   as tall as the screen that sticks to its top and takes no room in the page.
+   On a wide screen it is a rail in the right margin; on a narrower one, a bar
+   across the top, whose button opens the list. */
+.ch-story { --bar: 0px; }
+/* One way of moving, for everything that moves in Part I: one easing, and
+   times between 650 and 900 ms. */
+.ch-story { --ch-ease: cubic-bezier(0.22, 0.8, 0.24, 1); --ch-move: 750ms; --ch-fade: 650ms; }
+/* Part I's type, in five roles: display (the title, the years), statement
+   (the question, "This is mine."), the statement's second voice (the line
+   under the question, the father's words), narrative, and the quiet note. */
+.ch-story {
+  --t-display: clamp(52px, 6.2vw, 92px);
+  --t-statement: clamp(30px, 3.6vw, 48px);
+  --t-second: clamp(24px, 2.9vw, 38px);
+}
+/* Where a chapter is opened: a point in the page, at the top of its section. */
+.ch-mark { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; }
+/* A question of Part III that holds its own mark (the first: its box comes before its scene). */
+.ch-question { position: relative; }
+/* A jump to it stops under Part III's sticky header, so the box's first line shows. */
+.ch-question > .ch-mark { scroll-margin-top: var(--investigation-bottom, 0px); }
+/* The last chapter may be shorter than the screen: it is opened with the
+   story's end at the screen's foot, so the navigation is still there. */
+.ch-method > .ch-mark { top: min(0px, calc(100% - 100vh)); top: min(0px, calc(100% - 100svh)); }
+.ch-nav {
+  position: sticky; top: 0; z-index: 20; height: 100vh; height: 100svh; margin-bottom: -100vh; margin-bottom: -100svh;
+  pointer-events: none; font-family: var(--font-mono);
+}
+.ch-navHidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.ch-story .ch-navHead { margin: 0; color: var(--ink-3); font: 500 10.5px / 1.4 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; }
+.ch-story :is(.ch-navList, .ch-navParts) { margin: 0; padding: 0; list-style: none; }
+.ch-story .ch-nav a { position: relative; color: var(--ink-3); text-decoration: none; transition: color 150ms ease; }
+.ch-story .ch-nav a:hover { color: var(--ink-2); }
+.ch-story .ch-nav a[aria-current="true"] { color: var(--ink); }
+/* a chapter's dot, on the line */
+.ch-navList > li > a::before {
+  content: ""; position: absolute; left: 0; top: 50%; z-index: 1; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%;
+  background: var(--ink-3); box-shadow: 0 0 0 4px var(--void); transition: background-color 150ms ease, transform 150ms ease;
+}
+.ch-navList > li[data-on="true"] > a::before { background: var(--form-data); transform: scale(1.3); }
+
+/* A wide screen: the rail. The story's column gives way on the right for as
+   much as the margin lacks, so the rail is never over the story; and the
+   margin it stands in has the page's own ground, so no thread runs under it. */
+@media (min-width: 75rem) {
+  .ch-story { margin-right: max(0px, 212px - max(var(--page-margin), (100vw - var(--page-max)) / 2)); }
+  .ch-nav::before {
+    content: ""; position: absolute; left: calc(100% + 22px); top: 0; bottom: 0; width: 100vw;
+    background: linear-gradient(to right, transparent, var(--void) 14px);
+  }
+  .ch-navBar { display: none; }
+  .ch-navPanel { position: absolute; left: calc(100% + 40px); top: 50%; width: 160px; transform: translateY(-50%); pointer-events: auto; }
+  .ch-story .ch-navHead { margin-bottom: 22px; }
+  .ch-navList { position: relative; display: grid; gap: 18px; }
+  /* the line through the dots, and how much of it the reader has come */
+  .ch-navList::before, .ch-navList::after { content: ""; position: absolute; left: 3px; top: var(--line-top, 0px); width: 1px; }
+  .ch-navList::before { height: var(--line-long, 0px); background: var(--rule-strong); }
+  .ch-navList::after { height: var(--line-done, 0px); background: var(--form-data); }
+  .ch-navList > li > a { display: block; padding-left: 24px; font: 400 13px / 1.35 var(--font-mono); }
+  /* Show parts in the active chapter, keeping inactive click targets stable. */
+  .ch-story .ch-navParts { display: none; gap: 9px; padding: 11px 0 2px 24px; }
+  .ch-story .ch-navList > li[data-on="true"] > .ch-navParts { display: grid; }
+  .ch-navParts a { display: block; font: 400 12px / 1.35 var(--font-mono); }
+}
+
+/* A narrower screen: the bar. What a pinned scene holds at its top stands
+   under it (--bar). */
+@media (max-width: 74.99rem) {
+  .ch-story { --bar: 44px; }
+  .ch-navBar {
+    position: absolute; top: 0; left: calc(-1 * var(--page-margin)); right: calc(-1 * var(--page-margin)); height: var(--bar);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 var(--page-margin);
+    border: 0; border-bottom: 1px solid var(--rule); border-radius: 0; background: var(--void); color: var(--ink);
+    font: 500 13px / 1 var(--font-mono); text-align: left; cursor: pointer; pointer-events: auto; -webkit-tap-highlight-color: transparent;
+  }
+  .ch-navNow { display: inline-flex; align-items: center; gap: 10px; min-width: 0; white-space: nowrap; }
+  .ch-navNow::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--form-data); }
+  .ch-navAsk { display: inline-flex; flex: none; align-items: center; gap: 9px; color: var(--ink-2); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; }
+  .ch-navAsk svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; }
+  /* how far through the chapters the reader is, along the bar's foot */
+  .ch-navDone { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--form-data); transform-origin: 0 50%; transform: scaleX(var(--done, 0)); }
+  .ch-navPanel {
+    position: absolute; top: var(--bar); left: calc(-1 * var(--page-margin)); right: calc(-1 * var(--page-margin)); display: none;
+    max-height: calc(100vh - var(--bar)); max-height: calc(100svh - var(--bar)); overflow-y: auto; padding: 18px var(--page-margin) 14px;
+    border-bottom: 1px solid var(--rule-strong); background: var(--void); pointer-events: auto;
+  }
+  .ch-nav[data-open="true"] .ch-navPanel { display: block; }
+  .ch-story .ch-navHead { margin-bottom: 6px; }
+  .ch-navList > li > a { display: flex; align-items: center; min-height: 44px; padding-left: 22px; font: 400 16px / 1.3 var(--font-mono); }
+  .ch-story .ch-navParts { padding-left: 22px; }
+  .ch-navParts a { display: flex; align-items: center; min-height: 40px; font: 400 14px / 1.3 var(--font-mono); }
+}
+
+/* ── words ── */
+.ch-text { position: relative; z-index: 2; min-width: 0; max-width: 34rem; }
+/* Later passages stay centred; the opening question and personal memory
+   keep the left edge of their original reading columns. */
+.ch-story .ch-text,
+.ch-story .ch-text :is(p, h2, h3, h4, blockquote, li) { text-align: center; }
+.ch-col > .ch-text,
+.ch-woodenText > .ch-text,
+.ch-woodenAfter > .ch-text { margin-inline: auto; }
+.ch-story :is(.ch-open, .ch-memory) .ch-text,
+.ch-story :is(.ch-open, .ch-memory) .ch-text :is(p, h2, h3, h4, blockquote, li) { text-align: left; }
+.ch-memory .ch-col > .ch-text { margin-inline: 0; }
+.ch-text > :last-child { margin-bottom: 0; }
+.ch-text.ch-large {
+  max-width: 20em;
+  font-size: clamp(30px, 3.9vw, 52px); line-height: 1.08; letter-spacing: var(--tracking-display); text-wrap: balance;
+}
+.ch-text.ch-headline { font-size: clamp(30px, 3.4vw, 46px); line-height: 1.08; letter-spacing: var(--tracking-display); }
+.ch-text.ch-lead { font-size: clamp(20px, 1.8vw, 25px); line-height: 1.45; }
+.ch-people .ch-text.ch-lead, .ch-back .ch-text.ch-lead { font-size: clamp(22px, 2vw, 28px); }
+.ch-text.ch-medium { font-size: clamp(22px, 2.6vw, 32px); line-height: 1.2; letter-spacing: var(--tracking-title); text-wrap: balance; }
+.ch-text.ch-cardText { font-size: 18px; line-height: 1.5; }
+/* Said in passing: smaller and quieter than the text it follows. */
+.ch-text.ch-quiet { font-size: clamp(16px, 1.3vw, 18px); line-height: 1.5; color: var(--ink-2); }
+/* Said aloud, in a speech balloon. */
+.ch-text.ch-said { font-size: clamp(19px, 2.1vw, 27px); line-height: 1.2; letter-spacing: var(--tracking-title); text-wrap: balance; }
+/* A part's name: a heading in the body, on one line whatever the screen's width. */
+.ch-text.ch-partTitle { max-width: none; }
+.ch-story .ch-partTitle :is(h1, h2, h3) {
+  margin: 0; padding: 0; border: 0; color: var(--ink); white-space: nowrap;
+  font: 400 clamp(20px, 5.8vw, 34px) / 1.15 var(--font-title); letter-spacing: var(--tracking-display); text-transform: none;
+}
+.ch-missing {
+  padding: 8px 10px; border: 1px dashed var(--rule-strong);
+  color: var(--ink-3); font: 400 13px / 1.4 var(--font-mono);
+}
+.ch-note { margin-top: 12px; color: var(--ink-3); font: 500 11px / 1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* ── boxes for what is still to come ── */
+.ch-holder {
+  position: relative; z-index: 2; min-width: 0;
+  border: 1px solid var(--rule-strong); background-color: var(--raised);
+  background-image:
+    linear-gradient(to top right, transparent calc(50% - 0.5px), var(--rule) calc(50% - 0.5px) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--rule) calc(50% - 0.5px) calc(50% + 0.5px), transparent calc(50% + 0.5px));
+}
+.ch-holder[data-kind="open"] { z-index: auto; background: none; }
+.ch-holderLabel {
+  position: absolute; left: 8px; bottom: 8px; z-index: 2; max-width: calc(100% - 16px); padding: 3px 7px;
+  background: var(--void); color: var(--ink-2);
+  font: 500 11px / 1.35 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+/* A picture made for the story: over the thread, as a print would lie on it. */
+.ch-picture { position: relative; z-index: 2; display: block; width: 100%; height: auto; }
+/* However wide the window, an object is never taller than about two thirds
+   of it: each is held to the width at which its height is 68% of the screen. */
+.ch-device { width: 100%; max-width: 44vh; max-width: 44svh; }
+
+/* A thing with two sides: they lie back to back and the pair turns as one,
+   about its hinge, which lies across: the two sides are the same width, so
+   the turn hides that one is a little taller. */
+.ch-sides {
+  position: absolute; inset: 0; transform-style: preserve-3d;
+  transition: transform 900ms var(--ch-ease);
+}
+.ch-sides[data-turned="true"] { transform: rotateX(180deg); }
+.ch-side {
+  position: absolute; inset: 0; width: 100%; height: auto; margin: auto;
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+}
+.ch-sideBack { transform: rotateX(180deg); }
+
+/* ── the title and the cover: the first screen ──
+   The title and a short text at the left, the cover, smaller, at the right. */
+.ch-hero {
+  position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
+  align-items: center; column-gap: clamp(32px, 4vw, 64px);
+  min-height: calc(100svh - 76px - var(--bar)); padding: calc(var(--bar) + 4svh) 0 6svh;
+}
+.ch-heroWords { display: grid; gap: clamp(18px, 2.4svh, 28px); align-content: center; }
+.ch-story .ch-title {
+  margin: 0; color: var(--ink); text-align: center;
+  font: 400 var(--t-display) / 0.98 var(--font-title); letter-spacing: var(--tracking-display); text-transform: none;
+}
+.ch-text.ch-intro {
+  max-width: none; justify-self: center; color: var(--ink-2);
+  font-size: clamp(16px, 1.42vw, 23px); line-height: 1.35; white-space: nowrap;
+}
+.ch-coverWrap { position: relative; }
+.ch-cover { width: 100%; max-height: calc(100svh - 76px - var(--bar) - 8svh); object-fit: contain; object-position: right center; }
+
+/* ── the opening: one screen ── */
+.ch-open {
+  position: relative; display: grid; align-content: start; gap: 18px;
+  padding: calc(var(--bar) + 16svh) 0 4svh;
+}
+/* The question keeps clear of the right of the screen, where the device and
+   the threads come down; its second line a little smaller. */
+.ch-open .ch-text { max-width: min(20em, 56%); }
+.ch-open .ch-text.ch-large { font-size: var(--t-statement); line-height: 1.08; }
+.ch-text.ch-aside { max-width: min(32em, 56%); font-size: clamp(16px, 1.35vw, 20px); line-height: 1.5; letter-spacing: normal; color: var(--ink-2); }
+.ch-memory .ch-text.ch-headline { font-size: var(--t-statement); }
+.ch-memory .ch-text.ch-medium { font-size: clamp(27px, 3vw, 42px); line-height: 1.15; letter-spacing: var(--tracking-display); }
+.ch-memory .ch-text.ch-quiet { font-size: clamp(18px, 1.5vw, 21px); line-height: 1.45; }
+/* "Hold on to it for a moment.", and the reader's choice to keep a thread */
+.ch-hold { display: grid; justify-items: start; gap: 14px; margin-top: 18px; max-width: 56%; }
+.ch-hold .ch-text { color: var(--ink-2); font-size: clamp(16px, 1.3vw, 19px); line-height: 1.4; }
+/* A small quiet button, in the story's own type: the reader's thread, en passant. */
+.ch-story .ch-ask {
+  position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 10px; min-height: 40px; padding: 8px 14px;
+  border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--void); color: var(--ink-2);
+  font: 400 13px / 1.2 var(--font-mono); cursor: pointer;
+  transition: color 200ms ease, border-color 200ms ease;
+}
+.ch-story .ch-ask:hover { color: var(--ink); border-color: var(--ink-3); }
+.ch-story .ch-ask:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.ch-story .ch-ask:disabled { cursor: default; opacity: 0.6; }
+.ch-story .ch-ask i { width: 18px; height: 0; border-top: 1.5px solid var(--ink-3); transition: border-color var(--ch-fade) ease; }
+.ch-story .ch-ask[aria-pressed="true"] { color: var(--form-data); border-color: var(--form-data); background: color-mix(in srgb, var(--form-data) 10%, var(--void)); }
+.ch-story .ch-ask[aria-pressed="true"] i { border-top-color: var(--form-data); }
+.ch-told2 .ch-ask { justify-self: start; margin-top: 6px; }
+.ch-told2 .ch-ask i { border-top-color: var(--thread); }
+
+/* The Pocket Micro (origin.js). It lies in its place in the memory; while
+   the opening question is read it is moved (--dx, --dy) to peek in at the
+   column's right edge, mostly hidden, and glides home as the reader scrolls
+   on. The memory's row clips it at the column's edge, not above or below. */
+.ch-memory { overflow-x: clip; }
+.ch-memory :is(.ch-mine, .ch-told2) { transition: opacity var(--ch-fade) ease 200ms; }
+.ch-memory[data-arrived="false"] :is(.ch-mine, .ch-told2) { opacity: 0; transition: opacity 200ms ease; }
+.ch-device { position: relative; z-index: 3; }
+.ch-device .ch-pocket { transform: none; transition: transform var(--ch-move) var(--ch-ease); }
+.ch-device .ch-pocket[data-side="peek"] { transform: translate3d(var(--dx, 0px), var(--dy, 0px), 0); }
+/* on a phone it waits low, its top at the screen's foot, and rises */
+.ch-device .ch-pocket[data-side="low"] { transform: translate3d(0, 38%, 0); }
+.ch-pocket { position: relative; width: 100%; aspect-ratio: 800 / 1231; perspective: 1200px; }
+.ch-pocketRight, .ch-pocketFlap { position: absolute; top: 0; width: 50%; height: 100%; }
+.ch-pocketRight { left: 50%; overflow: hidden; }
+.ch-pocketRight .ch-picture { width: 200%; max-width: none; left: -100%; }
+.ch-pocketFlap {
+  z-index: 3; left: 0; transform-origin: 100% 50%; transform-style: preserve-3d; transform: rotateY(0deg);
+  transition: transform 850ms var(--ch-ease);
+}
+.ch-pocket[data-closed="true"] .ch-pocketFlap { transform: rotateY(180deg); }
+.ch-pocketFront, .ch-pocketBack { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.ch-pocketFront .ch-picture { width: 200%; max-width: none; }
+.ch-pocketBack { transform: rotateY(180deg); }
+.ch-pocketBack .ch-picture { width: 200%; max-width: none; height: 100%; left: -100%; }
+/* once shut, the half beneath is gone (it would show past the cover's edge) */
+.ch-pocket[data-closed="true"] .ch-pocketRight { visibility: hidden; transition: visibility 0s linear 850ms; }
+/* En passant on the device's own board (origin.js): squares and pawns cut
+   from the picture itself, and its tiny screen. Gone once it folds. */
+.ch-pocket { container-type: inline-size; }
+.ch-ep { position: absolute; inset: 0; z-index: 5; pointer-events: none; transition: opacity 300ms ease; }
+.ch-pocket[data-closed="true"] .ch-ep { opacity: 0; }
+.ch-epTile { position: absolute; background-image: url("/images/stories/chess/device.webp"); background-repeat: no-repeat; }
+.ch-epPiece { clip-path: circle(41% at 50% 50%); will-change: transform; }
+.ch-epScreen {
+  position: absolute; display: grid; place-items: center; background: rgb(164 156 139); border-radius: 2px;
+  color: #2b2823; font: 500 3.9cqw / 1 var(--font-mono); letter-spacing: 0.04em; white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ch-device .ch-pocket, .ch-pocketFlap, .ch-memory :is(.ch-mine, .ch-told2), .ch-ep { transition: none !important; }
+  .ch-pocketFlap, .ch-pocketBack, .ch-pocket[data-closed="true"] .ch-pocketFlap { transform: none; }
+  .ch-pocketBack { left: 100%; visibility: hidden; }
+  .ch-pocket[data-closed="true"] .ch-pocketFront { visibility: hidden; }
+  .ch-pocket[data-closed="true"] .ch-pocketBack { visibility: visible; }
+  .ch-pocket[data-closed="true"] .ch-pocketRight { transition: none; }
+}
+
+.ch-storyMeta { margin-bottom: 24px; color: var(--ink-3); font: 400 12px / 1.5 var(--font-mono); }
+
+/* ── free scroll: text and pictures pass by ── */
+.ch-free { position: relative; padding: 6vh 0 12vh; }
+.ch-row { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
+
+.ch-memory { padding-top: 4vh; row-gap: 26px; }
+.ch-mine { position: relative; z-index: 2; grid-column: 2 / 7; grid-row: 1; display: grid; gap: 8px; }
+/* the memory's own words: one line, and a quieter one under it */
+.ch-told2 { display: grid; gap: 12px; }
+.ch-device { grid-column: 2 / 6; grid-row: 2; }
+.ch-memory .ch-col { grid-column: 7 / 13; grid-row: 2; align-self: center; }
+/* The years between: the thread as a timeline, the decades named behind it. */
+.ch-years { position: relative; height: 72vh; height: 72svh; }
+/* the chapter's largest words, at the left as the opening's are */
+.ch-text.ch-yearsText {
+  position: absolute; left: 0; top: 20%; max-width: none;
+  font-size: var(--t-display); line-height: 0.98; letter-spacing: var(--tracking-display);
+}
+/* "No chess.": apart from it, at the lower right */
+.ch-text.ch-yearsNone { left: auto; right: 0; top: 56%; }
+.ch-story[data-live="true"] .ch-years .ch-yearsText[data-reveal] {
+  transform: translateY(10px); transition: opacity 420ms var(--ch-ease), transform 420ms var(--ch-ease);
+}
+.ch-story[data-live="true"] .ch-years .ch-yearsText[data-reached="true"] { transform: translateY(0); }
+.ch-decade {
+  --shown: 1;
+  position: absolute; right: 0; top: var(--at); z-index: 0; transform: translateY(-50%); text-align: right;
+  color: var(--rule); font: 300 clamp(72px, 10vw, 150px) / 1 var(--font-title); letter-spacing: var(--tracking-display);
+  pointer-events: none; user-select: none;
+}
+
+/* The wooden set, pinned (wooden.js): its stretch is as many screens long as
+   the scene takes, and the stage stays on screen for all of them. The stage
+   is clear, so the threads show around the board and are hidden behind it. */
+.ch-woodenPin { position: relative; height: calc((var(--screens) + 1) * 100vh); height: calc((var(--screens) + 1) * 100svh); }
+.ch-woodenStage {
+  position: sticky; top: 0; z-index: 2; height: 100vh; height: 100svh; overflow: hidden;
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center;
+}
+/* The board is held to two thirds of the screen's height, so a hand has room
+   to come in above it and below it. */
+.ch-woodenScene {
+  position: relative; grid-column: 1 / 7; grid-row: 1; justify-self: center; width: min(100%, 55vh); width: min(100%, 55svh);
+  aspect-ratio: 838 / 1000;
+}
+/* The set itself: its two sides, and the pieces and hands over them. wooden.js
+   draws it back, frame by frame, as the board becomes the phone's. */
+.ch-woodenLid { position: absolute; inset: 0; perspective: 1500px; transform-origin: 0 0; will-change: transform, opacity; }
+/* The pieces and the hands, over the board: set up once it has turned over.
+   Each is moved by a transform written by wooden.js, frame by frame. */
+.ch-woodenPieces { position: absolute; inset: 0; opacity: 0; transition: opacity 300ms ease; }
+.ch-woodenPieces[data-on="true"] { opacity: 1; transition: opacity 120ms ease; }
+.ch-woodenPieces img { position: absolute; left: 0; top: 0; height: auto; max-width: none; will-change: transform; }
+/* An arm runs off the screen where it can; where it ends first, it fades. */
+.ch-woodenPieces .ch-woodenHand { z-index: 1000; pointer-events: none; will-change: transform, opacity; }
+.ch-woodenHand[data-from="below"] { mask-image: linear-gradient(to bottom, #000 82%, transparent 99%); }
+.ch-woodenHand[data-from="above"] { mask-image: linear-gradient(to top, #000 82%, transparent 99%); }
+/* The phone, laid over the set with its board on the set's squares; wooden.js
+   moves it too. It is taller than the scene's box and is cut by the screen. */
+.ch-woodenPhone { position: absolute; z-index: 3; height: auto; max-width: none; transform-origin: 0 0; pointer-events: none; will-change: transform, opacity; }
+/* The first game on its screen; from Part II, the search and the strangers' games. */
+.ch-firstGame { display: block; width: 100%; height: auto; opacity: calc(1 - var(--online, 0)); }
+.ch-onlineScreen { position: absolute; inset: 0; opacity: var(--online, 0); }
+.ch-onlineScreen .ch-phoneBox { height: auto; }
+/* "Searching for opponent…", with a quiet pulse */
+.ch-searching i { background: #3c3a37; }
+.ch-searching b { animation: ch-pulse 1.6s ease-in-out infinite; }
+@keyframes ch-pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+/* Each stranger's life, a grey thread through the game; then all of them. */
+.ch-crossings { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.ch-crossings path { fill: none; stroke: var(--them); stroke-opacity: 0.75; stroke-width: 1.3; stroke-linecap: round; transition: opacity 300ms ease; }
+.ch-many { position: absolute; left: 0; top: 0; width: 64%; height: 100%; color: var(--them); pointer-events: none; }
+/* One thread field, in the original pinned stage, from the statistics to
+   the pink board. Only the final club scene overlaps its last screen. */
+.ch-pin.ch-threadWeave { position: absolute; inset: 0; background: transparent; pointer-events: none; }
+.ch-threadWeave .ch-clubBoard { opacity: 0; transition: none; }
+.ch-woodenPin + .ch-club { margin-top: -100vh; margin-top: -100svh; background: transparent; }
+.ch-woodenPin + .ch-club .ch-stage { background: var(--void); }
+.ch-woodenPin + .ch-club:not([data-arrived="true"]) .ch-stage { opacity: 0; pointer-events: none; }
+.ch-manyCopy { position: absolute; left: 66%; right: 0; top: 50%; z-index: 6; transform: translateY(-50%); }
+/* How the author pictures each stranger: beside the phone, drawing itself in. */
+.ch-pictured { position: absolute; left: 45%; top: 26%; width: 19%; z-index: 4; pointer-events: none; }
+.ch-pictured .ch-who { left: 0; top: 0; width: 100%; max-width: none; }
+.ch-pictured .ch-who img {
+  width: 100%; max-width: 240px;
+  -webkit-mask-image: radial-gradient(ellipse 62% 62% at var(--at, 50% 50%), #000 52%, transparent 100%), linear-gradient(100deg, #000 calc(var(--drawn, 1) * 140% - 40%), transparent calc(var(--drawn, 1) * 140%));
+  -webkit-mask-composite: source-in;
+  mask-image: radial-gradient(ellipse 62% 62% at var(--at, 50% 50%), #000 52%, transparent 100%), linear-gradient(100deg, #000 calc(var(--drawn, 1) * 140% - 40%), transparent calc(var(--drawn, 1) * 140%));
+  mask-composite: intersect;
+  filter: blur(calc((1 - var(--drawn, 1)) * 3px));
+}
+/* The words of the wooden scene and Part II's start, on a wide screen: in a
+   column of their own that scrolls past the scene. */
+.ch-woodenWords { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.ch-woodenWords > div { position: absolute; left: 66%; right: 0; transform: translateY(-50%); }
+.ch-woodenWords > [data-thread-copy] { left: 55%; right: 2%; }
+.ch-woodenWords [data-thread-copy] .ch-text.ch-lead {
+  max-width: 26ch; margin-inline: auto; font-size: clamp(27px, 2.55vw, 37px); line-height: 1.3; text-wrap: pretty;
+}
+/* a note said in passing under the words, as "Nothing major…" at the opening */
+.ch-woodenWords .ch-text.ch-wordsAside { max-width: 26ch; margin: 0.55em auto 0; }
+/* A question asked of the strangers: a statement's size. */
+.ch-text.ch-question { font-size: var(--t-second); line-height: 1.12; letter-spacing: var(--tracking-display); text-wrap: balance; }
+/* The words beside the scene share one place, each there for its part of it. */
+.ch-woodenText { grid-column: 8 / 13; grid-row: 1; opacity: 0; transition: opacity var(--ch-fade) ease; }
+.ch-woodenText strong { color: var(--form-data); font-weight: inherit; }
+/* 1. e4, quietly under the board as it is played, and under the first game */
+.ch-firstMove {
+  position: absolute; left: 0; width: 50%; bottom: 5svh; text-align: center; z-index: 4;
+  color: var(--thread); font: 400 13px / 1 var(--font-mono); letter-spacing: 0.06em;
+  opacity: 0; transition: opacity var(--ch-fade) ease;
+}
+.ch-firstMove[data-on="true"] { opacity: 1; }
+.ch-woodenText[data-on="true"] { opacity: 1; }
+/* The scene's own ground, in the page's colour: it comes when the phone does,
+   and the thread that came down the page is taken in under it. */
+.ch-woodenLink { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.ch-woodenLink path { fill: none; stroke: var(--thread); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.ch-woodenVeil { position: absolute; inset: 0 -50vw; background: var(--void); pointer-events: none; }
+/* The chart the phone comes to rest under. It stands still; wooden.js writes
+   on it how much of it shows. Room is left under it for the phone. */
+.ch-woodenChart { position: absolute; left: 22px; width: 50%; top: 44%; transform: translateY(-50%); pointer-events: none; }
+.ch-woodenChart .ch-plot { aspect-ratio: 1.8; max-height: 36svh; }
+.ch-story .ch-woodenChart .ch-timeTitle { margin-bottom: 46px; }
+/* the caption starts clear of the phone resting under the axis's beginning */
+.ch-woodenChart .ch-timeCaption { margin-left: calc(2rem + 5svh + 14px); }
+/* … and the words beside the chart, one after the other in one place. */
+.ch-woodenAfter {
+  position: absolute; left: 68%; right: 0; top: 44%; transform: translateY(-50%);
+  opacity: 0; transition: opacity var(--ch-fade) ease;
+}
+.ch-woodenAfter[data-on="true"] { opacity: 1; }
+
+/* Today's chart: the measured line complete as soon as it arrives, in the
+   thread's clay; only the note at the peak waits (--peak). */
+.ch-chart { position: relative; margin: 0; }
+.ch-story .ch-timeTitle { margin: 0 0 82px 2rem; color: var(--ink); font: 400 clamp(23px, 2.1vw, 29px) / 1.1 var(--font-title); letter-spacing: var(--tracking-title); text-transform: none; }
+.ch-plot { position: relative; aspect-ratio: 1.8; max-height: 32svh; margin: 0 0 2.2rem 2rem; }
+.ch-grid, .ch-base { position: absolute; left: 0; right: 0; height: 0; border-top: 1px solid var(--rule); }
+.ch-base { bottom: 0; border-top-color: var(--rule-strong); }
+.ch-tick, .ch-year, .ch-timeUnit { position: absolute; color: var(--ink-2); white-space: nowrap; font: 400 11px / 1 var(--font-mono); font-variant-numeric: tabular-nums; }
+.ch-tick { right: calc(100% + 10px); transform: translateY(-50%); }
+.ch-year { top: calc(100% + 10px); transform: translateX(-50%); }
+.ch-timeUnit { left: 0; bottom: calc(100% + 12px); font-size: 10px; }
+.ch-lines { position: absolute; inset: 0; overflow: visible; }
+.ch-lines path { fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.ch-measured { stroke: var(--thread); }
+.ch-estimate { stroke: var(--ink-3); stroke-width: 1.4; stroke-dasharray: 4 5; filter: blur(0.6px); opacity: 0; transition: opacity var(--ch-fade) ease; }
+.ch-estimate[data-on="true"] { opacity: 0.85; }
+.ch-estimateLabel {
+  position: absolute; transform: translateY(calc(-100% - 8px)); color: var(--ink-3); white-space: nowrap;
+  font: 400 11px / 1 var(--font-mono); font-style: italic; opacity: 0; transition: opacity var(--ch-fade) ease;
+}
+.ch-estimateLabel[data-on="true"] { opacity: 1; }
+/* the note stands centred over the peak (its left is set at the peak) */
+.ch-timePeak { position: absolute; bottom: calc(100% + 12px); transform: translateX(-50%); opacity: var(--peak, 1); color: var(--ink); font: 400 12px / 1.4 var(--font-mono); text-align: center; white-space: nowrap; }
+.ch-timePeak small { display: block; color: var(--ink-2); font-size: 10px; }
+.ch-peakPointer { position: absolute; inset: 0; overflow: visible; opacity: var(--peak, 1); pointer-events: none; }
+.ch-peakPointer path { fill: none; stroke: var(--thread); stroke-width: 1; }
+.ch-peakPointer circle { fill: var(--thread); }
+.ch-timeCaption { margin-left: 4rem; color: var(--ink-2); font: 400 11px / 1.5 var(--font-mono); }
+
+/* ── pinned scenes: the graphic stays, the cards pass ── */
+.ch-pin { position: relative; z-index: 3; border-top: 1px solid var(--rule); background: var(--void); }
+.ch-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.ch-scene { position: absolute; inset: 0 0 0 42%; display: grid; place-items: center; }
+.ch-steps { position: relative; margin-top: -100vh; margin-top: -100svh; padding-bottom: 28vh; pointer-events: none; }
+.ch-step { display: flex; align-items: center; min-height: 88vh; }
+.ch-card {
+  width: min(22rem, 100%); padding: 18px 20px 20px;
+  border-left: 2px solid var(--rule-strong); background: var(--raised);
+  opacity: 0.45; transition: opacity 300ms ease; pointer-events: auto;
+}
+.ch-step[data-on="true"] .ch-card { opacity: 1; }
+/* The words that come in on the scroll are centred, and what stands among
+   them (a choice, a range, a waffle) is centred with them. */
+.ch-card, .ch-told > div { text-align: center; }
+.ch-card :is(p, h2, h3, li), .ch-told > div :is(p, h2, h3, li) { text-align: center; }
+.ch-card :is(.ch-text, .ch-wrongRange, .ch-waffle), .ch-told > div :is(.ch-text, .ch-wrongRange, .ch-waffle) { margin-inline: auto; }
+.ch-card :is(.ch-guess), .ch-told > div :is(.ch-guess) { justify-content: center; }
+.ch-card .ch-hold, .ch-told > div .ch-hold { justify-items: center; margin-inline: auto; }
+/* A scene that follows on from the page above it has no rule over it. */
+.ch-pin[data-open="true"] { border-top: 0; }
+/* Part II's words: no cards. They stand in one place beside the scene, each
+   giving way to the next as the reader scrolls. */
+.ch-told { position: absolute; left: 0; top: 50%; width: 36%; z-index: 5; }
+.ch-told > div { position: absolute; left: 0; right: 0; top: 0; transform: translateY(-50%); opacity: 0; transition: opacity 400ms ease; }
+.ch-told > div[data-on="true"] { opacity: 1; transition: opacity 400ms ease 150ms; }
+/* only the words in view take a tap (the reader's choice lives in them) */
+.ch-told > div { pointer-events: none; }
+.ch-told > div[data-on="true"] { pointer-events: auto; }
+/* Reading (Part II's club, wide screens): no cards, the words scroll past in
+   the right-hand column, as beside the wooden set; the scene is at the left. */
+.ch-pin[data-reading="true"] .ch-scene { inset: 0 36% 0 0; }
+.ch-pin[data-reading="true"] .ch-step { justify-content: flex-end; min-height: 58vh; }
+.ch-pin[data-reading="true"] .ch-steps { padding-bottom: 12vh; }
+.ch-pin[data-reading="true"] .ch-card { width: 34%; padding: 0; border: 0; background: none; opacity: 1; }
+/* A stretch with no card: the scene speaks alone. */
+.ch-step[data-bare="true"] { min-height: 72vh; }
+.ch-pin:is([data-reading="true"], .ch-club) .ch-step[data-bare="true"] { min-height: 58vh; }
+.ch-step[data-bare="true"] .ch-card { visibility: hidden; height: 1px; padding: 0; border: 0; }
+
+/* Things on a scene, by step: a layer fades where it is, a panel leaves the flow. */
+.ch-layer { position: absolute; opacity: 0; visibility: hidden; transition: opacity 500ms ease, visibility 0s linear 500ms; }
+.ch-layer[data-on="true"] { opacity: 1; visibility: visible; transition: opacity 500ms ease, visibility 0s; }
+.ch-panel[data-on="false"] { display: none; }
+.ch-panel[data-on="true"] { animation: ch-in 450ms ease both; }
+@keyframes ch-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.ch-stack { display: grid; gap: 22px; width: min(35rem, 100%); }
+
+/* A plain board, where a real position is still to come (Part III). */
+.ch-board {
+  border: 1px solid var(--rule-strong);
+  background: conic-gradient(var(--raised) 25%, var(--void) 0 50%, var(--raised) 0 75%, var(--void) 0) 0 0 / 25% 25%;
+}
+.ch-boardSmall { width: min(40vh, 70%); aspect-ratio: 1; margin-inline: auto; }
+
+/* Part II. Its name stays at the top of the screen for the whole of it: it
+   sticks there, over the pinned scene, until the part ends. */
+.ch-people { position: relative; }
+/* It takes no room: it sticks at the top from the start of the wooden set,
+   unseen until the first stranger is found (data-titled, from wooden.js). */
+.ch-peopleTitle {
+  position: sticky; top: calc(var(--bar) + 5vh); top: calc(var(--bar) + 5svh); z-index: 8; height: 0; overflow: visible; pointer-events: none;
+  opacity: 0; transition: opacity var(--ch-fade) ease;
+}
+.ch-people[data-titled="true"] .ch-peopleTitle { opacity: 1; }
+/* on its own ground, so what scrolls away under it does not show through */
+.ch-peopleTitle .ch-text { display: inline-block; padding: 4px 14px 10px 0; background: var(--void); box-shadow: 0 0 18px 10px var(--void); }
+
+/* Part II: one board, and what gathers around it. The scene's things are laid
+   out in a square, which is sized and placed for what it shows (data-view). */
+.ch-boardwrap { position: relative; width: min(54vh, 78%); aspect-ratio: 1; transition: width 600ms ease, transform 600ms ease, opacity 500ms ease; }
+/* At the club the professor stands at the board's left, so the two together
+   are centred in the scene. */
+.ch-boardwrap[data-view="club"], .ch-boardwrap[data-view="quiet"] { width: min(60vh, 66%); transform: translate(10%, -12%); }
+/* The turn of the story stands alone: the club is still there, far back. */
+.ch-boardwrap[data-view="quiet"] { opacity: 0.08; }
+.ch-layer.ch-big { z-index: 7; inset: 0; display: grid; place-items: center; padding: 0 6%; text-align: center; }
+.ch-pin[data-reading="true"] .ch-boardwrap:is([data-view="club"], [data-view="quiet"]) { transform: translate(10%, -3%); }
+.ch-big .ch-text { max-width: 17em; margin-inline: auto; }
+.ch-big .ch-text p { text-align: center; }
+.ch-text.ch-statement { font-size: var(--t-statement); line-height: 1.1; letter-spacing: var(--tracking-display); text-wrap: balance; }
+/* What "safe" means: the London System's men, ringed in the thread's clay. */
+.ch-london { position: absolute; z-index: 1; background: var(--thread); mix-blend-mode: multiply; opacity: 0; transition: opacity var(--ch-fade) ease; pointer-events: none; }
+.ch-london[data-on="true"] { opacity: 0.75; }
+/* at the board's left, clear of the hand that plays from below, and above the hands */
+.ch-firstMove.ch-clubMove { left: 0; width: 70%; text-align: left; white-space: nowrap; bottom: -12%; z-index: 9; }
+
+/* The strangers: the phone, and beside it who is on the other side. As it
+   goes, the phone comes towards us, into its board. */
+.ch-layer.ch-phoneLayer {
+  z-index: 3; left: 2%; top: -14%; height: 128%; aspect-ratio: 800 / 1704; transform-origin: 50% 52%;
+  transition: opacity 500ms ease, transform 700ms cubic-bezier(0.3, 0.1, 0.2, 1), visibility 0s linear 500ms;
+}
+.ch-layer.ch-phoneLayer[data-on="false"] { transform: scale(1.45); }
+.ch-layer.ch-phoneLayer[data-on="true"] { transition: opacity 500ms ease, transform 700ms cubic-bezier(0.3, 0.1, 0.2, 1), visibility 0s; }
+.ch-phoneBox { position: relative; width: 100%; height: 100%; container-type: inline-size; }
+.ch-phoneBox > img { display: block; width: 100%; height: auto; }
+/* What the page writes on the phone's screen, placed and sized by the phone's
+   own width (the bar's and the clocks' places are from make-phone.cjs). */
+.ch-screen {
+  position: absolute; inset: 0; color: #dedcd8;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 6px; font-size: 2.5cqw; line-height: 1;
+}
+.ch-phonePosition { position: absolute; left: 9.75%; top: 33.1%; width: 79.85%; height: auto; display: block; }
+.ch-phoneMove { position: absolute; top: 15.3%; left: 15%; color: #dedcd8; font-size: 1.15em; }
+.ch-screenBar {
+  position: absolute; left: 12.8%; top: 25%; height: 2.85%; display: flex; align-items: flex-start; white-space: nowrap;
+  opacity: 0; transition: opacity 300ms ease;
+}
+.ch-screenBar[data-on="true"] { opacity: 1; }
+.ch-screenBar i { flex: none; height: 100%; aspect-ratio: 1; margin-right: 0.76em; }
+.ch-screenBar b { margin-top: 0.4em; font-weight: 600; }
+.ch-screenBar span { margin: 0.4em 0.4em 0; color: #9c9a96; }
+.ch-screenBar .ch-flag { width: 1.45em; margin-top: 0.35em; }
+.ch-clock {
+  position: absolute; left: 65.8%; width: 20.5%; top: 24.88%; height: 3.05%; padding-right: 0.75em;
+  display: flex; align-items: center; justify-content: flex-end; color: #ffffff; font-size: 1.3em; font-weight: 500; font-variant-numeric: tabular-nums;
+}
+.ch-clock[data-whose="mine"] { top: 75.63%; color: #2b2a28; }
+.ch-flag { display: inline-block; flex: none; width: 1.5em; height: auto; border-radius: 1px; }
+/* Beside the phone, large enough to read: a username, a rating, a country. */
+.ch-who {
+  position: absolute; left: 110%; top: 23%; width: max-content; max-width: 15rem; display: grid; gap: 7px;
+  opacity: 0; transition: opacity 300ms ease;
+}
+.ch-who[data-on="true"] { opacity: 1; transition: opacity 350ms ease 150ms; }
+.ch-who b { color: var(--ink); font: 500 15px / 1.3 var(--font-mono); letter-spacing: 0.02em; }
+.ch-who span { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-2); font: 500 12px / 1.3 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+/* … and a glimpse of them: hands, a phone, one thing of where they are. It is
+   cut from a larger drawing, so it fades out all round, as a vignette does. */
+.ch-who img {
+  display: block; width: clamp(120px, 26vh, 250px); height: auto; margin-top: 18px;
+  mask-image: radial-gradient(ellipse 62% 62% at var(--at, 50% 50%), #000 52%, transparent 100%);
+}
+
+/* The club: the board as an object on the table, and the game played on it.
+   It comes up out of the phone's board, and at the end goes small, into the
+   middle of the thousand. */
+.ch-layer.ch-clubBoard {
+  inset: 12% 2% 12% 30%; z-index: 3; display: grid; place-items: center;
+  transition: opacity 500ms ease, transform 900ms cubic-bezier(0.3, 0.1, 0.2, 1), visibility 0s linear 500ms;
+}
+.ch-layer.ch-clubBoard[data-on="false"] { transform: scale(0.7); }
+.ch-layer.ch-clubBoard[data-on="true"] { transition: opacity 500ms ease, transform 900ms cubic-bezier(0.3, 0.1, 0.2, 1), visibility 0s; }
+/* (a tiny board of the grid is 40/48 of one of its 37 places, the grid four
+   squares wide: 9% of the square, against this board's 68%) */
+.ch-boardwrap[data-view="many"] .ch-layer.ch-clubBoard { transform: translate(-20.6%, 0) scale(0.1325); }
+/* The board with nothing on it, and over it the pieces and the two players'
+   hands, each moved by a transform written by club.js, frame by frame. */
+.ch-clubTable { position: relative; width: 100%; aspect-ratio: 1000 / 829; }
+.ch-clubTable img { position: absolute; left: 0; top: 0; height: auto; max-width: none; }
+.ch-clubGround { width: 100%; }
+.ch-clubPiece { transform-origin: 0 0; will-change: transform; }
+/* A hand's far end fades out: the opponent's arm towards the upper right, the
+   author's towards the bottom. */
+.ch-clubHand { z-index: 1000; pointer-events: none; will-change: transform, opacity; }
+.ch-clubHand[data-from="far"] { mask-image: linear-gradient(to bottom left, transparent 6%, #000 30%); }
+.ch-clubHand[data-from="near"] { mask-image: linear-gradient(to bottom, #000 80%, transparent 99%); }
+/* Where and when, at the board's left, until the professor stands there. */
+.ch-layer.ch-place {
+  z-index: 5; right: 73%; top: 36%; display: grid; grid-template-columns: auto auto; align-items: center; gap: 4px 8px;
+  color: var(--ink-2); font: 500 11px / 1.2 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap;
+}
+.ch-place svg { width: 9px; height: auto; fill: var(--thread); }
+.ch-place span { grid-column: 2; color: var(--ink-3); }
+/* A half figure standing at the board's left side and bowed over it: his head
+   is over the board's far left squares, so what he looks down at is the game.
+   He leans in from the side, once the opening is played. */
+.ch-layer.ch-professor {
+  z-index: 4; left: -20%; top: 17%; height: 104%; transform-origin: 30% 90%;
+  transition: opacity 600ms ease, transform 900ms cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s linear 600ms;
+}
+.ch-layer.ch-professor[data-on="false"] { transform: translate(-10%, 2%) rotate(-4deg); }
+.ch-layer.ch-professor[data-on="true"] { transition: opacity 600ms ease, transform 900ms cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s; }
+/* He is cut at the waist: that edge fades out. */
+.ch-professor img { display: block; width: auto; height: 100%; mask-image: linear-gradient(to bottom, #000 78%, transparent 98%); }
+/* What he asked, across the top of the scene; and what it left behind, alone. */
+/* A speech balloon over his head, its tail towards him; it comes up from there. */
+.ch-layer.ch-bubble {
+  z-index: 6; left: -20%; right: 22%; bottom: 84%; padding: 15px 20px 17px;
+  border: 1px solid var(--ink-2); border-radius: 20px; background: var(--void); transform-origin: 34% 100%;
+  transition: opacity 400ms ease, transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s linear 400ms;
+}
+.ch-layer.ch-bubble[data-on="false"] { transform: translateY(10px) scale(0.86); }
+.ch-layer.ch-bubble[data-on="true"] { transition: opacity 400ms ease, transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s; }
+.ch-bubble::after {
+  content: ""; position: absolute; left: 32%; bottom: -8px; width: 14px; height: 14px;
+  border-right: 1px solid var(--ink-2); border-bottom: 1px solid var(--ink-2); background: var(--void);
+  transform: rotate(45deg) skew(12deg, 12deg);
+}
+.ch-bubble .ch-text { max-width: none; text-align: center; }
+.ch-bubble .ch-text p { text-align: center; }
+.ch-layer.ch-how { z-index: 6; inset: 0; display: grid; place-items: center; text-align: center; }
+/* The thousand: one picture, four of the scene's squares wide and centred in
+   the scene, kept to the scene's box so the words beside it stay clear; it
+   fades out at the box's sides. */
+.ch-layer.ch-minis {
+  z-index: 1; inset: 0; overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 9%, #000 94%, transparent);
+}
+.ch-layer.ch-minis[data-on="true"] { transition: opacity 700ms ease 350ms, visibility 0s; }
+.ch-minisBox { position: absolute; left: 50%; top: 50%; width: calc(4 * min(54vh, 78%)); transform: translate(-50%, -50%); pointer-events: auto; cursor: crosshair; }
+.ch-minisBox img { display: block; width: 100%; max-width: none; height: auto; }
+/* what the game under the pointer was */
+.ch-boardNote {
+  position: absolute; z-index: 3; transform: translate(14px, calc(-100% - 10px)); padding: 6px 9px; white-space: nowrap; pointer-events: none;
+  border: 1px solid var(--rule-strong); background: var(--void); color: var(--ink); font: 400 11.5px / 1.3 var(--font-mono);
+}
+
+/* Part III: the investigation. Down the rabbit hole (dive.js): the thousand
+   boards, where Part II left them, are dived into; three boards come up, one for
+   each question, each a way into its part. */
+.ch-games { position: absolute; inset: 0; display: grid; place-items: center; transform: scale(calc(1 + var(--dive, 0) * 7)); opacity: calc(1 - var(--boards, 0)); }
+.ch-dive { position: absolute; inset: 0; z-index: 7; pointer-events: none; }
+.ch-people[data-diving="true"] > .ch-peopleTitle { opacity: 0; }
+.ch-club .ch-step { position: relative; }
+.ch-stepMark { position: absolute; left: 0; top: 80vh; width: 0; height: 0; }
+/* "Your username" in the chapters: lands with the username box in the middle of
+   the screen (on a phone, held at its foot) */
+.ch-step[data-place="username"] > .ch-stepMark { top: -20vh; top: -20svh; }
+/* The part opens on one centred group, as the prototype's opener: its name large, one
+   quiet line under it, and the three questions. */
+.ch-diveThree {
+  position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; padding: calc(var(--bar) + 4svh) 0 6svh;
+  opacity: var(--boards, 0); transform: translateY(calc((1 - var(--boards, 0)) * 4svh)); pointer-events: none;
+}
+.ch-dive[data-boards="true"]:not([data-into="true"]) .ch-diveThree { pointer-events: auto; }
+.ch-text.ch-diveTitle { max-width: 100%; margin: 0; text-align: center; }
+.ch-story .ch-diveTitle.ch-partTitle h2 { max-width: 14em; margin: 0 auto; white-space: normal; text-wrap: balance; font-size: clamp(40px, 5.6vw, 76px); line-height: 1.02; letter-spacing: -0.015em; }
+.ch-text.ch-diveWords { max-width: 30em; margin: clamp(14px, 2.2svh, 24px) 0 0; text-align: center; color: var(--ink-3); }
+.ch-diveWords p { text-align: center; }
+.ch-diveBoards { display: grid; grid-template-columns: repeat(3, minmax(0, 200px)); gap: clamp(20px, 4vw, 60px); justify-content: center; width: 100%; margin: clamp(32px, 6svh, 64px) 0 0; padding: 0; list-style: none; }
+.ch-diveBoards a { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 14px; color: var(--ink-2); text-align: center; text-decoration: none; font: 400 13px / 1.35 var(--font-mono); transition: color 200ms ease; }
+.ch-diveBoards a:hover, .ch-diveBoards a:focus-visible { color: var(--ink); }
+.ch-diveBoards a:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px; }
+.ch-diveBoards b { display: block; margin-bottom: 4px; color: var(--ink-3); font-weight: 400; }
+.ch-diveBoards > li { min-width: 0; }
+.ch-diveBoards svg { display: block; width: 100%; height: auto; }
+/* if the reader goes on without choosing, the name, the line and the other two go, and
+   the first board glides to the middle (dive.js), sharp all the way; the question's
+   name comes up under it, large, and stays until the stage leaves */
+.ch-diveTitle, .ch-diveWords, .ch-diveBoards > li:not(:first-child), .ch-diveBoards > li:first-child span { opacity: calc(1 - min(1, var(--into, 0) * 1.8)); }
+.ch-diveBoards > li:first-child svg {
+  position: relative; z-index: 3; transform-origin: 50% 50%;
+  transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--ts, 1));
+}
+/* once it has reached its place at the top left, the board there takes over */
+.ch-dive[data-docked="true"] .ch-diveBoards > li:first-child svg { opacity: 0; }
+.ch-diveNext {
+  position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; gap: 0; padding: calc(var(--bar) + 4svh) var(--page-margin, 20px) 6svh;
+  text-align: center; pointer-events: none;
+}
+.ch-diveSpot { display: block; width: min(250px, 28svh); aspect-ratio: 80 / 84; margin-bottom: clamp(22px, 4svh, 40px); }
+.ch-diveName { opacity: var(--named, 0); transform: translateY(calc((1 - var(--named, 0)) * 14px)); }
+.ch-text.ch-diveSaid { max-width: 30em; margin: clamp(16px, 2.6svh, 26px) 0 0; color: var(--ink-2); text-align: center; opacity: var(--said, 0); transform: translateY(calc((1 - var(--said, 0)) * 10px)); }
+.ch-diveSaid p { margin: 0; text-align: center; }
+/* the question's name is already above it, large */
+.ch-diveSaid h3 { display: none; }
+/* the first question follows its name with no rule between: one continuous scroll */
+.ch-part3 .ch-question .ch-sayPin { border-top: 0; }
+.ch-story .ch-diveName { color: var(--ink); font: 400 clamp(40px, 5.4vw, 76px) / 1.02 var(--font-title); letter-spacing: -0.015em; text-wrap: balance; max-width: 14em; }
+.ch-investigationBoard text { fill: #fff8ef; font: 600 8px / 1 var(--font-mono); }
+.ch-diveBoards svg text.ch-diveSmall { fill: var(--ink-2); font-size: 7px; font-weight: 400; }
+.ch-diveClay { fill: var(--thread); }
+.ch-diveLine { fill: none; stroke: var(--thread); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.ch-diveGrey { fill: none; stroke: var(--ink-3); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+/* the part's name stays over its scenes: they give it room at their top */
+.ch-part3 .ch-pin[data-reading="true"] .ch-scene { top: 9svh; }
+/* Part III's steps count at 70% of the screen (parts.js stepLine): its second card starts lower, so
+   a jump to a question's chapter mark still lands on the first step, not the second */
+.ch-part3 .ch-pin[data-reading="true"] .ch-step[data-step="1"] { min-height: 74vh; }
+/* a step whose scene is small (the message) keeps its words nearer the middle, as in Parts I and II */
+@media (min-width: 60.01rem) { .ch-pin[data-reading="true"] .ch-step[data-place="near"] .ch-card { margin-right: 8%; } }
+/* A step on one line (place "line"): its box as wide as its words, from the
+   column's right edge (28 Nov, owner: "A professor stood nearby, watching." in one row). */
+@media (min-width: 60.01rem) {
+  .ch-pin[data-reading="true"] .ch-step[data-place="line"] .ch-card { width: auto; max-width: 64%; }
+  .ch-pin[data-reading="true"] .ch-step[data-place="line"] .ch-text p { white-space: nowrap; }
+  /* the club's turns (his question, "How did he know?", the central question) are
+     centred across the whole column, not only over the scene at its left (28 Nov, owner) */
+  .ch-club[data-reading="true"] .ch-layer.ch-big { right: calc(-100% * 40 / 60); }
+  .ch-club[data-reading="true"] .ch-big .ch-text { max-width: 20em; }
+}
+/* What our choices reveal (reveal.js): one stage, as in the Part III prototype and as
+   "When things go wrong" (wrong-stage.js). The marks are players (slate), her (clay, the
+   travelling dot), games, points; the lines, cards and words are drawn under them.
+   Slate = them, clay = me, green = the reader, ivory = the mystery and the right card. */
+.ch-reveal { --scene: reveal; }
+.ch-rvScene { position: relative; width: 100%; height: 100%; }
+.ch-story .ch-rvSaid { margin: 10px 0 0; color: var(--form-data); font: 400 13px / 1.5 var(--font-mono); }
+.ch-story .ch-youDials .ch-youStatus[data-kind="read"] { color: var(--form-data); }
+@media (min-width: 60.01rem) {
+  .ch-part3 .ch-reveal[data-reading="true"] .ch-scene { right: 34%; }
+  .ch-part3 .ch-reveal[data-reading="true"] .ch-card { width: 32%; }
+}
+/* labels kept in the back (the curve, when the professor comes back) */
+.ch-stageLabels[data-on="true"][data-faint="true"] { opacity: 0.18; }
+.ch-stageLabels[data-on="true"][data-quick="true"] { transition: opacity 300ms ease; }
+/* a hidden game: an outline */
+.ch-atomDot rect[data-role="hollow"] { fill: transparent; stroke: var(--them); stroke-width: 1.2px; }
+.ch-ratingChip[data-tone="hollow"] { background: none; box-shadow: inset 0 0 0 1.4px var(--them); color: var(--ink); }
+.ch-ratingChip[data-tone="band"] { background: color-mix(in srgb, var(--ink) 24%, var(--void)); color: var(--ink); }
+.ch-story .ch-stageCap { margin: -4px 0 8px; min-height: 1.4em; color: var(--ink-2); font: 400 14px / 1.4 var(--font-mono); transition: opacity 350ms ease; }
+.ch-stageCap[data-on="false"] { opacity: 0; }
+
+/* the dials */
+.ch-rvBand { fill: var(--ink); opacity: 0.06; }
+.ch-rvWhat { fill: var(--ink-3); font: 400 calc(12px * var(--u, 1)) / 1 var(--font-mono); }
+.ch-rvShadow { fill: var(--them-dim); }
+.ch-rvHerDot { fill: var(--thread); }
+.ch-rvYouDot { fill: var(--form-data); }
+.ch-rvYouTick { stroke: var(--form-data); stroke-width: 1.5; opacity: 0.85; }
+.ch-rvJoin { fill: none; stroke: var(--thread); stroke-width: 1.4; stroke-dasharray: 1; animation: ch-rvDraw 1400ms cubic-bezier(0.65, 0, 0.25, 1) 500ms both; }
+.ch-stageText[data-kind="other"] { fill: var(--them); }
+
+/* the lineup: the mystery card on top, the ten below */
+.ch-rvMystery { fill: var(--raised); stroke: var(--ink); stroke-width: 1; stroke-dasharray: 4 4; }
+.ch-rvCards { pointer-events: auto; }
+.ch-rvCard { animation: ch-rvDeal 420ms cubic-bezier(0.65, 0, 0.25, 1) both; animation-delay: calc(var(--i) * 35ms); }
+.ch-rvCards[data-intro="true"] .ch-rvCard { animation: none; }
+@keyframes ch-rvDeal { from { opacity: 0; transform: translateY(10px); } }
+.ch-rvCard[role="button"] { cursor: pointer; }
+.ch-rvCard:focus { outline: none; }
+.ch-rvCardBox { fill: var(--raised); stroke: var(--rule); stroke-width: 1; transition: stroke 300ms ease, stroke-width 300ms ease; }
+.ch-rvCard[role="button"]:hover .ch-rvCardBox { stroke: var(--ink-3); }
+.ch-rvCard:focus-visible .ch-rvCardBox { stroke: var(--form-data); stroke-width: 2; }
+.ch-rvCard[data-you="true"] .ch-rvCardBox { stroke: var(--form-data); stroke-width: 2; }
+.ch-rvCard[data-truth="truth"] .ch-rvCardBox { stroke: var(--ink); stroke-width: 2; }
+.ch-rvCard[data-truth="her"] .ch-rvCardBox { stroke: var(--thread); stroke-width: 2; }
+.ch-rvCard[data-truth="you"] .ch-rvCardBox { stroke: var(--form-data); stroke-width: 2; }
+.ch-rvCard[data-dim="true"] { opacity: 0.45; transition: opacity 400ms ease; }
+.ch-rvGlyphLine { stroke: var(--rule-strong); stroke-width: 1; }
+.ch-rvGlyphLine[data-unknown="true"] { stroke-dasharray: 2 3; }
+.ch-rvGlyphDot { fill: var(--them); }
+.ch-rvGlyphDot[data-tone="mystery"] { fill: var(--ink); }
+.ch-rvCard[data-truth="her"] .ch-rvGlyphDot { fill: var(--thread); }
+.ch-rvCard[data-truth="you"] .ch-rvGlyphDot { fill: var(--form-data); }
+.ch-rvControls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 14px; pointer-events: auto; }
+.ch-rvShow { padding: 6px 0; border: 0; background: none; color: var(--ink-2); font: 400 12.5px / 1 var(--font-mono); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ch-rvShow:hover { color: var(--ink); }
+.ch-rvSeg { display: inline-flex; overflow: hidden; border: 1px solid var(--rule-strong); border-radius: 999px; }
+.ch-rvSeg button { padding: 6px 12px; border: 0; background: none; color: var(--ink-2); font: 400 12.5px / 1 var(--font-mono); cursor: pointer; }
+.ch-rvSeg button[aria-pressed="true"] { background: var(--form-data); color: var(--void); }
+
+/* the curve */
+.ch-rvSeries { fill: none; stroke: var(--them); stroke-width: 2; stroke-linejoin: round; }
+.ch-rvSeries[data-kind="me"] { stroke: var(--thread); }
+.ch-rvSeries[data-kind="you"] { stroke: var(--form-data); }
+.ch-rvSeries[data-dash="true"] { stroke-dasharray: 5 4; }
+.ch-rvSeries[data-draw="true"] { stroke-dasharray: 1; animation: ch-rvDraw 1400ms cubic-bezier(0.65, 0, 0.25, 1) 500ms both; }
+@keyframes ch-rvDraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+/* the professor, as in the prototype: he fades in at the bottom right, behind the
+   players at the opening and over the curve at the club */
+.ch-rvProfessor { position: absolute; right: 2%; bottom: 4%; height: 46%; width: auto; max-width: none; opacity: 0; pointer-events: none; transition: opacity 700ms ease; }
+.ch-rvProfessor[data-on="true"] { opacity: 0.9; }
+@media (prefers-reduced-motion: reduce) {
+  .ch-rvJoin, .ch-rvSeries[data-draw="true"], .ch-rvCard { animation: none; }
+  .ch-rvProfessor, .ch-rvCard[data-dim="true"] { transition: none; }
+}
+@media (max-width: 60rem) {
+  .ch-story .ch-stageCap { margin: -2px 0 4px; font-size: 11.5px; }
+  .ch-rvProfessor { height: 40%; }
+}
+/* What we do when things go wrong (wrong.js): the phone, the fork, the hundred, the charts.
+   Clay is the author; data green, games saved and the reader's controls; lavender, resigning. */
+.ch-kingBeat { display: grid; gap: 1.1em; }
+.ch-wrong { --scene: wrong; }
+.ch-wrongScene { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
+/* The boards of her games, as Chess.com draws them (cc-board.js), without the phone. */
+.ch-cc { --cc: min(100%, 60svh, 540px); display: grid; gap: 0; width: var(--cc); margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.ch-cc[data-small="true"] { --cc: min(40vw, 40svh, 300px); }
+.ch-story .ch-ccNote { margin: 0 0 12px; color: var(--ink-3); font: 400 11.5px / 1.4 var(--font-mono); font-variant-numeric: tabular-nums; }
+.ch-story p.ch-ccNote { margin: 12px 0 0; color: var(--ink-2); }
+.ch-ccBar { display: flex; align-items: center; gap: 8px; height: 34px; color: #dedcd8; font-size: 13px; white-space: nowrap; }
+.ch-ccBar i { flex: none; width: 26px; height: 26px; border-radius: 3px; background: #55524d; }
+.ch-ccBar[data-mine="true"] i { background: var(--thread); }
+.ch-ccBar b { font-weight: 600; }
+.ch-ccBar span { color: #9c9a96; }
+.ch-cc[data-small="true"] .ch-ccBar { height: 26px; gap: 6px; font-size: 11px; }
+.ch-cc[data-small="true"] .ch-ccBar i { width: 18px; height: 18px; }
+.ch-ccBoardBox { position: relative; border-radius: 3px; overflow: hidden; box-shadow: 0 10px 30px rgb(0 0 0 / 0.35); }
+.ch-ccBoardBox svg { display: block; width: 100%; height: auto; }
+.ch-ccCoord { font: 600 9px / 1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.ch-story .ch-ccSay {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 0.6em 1.1em; border-radius: 8px; white-space: nowrap;
+  background: rgb(38 36 33 / 0.94); color: #f4f1ea; font: 600 14px / 1.2 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; box-shadow: 0 8px 22px rgb(0 0 0 / 0.45);
+}
+.ch-wrongRange { display: grid; gap: 6px; max-width: 22rem; margin-top: 16px; color: var(--ink-3); font: 400 12px / 1.2 var(--font-mono); }
+.ch-wrongRange b { color: var(--ink); font: 400 30px / 1 var(--font-title); }
+.ch-wrongRange input { width: 100%; accent-color: var(--form-data); pointer-events: auto; }
+.ch-hundred, .ch-levels, .ch-mine { width: min(100%, 34rem); margin: 0; }
+.ch-hundred svg, .ch-levels svg, .ch-mine svg { display: block; width: 100%; height: auto; overflow: visible; }
+.ch-miniWhite { fill: #efe8dc; }
+.ch-miniBlack { fill: #151413; stroke: #8d867b; stroke-width: 0.6; }
+/* the hundred's outcome is told once they have played out (wrong.js) */
+.ch-afterPlay { transition: opacity var(--ch-fade) ease; }
+.ch-afterPlay[data-on="false"] { opacity: 0; visibility: hidden; }
+.ch-story .ch-guessReply { margin: 0 0 14px; color: var(--ink); font: 400 13px / 1.4 var(--font-mono); }
+.ch-guessReply b { color: var(--form-data); font-weight: 500; font-variant-numeric: tabular-nums; }
+.ch-guessReply strong { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { .ch-afterPlay { transition: none; } }
+@media (max-width: 60rem) {
+  .ch-diveThree { padding: calc(var(--bar) + 2svh) var(--page-margin) 4svh; }
+  .ch-story .ch-diveTitle.ch-partTitle h2 { font-size: clamp(36px, 10vw, 52px); }
+  .ch-diveBoards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 5svh; }
+  .ch-story .ch-diveName { font-size: clamp(34px, 9.6vw, 52px); }
+  .ch-diveSpot { width: min(200px, 26svh, 52vw); }
+  .ch-diveBoards a { font-size: 11px; gap: 10px; }
+  .ch-cc { --cc: min(100%, 44svh); }
+  .ch-cc[data-small="true"] { --cc: min(40vw, 28svh); }
+  .ch-ccBar { height: 28px; font-size: 12px; }
+  .ch-ccBar i { width: 20px; height: 20px; }
+  .ch-story .ch-ccNote { margin-bottom: 6px; font-size: 10.5px; }
+  .ch-story p.ch-ccNote { margin: 6px 0 0; }
+  /* Part III's sentences run longer: its pictures start lower, the words on their own ground */
+  .ch-part3 .ch-pin[data-plain="true"] .ch-scene { top: 35svh; height: 62svh; }
+  .ch-part3 .ch-told > div { padding-bottom: 14px; background: linear-gradient(var(--void) 82%, transparent); }
+  .ch-hundred, .ch-levels, .ch-mine, .ch-meet { width: 100%; }
+}
+/* Part III: the investigation. */
+.ch-turn {
+  position: relative; z-index: 3; display: grid; align-content: center;
+  min-height: 100vh; min-height: 100svh; padding: 12vh 0; border-top: 1px solid var(--rule); background: var(--void);
+}
+/* What we say about ourselves. */
+.ch-messageCopy h3 { margin: 0 0 16px; font: 500 26px / 1.1 var(--font-title); letter-spacing: -0.02em; }
+/* Her message on its own: the day above, then her bubble. Until its words come, the
+   bubble holds their place with soft lines, so nothing moves when it is read. */
+.ch-sayMessage { position: relative; width: min(27rem, 90%); }
+.ch-story .ch-sayMessageDay { margin: 0 0 14px; text-align: center; color: var(--ink-3); font: 400 11px / 1 var(--font-mono); letter-spacing: 0.06em; white-space: nowrap; }
+.ch-story .ch-sayBubble { position: relative; margin: 0; box-sizing: border-box; padding: 18px 22px; border-radius: 22px 22px 6px 22px; background: var(--thread); color: #fff8ef; font: 400 clamp(15px, 1.4vw, 20px) / 1.42 var(--font-mono, sans-serif); box-shadow: 0 18px 40px rgba(17, 16, 15, 0.45); transform-origin: 50% 50%; }
+.ch-sayBubbleText { position: relative; display: block; }
+.ch-sayBubbleText > span { display: block; transition: opacity 600ms ease; }
+.ch-sayBubbleText::before { content: ""; position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 600ms ease;
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 0.4em, rgba(255, 248, 239, 0.34) 0.4em, rgba(255, 248, 239, 0.34) 1.02em, transparent 1.02em, transparent 1.42em); }
+/* the message she answers: a quiet grey bubble, words held back */
+.ch-sayTheirs { position: relative; display: grid; gap: 0.6em; align-content: center; box-sizing: border-box; width: 86%; margin: 0 0 8px; padding: 18px 22px; border-radius: 22px 22px 22px 6px; background: #34322f; font-size: clamp(15px, 1.4vw, 20px); }
+.ch-sayTheirs i { display: block; height: 0.62em; background: rgba(240, 233, 223, 0.16); }
+.ch-sayTheirs i:last-child { width: 62%; }
+.ch-sayBubble[data-revealed="false"] .ch-sayBubbleText > span { opacity: 0; }
+.ch-sayBubble[data-revealed="false"] .ch-sayBubbleText::before { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .ch-sayBubbleText > span, .ch-sayBubbleText::before { transition: none; } }
+.ch-sayGraphics { width: min(54rem, 100%); }
+.ch-part3 .ch-sayPin[data-reading="true"] .ch-scene { top: calc(var(--bar) + 15svh); bottom: 16px; }
+/* Q1's charts take a little more of the width than other pins (the words keep about 360px) */
+@media (min-width: 60.01rem) {
+  .ch-part3 .ch-sayPin[data-reading="true"] .ch-scene { right: 34%; }
+  .ch-part3 .ch-sayPin[data-reading="true"] .ch-card { width: 32%; }
+}
+.ch-ratings { position: relative; margin: 0; width: 100%; color: var(--ink); }
+.ch-ratingTitle { font: 400 clamp(22px, 2.2vw, 29px) / 1.15 var(--font-title); letter-spacing: -0.02em; }
+/* a small line under a chart's title (only the 2-minute vs 10-minute scatter has one, 28 Nov);
+   its place is kept under every title so the charts never move */
+.ch-story .ch-ratingSub { display: block; height: 16px; margin-top: 4px; color: var(--ink-3); font: 400 12px / 16px var(--font-mono); letter-spacing: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ch-ratings[data-compact="true"] .ch-ratingSub { display: none; }
+/* Every chart's legend: coloured tags under its title, in one row of fixed height
+   (the same for every chart, so the plot under it never moves). */
+.ch-ratingChips { display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; height: 19px; margin: 10px 0 8px; pointer-events: none; overflow: hidden; }
+/* the legend's row; a chart's view switch sits at its right end */
+.ch-ratingHeadRow { display: flex; align-items: center; gap: 12px; min-height: 26px; margin: 10px 0 8px; padding-right: 20px; }
+.ch-ratingHeadRow .ch-ratingChips { flex: 1 1 auto; min-width: 0; margin: 0; }
+.ch-ratingChip { font: 500 11px / 1 var(--font-mono); padding: 4px 6px; border-radius: 2px; white-space: nowrap; background: var(--them); color: #0d1219; transition: opacity 500ms ease; }
+.ch-ratingChip[data-tone="rapid"] { background: color-mix(in srgb, var(--thread) 45%, var(--ink)); }
+.ch-ratingChip:is([data-tone="bullet"], [data-tone="me"]) { background: var(--thread); color: #fff6ee; }
+.ch-ratingChip[data-tone="you"] { background: var(--form-data); color: #0c1a0e; }
+.ch-ratingChip[data-tone="crowd"] { background: var(--them); color: #0d1219; }
+.ch-ratingChip[data-shown="false"] { opacity: 0; }
+/* a tag with a small note under it (the ratings chart): the tag as wide as its note */
+.ch-ratingChips:has(.ch-ratingChipBox) { gap: 12px; overflow: visible; }
+.ch-ratingChipBox { display: inline-flex; flex-direction: column; align-items: stretch; transition: opacity 500ms ease; }
+.ch-ratingChipBox[data-shown="false"] { opacity: 0; }
+.ch-story .ch-ratingChipNote { display: block; height: 0; margin-top: 4px; color: var(--ink-3); font: 400 11px / 14px var(--font-mono); white-space: nowrap; }
+@media (max-width: 40rem) { .ch-story .ch-ratingChipNote { font-size: 10px; } }
+.ch-ratings svg { display: block; overflow: visible; max-width: 100%; }
+.ch-ratings svg text { fill: var(--ink-2); font: 400 12px / 1 var(--font-mono); }
+.ch-ratingGrid { stroke: var(--rule); stroke-width: 1; }
+.ch-ratingRef { fill: none; stroke: var(--ink-3); stroke-dasharray: 3 5; stroke-width: 1; opacity: 0.7; }
+.ch-ratingRapid, .ch-ratingBullet, .ch-ratingTypical { fill: none; stroke: var(--ink-2); stroke-width: 2.4; stroke-linejoin: round; }
+.ch-ratingBullet { stroke: var(--thread); stroke-width: 2.6; }
+.ch-ratingRapid { stroke: color-mix(in srgb, var(--thread) 45%, var(--ink)); }
+.ch-ratingTypical { stroke: var(--them); stroke-width: 2; }
+.ch-ratingWindow { fill: var(--thread); }
+.ch-ratingGap { fill: none; stroke: var(--ink-2); stroke-width: 1; }
+.ch-ratingPeers { fill: var(--them); }
+.ch-ratingPeers use { opacity: 0.65; transition: opacity 200ms ease; }
+.ch-ratings [data-highlight="lower"] .ch-ratingPeers use[data-lower="true"] { fill: var(--them); opacity: 0.95; }
+.ch-ratings [data-highlight="lower"] .ch-ratingPeers use[data-lower="false"] { opacity: 0.18; }
+.ch-ratings [data-highlight="near"] .ch-ratingPeers use[data-near="false"] { opacity: 0.20; }
+.ch-ratings [data-highlight="near"] .ch-ratingPeers use[data-near="true"] { fill: var(--them); opacity: 0.9; }
+.ch-ratingExpected { fill: var(--void); stroke: var(--ink); stroke-width: 1.5; }
+.ch-ratingMe circle { fill: var(--thread); stroke: var(--void); stroke-width: 2; }
+.ch-ratings .ch-ratingMe text, .ch-ratings .ch-ratingClay, .ch-ratingClay { fill: var(--thread); color: var(--thread); }
+.ch-ratings .ch-ratingPale { fill: color-mix(in srgb, var(--thread) 45%, var(--ink)); }
+/* line-end labels stay readable where the line runs under them */
+.ch-ratings .ch-ratingPale, .ch-ratings .ch-ratingClay { paint-order: stroke; stroke: var(--void); stroke-width: 4px; stroke-linejoin: round; }
+.ch-ratingMe text { font-weight: 600; }
+/* the view switch: one small pill of two or three choices */
+.ch-ratingExplore { display: none; flex: none; }
+.ch-ratingExplore[data-visible="true"] { display: flex; }
+.ch-ratingViews { display: flex; padding: 2px; border: 1px solid var(--rule-strong); border-radius: 999px; }
+.ch-ratingViews button { min-height: 24px; padding: 3px 10px; background: none; border: 0; border-radius: 999px; color: var(--ink-2); font: 400 11px / 1 var(--font-mono); white-space: nowrap; cursor: pointer; transition: background-color 150ms ease, color 150ms ease; }
+.ch-ratingViews button[aria-pressed="true"] { background: var(--raised); color: var(--ink); box-shadow: inset 0 0 0 1px var(--rule-strong); }
+.ch-paceCloud circle { fill: var(--them); opacity: 0.7; transition: opacity 240ms ease; }
+.ch-ratings [data-highlight="true"] .ch-paceCloud circle[data-slower="true"] { fill: var(--them); opacity: 1; }
+.ch-ratings [data-highlight="true"] .ch-paceCloud circle[data-slower="false"] { opacity: 0.3; }
+.ch-paceMeLine { stroke: var(--thread); stroke-width: 1.5; }
+@media (hover: hover) and (pointer: fine) {
+  .ch-ratingViews button:hover { color: var(--ink); }
+}
+@media (max-width: 60rem) {
+  .ch-part3 .ch-sayPin[data-plain="true"] .ch-scene { top: calc(var(--bar) + 7svh + var(--say-copy, 180px) + 18px); bottom: 12px; height: auto; }
+  .ch-part3 .ch-sayPin .ch-told > div { padding-bottom: 0; background: none; }
+  .ch-sayGraphics .ch-panel { max-height: 100%; }
+  .ch-ratings svg text { font-size: 11px; }
+  .ch-ratingViews button { padding-inline: 8px; }
+  .ch-ratingHeadRow { padding-right: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ch-ratingPeers use, .ch-paceCloud circle { transition: none; }
+}
+.ch-saySection { position: relative; z-index: 3; background: var(--void); }
+/* The names: the crowd of the pace chart, sorted by what usernames say (crowd.js). */
+.ch-ratings[data-compact="true"] .ch-ratingTitle { margin-bottom: 6px; }
+.ch-paceCloud circle, .ch-crowdDot { transition: opacity 240ms ease; }
+.ch-paceCloud[data-crowd="true"] circle, .ch-crowdDot[data-settled="true"], .ch-crowdDot[data-tone] {
+  transition: transform 1100ms var(--ch-ease), opacity 500ms ease, fill 500ms ease;
+}
+.ch-ratings circle[data-tone="quiet"] { fill: var(--them); }
+.ch-ratings circle[data-tone="plain"] { fill: var(--them); }
+/* lost games: the resigned ones lit in whose they are (players slate, me clay, you green), the rest dim */
+.ch-ratings circle[data-tone="resign"] { fill: var(--them); }
+.ch-ratings circle[data-tone="me"] { fill: var(--thread); }
+.ch-ratings circle[data-tone="you"] { fill: var(--form-data); }
+/* the lost games not resigned: the same quiet ring in every square, whoever's; only the resigned take a colour */
+.ch-ratings circle[data-tone="kept"] { fill: transparent; stroke: var(--rule-strong); stroke-width: 1; }
+.ch-crowdFade, .ch-crowdMarks > g, .ch-crowdTag { transition: opacity 500ms ease; }
+.ch-crowdFade:not([data-settled]) { transition: none; }
+.ch-ratingMe[data-settled="true"] { transition: transform 1100ms var(--ch-ease), opacity 500ms ease; }
+.ch-crowdTag rect { fill: var(--raised); stroke: var(--rule-strong); }
+.ch-crowdTag line { stroke: var(--ink-3); }
+.ch-ratings .ch-crowdTag text { fill: var(--ink); font-size: 14px; }
+.ch-ratings .ch-crowdUnknown { fill: var(--ink-2); }
+.ch-crowdTypical { stroke: var(--ink-2); stroke-dasharray: 3 4; stroke-width: 1; }
+.ch-crowdMarks text { paint-order: stroke; stroke: var(--void); stroke-width: 4px; stroke-linejoin: round; }
+.ch-ratings .ch-crowdLabel { fill: var(--ink-2); }
+.ch-ratings .ch-crowdLabelLit { fill: var(--ink); }
+.ch-ratings .ch-crowdExample { fill: var(--ink-2); opacity: 0.8; }
+.ch-crowdMedian { transition: opacity 600ms ease 500ms; }
+.ch-crowdMedian line { stroke: var(--them); stroke-width: 2; }
+.ch-crowdShift { fill: none; stroke: var(--ink); stroke-width: 1; stroke-dasharray: 2 3; opacity: 0.6; }
+.ch-crowdMe { stroke: var(--thread); stroke-width: 1.5; }
+.ch-crowdYou { stroke: var(--form-data); stroke-width: 1.5; }
+.ch-paceYouLine { stroke: var(--form-data); stroke-width: 1.5; }
+.ch-ratings .ch-crowdRight { fill: var(--form-data); }
+.ch-ratings .ch-crowdWrong { fill: var(--ink-2); }
+.ch-ratings .ch-crowdBig { fill: var(--ink); font: 500 clamp(26px, 3.2vw, 40px) / 1 var(--font-sans, ui-sans-serif); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.ch-ratings .ch-crowdBig[data-who="me"] { fill: var(--thread); }
+.ch-ratings .ch-crowdBig[data-who="you"] { fill: var(--form-data); }
+.ch-ratings .ch-crowdBig .ch-crowdUnit { fill: var(--ink-2); font: 400 15px / 1 var(--font-mono); letter-spacing: 0; }
+.ch-crowdWho[data-who="me"] { fill: var(--thread); }
+.ch-crowdWho[data-who="you"] { fill: var(--form-data); }
+/* the usernames game, on the chart: Lower / Higher either side of each row's pile */
+.ch-nameButtons { position: absolute; left: 0; right: 0; height: 0; z-index: 2; transition: opacity 400ms ease; }
+.ch-nameButtons[data-open="false"] { opacity: 0; pointer-events: none; }
+.ch-nameButton { position: absolute; min-height: 30px; padding: 5px 11px; border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--void);
+  color: var(--ink); font: 500 12px / 1 var(--font-mono); white-space: nowrap; cursor: pointer; transition: background 200ms ease, border-color 200ms ease, color 200ms ease, opacity 300ms ease; }
+.ch-nameButton:focus-visible { outline: 2px solid var(--form-data); outline-offset: 2px; }
+.ch-nameButton[aria-pressed="true"] { background: var(--form-data); border-color: var(--form-data); color: #0c1a0e; }
+.ch-nameButton:disabled { cursor: default; }
+/* once guessed, the pair steps aside for the dots (the verdict is written on the row) */
+.ch-nameGuess[data-guessed="true"] .ch-nameButton { opacity: 0; pointer-events: none; transition: opacity 400ms ease 500ms; }
+@media (hover: hover) and (pointer: fine) {
+  .ch-nameButton:not(:disabled):hover { border-color: var(--form-data); color: var(--form-data); }
+}
+.ch-story .ch-ratingChips .ch-nameScore { margin: 0 0 0 auto; color: var(--form-data); font: 500 11px / 1 var(--font-mono); white-space: nowrap; }
+/* the guesses, in the words beside the crowd: all four kinds in one step */
+.ch-nameAsks { display: grid; gap: 18px; margin-top: 22px; }
+.ch-nameRow { display: grid; justify-items: center; gap: 0; }
+.ch-nameRow h4 { margin: 0 0 4px; color: var(--ink); font: 400 24px / 1.1 var(--font-title); letter-spacing: var(--tracking-display); }
+.ch-story .ch-nameExamples { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; margin-bottom: 10px; color: var(--ink-2); font: 400 12px / 1.5 var(--font-mono); overflow-wrap: anywhere; }
+.ch-nameExamples i { font-style: normal; color: var(--ink-3); }
+.ch-nameChoices { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.ch-nameChoices .ch-ask { min-height: 40px; }
+.ch-story .ch-nameVerdict { min-height: 1.5em; margin-top: 6px; color: var(--ink-2); font: 400 12px / 1.45 var(--font-mono); opacity: 0; transition: opacity var(--ch-fade) ease; }
+.ch-nameVerdict[data-shown="true"] { opacity: 1; }
+.ch-nameVerdict strong { color: var(--ink); font-weight: 500; }
+.ch-story .ch-nameScore { margin-bottom: 14px; color: var(--ink-2); font: 400 12px / 1.4 var(--font-mono); }
+.ch-nameShort { display: none; }
+@media (max-width: 60rem) {
+  /* one line a kind: its name and the verdict at the left, the three choices at the right */
+  .ch-nameAsks { gap: 2px; margin-top: 8px; }
+  .ch-nameRow { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: 1fr 1fr; justify-items: start; align-items: center; column-gap: 8px; }
+  .ch-nameRow h4 { grid-column: 1; grid-row: 1; align-self: end; margin: 0; font-size: 18px; }
+  .ch-story .ch-nameExamples { display: none; }
+  .ch-nameChoices { grid-column: 2; grid-row: 1 / span 2; flex-wrap: nowrap; gap: 4px; }
+  .ch-nameChoices .ch-ask { min-height: 38px; padding-inline: 9px; font-size: 12px; }
+  .ch-nameChoices .ch-ask i { display: none; }
+  .ch-nameChoices .ch-nameShort { display: inline; }
+  .ch-nameChoices .ch-nameLong { display: none; }
+  .ch-nameChoices .ch-ask { white-space: nowrap; }
+  .ch-story .ch-nameVerdict { grid-column: 1; grid-row: 2; align-self: start; margin: 0; min-height: 1.3em; font-size: 11px; text-align: left; }
+  .ch-nameMore { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ch-paceCloud circle, .ch-crowdDot, .ch-crowdFade, .ch-crowdMarks > g, .ch-crowdTag, .ch-ratingMe, .ch-nameVerdict { transition: none !important; }
+}
+.ch-rows { display: grid; gap: 9px; }
+.ch-rows div { display: flex; height: 22px; }
+.ch-rows i { background: var(--rule-strong); }
+.ch-rows i + i { background: color-mix(in srgb, var(--rule-strong) 60%, var(--rule)); }
+.ch-rows i + i + i { background: var(--rule); }
+.ch-rows[data-you="true"] i:first-child { background: var(--form-data); }
+.ch-guess { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.ch-guess button {
+  min-height: 40px; padding: 0 16px; border: 1px solid var(--ink-2); border-radius: 99px; background: none; cursor: pointer;
+  color: var(--ink); font: 500 13px / 1 var(--font-mono); transition: background-color 150ms ease, color 150ms ease;
+}
+.ch-guess button:hover { border-color: var(--ink); }
+.ch-guess button[aria-pressed="true"] { background: var(--form-data); border-color: var(--form-data); color: var(--void); }
+.ch-unknown { z-index: 3; border-top: 1px solid var(--rule); background: var(--void); }
+.ch-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 8vh; }
+.ch-two > * { max-width: none; padding: 18px 20px; border: 1px solid var(--rule-strong); }
+
+/* Part IV, and what follows the story. */
+/* The part's name, as Part II's (28 Nov, owner): at the left, then held at the
+   top of the screen to the end of the part. It takes no room: the encounter
+   below leaves it its own. */
+.ch-back > .ch-endingTitle { opacity: 1; margin-top: 12vh; margin-top: 12svh; }
+.ch-encounter { padding-top: calc(22vh + 40px); padding-top: calc(22svh + 40px); }
+/* the message that started it, and her answer, as at the start of Part III
+   (.ch-sayMessage): no phone. His words are shown now. */
+.ch-chat { grid-column: 1 / 7; justify-self: center; align-self: center; z-index: 2; }
+.ch-story .ch-chatTheirs { display: block; color: #f0e9df; font: 400 clamp(15px, 1.4vw, 20px) / 1.42 var(--font-mono, sans-serif); transform-origin: 0 100%; }
+.ch-encounter .ch-col { grid-column: 8 / 12; align-self: center; }
+@media (max-width: 60rem) { .ch-encounter { padding-top: calc(12svh + 40px); } }
+.ch-close { padding-top: 22vh; }
+.ch-close .ch-col { grid-column: 3 / 11; display: grid; gap: 9vh; }
+/* The threads go on past the end of the story, into the page's ground. */
+.ch-back { padding-bottom: 0; }
+.ch-onward { position: relative; height: 62vh; }
+.ch-onward::after {
+  content: ""; position: absolute; inset: 45% -50vw 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(to bottom, transparent, var(--void) 92%);
+}
+.ch-method { position: relative; z-index: 3; padding: 8vh 0; border-top: 1px solid var(--rule); background: var(--void); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ch-story[data-live="true"] [data-reveal] { transition: none; }
+  /* No turn: one side gives way to the other. */
+  .ch-sides, .ch-sides[data-turned="true"] { transform: none; transition: none; }
+  .ch-side, .ch-sideBack { transform: none; -webkit-backface-visibility: visible; backface-visibility: visible; }
+  .ch-sides[data-turned="true"] .ch-sideFront, .ch-sides[data-turned="false"] .ch-sideBack { visibility: hidden; }
+  .ch-boardwrap, .ch-woodenAfter, .ch-screenBar, .ch-who, .ch-who[data-on="true"], .ch-told > div, .ch-told > div[data-on="true"] { transition: none; }
+  .ch-games { transform: none; }
+  .ch-layer.ch-phoneLayer, .ch-layer.ch-clubBoard, .ch-layer.ch-professor, .ch-layer.ch-minis, .ch-layer.ch-bubble, .ch-layer.ch-bubble[data-on="true"],
+  .ch-layer.ch-phoneLayer[data-on="true"], .ch-layer.ch-clubBoard[data-on="true"], .ch-layer.ch-professor[data-on="true"], .ch-layer.ch-minis[data-on="true"] { transition: none; }
+  .ch-thread path, .ch-thread circle, .ch-thread text, .ch-card, .ch-layer, .ch-layer[data-on="true"], .ch-guess button, .ch-woodenPieces, .ch-woodenPieces[data-on="true"], .ch-woodenText { transition: none; }
+  .ch-searching b { animation: none; opacity: 1; }
+  .ch-london, .ch-crossings path, .ch-peopleTitle, .ch-woodenTold > div { transition: none; }
+  .ch-panel[data-on="true"] { animation: none; }
+}
+
+/* A phone, or a narrow screen: one column; the pinned graphic takes the top
+   of the screen and the cards pass through the bottom of it. */
+@media (max-width: 60rem) {
+  .ch-knot { left: var(--px); top: var(--py); }
+  .ch-row { grid-template-columns: minmax(0, 1fr); row-gap: 5vh; }
+  .ch-row > .ch-text, .ch-row > .ch-col, .ch-row > .ch-mine, .ch-row > .ch-holder, .ch-row > .ch-picture, .ch-row > .ch-device, .ch-row > .ch-chat, .ch-row > .ch-chart { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
+  /* compact on a phone: the three close together, the set soon after */
+  .ch-years { height: 55vh; height: 55svh; }
+  /* and no gap of its own between the years and the wooden set */
+  .ch-free:not(.ch-back) { padding-bottom: 0; }
+  .ch-people:not(.ch-part3) { padding-top: 0; }
+  .ch-text.ch-yearsText { top: 2%; }
+  .ch-text.ch-yearsNone { top: 34%; }
+  .ch-open .ch-text, .ch-text.ch-aside, .ch-hold { max-width: none; }
+  /* the first screen is the title and the cover alone: the opening question
+     waits below it (60px: the site's masthead above the story) */
+  .ch-hero { grid-template-columns: minmax(0, 1fr); row-gap: 28px; min-height: calc(100svh - 60px); align-content: center; padding: calc(var(--bar) + 4svh) 0 4svh; }
+  .ch-text.ch-intro { font-size: clamp(17px, 4.9vw, 24px); }
+  .ch-cover { max-height: none; }
+  .ch-memory { row-gap: 22px; padding-bottom: 5vh; }
+  .ch-device { width: 72%; }
+  .ch-device .ch-pocket[data-side] { transform: none; }
+  /* The pinned set takes the screen's width; its words stand above it, clear
+     of the threads' lane at the left, and give way when the game begins. */
+  .ch-woodenStage { grid-template-columns: minmax(0, 1fr); margin-inline: calc(-1 * var(--page-margin)); padding-inline: var(--page-margin); }
+  .ch-woodenScene { grid-column: 1; width: min(100%, 42svh); top: 9svh; }
+  .ch-woodenText { position: absolute; top: calc(var(--bar) + 1.5svh); left: calc(var(--page-margin) + 14%); right: var(--page-margin); transition: opacity 300ms ease; }
+  .ch-woodenText { z-index: 6; padding-bottom: 18px; background: linear-gradient(var(--void) 78%, transparent); }
+  /* the words at the top, one after another; under Part II's name once it is there */
+  .ch-woodenTold { position: absolute; z-index: 6; top: calc(var(--bar) + 1.5svh); left: var(--page-margin); right: var(--page-margin); transition: top var(--ch-fade) var(--ch-ease); }
+  .ch-people[data-titled="true"] .ch-woodenTold { top: calc(var(--bar) + 7.5svh); }
+  .ch-woodenTold > div { position: absolute; left: 0; right: 0; top: 0; padding-bottom: 18px; background: linear-gradient(var(--void) 80%, transparent); opacity: 0; transition: opacity 300ms ease; }
+  .ch-woodenTold > div[data-on="true"] { opacity: 1; }
+  /* Clear the outgoing sentence before bringing in the next. Transitions
+     stay interruptible when the reader reverses or skips a scroll beat. */
+  .ch-woodenTold > [data-thread-copy] {
+    transform: translateY(8px); pointer-events: none;
+    transition: opacity 140ms ease, transform 140ms ease;
+  }
+  .ch-woodenTold > [data-thread-copy][data-on="true"] {
+    transform: translateY(0); transition: opacity 320ms var(--ch-ease) 140ms, transform 320ms var(--ch-ease) 140ms;
+  }
+  .ch-people .ch-woodenTold [data-thread-copy] .ch-text.ch-lead {
+    max-width: 28ch; margin-inline: auto; font-size: clamp(20px, 5.9vw, 24px); line-height: 1.32; text-wrap: pretty;
+  }
+  .ch-manyCopy { left: var(--page-margin); right: var(--page-margin); top: calc(var(--bar) + 7.5svh); transform: none; padding-bottom: 18px; background: linear-gradient(var(--void) 80%, transparent); }
+  .ch-pictured { left: 54%; top: 40%; width: 43%; }
+  .ch-many { width: 100%; }
+  /* the turn of the story, quiet and alone over the whole screen */
+  .ch-pin[data-plain="true"] .ch-layer.ch-big {
+    top: -28svh; bottom: auto; height: 100svh; left: calc(-1 * var(--page-margin)); right: calc(-1 * var(--page-margin));
+    padding: 0 calc(var(--page-margin) + 4%); background: var(--void);
+  }
+  /* the chart takes the width, its words above it, the phone under its corner */
+  .ch-woodenChart { left: var(--page-margin); right: var(--page-margin); width: auto; top: 31svh; transform: none; }
+  .ch-woodenChart .ch-plot { aspect-ratio: 1.8; max-height: 27svh; }
+  .ch-story .ch-woodenChart .ch-timeTitle { font-size: 22px; margin-bottom: 66px; }
+  .ch-woodenChart .ch-timeCaption { margin-left: calc(2rem + 5svh + 12px); font-size: 10px; }
+  .ch-timePeak { font-size: 11px; }
+  .ch-timePeak small { font-size: 9px; }
+  .ch-woodenAfter { left: var(--page-margin); right: var(--page-margin); top: calc(var(--bar) + 2svh); transform: none; }
+  .ch-firstMove { width: 100%; bottom: 4svh; }
+  .ch-decade { right: 0; top: var(--pat, var(--at)); transform: translateY(-50%); font-size: clamp(72px, 22vw, 120px); }
+  .ch-people { padding-top: 8vh; }
+  .ch-peopleTitle { top: calc(var(--bar) + 1.2svh); }
+  /* Part II's words stand under its name, the scene under them */
+  .ch-told { left: var(--page-margin); right: var(--page-margin); top: calc(var(--bar) + 7svh); width: auto; }
+  .ch-told > div { transform: none; }
+  .ch-pin[data-plain="true"] .ch-scene { inset: 28svh var(--page-margin) auto; height: 54svh; }
+
+  .ch-stage { margin-inline: calc(-1 * var(--page-margin)); }
+  .ch-scene { inset: max(7svh, calc(var(--bar) + 10px)) var(--page-margin) auto; height: 54svh; }
+  .ch-step { align-items: flex-end; min-height: 100vh; padding-bottom: 5vh; }
+  .ch-card { width: 100%; padding: 14px 16px 16px; background: color-mix(in srgb, var(--raised) 94%, transparent); }
+  .ch-text.ch-cardText { font-size: 17px; }
+  .ch-boardwrap { width: min(34svh, 60%); }
+  /* the phone and the words beside it need the screen's width */
+  .ch-boardwrap[data-view="phone"] { width: min(46svh, 92%); }
+  .ch-layer.ch-phoneLayer { left: 1%; top: -5%; height: 110%; }
+  .ch-who { left: 108%; max-width: 8.6rem; }
+  .ch-who b { font-size: 12px; overflow-wrap: anywhere; }
+  .ch-who span { flex-wrap: wrap; font-size: 11px; }
+  /* with only the professor beside it, the board can take more of a phone's width */
+  .ch-boardwrap[data-view="club"], .ch-boardwrap[data-view="how"] { width: min(44svh, 80%); transform: translate(10%, -4%); }
+  .ch-layer.ch-place { right: 74%; top: 30%; }
+  .ch-layer.ch-bubble { left: -17%; right: 7%; bottom: 86%; padding: 12px 16px 14px; }
+  .ch-step[data-bare="true"] { min-height: 80vh; }
+  .ch-club .ch-step[data-bare="true"] { min-height: 62vh; }
+  /* room for the last words to be read before the scene goes */
+  .ch-club .ch-steps { padding-bottom: 60vh; }
+  /* fewer, larger boards: here a tiny board is 14% of the square; the grid
+     fades out at the top and bottom of the scene's box, under the words */
+  .ch-layer.ch-minis { mask-image: linear-gradient(to bottom, transparent, #000 9%, #000 91%, transparent); }
+  .ch-minisBox { width: calc(6.2 * min(34svh, 60%)); }
+  .ch-boardNote { white-space: normal; width: 210px; }
+  .ch-boardwrap[data-view="many"] .ch-layer.ch-clubBoard { transform: translate(-20.6%, 0) scale(0.205); }
+  .ch-pawnRow { grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr); gap: 10px; }
+  .ch-pawnLabel b { font-size: 15px; }
+  .ch-boardSmall { width: min(34svh, 70%); }
+  .ch-two { grid-template-columns: minmax(0, 1fr); }
+  .ch-close { padding-top: 12vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ch-story[data-live="true"] .ch-years .ch-yearsText[data-reveal],
+  .ch-woodenTold > [data-thread-copy], .ch-woodenTold > [data-thread-copy][data-on="true"] {
+    transform: none; transition: opacity 120ms ease;
+  }
+}
+
+/* A phone: the chart can be taller than it is wide-ish, for its lines to read. */
+@media (max-width: 40rem) {
+  /* the title and the years, one size, on one line even at 320 wide */
+  .ch-story { --t-display: min(52px, 13.6vw); }
+  .ch-plot, .ch-woodenChart .ch-plot { aspect-ratio: 1.55; }
+  /* the longer texts have to fit above the board, and above Part II's scene */
+  .ch-people .ch-woodenText .ch-text.ch-lead, .ch-people .ch-woodenTold .ch-text.ch-lead, .ch-told .ch-text.ch-lead { font-size: 19px; line-height: 1.4; }
+}
+
+/* Where the reader is in Part III (investigation-header.js): the three questions'
+   boards, small, at the top left of the story's column, the one being read lit and
+   ringed, those read and to come quiet. The first arrives from the dive (--dock, 0..1,
+   and data-docked, from dive.js); the other two appear beside it as it comes. Each is
+   named under it on hover or focus. */
+.ch-part3 { --investigation-top: var(--bar); --investigation-bottom: calc(var(--investigation-top) + var(--investigation-header-height, 72px)); }
+/* The first question starts under the dive (dive.js), so its name stands over the
+   question's own scene, dimmed (--under), as in the prototype: Part III is drawn up
+   by the dive's last two screens; the question's first step rests two screens to make
+   up for it. The dive stays above it, and is see-through only while it is named. */
+.ch-story .ch-part3 { margin-top: -215svh; padding-top: 0; }
+.ch-part3 .ch-question :is(.ch-saySection, .ch-sayPin) { z-index: 2; }
+.ch-pin[data-under="true"], .ch-pin[data-under="true"] > .ch-stage { background: transparent; }
+/* each question's scene, dimmed under its name while it opens (--under, opening.js) */
+.ch-part3 [data-investigation-part] .ch-pin > .ch-stage > .ch-scene { opacity: var(--under, 1); }
+/* The second and third questions start under the recap before them (hub.js): drawn up
+   by 220svh, their pins below the recap, with no rule; their first step comes once
+   the name has gone up (60svh later than before), and a jump to them lands on their name. */
+.ch-story .ch-part3 .ch-next { position: relative; margin-top: -220svh; }
+.ch-part3 .ch-next > .ch-pin { z-index: 2; border-top: 0; }
+.ch-part3 .ch-next > .ch-pin > .ch-steps > .ch-step:first-child { margin-top: 280svh; }
+.ch-part3 .ch-next > .ch-pin > .ch-mark { top: 55svh; }
+/* a question's first line under its name; the rest of its first step stays in the step */
+.ch-diveSaid.ch-firstOnly p:not(:first-of-type) { display: none; }
+.ch-afterFirst p:first-of-type { display: none; }
+/* a jump to the first question lands on its name, not halfway through the glide */
+.ch-question > .ch-mark { top: 60svh; }
+/* (its holder is the boards' stacking context: above the rail's margin on wide screens) */
+.ch-part3 > .ch-peopleTitle { top: var(--investigation-top); z-index: 21; }
+.ch-investigationHeader {
+  --icon: 50px; --icons-top: 12px;
+  position: fixed; top: calc(var(--bar) + var(--icons-top)); left: max(var(--page-margin), (100vw - var(--page-max)) / 2); z-index: 21;
+  display: flex; gap: 12px; pointer-events: auto; transition: opacity 300ms ease, visibility 0s linear 300ms;
+}
+/* what scrolls up under the boards fades out on the page's ground before it gets there */
+.ch-investigationHeader::before {
+  content: ""; position: fixed; z-index: -1; top: var(--bar); left: 0; right: 0; height: calc(var(--icons-top) + var(--icon) * 84 / 80 + 30px);
+  background: linear-gradient(var(--void) 62%, transparent); pointer-events: none; opacity: 0; transition: opacity 300ms ease;
+}
+.ch-investigationHeader[data-docked="true"]::before { opacity: 1; }
+.ch-investigationHeader[data-on="false"] { opacity: 0; visibility: hidden; }
+.ch-investigationHeader[data-on="true"] { transition-delay: 0s; }
+.ch-investigationHeader[data-docked="false"] { pointer-events: none; }
+.ch-story .ch-investigationTab { position: relative; display: block; width: var(--icon); color: var(--ink-2); text-decoration: none; border-radius: 3px; }
+.ch-investigationTab .ch-investigationBoard { display: block; width: 100%; height: auto; border-radius: 2px; opacity: 0.45; filter: grayscale(0.7); transition: opacity 300ms ease, filter 300ms ease; }
+.ch-investigationTab[data-state="done"] .ch-investigationBoard { opacity: 0.6; }
+.ch-investigationTab[data-state="now"] .ch-investigationBoard { opacity: 1; filter: none; }
+.ch-story .ch-investigationTab:hover .ch-investigationBoard { opacity: 0.9; filter: none; }
+/* the one being read: a thin ring of the page's ink */
+.ch-investigationTab::after { content: ""; position: absolute; inset: -3px -3px 1px; border: 1px solid var(--ink); border-radius: 3px; opacity: 0; transition: opacity 300ms ease; pointer-events: none; }
+.ch-investigationTab[data-state="now"]::after { opacity: 0.9; }
+.ch-story .ch-investigationTab:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+/* The two travelling dots (travellers.js): mine in clay, the reader's in green. Each
+   stands in for its mark (data-dot), which is hidden; marks that are not a chart's
+   own dot are empty boxes for it to sit in. */
+.ch-travellers { position: fixed; inset: 0; pointer-events: none; }
+.ch-traveller { position: fixed; left: 0; top: 0; width: 8px; height: 8px; border-radius: 50%; opacity: 0; will-change: transform; box-shadow: 0 0 0 3px var(--void); }
+.ch-traveller[data-who="me"] { background: var(--thread); }
+.ch-traveller[data-who="you"] { background: var(--form-data); }
+.ch-part3[data-travelling="true"] [data-dot] { visibility: hidden; }
+.ch-dotMark { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+.ch-dotInline { margin-right: 8px; vertical-align: -1px; }
+.ch-dotBeside { position: absolute; left: -24px; top: 50%; margin-top: -6px; }
+/* the dots at the end (Part IV): no dot travels there, so they are drawn; mine
+   always, his when he is the one reading */
+.ch-dotYou { background: var(--form-data); }
+.ch-dotMe { background: var(--thread); }
+/* on a phone the bubbles are nearly as wide as the screen: the dots come in to stay on them */
+@media (max-width: 40rem) { .ch-chat .ch-dotBeside { left: -15px; } }
+.ch-investigationTab svg { transform-origin: 50% 50%; }
+/* a question's board is out, large, while it opens (opening.js): its place here waits */
+.ch-investigationHeader[data-fly1="true"] .ch-investigationTab:nth-child(2),
+.ch-investigationHeader[data-fly2="true"] .ch-investigationTab:nth-child(3) { opacity: 0; }
+.ch-investigationHeader[data-fly1="true"] .ch-investigationTab:nth-child(2)::after,
+.ch-investigationHeader[data-fly2="true"] .ch-investigationTab:nth-child(3)::after { opacity: 0; }
+/* a question's board is down in its recap (hub.js): in full on its way, then gone from here */
+.ch-investigationTab:is([data-away="going"], [data-away="here"])::after { opacity: 0; }
+.ch-story .ch-investigationTab[data-away="going"] .ch-investigationBoard { opacity: 1; filter: none; }
+.ch-story .ch-investigationTab[data-away="here"] .ch-investigationBoard { opacity: 0; }
+/* while the first is still on its way, the others come in beside it */
+.ch-investigationHeader[data-docked="false"] .ch-investigationTab { opacity: var(--dock, 0); }
+.ch-investigationHeader[data-docked="false"] .ch-investigationTab:first-child { opacity: 0; }
+.ch-investigationHeader[data-docked="false"] .ch-investigationTab::after { opacity: 0; }
+/* its name, under it, on hover or focus */
+.ch-investigationName {
+  position: absolute; left: 0; top: calc(100% + 10px); padding: 5px 8px; border-radius: 3px; background: var(--void); border: 1px solid var(--rule);
+  color: var(--ink); font: 400 13px / 1.2 var(--font-mono); white-space: nowrap; opacity: 0; visibility: hidden; transform: translateY(-3px);
+  transition: opacity 160ms ease, transform 160ms ease, visibility 0s linear 160ms; pointer-events: none;
+}
+.ch-investigationNumber { color: var(--ink-3); }
+.ch-investigationTab:is(:hover, :focus-visible) .ch-investigationName { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+@media (max-width: 74.99rem) {
+  /* under the chapters' bar, and under its open panel */
+  .ch-part3 > .ch-peopleTitle { z-index: 19; }
+}
+@media (max-width: 60rem) {
+  .ch-investigationHeader { --icon: 40px; --icons-top: 10px; left: var(--page-margin); gap: 10px; }
+  /* on a phone the boards' ground is there whenever they are, so nothing (an
+     opening's first line, the last chart before the recap) runs under them */
+  .ch-investigationHeader[data-on="true"]::before { opacity: 1; }
+  /* no hover on a phone: the boards stay quiet and the bar above names the part */
+  .ch-investigationName { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ch-investigationHeader, .ch-investigationTab .ch-investigationBoard, .ch-investigationTab::after { transition: none; }
+}
+.ch-part3 .ch-card .ch-text > h3, .ch-part3 .ch-told .ch-text > h3 { display: none; }
+.ch-part3 .ch-pin[data-reading="true"] .ch-scene { top: calc(var(--investigation-bottom) + 16px); bottom: 16px; }
+@media (max-width: 60rem) {
+  .ch-part3 .ch-pin[data-plain="true"] { --investigation-graphic-height: calc(100svh - var(--investigation-bottom) - var(--investigation-copy-height, 120px) - 40px); }
+  .ch-part3 .ch-told { top: calc(var(--investigation-bottom) + 12px); }
+  .ch-part3 .ch-pin[data-plain="true"] .ch-scene { top: calc(var(--investigation-bottom) + var(--investigation-copy-height, 120px) + 24px); bottom: 16px; height: var(--investigation-graphic-height); }
+  .ch-part3 .ch-sayPin[data-plain="true"] .ch-scene { top: calc(var(--investigation-bottom) + var(--say-copy, 130px) + 24px); height: calc(100svh - var(--investigation-bottom) - var(--say-copy, 130px) - 40px); }
+  .ch-part3 .ch-wrong .ch-cc { --cc: min(100%, 44svh, max(80px, calc(var(--investigation-graphic-height) - 112px))); }
+  .ch-part3 .ch-wrong :is(.ch-hundred, .ch-levels, .ch-mine) > svg { max-height: max(96px, calc(var(--investigation-graphic-height) - 110px)); }
+}
+
+/* One stage carries the message into the evidence, then into the next question. */
+.ch-ratingPhone { position: absolute; inset: 0; display: grid; place-items: center; z-index: 2; pointer-events: none; }
+/* Part II's way into the third investigation: a quiet pointer under the professor, not a line of the story. */
+.ch-story .ch-club .ch-text a[href="#what-we-choose"] { display: inline-block; margin-top: 4px; color: var(--ink-2); font: 400 13px / 1.4 var(--font-mono); letter-spacing: 0.02em; text-decoration: underline; text-decoration-color: var(--rule-strong); text-underline-offset: 4px; white-space: nowrap; }
+.ch-story .ch-club a[href="#what-we-choose"]:hover, .ch-story .ch-club a[href="#what-we-choose"]:focus-visible { color: var(--ink); text-decoration-color: currentColor; }
+
+/* When a question ends, only it comes back (hub.js): its board comes down from its place
+   at the top left, then its name, my conclusion beside my dot, and the reader's sentence
+   beside theirs (travellers.js). Between two questions the recap holds the screen (the
+   stick); it goes back up, and the next question's board comes down to open it. */
+.ch-hub { --hub-board: 120px; position: relative; width: min(100% - 2 * var(--page-margin, 20px), 62rem); margin: 0 auto; padding: 18vh 0 22vh; }
+.ch-hubStick { position: relative; }
+.ch-hub[data-gate="true"] { z-index: 3; height: 360svh; padding: 0; }
+/* (on the page's ground, over the next question's scene, until that question is named) */
+.ch-hub[data-gate="true"] .ch-hubStick { position: sticky; top: 0; min-height: 100svh; display: grid; align-content: center; padding: 6svh 0; background: var(--void); }
+.ch-hub[data-gate="true"] .ch-hubStick[data-under="true"] { background: transparent; }
+/* the questions answered so far, side by side (one under another on a phone) */
+.ch-hubAll { display: grid; grid-template-columns: repeat(var(--answered, 1), minmax(0, 20rem)); justify-content: center; gap: clamp(24px, 4vw, 56px); margin: 0; padding: 0; list-style: none; }
+.ch-hubOne { display: grid; justify-items: center; align-content: start; gap: 16px; text-align: center; }
+.ch-hubWords { display: grid; justify-items: center; gap: 14px; }
+/* the words come with the board, and go with it */
+.ch-hubWords { opacity: var(--words, var(--here, 0)); transform: translateY(calc((1 - var(--words, var(--here, 0))) * 10px)); }
+.ch-hubBoard { display: block; width: var(--hub-board); }
+.ch-hubBoard svg { display: block; width: 100%; height: auto; opacity: 0; }
+.ch-hubOne[data-here="true"] .ch-hubBoard svg { opacity: 1; }
+.ch-story .ch-hubName { margin: 0; letter-spacing: 0; color: var(--ink-2); font: 400 clamp(19px, 1.7vw, 23px) / 1.2 var(--font-title); }
+.ch-hubLine { position: relative; display: inline-flex; align-items: center; gap: 12px; max-width: 100%; }
+/* a dot of its own beside an earlier conclusion (the travelling ones are hidden marks) */
+.ch-hubMark { flex: none; }
+.ch-hubMark:not([data-dot])[data-who="me"] { background: var(--thread); }
+.ch-hubMark:not([data-dot])[data-who="you"] { background: var(--form-data); }
+/* only the first, bold sentence of my conclusion is shown */
+.ch-story.ch-story.ch-story .ch-hubHer, .ch-story.ch-story.ch-story .ch-hubHer p { margin: 0; font-size: 0; line-height: 0; text-align: left; }
+.ch-story.ch-story.ch-story .ch-hubHer strong { color: var(--ink); font: 400 clamp(16px, 1.3vw, 19px) / 1.25 var(--font-title); letter-spacing: -0.01em; }
+/* the reader's sentence: the same highlighted look as mine, in green, a step smaller */
+.ch-story .ch-hubYou { display: inline-flex; align-items: center; gap: 12px; margin: 0; color: var(--ink); font: 400 clamp(15px, 1.2vw, 17px) / 1.3 var(--font-title); letter-spacing: -0.005em; text-align: left; }
+.ch-hubYou .ch-hubMark { width: 10px; height: 10px; }
+.ch-hubYou > span { text-wrap: balance; }
+.ch-hubTitle { margin-bottom: 48px; text-align: center; }
+/* the part closes as it opened: "What the data said" as large as "Looking for answers in the data" */
+.ch-story .ch-hubTitle.ch-partTitle h2 { white-space: normal; text-wrap: balance; font-size: clamp(40px, 5.6vw, 76px); line-height: 1.02; letter-spacing: -0.015em; }
+/* the next question's board, out of its place while it opens (opening.js) */
+.ch-hub .ch-diveSpot svg {
+  display: block; width: 100%; height: auto; transform-origin: 50% 50%; opacity: 0;
+  transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--ts, 1));
+}
+.ch-hub[data-flying="true"] .ch-diveSpot svg { opacity: 1; }
+@media (max-width: 40rem) {
+  .ch-hub { --hub-board: 64px; padding: 12vh 0 16vh; }
+  .ch-hubAll { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .ch-hubOne { grid-template-columns: var(--hub-board) minmax(0, 1fr); justify-items: start; gap: 16px; text-align: left; }
+  .ch-hubWords { justify-items: start; gap: 8px; }
+  .ch-story.ch-story.ch-story .ch-hubHer strong { font-size: 16px; }
+  .ch-story .ch-hubYou { font-size: 14.5px; }
+  .ch-story .ch-hubTitle.ch-partTitle h2 { font-size: clamp(36px, 10vw, 52px); }
+}
+
+/* The reader's own Chess.com username, at the start of Part III (you.js), and
+   their green dot on the rapid/bullet chart (ratings.js). Quiet: one line of
+   her words, one field, one button, and what happened, in the story's mono. */
+.ch-you { position: relative; z-index: 3; width: min(100% - 2 * var(--page-margin, 20px), 36rem); margin: 0 auto; padding: 14vh 0 12vh; background: var(--void); }
+/* asked at the hinge, in the reading column beside the thousand boards: a card,
+   as in the owner's mock-ups (28 Nov) */
+.ch-you[data-where="hinge"] {
+  box-sizing: border-box; width: 100%; padding: 34px 28px 22px; border-radius: 18px; text-align: center;
+  background: color-mix(in srgb, var(--ink) 3.5%, var(--void));
+}
+.ch-story .ch-youTitle {
+  margin: 0; padding: 0; border: 0; color: var(--ink); text-transform: none; text-align: center;
+  font: 400 clamp(32px, 3.2vw, 46px) / 1.06 var(--font-title); letter-spacing: var(--tracking-display);
+}
+.ch-story .ch-youSub { margin: 10px 0 24px; color: var(--ink-2); text-align: center; text-wrap: balance; font: 400 clamp(19px, 1.7vw, 24px) / 1.3 var(--font-title); }
+@media (max-width: 60rem) {
+  /* a phone: the step's own card, held at the screen's foot, is the box already,
+     so this one has no ground of its own, and is tighter, to fit found */
+  .ch-you[data-where="hinge"] { padding: 8px 0 0; background: none; }
+  .ch-story .ch-youTitle { font-size: clamp(28px, 8vw, 34px); }
+  .ch-story .ch-youSub { margin: 6px 0 16px; font-size: clamp(17px, 4.8vw, 20px); }
+  .ch-story .ch-youLabel { margin-bottom: 8px; }
+  .ch-story .ch-youStats { margin-top: 16px; }
+  .ch-story .ch-youStats dd { font-size: 34px; }
+  .ch-story .ch-youStats dt { font-size: 13px; }
+  .ch-story .ch-youFollow { margin-top: 14px; font-size: 15px; }
+  .ch-story .ch-youFine { margin-top: 12px; font-size: 14px; }
+  .ch-youLinks { margin-top: 2px; }
+  /* the green dot waits inside the field, before the name, clear of the card's edge */
+  .ch-youHome { right: auto; left: 16px; margin: -5px 0 0; }
+  .ch-you[data-found="true"] .ch-youInput { padding-left: 36px; }
+}
+/* the reader's own place among the thousand boards: green, beside the club's */
+.ch-yourBoard { position: absolute; display: grid; place-items: center; box-sizing: border-box; background: var(--void); box-shadow: inset 0 0 0 2px var(--form-data); pointer-events: none; animation: ch-yours 900ms var(--ch-ease, ease) both; }
+.ch-yourBoard i { width: 22%; aspect-ratio: 1; border-radius: 50%; background: var(--form-data); }
+/* the dot itself waits beside the username box until the reader scrolls on (you.js: YouHop) */
+.ch-yourBoard i { opacity: 0; }
+[data-you-dot="board"] .ch-yourBoard i { opacity: 1; }
+.ch-youHome { position: absolute; right: 100%; top: 50%; width: 10px; height: 10px; margin: -5px 12px 0 0; border-radius: 50%; background: var(--form-data); animation: ch-yours 600ms var(--ch-ease, ease) both; }
+[data-you-dot]:not([data-you-dot="home"]) .ch-youHome { opacity: 0; animation: none; }
+.ch-youFlier { position: fixed; left: 0; top: 0; z-index: 60; width: 10px; height: 10px; border-radius: 50%; background: var(--form-data); opacity: 0; pointer-events: none; will-change: transform; }
+@media (prefers-reduced-motion: reduce) { .ch-youHome { animation: none; } }
+@keyframes ch-yours { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .ch-yourBoard { animation: none; } }
+.ch-youForm { display: grid; justify-items: center; text-align: center; }
+/* the field's name shows once a name is in it (found); until then the field says it */
+.ch-story .ch-youLabel { margin: 0 0 12px; color: var(--ink-3); font: 500 10.5px / 1.4 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; }
+.ch-you[data-found="false"] .ch-youLabel { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ch-youRow { display: flex; align-items: center; gap: 12px; width: 100%; }
+.ch-youField { position: relative; display: flex; flex: 1 1 auto; min-width: 0; }
+.ch-story .ch-youInput {
+  flex: 1 1 auto; width: 100%; min-width: 0; min-height: 52px; box-sizing: border-box; margin: 0; padding: 8px 22px;
+  border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--void); color: var(--ink);
+  font: 400 16px / 1.2 var(--font-mono);
+  transition: border-color 200ms ease;
+}
+.ch-story .ch-youInput::placeholder { color: var(--ink-3); opacity: 1; }
+.ch-story .ch-youInput:hover { border-color: var(--ink-3); }
+.ch-story .ch-youInput:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.ch-story .ch-youInput[aria-invalid="true"] { border-color: var(--thread); }
+/* "Find me": filled, in the page's ivory; "Found you": the reader's green, outlined */
+.ch-story .ch-youGo {
+  display: inline-flex; flex: 0 0 auto; align-items: center; gap: 12px; min-height: 52px; box-sizing: border-box; padding: 0 24px;
+  border: 1px solid var(--ink); border-radius: 999px; background: var(--ink); color: var(--void); cursor: pointer; white-space: nowrap;
+  font: 500 16px / 1 var(--font-mono); transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+}
+.ch-story .ch-youGo:disabled { cursor: default; }
+.ch-story .ch-youGo:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.ch-story .ch-youGo[aria-pressed="true"] { border-color: var(--form-data); background: color-mix(in srgb, var(--form-data) 6%, var(--void)); color: var(--form-data); font-weight: 400; }
+.ch-story .ch-youGo i { width: 18px; height: 0; border-top: 1.5px solid currentColor; }
+.ch-story .ch-youStatus { min-height: 1.5em; margin: 12px 0 0; color: var(--ink-2); font: 400 13px / 1.5 var(--font-mono); }
+.ch-story .ch-youStatus:empty { min-height: 0; margin: 0; }
+/* once found: the rating and the games read, side by side, a rule between */
+.ch-story .ch-youStats { display: flex; justify-content: center; margin: 26px 0 0; padding: 0; }
+.ch-youStats > div { display: flex; flex-direction: column-reverse; align-items: center; gap: 6px; min-width: 0; padding: 4px 30px; }
+.ch-youStats > div + div { border-left: 1px solid var(--rule-strong); }
+.ch-story .ch-youStats dd { margin: 0; color: var(--ink); font: 400 clamp(38px, 3.4vw, 50px) / 1 var(--font-title); font-variant-numeric: lining-nums; }
+.ch-story .ch-youStats dt { color: var(--ink-2); font: 400 15px / 1.3 var(--font-mono); }
+.ch-story .ch-youFollow { margin: 26px 0 0; color: var(--form-data); font: 400 17px / 1.4 var(--font-mono); }
+.ch-story .ch-youFine { margin: 18px 0 0; color: var(--ink-2); font: 400 15px / 1.4 var(--font-mono); }
+.ch-youLinks { display: flex; flex-wrap: wrap; justify-content: center; column-gap: 40px; margin-top: 8px; }
+.ch-story .ch-youLink {
+  min-height: 40px; padding: 6px 0; border: 0; background: none; cursor: pointer;
+  color: var(--ink-2); font: 400 14px / 1.2 var(--font-mono); text-decoration: underline; text-decoration-color: var(--ink-3); text-underline-offset: 5px;
+}
+.ch-story .ch-youLink:hover { color: var(--ink); }
+.ch-story .ch-youLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.ch-story .ch-youNote { max-width: 30rem; margin: 2px 0 6px; color: var(--ink-3); font: 400 12px / 1.5 var(--font-mono); }
+.ch-story .ch-youNote[hidden] { display: none; }
+.ch-ratingYou circle { fill: var(--form-data); stroke: var(--void); stroke-width: 2; }
+.ch-ratingYou[data-off="true"] circle { fill: var(--void); stroke: var(--form-data); stroke-width: 1.5; }
+.ch-ratings .ch-ratingYou text { fill: var(--form-data); font-weight: 600; }
+@media (max-width: 40rem) {
+  .ch-you { padding: 10vh 0 9vh; }
+  .ch-story .ch-youInput, .ch-story .ch-youGo { min-height: 46px; }
+  .ch-youRow { gap: 8px; }
+  .ch-story .ch-youInput { padding-inline: 16px; }
+  .ch-story .ch-youGo { gap: 8px; padding-inline: 16px; font-size: 15px; }
+  .ch-story .ch-youGo i { width: 12px; }
+  .ch-youStats > div { padding-inline: 16px; }
+  .ch-story .ch-youStats dt { white-space: nowrap; }
+}
+
+/* "When things go wrong", for the reader (you.js YourQueens, wrong.js): their
+   lost queens, counted from Chess.com, in green beside hers */
+.ch-youQueens { display: grid; justify-items: center; gap: 8px; text-align: center; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--rule); }
+.ch-youQueensWords { margin-bottom: 4px; }
+.ch-youQueens .ch-ask { min-height: 44px; }
+.ch-youQueens .ch-ask i { border-top-color: var(--form-data); }
+.ch-story .ch-youQueens .ch-youStatus[data-kind="counted"] { color: var(--form-data); }
+.ch-story .ch-youQueens .ch-youStatus:empty { display: none; }
+/* on a phone the scene's room is the words' leftovers: once counted, the box keeps only its answer */
+@media (max-width: 60rem) {
+  .ch-youQueens[data-kind="counted"] :is(.ch-youQueensWords, .ch-ask, .ch-youNote) { display: none; }
+  .ch-youQueens[data-kind="counted"] { padding-top: 12px; margin-top: 12px; }
+  .ch-mine .ch-youChose { display: none; }
+  .ch-youDials[data-kind="read"] :is(.ch-youQueensWords, .ch-ask, .ch-youNote) { display: none; }
+  .ch-youDials[data-kind="read"] { padding-top: 12px; margin-top: 12px; }
+  .ch-youDials .ch-youNote { display: none; }
+}
+
+/* ── The words, one system from the first screen to the last (27 Nov) ──
+   No boxes and no rails. Three sizes only, the same in every part:
+   narration (every paragraph that tells), a statement (a line that stands alone:
+   the opening question, "This is mine.", the professor, the central question,
+   "What is your chess?"), and a note (said in passing, quieter). Display type
+   (the title, the years) and the parts' names keep their own roles. Everything
+   keeps the alignment it had (centred where it was centred). Beside a pinned scene
+   only the step being read is lit. */
+.ch-story {
+  --t-narr: clamp(22px, 2.5vw, 36px);
+  --t-note: clamp(17px, 1.45vw, 21px);
+  --t-statement: clamp(32px, 4vw, 58px);
+}
+.ch-story.ch-story.ch-story .ch-text:is(.ch-lead, .ch-medium, .ch-question, .ch-cardText) {
+  font-size: var(--t-narr); line-height: 1.42; letter-spacing: normal; text-wrap: pretty;
+}
+.ch-story.ch-story.ch-story .ch-text:is(.ch-large, .ch-headline, .ch-statement, .ch-said) {
+  font-size: var(--t-statement); line-height: 1.1; letter-spacing: var(--tracking-display); text-wrap: balance;
+}
+.ch-story.ch-story.ch-story .ch-text:is(.ch-quiet, .ch-aside, .ch-intro) {
+  font-size: var(--t-note); line-height: 1.5; letter-spacing: normal; color: var(--ink-2);
+}
+/* beside a pinned scene, the step being read is lit and the others stay faint */
+.ch-pin[data-reading="true"] .ch-step:not([data-bare="true"]) .ch-card { opacity: 0.26; transition: opacity 450ms ease; }
+.ch-pin[data-reading="true"] .ch-step[data-on="true"] .ch-card { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .ch-pin[data-reading="true"] .ch-step .ch-card { transition: none; }
+}
+/* the larger words need a wider column beside the scene on a wide screen */
+.ch-pin[data-reading="true"] .ch-card { width: 38%; }
+.ch-pin[data-reading="true"] .ch-scene { right: 40%; }
+
+/* Highlighted words: the legend inside the sentence (highlights.js). Each role is
+   the colour of the marks it names on the stage. */
+.ch-story mark.ch-hl {
+  --hl: transparent; padding: 0; border-radius: 2px; color: inherit; background: var(--hl);
+  box-shadow: 0.15em 0 0 var(--hl), -0.15em 0 0 var(--hl); -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  transition: background-color 450ms ease, color 450ms ease, box-shadow 450ms ease;
+}
+.ch-story mark.ch-hl-me { --hl: var(--thread); color: #fff6ee; }
+.ch-story mark.ch-hl-meFaint { --hl: color-mix(in srgb, var(--thread) 45%, var(--void)); color: #fff6ee; }
+.ch-story mark.ch-hl-you { --hl: var(--form-data); color: #0c1a0e; }
+.ch-story mark.ch-hl-crowd { --hl: var(--them); color: #0d1219; }
+.ch-story mark.ch-hl-faint { --hl: var(--them-mid); color: #eef2f8; }
+.ch-story mark.ch-hl-grey { --hl: #5f5a53; color: #f4efe7; }
+.ch-story mark.ch-hl-hollow { box-shadow: inset 0 0 0 1.4px var(--them), 0.15em 0 0 transparent; }
+.ch-story mark.ch-hl-other { --hl: var(--other); color: #07142b; }
+.ch-story mark.ch-hl-band { --hl: color-mix(in srgb, var(--ink) 24%, var(--void)); color: var(--ink); }
+.ch-story mark.ch-hl strong { color: inherit; }
+/* a mark is lit with its step: in the faint steps around it, it is plain words */
+.ch-story .ch-pin[data-reading="true"] .ch-step:not([data-on="true"]) mark.ch-hl { --hl: transparent; box-shadow: none; color: inherit; }
+@media (prefers-reduced-motion: reduce) { .ch-story mark.ch-hl { transition: none; } }
+
+/* The method: a reading column, set left. */
+/* at the left of the column, not centred (28 Nov, owner) */
+.ch-method .ch-text { max-width: 44rem; margin-inline: 0; }
+.ch-story .ch-method .ch-text :is(p, h2, h3, h4, li) { text-align: left; }
+.ch-method .ch-text ul { padding-left: 1.1em; }
+.ch-method .ch-text li { margin: 0 0 0.8em; font-size: 17px; line-height: 1.55; color: var(--ink-2); }
+.ch-method .ch-text li strong { color: var(--ink); }
+.ch-method .ch-storyMeta { max-width: 44rem; margin-inline: 0; }
+
+/* ── A phone: the words scroll over the picture (27 Nov, owner: as on The
+   Pudding's love story) ──
+   The picture holds the whole screen; each step's words come in a small dark
+   box from the foot of the screen and scroll up over it to the top, and the
+   picture changes as a box comes up. The club, the three questions, and (in
+   wooden.js) the wooden set and the strangers. */
+@media (max-width: 60rem) {
+  .ch-pin[data-reading="true"] { --phone-scene-top: calc(var(--bar) + 7svh); }
+  .ch-part3 .ch-pin[data-reading="true"] {
+    --phone-scene-top: calc(var(--investigation-bottom) + 8px);
+    --investigation-graphic-height: calc(100svh - var(--investigation-bottom) - 24px);
+  }
+  .ch-story .ch-pin[data-reading="true"] .ch-scene { inset: var(--phone-scene-top) var(--page-margin) 12px; height: auto; }
+  .ch-story .ch-pin[data-reading="true"] .ch-steps { padding-top: 55svh; padding-bottom: 70vh; }
+  .ch-story .ch-pin[data-reading="true"] .ch-step,
+  .ch-story .ch-part3 .ch-pin[data-reading="true"] .ch-step[data-step="1"] { justify-content: center; align-items: center; min-height: 92vh; padding-bottom: 0; }
+  .ch-story .ch-pin[data-reading="true"] .ch-step[data-bare="true"] { min-height: 60vh; }
+  .ch-story .ch-pin[data-reading="true"] .ch-step:not([data-bare="true"]) .ch-card,
+  .ch-story .ch-woodenWords > div {
+    width: min(100%, 26rem); padding: 14px 16px 16px; border: 1px solid #2a2927; border-radius: 3px;
+    background: rgba(9, 9, 8, 0.94); opacity: 1;
+  }
+  /* the turn of the story, alone over the whole screen */
+  .ch-pin[data-reading="true"] .ch-layer.ch-big {
+    top: calc(-1 * var(--phone-scene-top)); bottom: auto; height: 100svh; left: calc(-1 * var(--page-margin)); right: calc(-1 * var(--page-margin));
+    padding: 0 calc(var(--page-margin) + 4%); background: var(--void);
+  }
+  /* the wooden set: its words scroll over it in the same boxes */
+  .ch-story .ch-woodenWords > div,
+  .ch-story .ch-woodenWords > [data-thread-copy] { left: 50%; right: auto; transform: translate(-50%, -50%); }
+  .ch-story .ch-woodenWords [data-thread-copy] .ch-text.ch-lead { max-width: none; margin-inline: auto; }
+  .ch-story .ch-woodenWords .ch-text.ch-wordsAside { max-width: none; }
+  /* only the box being read is in focus (parts.js, wooden.js: data-focus); the
+     ones coming up from below and going up above are dimmed, and
+     their highlights wait, as beside the data on a wide screen */
+  .ch-story .ch-pin[data-reading="true"] .ch-step:not([data-bare="true"]) .ch-card,
+  .ch-story .ch-woodenWords > div { transition: opacity 160ms ease; }
+  .ch-story .ch-pin[data-reading="true"] .ch-step[data-focus="false"] .ch-card,
+  .ch-story .ch-woodenWords > div[data-focus="false"] { opacity: 0.45; }
+  .ch-story .ch-pin[data-reading="true"] .ch-step[data-focus="false"] mark.ch-hl,
+  .ch-story .ch-woodenWords > div[data-focus="false"] mark.ch-hl { --hl: transparent; box-shadow: none; color: inherit; }
+}
+@media (max-width: 60rem) and (prefers-reduced-motion: reduce) {
+  .ch-story .ch-pin[data-reading="true"] .ch-step .ch-card, .ch-story .ch-woodenWords > div { transition: none; }
+}
+/* A phone, the club and Part III (28 Nov): the words no longer cover the picture
+   they talk about. Each card comes up from the foot of the screen and stays
+   there, its foot 10px above the screen's (sticky; --card-h is its own height,
+   parts.js), while its step is read; the next one then pushes it up and out, and
+   it fades as it goes (data-past). The picture keeps the screen above the cards'
+   band (--sheet), so its buttons, boards and cards can be pressed while their
+   question is being read. */
+@media (max-width: 60rem) {
+  .ch-pin[data-sheet="true"] { --sheet: 30svh; --sheet-top: calc(var(--bar) + 8px); }
+  .ch-part3 .ch-pin[data-sheet="true"] {
+    --sheet-top: calc(var(--investigation-bottom) + 8px);
+    --investigation-graphic-height: calc(100svh - var(--investigation-bottom) - var(--sheet) - 24px);
+  }
+  .ch-story .ch-pin[data-sheet="true"] .ch-scene { bottom: calc(var(--sheet) + 8px); }
+  .ch-story .ch-pin[data-sheet="true"] .ch-step[data-step]:not([data-bare="true"]) { align-items: flex-start; min-height: max(92vh, calc(var(--card-h, 240px) + 62svh)); }
+  .ch-story .ch-pin[data-sheet="true"] .ch-step[data-step]:not([data-bare="true"]) > .ch-card {
+    position: sticky; z-index: 2;
+    top: max(var(--sheet-top), calc(100svh - var(--card-h, 240px) - 10px));
+  }
+  .ch-story .ch-pin[data-sheet="true"] .ch-step[data-past="true"] .ch-card { opacity: 0; }
+  /* the last card is held over the last chart long enough: less of the chart
+     alone after it, so the recap is not a screen away */
+  .ch-story .ch-part3 .ch-pin[data-sheet="true"] .ch-steps { padding-bottom: 30vh; }
+  /* In every data section the picture takes the room above the current card,
+     whatever its height (parts.js: --card-now). Q2 and Q3 also glide their camera. */
+  .ch-part3 .ch-pin[data-sheet="true"] { --sheet: clamp(18svh, calc(var(--card-now, 30svh) + 16px), 58svh); }
+}
+/* small phones: the words of Part III a little smaller, so a card takes less of the screen */
+@media (max-width: 40rem) {
+  .ch-part3 .ch-pin[data-sheet="true"] .ch-card { --t-narr: 18px; }
+}
+@media (max-width: 40rem) and (max-height: 780px) {
+  .ch-part3 .ch-pin[data-sheet="true"] .ch-card { --t-narr: 17px; }
+}
+
+/* ── "When things go wrong" on one stage, as in the Part III prototype (wrong-stage.js):
+   the same marks are opponents, games and her own games in turn; CSS carries each
+   change, with a delay per mark. Ivory = not lost (or resigned, for her opponents),
+   grey and dark = the rest, clay = hers, green = the reader's. The big board is the
+   story's own ivory and grey. The scene sits where Q1's charts sit. */
+@media (min-width: 60.01rem) {
+  .ch-part3 .ch-wrong[data-reading="true"] .ch-scene { right: 34%; }
+  .ch-part3 .ch-wrong[data-reading="true"] .ch-card { width: 32%; }
+}
+.ch-wrongScene { display: block; }
+.ch-stage2 { position: absolute; inset: 0; display: flex; flex-direction: column; margin: 0; color: var(--ink); }
+.ch-stageHead { flex: none; }
+.ch-story .ch-stageTitle { margin: 0; min-height: 1.15em; }
+/* the big number, as Q1's ("52 in 100"): the same type and size */
+.ch-story .ch-stageNum { margin: 2px 0 10px; min-height: 1em; color: var(--ink); font: 500 clamp(26px, 3.2vw, 40px) / 1 var(--font-sans, ui-sans-serif); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; transition: opacity 350ms ease; }
+.ch-stageNum[data-on="false"] { opacity: 0; }
+.ch-stageNum[data-tone="you"] { color: var(--form-data); }
+.ch-stageNum[data-tone="me"] { color: var(--thread); }
+.ch-stageNum small { margin-left: 8px; color: var(--ink-2); font: 400 15px / 1 var(--font-mono); letter-spacing: 0; }
+.ch-stage2 svg { flex: 1 1 auto; min-height: 0; width: 100%; overflow: visible; }
+/* on a wide screen, Q1's frame: as tall as Q1's figure (title, keys, at most 600 px of
+   chart) and centred the same way, so the title sits where Q1's titles do */
+@media (min-width: 60.01rem) {
+  .ch-stage2 { inset: auto 0; top: 50%; height: min(677px, calc(100% - 73px)); transform: translateY(-50%); }
+}
+.ch-ratingChip[data-tone="ivory"] { background: var(--them); color: #0d1219; }
+.ch-ratingChip[data-tone="faint"] { background: var(--them-mid); color: #eef2f8; }
+/* keys that are a mark, not a colour: a dot for the lit, a ring for the rest */
+.ch-ratingChip:is([data-tone="filled"], [data-tone="ring"], [data-tone="dim"], [data-tone="meDim"]) { display: inline-flex; align-items: center; gap: 6px; padding-left: 0; background: none; box-shadow: none; color: var(--ink-2); }
+.ch-ratingChip:is([data-tone="filled"], [data-tone="ring"], [data-tone="dim"], [data-tone="meDim"])::before { content: ""; width: 9px; height: 9px; border-radius: 50%; box-sizing: border-box; }
+.ch-ratingChip[data-tone="filled"]::before { background: var(--ink-2); }
+.ch-ratingChip:is([data-tone="ring"], [data-tone="dim"], [data-tone="meDim"])::before { border: 1px solid var(--ink-3); }
+.ch-ratingChip[data-tone="meHollow"] { background: none; box-shadow: inset 0 0 0 1.4px var(--thread); color: var(--ink); }
+/* the marks */
+.ch-atom, .ch-atomDot, .ch-atomBoard { transition: transform 1s cubic-bezier(0.65, 0, 0.25, 1), opacity 700ms ease; }
+.ch-atom { pointer-events: auto; }
+.ch-atomDot rect { transition: fill 600ms ease, stroke 600ms ease; stroke: none; }
+.ch-atomDot rect[data-role="crowd"] { fill: var(--them); }
+.ch-atomDot rect[data-role="faint"] { fill: var(--them-mid); }
+/* the unlit: an empty ring, the same for everyone (Q1's give-up squares too) */
+.ch-atomDot rect:is([data-role="dim"], [data-role="meDim"]) { fill: transparent; stroke: var(--rule-strong); stroke-width: 1px; }
+.ch-atomDot rect[data-role="me"] { fill: var(--thread); }
+.ch-atomDot rect[data-role="meHollow"] { fill: var(--void); stroke: var(--thread); stroke-width: 1.6px; }
+.ch-atomDot rect[data-role="you"] { fill: var(--form-data); }
+/* played on and lost, where giving up is a ring beside it (the queen's hundred, v2 prototype) */
+.ch-atomDot rect[data-role="lost"] { fill: var(--them-faint); }
+.ch-ratingChip[data-tone="lost"] { background: var(--them-faint); color: var(--ink-2); }
+/* marks drawn as labels (the clock's four hundreds, the hundred who resign) and the ratings' bars */
+.ch-stageDot { fill: var(--them-faint); }
+.ch-stageDot[data-on="true"] { fill: var(--them); }
+.ch-stageDot[data-kind="ring"] { fill: transparent; stroke: var(--rule-strong); stroke-width: 1px; }
+.ch-stageBarGave { fill: transparent; stroke: var(--rule-strong); stroke-width: 1px; }
+.ch-stageBarLost { fill: var(--them-faint); }
+.ch-stageBarSaved { fill: var(--them); }
+.ch-stageYou .ch-stageBarGave { fill: transparent; stroke: var(--form-data); }
+.ch-stageYou .ch-stageBarLost { fill: color-mix(in srgb, var(--form-data) 28%, var(--void)); }
+.ch-stageYou .ch-stageBarSaved { fill: var(--form-data); }
+/* the big board */
+.ch-bigBoard { transition: transform 1s cubic-bezier(0.65, 0, 0.25, 1), opacity 700ms ease; }
+.ch-bigLight { fill: #ddd6ca; }
+.ch-bigDark { fill: #8d867b; }
+.ch-stageCaption { fill: var(--ink-2); font: 400 calc(13px * var(--u, 1)) / 1 var(--font-mono); transition: opacity 350ms ease; }
+.ch-stageCaption[data-on="false"] { opacity: 0; }
+/* the labels of a scene come once its marks have moved */
+.ch-stageLabels { opacity: 0; transition: opacity 350ms ease; pointer-events: none; }
+.ch-stageLabels[data-on="true"] { opacity: 1; transition: opacity 600ms ease 500ms; }
+.ch-stageText { fill: var(--ink-3); font: 400 calc(12px * var(--u, 1)) / 1 var(--font-mono); }
+/* as Q1's: notes in the small mono, a square's name in the serif, its number as "52 in 100" */
+.ch-stageText[data-kind="note"] { fill: var(--ink-2); }
+.ch-stageText[data-kind="name"] { fill: var(--ink-2); font: 400 calc(17px * var(--u, 1)) / 1 var(--font-title); }
+.ch-stageText[data-kind="num"] { fill: var(--ink); font: 500 calc(34px * var(--u, 1)) / 1 var(--font-sans, ui-sans-serif); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.ch-stageText .ch-stageUnit { fill: var(--ink-2); font: 400 calc(15px * var(--u, 1)) / 1 var(--font-mono); letter-spacing: 0; }
+.ch-stageText[data-kind="me"] { fill: var(--thread); }
+.ch-stageText[data-kind="you"] { fill: var(--form-data); }
+.ch-stageLine { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 5 4; }
+.ch-stageGrid { stroke: var(--rule); stroke-width: 1; }
+.ch-stageBar { fill: var(--them-mid); }
+.ch-stageChance { fill: var(--ink); opacity: 0; transition: opacity 600ms ease; }
+.ch-stageChance[data-on="true"] { opacity: 0.045; }
+.ch-stageRing { fill: none; stroke: var(--form-data); stroke-width: 2; }
+.ch-stageYou rect, .ch-stageYou circle { fill: var(--form-data); }
+.ch-stageYou circle[data-kind="lost"] { fill: color-mix(in srgb, var(--form-data) 28%, var(--void)); }
+.ch-stageYou circle[data-kind="gave"] { fill: none; stroke: var(--form-data); stroke-width: 1.2; }
+@media (max-width: 60rem) {
+  .ch-story .ch-stageNum { font-size: 30px; margin-bottom: 6px; }
+  .ch-stageNum small { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ch-atom, .ch-atomDot, .ch-atomBoard, .ch-atomDot rect, .ch-bigBoard, .ch-stageLabels, .ch-stageLabels[data-on="true"], .ch-stageNum { transition: none; }
+}
+
+/* ── Each question's opening, at the right as in the prototype (27 Nov, owner): the
+   name right-aligned to the words' column edge and reaching left over the scene, the
+   first line under it in the column the steps' words use (32% of the story, left-
+   aligned). The board comes down to the right too, above the name. In a recap
+   (hub.js) the opening is widened to the story's column by --story-l / --story-r. */
+@media (min-width: 60.01rem) {
+  .ch-diveNext { justify-items: end; text-align: right; padding-inline: 0; }
+  .ch-hub .ch-diveNext { left: var(--story-l, 0px); right: var(--story-r, 0px); }
+  .ch-story .ch-diveName { max-width: min(16em, 100%); text-align: right; }
+  .ch-story.ch-story.ch-story .ch-text.ch-diveSaid { justify-self: end; width: 32%; max-width: none; text-align: left; }
+  .ch-story.ch-story .ch-diveSaid p { text-align: left; }
+  /* Q1's line ("Before judging others, I'll start with myself.") stands on one row,
+     a little smaller, right under the name (owner, 27 Nov) */
+  .ch-story.ch-story.ch-story .ch-text.ch-diveSaid:not(.ch-firstOnly) { width: auto; white-space: nowrap; font-size: min(var(--t-narr), 1.9vw); }
+}
+/* the stage's camera (wrong-stage.js): each chart fitted to the room it has */
+.ch-stageCamera { transition: transform 1s cubic-bezier(0.65, 0, 0.25, 1); }
+.ch-stage2 svg { margin-bottom: 8px; }
+@media (prefers-reduced-motion: reduce) { .ch-stageCamera { transition: none; } }
+
+/* "What their names say": each row's name large, in the story's serif, so the kinds
+   of username read at a glance; its examples stay small beside it (27 Nov, owner).
+   The squares of lost games are named the same way. */
+.ch-ratings .ch-crowdMarks text.ch-crowdRowName { font: 400 20px / 1 var(--font-title); letter-spacing: -0.01em; }
+.ch-ratings .ch-crowdMarks text.ch-crowdRowName .ch-crowdExample { font: 400 12px / 1 var(--font-mono); letter-spacing: 0; }
+@media (max-width: 40rem) { .ch-ratings .ch-crowdMarks text.ch-crowdRowName { font-size: 17px; } }
+.ch-ratings .ch-crowdMarks text.ch-crowdGridName { font-size: 17px; }
+@media (max-width: 40rem) { .ch-ratings .ch-crowdMarks text.ch-crowdGridName { font-size: 15px; } }
+.ch-ratings .ch-crowdKey circle { fill: var(--them); }
+
+/* each question's own board beside its name, at the opening: small, a mark, not a picture
+   (27 Nov, owner: "way smaller") */
+.ch-diveSpot { width: min(84px, 11svh); margin-bottom: 14px; }
+@media (max-width: 60rem) { .ch-diveSpot { width: min(64px, 9svh); } }
+/* the scatter at the reader's level (ratings.js, "Your level"): players within 100 of their rapid rating */
+.ch-ratings [data-highlight="yours"] .ch-ratingPeers use[data-near-you="false"] { opacity: 0.20; }
+.ch-ratings [data-highlight="yours"] .ch-ratingPeers use[data-near-you="true"] { fill: var(--them); opacity: 0.9; }
+.ch-ratingViews button.ch-ratingYourView { color: var(--form-data); }
+.ch-ratingViews button.ch-ratingYourView[aria-pressed="true"] { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--form-data) 60%, transparent); }
+.ch-crowdYouMark { opacity: 0; transition: transform 1100ms var(--ch-ease), opacity 300ms ease; }
+.ch-crowdYouMark[data-on="true"] { opacity: 1; }
+.ch-ratingYou .ch-ratingExpected { fill: var(--void); stroke: var(--form-data); }
+/* "Your level" on the pace chart (ratings.js): the clouds swap, the typical line slides */
+.ch-paceSwap { transition: opacity 600ms ease, visibility 0s; }
+/* the view not shown fades, then is hidden: its dots are no longer painted (ratings.js) */
+.ch-paceSwap[data-off="true"] { opacity: 0; visibility: hidden; transition: opacity 600ms ease, visibility 0s linear 600ms; }
+.ch-paceTypical { transition: transform 700ms cubic-bezier(0.65, 0, 0.25, 1); }
+@media (prefers-reduced-motion: reduce) { .ch-paceSwap, .ch-paceTypical { transition: none; } }
+
+/* A phone: a legend too long for one row (Q2's levels at 360px cut "Played on,
+   did not lose") goes on to a second, instead of being cut. */
+@media (max-width: 40rem) {
+  .ch-stageHead .ch-ratingChips { flex-wrap: wrap; height: auto; min-height: 19px; row-gap: 4px; overflow: visible; }
+}
+
+/* A phone, Part II (28 Nov): the part's name stands on a band of the page's own
+   ground, the screen's width, fading at its foot, so the words scrolling up pass
+   under it instead of showing through beside it. The London System's caption
+   stays readable over the hand that comes in from the near side. */
+@media (max-width: 60rem) {
+  .ch-people:not(.ch-part3) > .ch-peopleTitle, .ch-back > .ch-endingTitle { top: var(--bar); }
+  .ch-people:not(.ch-part3) > .ch-peopleTitle :is(h1, h2, h3, p), .ch-back > .ch-endingTitle :is(h1, h2, h3, p) { text-align: left; }
+  .ch-people:not(.ch-part3) > .ch-peopleTitle .ch-text, .ch-back > .ch-endingTitle .ch-text {
+    display: block; text-align: left; box-sizing: border-box; width: calc(100% + 2 * var(--page-margin)); margin-inline: calc(-1 * var(--page-margin));
+    padding: calc(1.2svh + 4px) var(--page-margin) 18px; background: linear-gradient(var(--void) 74%, transparent); box-shadow: none;
+  }
+  .ch-firstMove.ch-clubMove { z-index: 1001; width: auto; padding: 3px 6px; border-radius: 2px; background: color-mix(in srgb, var(--void) 84%, transparent); }
+  /* the words no longer lie over the club's board (the cards' band, above), so
+     on a phone it can take the scene's width */
+  .ch-club .ch-boardwrap[data-view="club"], .ch-club .ch-boardwrap[data-view="how"] { width: min(50svh, 96%); transform: translate(2%, 0); }
+}
+
+/* A phone: every control at least about 36px to a finger (28 Nov). Where a
+   larger button would move the chart (the views' switch, the names' Lower and
+   Higher), an invisible margin around it takes the touch instead. */
+@media (max-width: 60rem) {
+  .ch-ratingViews button { position: relative; }
+  .ch-ratingViews button::after, .ch-nameButton::after { content: ""; position: absolute; inset: -7px -3px; }
+  .ch-nameButton { min-height: 32px; }
+  .ch-rvSeg button { padding: 11px 14px; }
+  .ch-rvShow { display: inline-block; padding: 11px 6px; margin-inline: -6px; }
+  .ch-wrongRange input { height: 36px; margin: 0; touch-action: pan-y pinch-zoom; }
+  .ch-card a[href^="#"] { display: inline-block; padding-block: 9px; }
+}
+
+/* Touch scrolling can cross several beats in a second. Settle chart changes
+   promptly, without a long queue of per-mark delays following the finger. */
+@media (max-width: 60rem) and (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+  .ch-atom, .ch-atomDot, .ch-atomBoard, .ch-bigBoard, .ch-stageCamera,
+  .ch-paceCloud[data-crowd="true"] circle, .ch-crowdDot[data-settled="true"], .ch-crowdDot[data-tone],
+  .ch-ratingMe[data-settled="true"], .ch-crowdYouMark {
+    transition: transform 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 160ms ease;
+    transition-delay: 0ms !important;
+  }
+  .ch-atomDot rect { transition: none; }
+  .ch-stageLabels[data-on="true"] { transition: opacity 160ms ease; }
+}
+
+/* Data narration leaves more room for the evidence in all three questions. */
+.ch-part3 { --t-narr: clamp(19px, 1.8vw, 26px); }
+@media (min-width: 60.01rem) {
+  .ch-story .ch-part3 .ch-pin[data-reading="true"] .ch-scene { right: 32%; }
+  .ch-story .ch-part3 .ch-pin[data-reading="true"] .ch-card { width: 30%; }
+}
+
+/* "How a game can end" (endings.js, 28 Nov): six marks in one ivory line style,
+   so colour keeps meaning whose game; a name in the story's serif, one quiet line. */
+.ch-ratings .ch-endings, .ch-ratings .ch-endingRow { transition: opacity 450ms ease; }
+.ch-ratings .ch-endingMark { color: var(--ink); fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.ch-ratings .ch-crowdMarks .ch-endingMark text.ch-endingGlyph { fill: currentColor; stroke: none; paint-order: normal; font: 500 26px / 1 var(--font-mono); }
+.ch-ratings .ch-crowdMarks .ch-endingMark text.ch-endingHalf { font: 400 28px / 1 var(--font-title); }
+.ch-ratings .ch-crowdMarks text.ch-endingHead { fill: var(--ink-2); font: 400 12px / 1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.ch-ratings .ch-crowdMarks text.ch-endingName { fill: var(--ink); }
+.ch-ratings .ch-crowdMarks text.ch-endingLine { fill: var(--ink-2); font: 400 14px / 1 var(--font-sans, ui-sans-serif); }
+@media (max-width: 40rem) { .ch-ratings .ch-crowdMarks text.ch-endingLine { font-size: 13px; } }
+@media (prefers-reduced-motion: reduce) { .ch-ratings .ch-endings, .ch-ratings .ch-endingRow { transition: none !important; } }
+.ch-ratings .ch-endingMark :is(circle, path, rect) { fill: none; stroke: currentColor; }
+.ch-ratings .ch-endingMark .ch-endingKing :is(path, rect) { fill: currentColor; stroke: none; }
+@media (max-width: 22rem) { .ch-ratings .ch-crowdMarks text.ch-endingLine { font-size: 12px; } .ch-ratings .ch-crowdMarks text.ch-endingName { font-size: 16px; } }
+
+/* The strips of lost games (crowd.js, 28 Nov): every way of losing alike first
+   ("ended", ivory), then the resigned lit in whose colour and the rest faint rings. */
+.ch-ratings circle[data-tone="ended"] { fill: var(--ink-2); }
+.ch-ratings .ch-crowdMarks text.ch-lostNumber { fill: var(--ink-2); font: 400 13px / 1 var(--font-mono); }
+.ch-ratings .ch-lostPart { transition: opacity 450ms ease; }
+.ch-ratings .ch-lostStrip[data-lit="true"] .ch-lostPart[data-big="false"] { opacity: 0.45; }
+.ch-ratings .ch-lostStrip .ch-crowdBig { font-size: clamp(22px, 2.4vw, 28px); }
+.ch-ratings .ch-lostStrip .ch-endingMark { color: var(--ink-2); }
+.ch-ratings .ch-lostStrip .ch-lostPart[data-big="true"] .ch-endingMark { color: var(--ink); }
+
+/* "How a game can end" as two tiers (endings.js EndingsMap, 28 Nov): thin section
+   rules ("The result", "How it ends"), the results in large serif with chess's
+   scores, the endings under the result they give. Fades narrow it to the loss;
+   the four ways of losing then travel up to the strips' legend. */
+.ch-ratings .ch-endingRow { transition: opacity 500ms ease, transform 800ms cubic-bezier(0.4, 0, 0.2, 1); }
+.ch-ratings .ch-endingRow .ch-endingLine, .ch-ratings .ch-endingResult, .ch-ratings .ch-endingTiers,
+.ch-ratings .ch-endingHead, .ch-ratings .ch-endingBracket { transition: opacity 500ms ease; }
+.ch-ratings .ch-crowdMarks .ch-endingRule text { fill: var(--ink-3); font: 400 11px / 1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.ch-ratings .ch-endingRule line { stroke: var(--rule-strong); stroke-width: 1; }
+.ch-ratings .ch-crowdMarks text.ch-endingWord { fill: var(--ink); font: 400 44px / 1 var(--font-title); letter-spacing: -0.01em; }
+.ch-ratings .ch-crowdMarks text.ch-endingScore { fill: var(--ink-3); font: 400 13px / 1 var(--font-mono); }
+.ch-ratings .ch-endingBracket { fill: none; stroke: var(--ink-3); stroke-width: 1; }
+@media (max-width: 40rem) { .ch-ratings .ch-crowdMarks text.ch-endingWord { font-size: 32px; } .ch-ratings .ch-crowdMarks text.ch-endingScore { font-size: 12px; } }
+@media (prefers-reduced-motion: reduce) {
+  .ch-ratings .ch-endingRow, .ch-ratings .ch-endingRow .ch-endingLine, .ch-ratings .ch-endingResult, .ch-ratings .ch-endingTiers,
+  .ch-ratings .ch-endingHead, .ch-ratings .ch-endingBracket { transition: none !important; }
+}
+
+/* "What their names say", 28 Nov: the guessing in the words' column (say.js NameQuiz),
+   the chart only shows. One kind asked at a time; its row lit, the rows waiting quiet. */
+.ch-story .ch-nameQuiz { margin-top: 22px; text-align: left; font-family: var(--font-sans, ui-sans-serif); }
+.ch-story .ch-nameQuiz p { margin: 0; }
+.ch-story .ch-nameQuizCount { color: var(--ink-3); font: 400 11px / 1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.ch-story .ch-nameQuizKind { margin-top: 6px !important; color: var(--ink); font: 400 24px / 1.2 var(--font-title); }
+.ch-story .ch-nameQuizExamples { margin-top: 4px !important; color: var(--ink-3); font: 400 12px / 1.4 var(--font-mono); }
+.ch-story .ch-nameQuizButtons { display: flex; gap: 10px; margin-top: 16px; }
+/* (relative, so the enlarged touch area of phones stays around its own button) */
+.ch-story .ch-nameQuiz .ch-nameButton { position: relative; min-height: 40px; padding: 8px 22px; font-size: 15px; }
+.ch-story .ch-nameQuizAnswer { margin-top: 16px; }
+.ch-story .ch-nameQuizVerdict { color: var(--ink); font: 400 18px / 1.3 var(--font-title); }
+.ch-story .ch-nameQuizAnswer[data-right="true"] .ch-nameQuizVerdict { color: var(--form-data); }
+.ch-story .ch-nameQuizData { margin-top: 4px !important; color: var(--ink-2); font: 400 12px / 1.4 var(--font-mono); }
+.ch-story .ch-nameQuizScore { color: var(--form-data); font: 400 18px / 1.3 var(--font-title); }
+.ch-ratings .ch-crowdRow { transition: opacity 400ms ease; }
+.ch-ratings .ch-crowdRow[data-state="waiting"] .ch-crowdRowName { opacity: 0.35; }
+.ch-ratings .ch-crowdRow .ch-crowdRowName { transition: opacity 400ms ease; }
+.ch-ratings .ch-crowdRange { fill: var(--them); opacity: 0.22; }
+.ch-ratings .ch-crowdMarks text.ch-crowdDiff { fill: var(--ink); font: 400 13px / 1 var(--font-mono); transition: opacity 500ms ease 250ms; }
+.ch-ratings .ch-crowdMarks text.ch-crowdDiff .ch-crowdDiffRange { fill: var(--ink-3); }
+
+/* A term explained where it first comes up (highlights.js TERMS, 28 Nov): dotted
+   underline; on hover, focus or tap, the definition "How a game can end" uses. */
+.ch-story span.ch-hl-term { position: relative; text-decoration: underline dotted; text-decoration-color: var(--ink-3); text-underline-offset: 0.18em; cursor: help; outline: none; }
+.ch-story span.ch-hl-term::after { content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 8px); z-index: 5; width: max-content; max-width: 240px;
+  transform: translate(-50%, 4px); padding: 8px 11px; border: 1px solid var(--rule-strong); border-radius: 4px; background: var(--void);
+  color: var(--ink-2); font: 400 12px / 1.45 var(--font-mono); letter-spacing: 0; text-align: left; white-space: normal;
+  opacity: 0; pointer-events: none; transition: opacity 180ms ease, transform 180ms ease; }
+.ch-story span.ch-hl-term:is(:hover, :focus)::after { opacity: 1; transform: translate(-50%, 0); }
+.ch-story span.ch-hl-term:focus-visible { outline: 2px solid var(--form-data); outline-offset: 2px; border-radius: 2px; }
+.ch-story .ch-woodenWords span.ch-hl-term { pointer-events: auto; }
+.ch-ratings .ch-crowdRange { fill: none; stroke: var(--ink); stroke-width: 1.6; opacity: 0.8; }
+.ch-story .ch-nameQuizButtons { justify-content: center; }
+@media (max-width: 60rem) { .ch-story .ch-nameQuiz { margin-top: 12px; } .ch-story .ch-nameQuizKind { font-size: 20px; } .ch-story .ch-nameQuizButtons { margin-top: 10px; } }
+
+/* The squares of lost games, as the owner's reference (28 Nov): beside each square
+   the number resigned, large, in whose colour, and the other ways of losing with
+   their marks (endings.js), small. */
+.ch-ratings .ch-lostSquare { --who: var(--them); }
+.ch-ratings .ch-lostSquare[data-who="me"] { --who: var(--thread); }
+.ch-ratings .ch-lostSquare[data-who="you"] { --who: var(--form-data); }
+.ch-ratings .ch-crowdMarks text.ch-lostBig { fill: var(--who); font: 400 44px / 1 var(--font-sans, ui-sans-serif); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.ch-ratings .ch-crowdMarks text.ch-lostBigUnit { fill: var(--who); font: 400 12px / 1 var(--font-sans, ui-sans-serif); }
+.ch-ratings .ch-crowdMarks text.ch-lostCount { fill: var(--ink-2); font: 400 17px / 1 var(--font-sans, ui-sans-serif); font-variant-numeric: tabular-nums; }
+.ch-ratings .ch-crowdMarks text.ch-lostCount .ch-lostCountName { fill: var(--ink-3); font-size: 11.5px; }
+.ch-ratings .ch-lostSquare .ch-endingMark { color: var(--ink-3); }
+.ch-ratings .ch-crowdMarks text.ch-lostNote { fill: var(--ink-3); font: 400 11px / 1 var(--font-sans, ui-sans-serif); transition: opacity 500ms ease; }
+@media (max-width: 40rem) {
+  .ch-ratings .ch-crowdMarks text.ch-lostBig { font-size: 28px; }
+  .ch-ratings .ch-crowdMarks text.ch-lostCount { font-size: 13px; }
+}
+.ch-story .ch-ratingChip[data-tone="resignedKey"], .ch-story .ch-ratingChip[data-tone="ring"] { display: inline-flex; align-items: center; gap: 6px; padding-left: 0; background: none; box-shadow: none; color: var(--ink-2); }
+.ch-story .ch-ratingChip[data-tone="resignedKey"]::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--them); }

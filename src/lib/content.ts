@@ -3,6 +3,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
 import { MEDIA_BASE } from '../collections/Media'
+import { getDrafts } from './drafts'
 import { readingMinutes } from './reading-time'
 
 // The page components and the two data builders they lean on (archiveFieldData
@@ -334,7 +335,19 @@ export const getPosts = cache(async (): Promise<ContentNode[]> => {
     pagination: false,
   })
 
-  return (docs as unknown as PostDoc[]).map(postToNode)
+  const posts = (docs as unknown as PostDoc[]).map(postToNode)
+
+  // Pieces still being written join the published ones wherever drafts are
+  // shown (see drafts.ts), each in its place by date. A document in the panel
+  // at the same address wins: once a piece is published, its file is spent.
+  const drafts = (await getDrafts())
+    .map(postToNode)
+    .filter((draft) => !posts.some((post) => post.fields.slug === draft.fields.slug))
+  if (!drafts.length) return posts
+
+  return [...posts, ...drafts].sort((a, b) =>
+    String(b.frontmatter.date).localeCompare(String(a.frontmatter.date)),
+  )
 })
 
 export const getPhotographs = cache(async (): Promise<ContentNode[]> => {
