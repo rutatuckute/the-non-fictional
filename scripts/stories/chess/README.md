@@ -75,7 +75,7 @@ the published site. The names, in reading order:
 | II | `people-bridge` (before the title), `people-title` (a heading), `people-intro`, `people-plain`, `people-picture`, `strangers`, `strangers-where`, `strangers-moment`, `people-many`, `club`, `professor`, `professor-quote`, `professor-how`, `professor-maybe`, `central`, `boards` |
 | III | `investigation-title` (a heading), `data-intro`, `you-chesscom` (the optional username box), `say-message` … `say-limits`, `wrong-observation`, `wrong-decide`, `wrong-outcome`, `you-queens` (the optional lost-queens count, under `wrong-mine`), `wrong-crowd`, `wrong-right`, `wrong-you`, `wrong-stalemate`, `choose-question` (with `you-dials`, the optional box that puts the reader's games in), `choose-contact` … `choose-end` |
 | III, first question | `say-message`, `say-prediction`, `say-guess`, `say-answer`, `say-surprise`, `say-limits` |
-| III, second question | `wrong-observation`, `wrong-decide`, `wrong-outcome`, `you-queens` (the optional lost-queens count, under `wrong-mine`), `wrong-crowd`, `wrong-you` |
+| III, second question | `wrong-observation`, `wrong-decide`, `wrong-outcome`, `wrong-guess`, `wrong-play`, `wrong-saved`, `wrong-payoff`, `wrong-taleb`, `wrong-clock`, `wrong-levels`, `wrong-mine`, `you-queens` (the optional lost-queens count, under `wrong-mine`), `wrong-king`, `wrong-outcome-king`, `wrong-mine-king`, `wrong-guess-king`, `wrong-play-king`, `wrong-payoff-king`, `wrong-meet`, `wrong-you` |
 | III, third question | `choose-question`, `you-dials`, `choose-contact`, `choose-pace`, `choose-persistence`, `choose-habit`, `choose-all`, `choose-games`, `choose-split`, `choose-lineup`, `choose-round-1`, `choose-round-10`, `choose-round-30`, `choose-play`, `choose-curve`, `choose-me`, `choose-findme`, `choose-findyou` and `choose-you` (only once the reader's games are in), `choose-club`, `choose-disguise`, `choose-end` |
 | III, the end of it | `unknown`, `unknown-showed`, `unknown-cannot` |
 | IV | `ending-title` (a heading), `encounter` (beside the message on the phone), `continuing`, `last-question`, `yours` ("Is yours still there?") |
@@ -361,6 +361,7 @@ will stand there.
 - `board-notes.json` (public): what each of the thousand boards was, for its note on hover; from `chess-story/analysis/export_board_notes.py` in the data-stories repository.
 
 - `wrong.json` (investigation 2): from `chess-story/analysis/export_wrong.py` in the data-stories repository (`.venv/bin/python -I chess-story/analysis/export_wrong.py <repo>/src/components/stories/chess/wrong.json`).
+- `wrong-engine.json` (investigation 2, engine-checked: the queen's hundred games, who saved them, the clock, by rating, her opponents' giving up): from `chess-story/analysis/export_wrong_site.py`, which reads the v2 prototype's data (`export_wrong_v2.py`, every rapid queen loss checked with Stockfish): `.venv/bin/python -I chess-story/analysis/export_wrong_site.py <repo>/src/components/stories/chess/wrong-engine.json`.
 
 - `style.json` (investigation 3): from `chess-story/analysis/export_style.py` in the data-stories repository, after `style_scales.py` and `fast_mistakes.py` (definitions fixed beforehand in `style-definitions.md`).
 

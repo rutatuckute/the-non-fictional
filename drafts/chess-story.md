@@ -250,15 +250,19 @@ Thirty-seven moves later, it was my opponent who resigned.
 
 <!--step:wrong-guess-->
 
-Here are 100 real games. In each, a player at my level (rated 600–799) lost their queen in an even position, and played on.
+Here are 100 real games. In each, a player at my level lost their queen in an even position, and played on.
 
 How many of them do you think did not lose?
 
 <!--step:wrong-play-->
 
-15 did not lose: 11 won and 4 drew. More wins than draws: the other player gave it back.
+13 did not lose.
 
-Every 100 games played on cost 558 rating points. Resigning them all would have cost 767.
+<!--step:wrong-saved-->
+
+Not one of them came back alone. Every time, the other player went wrong somewhere: a careless move, a clock running down, a stalemate.
+
+And every time, someone was still there to take it. About half won their way back on the board; the others were still far behind when the other player slipped.
 
 <!--step:wrong-payoff-->
 
@@ -274,7 +278,7 @@ In chess the upside is small too, a draw or a win. But staying costs only time: 
 
 One thing changes the odds more than anything else: the other player's clock.
 
-From 18 in 100 to 53 in 100, for players under 800.
+From 16 in 100 to 51 in 100, for players under 800.
 
 <!--step:wrong-levels-->
 

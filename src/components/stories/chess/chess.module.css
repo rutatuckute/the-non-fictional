@@ -1635,6 +1635,19 @@
 .ch-atomDot rect[data-role="me"] { fill: var(--thread); }
 .ch-atomDot rect[data-role="meHollow"] { fill: var(--void); stroke: var(--thread); stroke-width: 1.6px; }
 .ch-atomDot rect[data-role="you"] { fill: var(--form-data); }
+/* played on and lost, where giving up is a ring beside it (the queen's hundred, v2 prototype) */
+.ch-atomDot rect[data-role="lost"] { fill: var(--them-faint); }
+.ch-ratingChip[data-tone="lost"] { background: var(--them-faint); color: var(--ink-2); }
+/* marks drawn as labels (the clock's four hundreds, the hundred who resign) and the ratings' bars */
+.ch-stageDot { fill: var(--them-faint); }
+.ch-stageDot[data-on="true"] { fill: var(--them); }
+.ch-stageDot[data-kind="ring"] { fill: transparent; stroke: var(--rule-strong); stroke-width: 1px; }
+.ch-stageBarGave { fill: transparent; stroke: var(--rule-strong); stroke-width: 1px; }
+.ch-stageBarLost { fill: var(--them-faint); }
+.ch-stageBarSaved { fill: var(--them); }
+.ch-stageYou .ch-stageBarGave { fill: transparent; stroke: var(--form-data); }
+.ch-stageYou .ch-stageBarLost { fill: color-mix(in srgb, var(--form-data) 28%, var(--void)); }
+.ch-stageYou .ch-stageBarSaved { fill: var(--form-data); }
 /* the big board */
 .ch-bigBoard { transition: transform 1s cubic-bezier(0.65, 0, 0.25, 1), opacity 700ms ease; }
 .ch-bigLight { fill: #ddd6ca; }

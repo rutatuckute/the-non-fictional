@@ -7,6 +7,7 @@ import { c, Guess, Pinned, Text } from "./parts"
 import { useReader, useTell } from "./reader"
 import { YourQueens } from "./you"
 import { BOARD, Labels, Stage, VIEW } from "./wrong-stage"
+import engine from "./wrong-engine.json"
 import data from "./wrong.json"
 import paths from "./wrong-paths.json"
 
@@ -19,11 +20,15 @@ import paths from "./wrong-paths.json"
 //                (rapid, rated 600–799), a queen down: how many of those who played on
 //                did not lose?
 //   play         the hundred play out, then fold into dots, those not lost first
+//   saved        who saved them: the saved by how the game ended, those who won their
+//                way back on the board apart from those still far behind
 //   payoff       the same dots as the price: resigning is −8 every time; playing on
 //                is the same −8 at worst
-//   taleb        the saved lift out of it, to 0 for a draw and +8 for a win
-//   clock        the same dots again, by the other player's clock
-//   levels       by rating: who gives up at once, and who is saved by staying
+//   taleb        the choice: resign (−8, a hundred rings) or play on (~3 more minutes:
+//                won, drew, lost anyway)
+//   clock        four hundreds, one for each of the other player's clocks
+//   levels       by rating, every lost queen: gave up at once, played on and lost,
+//                played on and did not lose; the minutes playing on costs, per band
 //   mine         her own games of that kind (and the reader's, in green, if found)
 // The lone king is one beat (`king`): her game played out to the three-queens
 // stalemate, with her own counts. Whoever wants more can open it ("go deeper"):
@@ -32,7 +37,10 @@ import paths from "./wrong-paths.json"
 //   meet         both hundreds side by side, with the reader's guesses
 //   you          her own words, her games a queen down: played on or resigned
 // (wrong-paths.json from analysis/export_wrong_paths.py, her own numbers in it
-// from export_wrong_her.py; wrong.json from export_wrong.py for her games.)
+// from export_wrong_her.py; wrong.json from export_wrong.py for her games;
+// wrong-engine.json from export_wrong_site.py: the queen's hundred, the clock, the
+// ratings and her opponents' giving up, every position checked with Stockfish, as
+// in the v2 prototype, analysis/out/wrong-v2.html.)
 //
 // Colours, as in the prototype: ivory, games not lost (and opponents who
 // resigned); grey and dark, the rest; clay, the author; green, only ever the
@@ -45,6 +53,11 @@ const signed = v => (v > 0 ? `+${v}` : v < 0 ? `−${Math.abs(v)}` : "0")
 const side = colour => (colour === "b" ? "Black" : "White")
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v))
 const pct = v => `${Math.round(v * 100)}%`
+const in100 = v => Math.round(v * 100)
+// time, to the whole minute and marked as approximate (owner, 28 Nov): 2.76 → "~3 min"
+const mins = minutes => `~${Math.max(1, Math.round(minutes))} min`
+const E = engine
+const GAME_MIN = mins(E.level.minutes.game)
 
 // The reader's own lost queens (you.js), while they belong to the name found
 // at the start of Part III.
@@ -114,6 +127,10 @@ const ORDER = Array.from({ length: 100 }, (_, i) => (i * 37 + 11) % 100) // the 
 const AFTER = new Map(ORDER.map((board, k) => [board, k]))
 const boardsOf = P =>
   P.boards.map(([fen, final, end, how, rating, move, after, white]) => ({ fen, final, end, rating, move, after, flip: !white, saved: end !== "lost" }))
+// the queen's hundred, engine-checked: how each ended, from the side of the one who played on
+const END_OF = how => (how === "lost" ? "lost" : how === "stalemate" ? "stalemate" : how === "draw" ? "drew" : "won")
+const engineBoards = () =>
+  E.boards.map(([fen, final, how, rating, move, after, white, back]) => ({ fen, final, how, end: END_OF(how), rating, move, after, flip: !white, saved: how !== "lost", back }))
 // those not lost first, then the lost, each in their own order
 const savedRank = boards => {
   const rank = []
@@ -138,8 +155,46 @@ const payOrder = boards => {
   })
   return out
 }
-// by rating: a row a band; the bar, those who gave up at once; the dot, those who stayed and did not lose
-const LV = { y: i => 76 + i * 54, x0: 128, bar: v => (v / 0.6) * 190, dot: v => 384 + (clamp(v, 0, 0.3) / 0.3) * 196 }
+// by rating, as in the v2 prototype: a row a band, one bar of every lost queen at that
+// level (gave up at once, played on and lost, played on and did not lose), the price at the right
+const LV = { x0: 112, w: 200, y: i => 64 + i * 58, h: 22 }
+// who saved them: the lost in a small block at the left, the saved in a row per ending
+const HOW = ["mate", "resigned", "time", "left", "stalemate", "draw"]
+const HOW_LABEL = { mate: "checkmated them", resigned: "they resigned", time: "their clock ran out", left: "they left the game", stalemate: "stalemate", draw: "another draw" }
+const HOWS = HOW.filter(h => E.level.counts[h])
+const SV = { lostX: 20, lostY: 70, lostCell: 24, x: 330, y: 70, row: 62, step: 34 }
+// the choice: resign at the left, play on at the right, a row per outcome
+const CH = { resX: 20, playX: 330, rows: { won: 110, drew: 200, lost: 290 }, cell: 25 }
+const choiceOf = b => (b.end === "lost" ? "lost" : b.end === "won" ? "won" : "drew")
+// the clock: four hundreds, one per clock
+const CL = { at: [[40, 92], [330, 92], [40, 392], [330, 392]], cell: 20 }
+// within each row, the order the marks take: who saved them (those who won their way
+// back first), the choice (by outcome)
+const SAVED_PLACE = (() => {
+  const boards = engineBoards()
+  const out = []
+  let lostK = 0
+  HOWS.forEach((h, row) =>
+    [...boards.keys()]
+      .filter(i => boards[i].how === h)
+      .sort((a, b) => Number(boards[b].back) - Number(boards[a].back) || a - b)
+      .forEach((i, j) => (out[i] = { x: SV.x + j * SV.step + 14, y: SV.y + row * SV.row + 18, back: boards[i].back, row })),
+  )
+  boards.forEach((b, i) => {
+    if (b.how !== "lost") return
+    const k = lostK++
+    out[i] = { x: SV.lostX + (k % 10 + 0.5) * SV.lostCell, y: SV.lostY + (Math.floor(k / 10) + 0.5) * SV.lostCell, lost: true }
+  })
+  return out
+})()
+const CHOICE_PLACE = (() => {
+  const seen = { won: 0, drew: 0, lost: 0 }
+  return engineBoards().map(b => {
+    const kind = choiceOf(b)
+    const j = seen[kind]++
+    return { kind, j, x: CH.playX + (j % 10 + 0.5) * CH.cell, y: CH.rows[kind] + Math.floor(j / 10) * CH.cell + (kind === "lost" ? 2 : 0) }
+  })
+})()
 // her own games: twelve a row
 const MINE = i => [(i % 12 + 0.5) * 50, (Math.floor(i / 12) + 0.5) * 50]
 // both hundreds side by side
@@ -147,8 +202,8 @@ const MEET = (i, right) => [(right ? 318 : 10) + (i % 10 + 0.5) * 27.2, 168 + Ma
 
 const PREP = {
   queen: (() => {
-    const boards = boardsOf(paths.queen)
-    return { boards, rank: savedRank(boards), pay: payOrder(boards), lit: 100 - paths.queen.counts.lost }
+    const boards = engineBoards()
+    return { boards, rank: savedRank(boards), pay: payOrder(boards), lit: 100 - E.level.counts.lost }
   })(),
   king: (() => {
     const boards = boardsOf(paths.king)
@@ -165,7 +220,7 @@ const StepSpy = ({ at, onStep }) => {
 // The steps, in reading order: the queen, then the lone king as one beat (and,
 // if the reader opens it, its hundred games), then both.
 const namesOf = deeper => [
-  "observation", "decide", "outcome", "guess", "play", "payoff", "taleb", "clock", "levels", "mine",
+  "observation", "decide", "outcome", "guess", "play", "saved", "payoff", "taleb", "clock", "levels", "mine",
   "king", ...(deeper ? ["guess-king", "play-king", "payoff-king"] : []),
   "meet", "you",
 ]
@@ -212,48 +267,96 @@ const PayoffLabels = ({ path, up }) => {
   )
 }
 const LevelLabels = ({ you }) => {
-  const R = paths.queen.byLevel
-  const rows = R.length + (you ? 1 : 0)
-  const bottom = LV.y(rows - 1) + 30
-  const gave = you ? (you.resigned + you.left) / you.cases : 0
-  const saved = you?.on ? you.saved / you.on : null
+  const R = E.levels
+  const few = R.filter(r => r.n < 2000)
+  const youRow = you && you.cases ? { gave: (you.resigned + you.left) / you.cases, onLost: (you.on - you.saved) / you.cases, onSaved: you.saved / you.cases, of: you.on ? you.saved / you.on : null } : null
+  const Bar = ({ r, y, kind }) => {
+    const a = r.gave * LV.w
+    const b = r.onLost * LV.w
+    const c_ = r.onSaved * LV.w
+    return (
+      <g data-kind={kind}>
+        <rect x={LV.x0} y={y} width={Math.max(0, a - 2)} height={LV.h} rx={3} className={c("ch-stageBarGave")} vectorEffect="non-scaling-stroke" />
+        <rect x={LV.x0 + a} y={y} width={Math.max(0, b - 2)} height={LV.h} rx={3} className={c("ch-stageBarLost")} />
+        <rect x={LV.x0 + a + b} y={y} width={Math.max(1, c_)} height={LV.h} rx={3} className={c("ch-stageBarSaved")} />
+      </g>
+    )
+  }
+  const foot = LV.y(R.length + (youRow ? 1 : 0)) + 4
   return (
     <>
-      <T x={LV.x0} y={34}>Resigned at once</T>
-      <T x={LV.dot(0)} y={34}>Stayed, did not lose</T>
-      {[0, 0.1, 0.2, 0.3].map(v => (
-        <g key={v}>
-          <line x1={LV.dot(v)} x2={LV.dot(v)} y1={50} y2={bottom} className={c("ch-stageGrid")} />
-          <T x={LV.dot(v)} y={bottom + 20} anchor="middle">{pct(v)}</T>
-        </g>
-      ))}
+      <T x={LV.x0} y={30} kind="note">every 100 lost queens at that level</T>
+      <T x={590} y={22} anchor="end" kind="note">playing on costs</T>
+      <T x={590} y={40} anchor="end">for a chance of not losing</T>
       {R.map((r, i) => {
-        const mine = r.band === paths.queen.level
+        const mine = r.band === E.level.band
         return (
           <g key={r.band}>
-            <T x={LV.x0 - 12} y={LV.y(i) + 4} anchor="end" kind={mine ? "me" : ""}>{r.band}</T>
-            <rect x={LV.x0} y={LV.y(i) - 11} width={LV.bar(r.resigned)} height={22} rx={3} className={c("ch-stageBar")} />
-            <T x={LV.x0 + LV.bar(r.resigned) + 6} y={LV.y(i) + 4}>{pct(r.resigned)}</T>
-            <T x={LV.dot(r.saved) + 13} y={LV.y(i) + 4}>{pct(r.saved)}</T>
+            <T x={LV.x0 - 12} y={LV.y(i) + 16} anchor="end" kind={mine ? "me" : "note"}>{r.band}</T>
+            <Bar r={r} y={LV.y(i)} />
+            <T x={590} y={LV.y(i) + 16} anchor="end" kind={mine ? "me" : "note"}>
+              {mins(r.gameSec / 60)} for {in100(r.savedOfOn)} in 100{r.n < 2000 ? " *" : ""}
+            </T>
           </g>
         )
       })}
-      {you ? (
+      {youRow ? (
         <g className={c("ch-stageYou")}>
-          <T x={LV.x0 - 12} y={LV.y(R.length) + 4} anchor="end" kind="you">You</T>
-          <rect x={LV.x0} y={LV.y(R.length) - 11} width={Math.max(2, LV.bar(Math.min(0.6, gave)))} height={22} rx={3} />
-          <T x={LV.x0 + Math.max(2, LV.bar(Math.min(0.6, gave))) + 6} y={LV.y(R.length) + 4} kind="you">{pct(gave)}</T>
-          {saved != null ? (
-            <>
-              <circle cx={LV.dot(saved)} cy={LV.y(R.length)} r={7} data-dot="you" />
-              <T x={LV.dot(saved) + 13} y={LV.y(R.length) + 4} kind="you">{pct(saved)}</T>
-            </>
-          ) : null}
+          <T x={LV.x0 - 12} y={LV.y(R.length) + 16} anchor="end" kind="you">You</T>
+          <Bar r={youRow} y={LV.y(R.length)} kind="you" />
+          {youRow.of != null ? <T x={590} y={LV.y(R.length) + 16} anchor="end" kind="you">{in100(youRow.of)} in 100</T> : null}
         </g>
       ) : null}
+      {few.length ? <T x={LV.x0} y={foot}>* few games ({few.map(r => `${r.n.toLocaleString("en")} lost queens at ${r.band}`).join(", ")})</T> : null}
     </>
   )
 }
+// who saved them: the lost counted at the left, each ending named above its row
+const SavedLabels = () => (
+  <>
+    <T x={SV.lostX} y={SV.lostY - 16} kind="note">lost ({E.level.counts.lost})</T>
+    {HOWS.map((h, k) => (
+      <T key={h} x={SV.x} y={SV.y + k * SV.row - 6} kind="note">{HOW_LABEL[h]}</T>
+    ))}
+  </>
+)
+// the choice: resigning is a hundred rings at −8; playing on, the hundred by outcome
+const ChoiceLabels = () => (
+  <>
+    <T x={CH.resX} y={40} kind="name">Resign</T>
+    <T x={CH.resX} y={62}>now</T>
+    <T x={CH.playX} y={40} kind="name">Play on</T>
+    <T x={CH.playX} y={62}>{GAME_MIN.replace(" min", "")} more minutes</T>
+    <line x1={300} x2={300} y1={24} y2={520} className={c("ch-stageGrid")} />
+    <T x={290} y={CH.rows.won + 5} anchor="end" kind="note">+8</T>
+    <T x={290} y={CH.rows.drew + 5} anchor="end" kind="note">0</T>
+    <T x={290} y={CH.rows.lost + 5} anchor="end" kind="note">−8</T>
+    <T x={CH.playX} y={CH.rows.won - 22}>won</T>
+    <T x={CH.playX} y={CH.rows.drew - 22}>drew</T>
+    <T x={CH.playX} y={CH.rows.lost - 22}>lost anyway</T>
+    <T x={CH.resX} y={CH.rows.lost - 22}>every game: −8</T>
+    {/* (the line her words point to: everything above it is a chance) */}
+    <line x1={CH.resX} x2={590} y1={CH.rows.lost - 42} y2={CH.rows.lost - 42} className={c("ch-stageLine")} />
+    {Array.from({ length: 100 }, (_, i) => (
+      <rect key={i} x={CH.resX + (i % 10) * 22 + 3} y={CH.rows.lost - 9 + Math.floor(i / 10) * 22 + 3} width={16} height={16} rx={8} className={c("ch-stageDot")} data-kind="ring" vectorEffect="non-scaling-stroke" />
+    ))}
+  </>
+)
+// the clock: a hundred for each of the other player's clocks, the saved lit
+const ClockLabels = () =>
+  E.clock.map((g, k) => {
+    const [x0, y0] = CL.at[k]
+    const n = in100(g.notLost)
+    return (
+      <g key={g.label}>
+        <T x={x0} y={y0 - 50} kind="note">{g.label}</T>
+        <T x={x0} y={y0 - 14} kind="num">{n}<tspan className={c("ch-stageUnit")}> in 100</tspan></T>
+        {Array.from({ length: 100 }, (_, i) => (
+          <rect key={i} x={x0 + (i % 10) * CL.cell + 2} y={y0 + Math.floor(i / 10) * CL.cell + 2} width={CL.cell - 4} height={CL.cell - 4} rx={(CL.cell - 4) / 2} className={c("ch-stageDot")} data-on={i < n ? "true" : "false"} />
+        ))}
+      </g>
+    )
+  })
 // the reader's own games a queen down, in green under hers: saved, lost, gave up at once
 const YourGames = ({ you }) => {
   const kinds = [...Array(you.saved).fill("saved"), ...Array(you.on - you.saved).fill("lost"), ...Array(you.resigned + you.left).fill("gave")]
@@ -291,7 +394,6 @@ export const Wrong = () => {
   const [settled, setSettled] = React.useState(both(false))
   const [decision, setDecision] = React.useState(both(null))
   useTell("decisions", decision)
-  const [clockAt, setClockAt] = React.useState(3)
   const [step, setStep] = React.useState(0)
   // the lone king's hundred games come in after its beat only if the reader asks
   const [deeper, setDeeper] = React.useState(false)
@@ -395,14 +497,10 @@ export const Wrong = () => {
       </>
     ),
     play: afterPlay("queen", "wrong-play"),
+    saved: <Text name="wrong-saved" look="lead" />,
     payoff: <Text name="wrong-payoff" look="lead" />,
     taleb: <Text name="wrong-taleb" look="lead" />,
-    clock: (
-      <>
-        <Text name="wrong-clock" look="lead" />
-        <Guess label="Their clock" options={[3, 2, 1, 0].map(i => paths.queen.clockLabels[i])} value={paths.queen.clockLabels[clockAt]} onChange={v => setClockAt(paths.queen.clockLabels.indexOf(v))} />
-      </>
-    ),
+    clock: <Text name="wrong-clock" look="lead" />,
     levels: <Text name="wrong-levels" look="lead" />,
     mine: (
       <>
@@ -458,14 +556,16 @@ export const Wrong = () => {
     const out = (() => {
       switch (kind) {
         case "observation": {
-          const o = HER.opponents
+          // giving up = resigning or leaving the game (owner, 28 Nov), at once or later
+          const o = E.opponentsGave
           return {
-            head: { title: "My opponents, a queen down", chips: [["ivory", "Resigned at once"], ["faint", "Resigned later"], ["dim", "Played on"]] },
-            num: { n: o.resignedAny, unit: "in 100 resigned" },
+            head: { title: "My opponents, a queen down", chips: [["ivory", "Gave up at once"], ["faint", "Gave up later"], ["dim", "Played to the end"]] },
+            num: { n: o.atOnce, unit: "in 100 gave up at once" },
+            box: [0, 0, VIEW, VIEW + 56],
             atoms: i => {
               if (i >= o.cases) return null
               const [x, y] = G(i)
-              return { x, y, s: 32, role: i < o.resignedAtOnce ? "crowd" : i < o.resignedAny ? "faint" : "dim", delay: i * 5 }
+              return { x, y, s: 32, role: i < o.atOnce ? "crowd" : i < o.atOnce + o.later ? "faint" : "dim", delay: i * 5 }
             },
           }
         }
@@ -489,14 +589,14 @@ export const Wrong = () => {
         case "play": {
           const fold = settled[path]
           return {
-            head: { title: `100 players at my level, ${what}`, chips: [["ivory", "Did not lose"], ["dim", "Lost"], ...(fold && guessed[path] ? [["you", "Your guess"]] : [])] },
+            head: { title: `100 players at my level, ${what}`, chips: [["ivory", "Did not lose"], [path === "queen" ? "lost" : "dim", "Lost"], ...(fold && guessed[path] ? [["you", "Your guess"]] : [])] },
             num: fold ? { n: lit, unit: "in 100 did not lose" } : { n: guess[path], unit: "your guess", tone: "you" },
             atoms: i => {
               if (i >= 100) return null
               const b = boards[i]
               if (fold) {
                 const [x, y] = G(rank[i])
-                return { x, y, s: 32, role: b.saved ? "crowd" : "dim", b: 0, bs: 32, fen: b.final, flip: b.flip, delay: rank[i] * 6 }
+                return { x, y, s: 32, role: b.saved ? "crowd" : path === "queen" ? "lost" : "dim", b: 0, bs: 32, fen: b.final, flip: b.flip, delay: rank[i] * 6 }
               }
               const [x, y] = G(i)
               const over = AFTER.get(i) < revealed[path]
@@ -504,8 +604,36 @@ export const Wrong = () => {
             },
           }
         }
-        case "payoff":
-        case "taleb": {
+        case "saved":
+          return {
+            head: { title: "How they came back", chips: [["ivory", "Won their way back"], ["faint", "Saved while still behind"], ["lost", "Lost"]] },
+            num: { n: `${lit} of ${lit}`, unit: "needed a mistake by the other player" },
+            box: [10, 40, VIEW, SV.y + HOWS.length * SV.row],
+            most: 0.95,
+            atoms: i => {
+              if (i >= 100) return null
+              const p = SAVED_PLACE[i]
+              if (p.lost) return { x: p.x, y: p.y, s: 16, role: "lost", delay: 0 }
+              return { x: p.x, y: p.y, s: 24, role: p.back ? "crowd" : "faint", delay: 200 + p.row * 90 }
+            },
+          }
+        case "taleb":
+          if (path === "queen") {
+            // the choice, as in the v2 prototype
+            return {
+              head: { title: "The choice", chips: [["dim", "Resign"], ["ivory", "Did not lose"], ["lost", "Lost anyway"], ...chose] },
+              num: { n: GAME_MIN, unit: `for ${lit} in 100 not losing` },
+              box: [10, 14, VIEW, 522],
+              most: 0.95,
+              atoms: i => {
+                if (i >= 100) return null
+                const p = CHOICE_PLACE[i]
+                return { x: p.x, y: p.y, s: 17, role: p.kind === "lost" ? "lost" : "crowd", delay: p.j * 6 }
+              },
+            }
+          }
+        // falls through (the lone king keeps the price)
+        case "payoff": {
           const up = kind === "taleb" || path === "king"
           return {
             head: { title: "The price, game by game", chips: [["faint", "Played on, lost"], ["ivory", "Did not lose"], ...chose] },
@@ -524,30 +652,24 @@ export const Wrong = () => {
             },
           }
         }
-        case "clock": {
-          const [, share] = paths.queen.clock.find(g => g[0] === clockAt) || paths.queen.clock[3]
-          const n = Math.round(share * 100)
+        case "clock":
           return {
-            head: { title: `When the other player had ${paths.queen.clockLabels[clockAt]} left`, chips: [["ivory", "Did not lose"], ["dim", "Lost"]] },
-            num: { n, unit: "in 100 did not lose" },
-            atoms: i => {
-              if (i >= 100) return null
-              const [x, y] = G(i)
-              return { x, y, s: 32, role: i < n ? "crowd" : "dim", delay: i * 4 }
-            },
-          }
-        }
-        case "levels": {
-          const R = paths.queen.byLevel
-          return {
-            box: [44, 18, 630, LV.y(R.length - (you ? 0 : 1)) + 60],
+            head: { title: "Every 100 games, by the other player’s clock", chips: [["ivory", "Did not lose"], ["lost", "Lost"]] },
+            num: { n: in100(E.clock[0].notLost), unit: "in 100, other player under a minute" },
+            box: [30, 30, 540, 600],
             most: 0.95,
-            head: { title: "By rating, a queen down", chips: [["faint", "Resigned at once"], ["ivory", "Stayed, did not lose"], ["me", "My level"], ...(you ? [["you", "You"]] : [])] },
-            atoms: i => {
-              if (i >= R.length) return null
-              const mine = R[i].band === paths.queen.level
-              return { x: LV.dot(R[i].saved), y: LV.y(i), s: 14, role: mine ? "me" : "crowd", dot: mine ? "me" : undefined, delay: i * 40 }
-            },
+            atoms: () => null,
+          }
+        case "levels": {
+          const R = E.levels
+          const mine = R.find(r => r.band === E.level.band)
+          const rows = R.length + (you && you.cases ? 1 : 0)
+          return {
+            box: [0, 8, VIEW, LV.y(rows) + 14],
+            most: 0.95,
+            head: { title: "By rating, every lost queen", chips: [["dim", "Gave up at once"], ["lost", "Played on, lost"], ["ivory", "Played on, did not lose"], ...(you ? [["you", "You"]] : [])] },
+            num: { n: mins(mine.gameSec / 60), unit: `for ${in100(mine.savedOfOn)} in 100 at my level` },
+            atoms: () => null,
           }
         }
         case "mine":
@@ -590,8 +712,23 @@ export const Wrong = () => {
     const on = k => kind === k
     out.labels = (
       <>
-        <Labels on={(on("payoff") || on("taleb")) && path === "queen"}>
-          <PayoffLabels path="queen" up={on("taleb")} />
+        <Labels on={on("observation")}>
+          <T x={0} y={VIEW + 26} kind="note">
+            Giving up = resigning or leaving the game.
+            <tspan x={0} dy="1.5em">Both count as a loss.</tspan>
+          </T>
+        </Labels>
+        <Labels on={on("payoff") && path === "queen"}>
+          <PayoffLabels path="queen" up={false} />
+        </Labels>
+        <Labels on={on("saved")}>
+          <SavedLabels />
+        </Labels>
+        <Labels on={on("taleb") && path === "queen"}>
+          <ChoiceLabels />
+        </Labels>
+        <Labels on={on("clock")}>
+          <ClockLabels />
         </Labels>
         <Labels on={on("payoff") && path === "king"}>
           <PayoffLabels path="king" up />
@@ -612,7 +749,7 @@ export const Wrong = () => {
       </>
     )
     return out
-  }, [name, decision, queenAt, kingAt, guess, guessed, revealed, settled, clockAt, you])
+  }, [name, decision, queenAt, kingAt, guess, guessed, revealed, settled, you])
 
   return (
     <Pinned
