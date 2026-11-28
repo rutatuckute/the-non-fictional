@@ -14,6 +14,8 @@
 //   hollow  a slate outline: hidden     meFaint pale clay: me in London
 //   other   slate: the typical player   grey    neutral: the estimate, his bubble
 //   band    the shaded middle half (an ivory wash)
+import { ENDINGS } from "./endings"
+
 const HIGHLIGHTS = {
   // Part I: the thread takes the story's clay here (Chess.com and social media unmarked since 28 Nov, owner)
   mine: [["This is mine", "me"]],
@@ -76,14 +78,32 @@ const HIGHLIGHTS = {
   yours: [["yours", "you"]],
 }
 
+// Terms explained where they first come up, long before "How a game can end"
+// explains them all (owner, 28 Nov): a dotted underline, and on hover, focus or
+// tap the same definition the endings use. By step name: [phrase, ending key].
+const TERMS = {
+  "chess-com": [["resigned", "resigned"]],
+}
+const tipOf = key => {
+  const e = ENDINGS.find(x => x.key === key)
+  return e ? `${e.name}: ${e.line}` : ""
+}
+const escape = text => text.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;")
+
 // The body's typography turns ' into ’; a phrase is looked for either way, and
 // only in the text between tags, never inside one.
 const variants = phrase => [...new Set([phrase, phrase.replace(/'/g, "’"), phrase.replace(/’/g, "'")])]
 
 export const highlight = (name, html, className) => {
   const marks = HIGHLIGHTS[name]
-  if (!marks || !html) return html
+  if (!html) return html
   let out = html
+  for (const [phrase, key] of TERMS[name] || []) {
+    const re = new RegExp(`(^|>)([^<]*?)\\b(${phrase})\\b`)
+    out = out.replace(re, (_, open, before, found) =>
+      `${open}${before}<span class="${className("term")}" tabindex="0" data-tip="${escape(tipOf(key))}">${found}</span>`)
+  }
+  if (!marks) return out
   for (const [phrase, role] of marks) {
     for (const text of variants(phrase)) {
       // the first occurrence outside a tag

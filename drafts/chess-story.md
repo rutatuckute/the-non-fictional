@@ -219,9 +219,21 @@ Other people put it right there in their username.
 
 And me? Right next to badatchess. Maybe that should have been my username.
 
+<!--step:say-behave-->
+
+And what about the way they lose?
+
+<!--step:say-endings-->
+
+A game ends in a win, a loss or a draw. But there is more than one way to get there.
+
+<!--step:say-giveup-count-->
+
+Not all lost games end the same way. Here, the filled dots are the ones players chose to give up on.
+
 <!--step:say-giveup-->
 
-Calling yourself bad doesn’t make you worse. It does make you quicker to give up, though.
+Calling yourself bad doesn’t make you that much worse. It does make you quicker to give up, though.
 
 <!--step:say-giveup-us-->
 

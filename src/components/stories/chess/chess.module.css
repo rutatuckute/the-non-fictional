@@ -1819,6 +1819,7 @@
 @media (max-width: 40rem) { .ch-ratings .ch-crowdMarks text.ch-crowdRowName { font-size: 17px; } }
 .ch-ratings .ch-crowdMarks text.ch-crowdGridName { font-size: 17px; }
 @media (max-width: 40rem) { .ch-ratings .ch-crowdMarks text.ch-crowdGridName { font-size: 15px; } }
+.ch-ratings .ch-crowdKey circle { fill: var(--them); }
 
 /* each question's own board beside its name, at the opening: small, a mark, not a picture
    (27 Nov, owner: "way smaller") */
@@ -1894,3 +1895,101 @@
   .ch-story .ch-part3 .ch-pin[data-reading="true"] .ch-scene { right: 32%; }
   .ch-story .ch-part3 .ch-pin[data-reading="true"] .ch-card { width: 30%; }
 }
+
+/* "How a game can end" (endings.js, 28 Nov): six marks in one ivory line style,
+   so colour keeps meaning whose game; a name in the story's serif, one quiet line. */
+.ch-ratings .ch-endings, .ch-ratings .ch-endingRow { transition: opacity 450ms ease; }
+.ch-ratings .ch-endingMark { color: var(--ink); fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.ch-ratings .ch-crowdMarks .ch-endingMark text.ch-endingGlyph { fill: currentColor; stroke: none; paint-order: normal; font: 500 26px / 1 var(--font-mono); }
+.ch-ratings .ch-crowdMarks .ch-endingMark text.ch-endingHalf { font: 400 28px / 1 var(--font-title); }
+.ch-ratings .ch-crowdMarks text.ch-endingHead { fill: var(--ink-2); font: 400 12px / 1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.ch-ratings .ch-crowdMarks text.ch-endingName { fill: var(--ink); }
+.ch-ratings .ch-crowdMarks text.ch-endingLine { fill: var(--ink-2); font: 400 14px / 1 var(--font-sans, ui-sans-serif); }
+@media (max-width: 40rem) { .ch-ratings .ch-crowdMarks text.ch-endingLine { font-size: 13px; } }
+@media (prefers-reduced-motion: reduce) { .ch-ratings .ch-endings, .ch-ratings .ch-endingRow { transition: none !important; } }
+.ch-ratings .ch-endingMark :is(circle, path, rect) { fill: none; stroke: currentColor; }
+.ch-ratings .ch-endingMark .ch-endingKing :is(path, rect) { fill: currentColor; stroke: none; }
+@media (max-width: 22rem) { .ch-ratings .ch-crowdMarks text.ch-endingLine { font-size: 12px; } .ch-ratings .ch-crowdMarks text.ch-endingName { font-size: 16px; } }
+
+/* The strips of lost games (crowd.js, 28 Nov): every way of losing alike first
+   ("ended", ivory), then the resigned lit in whose colour and the rest faint rings. */
+.ch-ratings circle[data-tone="ended"] { fill: var(--ink-2); }
+.ch-ratings .ch-crowdMarks text.ch-lostNumber { fill: var(--ink-2); font: 400 13px / 1 var(--font-mono); }
+.ch-ratings .ch-lostPart { transition: opacity 450ms ease; }
+.ch-ratings .ch-lostStrip[data-lit="true"] .ch-lostPart[data-big="false"] { opacity: 0.45; }
+.ch-ratings .ch-lostStrip .ch-crowdBig { font-size: clamp(22px, 2.4vw, 28px); }
+.ch-ratings .ch-lostStrip .ch-endingMark { color: var(--ink-2); }
+.ch-ratings .ch-lostStrip .ch-lostPart[data-big="true"] .ch-endingMark { color: var(--ink); }
+
+/* "How a game can end" as two tiers (endings.js EndingsMap, 28 Nov): thin section
+   rules ("The result", "How it ends"), the results in large serif with chess's
+   scores, the endings under the result they give. Fades narrow it to the loss;
+   the four ways of losing then travel up to the strips' legend. */
+.ch-ratings .ch-endingRow { transition: opacity 500ms ease, transform 800ms cubic-bezier(0.4, 0, 0.2, 1); }
+.ch-ratings .ch-endingRow .ch-endingLine, .ch-ratings .ch-endingResult, .ch-ratings .ch-endingTiers,
+.ch-ratings .ch-endingHead, .ch-ratings .ch-endingBracket { transition: opacity 500ms ease; }
+.ch-ratings .ch-crowdMarks .ch-endingRule text { fill: var(--ink-3); font: 400 11px / 1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.ch-ratings .ch-endingRule line { stroke: var(--rule-strong); stroke-width: 1; }
+.ch-ratings .ch-crowdMarks text.ch-endingWord { fill: var(--ink); font: 400 44px / 1 var(--font-title); letter-spacing: -0.01em; }
+.ch-ratings .ch-crowdMarks text.ch-endingScore { fill: var(--ink-3); font: 400 13px / 1 var(--font-mono); }
+.ch-ratings .ch-endingBracket { fill: none; stroke: var(--ink-3); stroke-width: 1; }
+@media (max-width: 40rem) { .ch-ratings .ch-crowdMarks text.ch-endingWord { font-size: 32px; } .ch-ratings .ch-crowdMarks text.ch-endingScore { font-size: 12px; } }
+@media (prefers-reduced-motion: reduce) {
+  .ch-ratings .ch-endingRow, .ch-ratings .ch-endingRow .ch-endingLine, .ch-ratings .ch-endingResult, .ch-ratings .ch-endingTiers,
+  .ch-ratings .ch-endingHead, .ch-ratings .ch-endingBracket { transition: none !important; }
+}
+
+/* "What their names say", 28 Nov: the guessing in the words' column (say.js NameQuiz),
+   the chart only shows. One kind asked at a time; its row lit, the rows waiting quiet. */
+.ch-story .ch-nameQuiz { margin-top: 22px; text-align: left; font-family: var(--font-sans, ui-sans-serif); }
+.ch-story .ch-nameQuiz p { margin: 0; }
+.ch-story .ch-nameQuizCount { color: var(--ink-3); font: 400 11px / 1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.ch-story .ch-nameQuizKind { margin-top: 6px !important; color: var(--ink); font: 400 24px / 1.2 var(--font-title); }
+.ch-story .ch-nameQuizExamples { margin-top: 4px !important; color: var(--ink-3); font: 400 12px / 1.4 var(--font-mono); }
+.ch-story .ch-nameQuizButtons { display: flex; gap: 10px; margin-top: 16px; }
+/* (relative, so the enlarged touch area of phones stays around its own button) */
+.ch-story .ch-nameQuiz .ch-nameButton { position: relative; min-height: 40px; padding: 8px 22px; font-size: 15px; }
+.ch-story .ch-nameQuizAnswer { margin-top: 16px; }
+.ch-story .ch-nameQuizVerdict { color: var(--ink); font: 400 18px / 1.3 var(--font-title); }
+.ch-story .ch-nameQuizAnswer[data-right="true"] .ch-nameQuizVerdict { color: var(--form-data); }
+.ch-story .ch-nameQuizData { margin-top: 4px !important; color: var(--ink-2); font: 400 12px / 1.4 var(--font-mono); }
+.ch-story .ch-nameQuizScore { color: var(--form-data); font: 400 18px / 1.3 var(--font-title); }
+.ch-ratings .ch-crowdRow { transition: opacity 400ms ease; }
+.ch-ratings .ch-crowdRow[data-state="waiting"] .ch-crowdRowName { opacity: 0.35; }
+.ch-ratings .ch-crowdRow .ch-crowdRowName { transition: opacity 400ms ease; }
+.ch-ratings .ch-crowdRange { fill: var(--them); opacity: 0.22; }
+.ch-ratings .ch-crowdMarks text.ch-crowdDiff { fill: var(--ink); font: 400 13px / 1 var(--font-mono); transition: opacity 500ms ease 250ms; }
+.ch-ratings .ch-crowdMarks text.ch-crowdDiff .ch-crowdDiffRange { fill: var(--ink-3); }
+
+/* A term explained where it first comes up (highlights.js TERMS, 28 Nov): dotted
+   underline; on hover, focus or tap, the definition "How a game can end" uses. */
+.ch-story span.ch-hl-term { position: relative; text-decoration: underline dotted; text-decoration-color: var(--ink-3); text-underline-offset: 0.18em; cursor: help; outline: none; }
+.ch-story span.ch-hl-term::after { content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 8px); z-index: 5; width: max-content; max-width: 240px;
+  transform: translate(-50%, 4px); padding: 8px 11px; border: 1px solid var(--rule-strong); border-radius: 4px; background: var(--void);
+  color: var(--ink-2); font: 400 12px / 1.45 var(--font-mono); letter-spacing: 0; text-align: left; white-space: normal;
+  opacity: 0; pointer-events: none; transition: opacity 180ms ease, transform 180ms ease; }
+.ch-story span.ch-hl-term:is(:hover, :focus)::after { opacity: 1; transform: translate(-50%, 0); }
+.ch-story span.ch-hl-term:focus-visible { outline: 2px solid var(--form-data); outline-offset: 2px; border-radius: 2px; }
+.ch-story .ch-woodenWords span.ch-hl-term { pointer-events: auto; }
+.ch-ratings .ch-crowdRange { fill: none; stroke: var(--ink); stroke-width: 1.6; opacity: 0.8; }
+.ch-story .ch-nameQuizButtons { justify-content: center; }
+@media (max-width: 60rem) { .ch-story .ch-nameQuiz { margin-top: 12px; } .ch-story .ch-nameQuizKind { font-size: 20px; } .ch-story .ch-nameQuizButtons { margin-top: 10px; } }
+
+/* The squares of lost games, as the owner's reference (28 Nov): beside each square
+   the number resigned, large, in whose colour, and the other ways of losing with
+   their marks (endings.js), small. */
+.ch-ratings .ch-lostSquare { --who: var(--them); }
+.ch-ratings .ch-lostSquare[data-who="me"] { --who: var(--thread); }
+.ch-ratings .ch-lostSquare[data-who="you"] { --who: var(--form-data); }
+.ch-ratings .ch-crowdMarks text.ch-lostBig { fill: var(--who); font: 400 44px / 1 var(--font-sans, ui-sans-serif); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.ch-ratings .ch-crowdMarks text.ch-lostBigUnit { fill: var(--who); font: 400 12px / 1 var(--font-sans, ui-sans-serif); }
+.ch-ratings .ch-crowdMarks text.ch-lostCount { fill: var(--ink-2); font: 400 17px / 1 var(--font-sans, ui-sans-serif); font-variant-numeric: tabular-nums; }
+.ch-ratings .ch-crowdMarks text.ch-lostCount .ch-lostCountName { fill: var(--ink-3); font-size: 11.5px; }
+.ch-ratings .ch-lostSquare .ch-endingMark { color: var(--ink-3); }
+.ch-ratings .ch-crowdMarks text.ch-lostNote { fill: var(--ink-3); font: 400 11px / 1 var(--font-sans, ui-sans-serif); transition: opacity 500ms ease; }
+@media (max-width: 40rem) {
+  .ch-ratings .ch-crowdMarks text.ch-lostBig { font-size: 28px; }
+  .ch-ratings .ch-crowdMarks text.ch-lostCount { font-size: 13px; }
+}
+.ch-story .ch-ratingChip[data-tone="resignedKey"], .ch-story .ch-ratingChip[data-tone="ring"] { display: inline-flex; align-items: center; gap: 6px; padding-left: 0; background: none; box-shadow: none; color: var(--ink-2); }
+.ch-story .ch-ratingChip[data-tone="resignedKey"]::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--them); }

@@ -8,8 +8,8 @@ import pace from "./pace.json"
 import paceLevels from "./pace-levels.json"
 import { Message } from "./phone-scenes"
 import { useReader } from "./reader"
-import { crowdLayout, crowdStage, dotAt, CrowdMarks, GROUPS, TYPICAL, MY_RAPID, MY_RESIGN, resignedOf } from "./crowd"
-import { NameButtons, NameScore } from "./say"
+import { ENDINGS } from "./endings"
+import { activeKind, diffWords, crowdLayout, crowdStage, dotAt, CrowdMarks, GROUPS, TYPICAL, MY_RAPID, MY_RESIGN, LOSS_ORDER, LOST_STAGES, endsOf } from "./crowd"
 import { useYourSay } from "./you-say"
 
 const T = data.timeline, S = data.scatter
@@ -154,7 +154,8 @@ const Chips = ({ chips, extra }) => (
   </div>
 )
 
-export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () => {} }) => {
+// (the guesses are made beside the chart, in the words' column: say.js; the chart only shows)
+export const RatingStory = ({ step, revealed = {}, guesses = {} }) => {
   const box = React.useRef(null), canvas = React.useRef(null), steps = React.useContext(PinSteps)
   const [canvasTop, setCanvasTop] = React.useState(64)
   const [size, setSize] = React.useState({ width: 680, height: 460 })
@@ -253,9 +254,10 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
   const withYou = Boolean(yourResign)
   const layout = React.useMemo(() => crowdLayout({ total: pace.peers.players, left, right, top: top + 22, bottom: crowdBottom, width: w, you: withYou }), [w, left, right, crowdBottom, withYou])
   const revealKey = GROUPS.map(g => (revealed[g.key] ? 1 : 0)).join("")
-  const targets = React.useMemo(() => stage ? Array.from({ length: pace.peers.players }, (_, i) => dotAt(layout, i, { stage, revealed, you: yourResign })) : null,
+  const active = activeKind(guesses)
+  const targets = React.useMemo(() => stage ? Array.from({ length: pace.peers.players }, (_, i) => dotAt(layout, i, { stage, revealed, you: yourResign, active })) : null,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [layout, stage, revealKey, yourResign])
+    [layout, stage, revealKey, yourResign, active])
   const revealDate = mix(time(T.bulletFirst), END, smooth((at - 2.35) / 0.65))
   const rapid = T.rapid.filter(q => time(q[0]) <= revealDate).at(-1)
   const bullet = T.bullet.filter(q => time(q[0]) <= revealDate).at(-1)
@@ -269,23 +271,25 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
   if (stage === "crowd") { meX = (left + right) / 2; meY = (top + bottom) / 2 + 10 }
   else if (stage) { meX = layout.rx(MY_RAPID); meY = top + 20; meOpacity = 0 }
 
-  const mode = stage === "giveup" || stage === "us" ? "giveup" : stage && stage !== "crowd" ? "names" : stage ? "crowd" : step >= 7 ? "pace" : step >= 4 ? "scatter" : "timeline"
+  const mode = LOST_STAGES.includes(stage) ? "giveup" : stage === "endings" || stage === "focus" ? "endings" : stage && stage !== "crowd" ? "names" : stage ? "crowd" : step >= 7 ? "pace" : step >= 4 ? "scatter" : "timeline"
   // one title per chart, kept while the chart changes (the crowd has none)
-  const title = stage === "us" ? "How our games end" : mode === "giveup" ? "How their games end" : mode === "names" ? "What their names say" : mode === "crowd" ? "\u00a0"
+  const title = stage === "us" ? "How our lost games end" : mode === "giveup" ? "How their lost games end" : mode === "endings" ? "How a game can end" : mode === "names" ? "What their names say" : mode === "crowd" ? "\u00a0"
     : mode === "pace" ? "How fast do I actually play" : mode === "scatter" ? "Normal chess vs fast chess" : "My chess ratings"
   // a small line under the title; its place is kept under every title so no chart moves
-  const subtitle = mode === "scatter" ? "Comparing ratings across the two time controls" : "\u00a0"
+  const subtitle = mode === "scatter" ? "Comparing ratings across the two time controls" : mode === "giveup" ? "Out of every 100 lost games" : "\u00a0"
   const youChip = ["you", "You"]
-  // the give-up squares: colour says whose, the mark says how it ended (a dot resigned, a ring did not)
-  const chips = mode === "giveup" ? [["filled", "Resigned"], ["ring", "Ended otherwise"]]
-    : mode === "names" ? []
+  // the squares of lost games: a filled dot resigned, a ring ended otherwise (owner's reference, 28 Nov)
+  const chips = mode === "giveup" ? [["resignedKey", "Resigned"], ["ring", "Ended otherwise"]]
+    : mode === "names" || mode === "endings" ? []
       : mode === "crowd" ? []
         : mode === "pace" ? [["me", "Me"], ["crowd", atYours ? "Players at your level" : "Players at my level"], ...(yourPace !== null ? [youChip] : [])]
           : step >= 5 ? [["me", "Me"], ["crowd", "Other players"], ...(you ? [youChip] : [])]
             : [["rapid", "Normal chess", true, "Rapid · 10-minute games"], ["bullet", "Fast chess", at >= 2.35, "Bullet · 2-minute games"]]
-  const resignWords = key => `${resignedOf(key, yourResign)} in 100`
-  const label = mode === "giveup" ? `Of 100 lost rapid games, players whose names say they are bad resigned ${resignWords("bad")}; everyone else ${resignWords("everyone")}.${stage === "us" ? ` Me: ${MY_RESIGN.resigned} of my ${MY_RESIGN.losses} losses.${yourResign ? ` You: ${yourResign.resigned} of your ${yourResign.losses}.` : ""}` : ""}`
-    : mode === "names" ? `Rapid ratings by what usernames say, against a typical opponent at ${TYPICAL}. ${GROUPS.filter(g => revealed[g.key]).map(g => `${g.label}: median ${g.median}`).join(". ")}`
+  const END_WORDS = { resigned: "resigned", checkmated: "checkmated", abandoned: "abandoned", timeout: "out of time" }
+  const endsWords = key => { const n = endsOf(key, yourResign); return LOSS_ORDER.map(end => `${n[end]} ${END_WORDS[end]}`).join(", ") }
+  const label = mode === "giveup" ? `How 100 lost rapid games ended. Players whose names say they are bad: ${endsWords("bad")}. Everyone else: ${endsWords("everyone")}.${stage === "us" ? ` Me, ${MY_RESIGN.losses} losses scaled to 100: ${endsWords("me")}.${yourResign ? ` You, ${yourResign.losses} losses scaled to 100: ${endsWords("you")}.` : ""}` : ""}`
+    : mode === "endings" ? `How a game of chess can end. The result: a win and a loss (1–0 or 0–1), or a draw (½–½). How it ends, when one player loses: ${ENDINGS.filter(e => e.group === "lose").map(e => `${e.name}: ${e.line}`).join(" ")} Nobody wins: ${ENDINGS.filter(e => e.group === "draw").map(e => `${e.name}: ${e.line}`).join(" ")}`
+    : mode === "names" ? `Rapid ratings by what usernames say, against a typical opponent at ${TYPICAL}. ${GROUPS.filter(g => revealed[g.key]).map(g => `${g.label}: ${diffWords(g)}`).join(". ")}`
       : mode === "crowd" ? "The pace chart's axis goes; its dots become a crowd of other players, some wearing usernames."
         : step >= 7 ? `My pace: 5 seconds per move. Typical peer: 7.7 seconds. Faster than 93% of a separate sample of peers.${yourPace !== null ? ` You, in green: ${yourPace} seconds.` : ""}${atYours ? ` Shown: ${level.seconds.length} players rated ${level.from}–${level.to}, typical ${level.median} seconds${yourShare !== null ? `; you are faster than ${yourShare} in 100 of them` : ""}.` : ""}`
       : step >= 4 ? `Normal chess (10-minute) rating is horizontal; fast chess (2-minute) rating is vertical. ${step >= 5 ? "87% of sampled players are rated lower in fast chess." : ""} ${step === 6 ? "My gap is about typical at my level." : ""}`
@@ -306,7 +310,7 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
       <figcaption className={c("ch-ratingTitle")} style={chartStyle} aria-hidden={step < 2}>{title}<span className={c("ch-ratingSub")}>{subtitle}</span></figcaption>
       {/* the legend, and at its right the view switch (where a chart has one), close to the chart */}
       <div className={c("ch-ratingHeadRow")} style={chartStyle} inert={step < 2} aria-hidden={step < 2}>
-        <Chips chips={chips} extra={mode === "names" ? <NameScore guesses={guesses} /> : null} />
+        <Chips chips={chips} />
         <div className={c("ch-ratingExplore")} inert={!(step === 6 || (paceStep && level))} aria-hidden={!(step === 6 || (paceStep && level))} data-visible={step === 6 || Boolean(paceStep && level)}>
           <div role="group" aria-label={paceStep ? "Pace chart view" : "Rating chart view"} className={c("ch-ratingViews")}>
             <button type="button" aria-pressed={view !== "all" && view !== "yours"} onClick={e => chooseView("mine", e)}>My level</button>
@@ -469,7 +473,7 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
           })}
         </g>
         </g>
-        <CrowdMarks layout={layout} stage={stage} revealed={revealed} guesses={guesses} you={yourResign}
+        <CrowdMarks layout={layout} stage={stage} revealed={revealed} active={active} you={yourResign}
           left={left} right={right} top={top + 22} bottom={crowdBottom} />
         {/* One author marker, retained from the timeline through the pace plot, into the crowd, and next to the names. */}
         <g className={c("ch-ratingMe")} data-author-marker="true" data-settled={step >= 8 ? "true" : undefined}
@@ -493,7 +497,6 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
           )
         })() : null}
       </svg>
-      <NameButtons bands={layout.bands} guesses={guesses} onGuess={onGuess} open={stage === "rows"} top={canvasTop} narrow={narrow} />
     </figure>
   )
 }

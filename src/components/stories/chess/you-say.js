@@ -12,8 +12,9 @@ import { useReader } from "./reader"
 //   without increment, at least 20 half-moves; per game (600 minus their final
 //   clock) divided by their own moves; then the median across games.
 // - resigning: of their rapid games not won or drawn, the share they ended by
-//   pressing resign (names_give_up.py's rule).
-// Only the two numbers and their counts are kept.
+//   pressing resign (names_give_up.py's rule), and (28 Nov) how all of them
+//   ended: resigned, checkmated, out of time, abandoned.
+// Only the numbers and their counts are kept.
 
 export const MIN_PACE_GAMES = 20
 export const MIN_LOSSES = 20
@@ -29,6 +30,7 @@ export const measure = (games, username) => {
   const name = username.toLowerCase()
   const paces = []
   let losses = 0, resigned = 0
+  const ends = { resigned: 0, checkmated: 0, timeout: 0, abandoned: 0 }
   for (const game of games) {
     const white = String(game.white?.username || "").toLowerCase() === name
     const black = String(game.black?.username || "").toLowerCase() === name
@@ -38,6 +40,7 @@ export const measure = (games, username) => {
     if (result && result !== "win" && !DRAWS.has(result)) {
       losses += 1
       if (result === "resigned") resigned += 1
+      if (result in ends) ends[result] += 1
     }
     if (game.time_control !== "600" || game.rules !== "chess") continue
     const clocks = clocksOf(game.pgn)
@@ -49,7 +52,7 @@ export const measure = (games, username) => {
   }
   return {
     pace: paces.length >= MIN_PACE_GAMES ? { seconds: Math.round(median(paces) * 10) / 10, games: paces.length } : null,
-    resign: losses >= MIN_LOSSES ? { share: resigned / losses, losses, resigned } : null,
+    resign: losses >= MIN_LOSSES ? { share: resigned / losses, losses, resigned, ends } : null,
   }
 }
 

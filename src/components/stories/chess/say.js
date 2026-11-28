@@ -3,38 +3,61 @@
 import * as React from "react"
 
 import { c } from "./parts"
-import { GROUPS, truth } from "./crowd"
+import { GROUPS, activeKind, diffWords, truth } from "./crowd"
 
-// The usernames game, on the chart itself (ratings.js places this over its
-// SVG): each kind waits as a pile on the typical opponent's line, with
-// "Lower" at its left and "Higher" at its right. A guess opens that row. The
-// story never waits for an answer; rows not guessed open, without a verdict,
-// once the reader scrolls on.
-export const NameButtons = ({ bands, guesses, onGuess, open, top, narrow }) => (
-  <div className={c("ch-nameButtons")} style={{ top }} data-open={open ? "true" : "false"} inert={!open} aria-hidden={!open}>
-    {bands.map(b => {
-      const g = b.group
-      const value = guesses[g.key]
-      const y = (b.bandTop + b.bandBottom) / 2
-      return (
-        <div key={g.key} role="group" aria-label={`${g.label}: lower or higher than a typical opponent?`} className={c("ch-nameGuess")}
-          data-guessed={value ? "true" : "false"}>
-          {[["lower", "← Lower", b.pileLeft - 8, "end"], ["higher", "Higher →", b.pileRight + 8, "start"]].map(([key, text, x, side]) => (
-            <button key={key} type="button" className={c("ch-nameButton")} data-side={side} data-right={value === key ? String(key === truth(g)) : undefined}
-              aria-pressed={value === key} disabled={Boolean(value)} onClick={() => onGuess(g.key, key)}
-              style={{ top: y, left: x, transform: `translate(${side === "end" ? "-100%" : "0"}, -50%)` }}>
-              {narrow ? text.replace(/ ?[←→] ?/, "") : text}
-            </button>
+// The usernames game, in the words' column beside the chart (owner, 28 Nov): the
+// chart is where the reader looks, the words are where they think and choose.
+// One pair of buttons asks about one kind of username at a time; an answer opens
+// that kind's row on the chart (its rating difference to a typical opponent), says here whether the reader called it, and moves on to the next.
+// Words by place: "better or worse" is the human question (the buttons, here);
+// "higher or lower" the statistical answer (the chart's axis and its numbers).
+// The story never waits for an answer: rows not answered open once the reader
+// scrolls on (scenes.js).
+const WORD = { lower: "Worse", higher: "Better" }
+const HOLD = 1700 // ms the answer stays before the next kind is asked
+
+export const NameQuiz = ({ guesses, onGuess }) => {
+  const active = activeKind(guesses)
+  // the kind just answered, held a moment so its answer can be read
+  const [just, setJust] = React.useState(null)
+  React.useEffect(() => {
+    if (!just) return
+    const timer = setTimeout(() => setJust(null), HOLD)
+    return () => clearTimeout(timer)
+  }, [just])
+  const answer = (key, value) => { onGuess(key, value); setJust(key) }
+
+  const answered = GROUPS.filter(g => guesses[g.key])
+  const correct = answered.filter(g => guesses[g.key] === truth(g)).length
+  const shown = just ? GROUPS.find(g => g.key === just) : GROUPS.find(g => g.key === active)
+  const index = shown ? GROUPS.indexOf(shown) : GROUPS.length
+
+  if (!shown) {
+    return (
+      <div className={c("ch-nameQuiz")} data-done="true">
+        <p className={c("ch-nameQuizScore")} role="status">You called {correct} of {GROUPS.length}.</p>
+      </div>
+    )
+  }
+  const value = guesses[shown.key]
+  const right = value ? value === truth(shown) : null
+  return (
+    <div className={c("ch-nameQuiz")} role="group" aria-label={`${shown.label}: better or worse than a typical opponent?`}>
+      <p className={c("ch-nameQuizCount")}>{index + 1} of {GROUPS.length}</p>
+      <p className={c("ch-nameQuizKind")}>{shown.label}</p>
+      <p className={c("ch-nameQuizExamples")}>{shown.examples.slice(0, 3).join(" · ")}</p>
+      {value ? (
+        <div className={c("ch-nameQuizAnswer")} role="status" data-right={String(right)}>
+          <p className={c("ch-nameQuizVerdict")}>{right ? `✓ ${WORD[truth(shown)]}, as you said.` : `✗ Actually ${WORD[truth(shown)].toLowerCase()}.`}</p>
+          <p className={c("ch-nameQuizData")}>{diffWords(shown)}</p>
+        </div>
+      ) : (
+        <div className={c("ch-nameQuizButtons")}>
+          {["lower", "higher"].map(key => (
+            <button key={key} type="button" className={c("ch-nameButton")} onClick={() => answer(shown.key, key)}>{WORD[key]}</button>
           ))}
         </div>
-      )
-    })}
-  </div>
-)
-
-export const NameScore = ({ guesses }) => {
-  const answered = GROUPS.filter(g => guesses[g.key])
-  if (!answered.length) return null
-  const correct = answered.filter(g => guesses[g.key] === truth(g)).length
-  return <p className={c("ch-nameScore")} role="status">You called {correct} of {answered.length}</p>
+      )}
+    </div>
+  )
 }
