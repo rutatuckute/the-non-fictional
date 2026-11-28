@@ -282,14 +282,14 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
       : mode === "crowd" ? []
         : mode === "pace" ? [["me", "Me"], ["crowd", atYours ? "Players at your level" : "Players at my level"], ...(yourPace !== null ? [youChip] : [])]
           : step >= 5 ? [["me", "Me"], ["crowd", "Other players"], ...(you ? [youChip] : [])]
-            : [["rapid", "Normal chess", true, "Rapid · 10-minute games"], ["bullet", "Fast chess", at >= 2.35, "Bullet · 1-minute games"]]
+            : [["rapid", "Normal chess", true, "Rapid · 10-minute games"], ["bullet", "Fast chess", at >= 2.35, "Bullet · 2-minute games"]]
   const resignWords = key => `${resignedOf(key, yourResign)} in 100`
   const label = mode === "giveup" ? `Of 100 lost rapid games, players whose names say they are bad resigned ${resignWords("bad")}; everyone else ${resignWords("everyone")}.${stage === "us" ? ` Me: ${MY_RESIGN.resigned} of my ${MY_RESIGN.losses} losses.${yourResign ? ` You: ${yourResign.resigned} of your ${yourResign.losses}.` : ""}` : ""}`
     : mode === "names" ? `Rapid ratings by what usernames say, against a typical opponent at ${TYPICAL}. ${GROUPS.filter(g => revealed[g.key]).map(g => `${g.label}: median ${g.median}`).join(". ")}`
       : mode === "crowd" ? "The pace chart's axis goes; its dots become a crowd of other players, some wearing usernames."
         : step >= 7 ? `My pace: 5 seconds per move. Typical peer: 7.7 seconds. Faster than 93% of a separate sample of peers.${yourPace !== null ? ` You, in green: ${yourPace} seconds.` : ""}${atYours ? ` Shown: ${level.seconds.length} players rated ${level.from}–${level.to}, typical ${level.median} seconds${yourShare !== null ? `; you are faster than ${yourShare} in 100 of them` : ""}.` : ""}`
-      : step >= 4 ? `Normal chess (10-minute) rating is horizontal; fast chess (1-minute) rating is vertical. ${step >= 5 ? "87% of sampled players are rated lower in fast chess." : ""} ${step === 6 ? "My gap is about typical at my level." : ""}`
-        : "My rating through 2026, last rating each day: normal chess (rapid, 10-minute games), then fast chess (bullet, 1-minute games) from July."
+      : step >= 4 ? `Normal chess (10-minute) rating is horizontal; fast chess (2-minute) rating is vertical. ${step >= 5 ? "87% of sampled players are rated lower in fast chess." : ""} ${step === 6 ? "My gap is about typical at my level." : ""}`
+        : "My rating through 2026, last rating each day: normal chess (rapid, 10-minute games), then fast chess (bullet, 2-minute games) from July."
   const fullLabel = you && (step === 5 || step === 6) ? `${label} You, in green: rapid ${you.rapid}, bullet ${you.bullet}, ${gapWords(you)}.` : label
   const chartStyle = { opacity: entry }
   // A layer at no opacity is still painted, and on a phone its hundreds of dots

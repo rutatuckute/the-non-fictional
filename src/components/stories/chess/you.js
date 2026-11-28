@@ -206,7 +206,7 @@ export const YouOnChessCom = ({ where }) => {
   return (
     <section className={c("ch-you")} aria-labelledby={`${id}-title`} data-found={found ? "true" : "false"} data-where={where}>
       <h3 id={`${id}-title`} className={c("ch-youTitle")}>What about you?</h3>
-      <p className={c("ch-youSub")}>{found ? "You’re in the story." : "Play on Chess.com? Add your username and see where you fit."}</p>
+      <p className={c("ch-youSub")}>{found ? "You’re in the story." : "Play on Chess.com? Add your username and see where it takes you."}</p>
       <form className={c("ch-youForm")} onSubmit={submit} noValidate>
         <label id={`${id}-label`} htmlFor={`${id}-name`} className={c("ch-youLabel")}>
           Your Chess.com username

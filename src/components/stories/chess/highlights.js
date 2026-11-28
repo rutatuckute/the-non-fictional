@@ -21,6 +21,7 @@ const HIGHLIGHTS = {
   // Part II: the London System's squares turn clay on the club board
   "people-intro": [["randomly matched stranger", "crowd"]],
   club: [["the London System", "me"]],
+  "professor-quote": [["your nature", "me"]],
   "professor-maybe": [["London System", "me"]],
 
   "say-claim": [["Soooo bad", "me"]],
@@ -69,8 +70,8 @@ const HIGHLIGHTS = {
   "hub-when-things-go-wrong": [["I play on.", "me"]],
   "hub-what-we-choose": [["Recognisable, even in disguise.", "me"]],
 
-  // Part IV: his message (the grey bubble), and the reader's own thread
-  encounter: [["Hey, do you play chess?", "grey"]],
+  // Part IV: her message, and the reader's own thread
+  encounter: [["my message", "me"]],
   yours: [["yours", "you"]],
 }
 

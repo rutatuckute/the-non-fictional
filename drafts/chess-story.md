@@ -126,7 +126,7 @@ Which random moment of their lives do they find themselves in?
 
 <!--step:club-->
 
-I went to a chess club in London once. I played the safe opening I had learnt for White: the London System.
+I went to a chess club in London once. I played the safest opening I knew: the London System.
 
 <!--step:professor-->
 
@@ -487,15 +487,15 @@ But I can play the game with my London games. From one, the computer can't find 
 
 <!--step:encounter-->
 
-Remember my message about blitz? This is the one it answered.
+Remember my message about blitz?
 
-Hey, do you play chess? Another unexpected appearance of chess in my life, and I had no idea where it would lead.
+That's another add-on to the chess thread. Out of randomness and optionalities.
 
 <!--step:continuing-->
 
-The game continues. I still play, and the person who sent that message is still in my life, playing a big part in it. If anything, he is the one who kept pushing me to work on this website, so this story coming to life has a lot to do with him.
+Still playing. This story coming to life has a lot to do with the person I answered to.
 
-We still play together, asking questions, getting things both wrong and right.
+Still asking questions. And getting things both wrong and right.
 
 <!--step:last-question-->
 
