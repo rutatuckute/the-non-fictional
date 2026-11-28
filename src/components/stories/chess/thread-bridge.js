@@ -30,6 +30,11 @@ export const ThreadBridge = React.forwardRef(function ThreadBridge({ narrow }, r
       board.current.style.opacity = String(reveal)
       node.style.opacity = String(still ? 1 - reveal : 1 - within(scrolled, 1.08, 1.35))
       node.dataset.weave = progress.toFixed(3)
+      // Long before the many come (the wooden set, the chart, the strangers),
+      // there is nothing to draw: the canvas is left empty and the phone's two
+      // paths as they are, once, without reading the page in every frame.
+      const idle = !share && !joined && !progress
+      if (idle && cached.current?.frame === "idle") return
 
       const key = `${width}x${height}`
       if (cached.current?.key !== key) {
@@ -103,7 +108,7 @@ export const ThreadBridge = React.forwardRef(function ThreadBridge({ narrow }, r
         path.style.strokeDasharray = "none"
         path.style.strokeDashoffset = "0"
       })
-      const frame = `${still ? "still" : progress.toFixed(4)}:${narrow}:${count}`
+      const frame = idle ? "idle" : `${still ? "still" : progress.toFixed(4)}:${narrow}:${count}`
       if (state.frame === frame) return
       state.frame = frame
       pen.clearRect(0, 0, width, height)

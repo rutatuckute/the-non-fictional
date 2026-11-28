@@ -101,7 +101,9 @@ const BigBoard = ({ fen, flip, at, cell, caption }) => {
           <image key={`${r}${f}${ch}`} href={PIECE(ch)} x={(flip ? 7 - f : f) * q} y={(flip ? 7 - r : r) * q} width={q} height={q} />
         ))}
       </g>
-      <text x={BOARD.x} y={BOARD.y + BOARD.size + 30} className={c("ch-stageCaption")} data-on={at === "full" && caption ? "true" : "false"}>
+      {/* (under the board by its own size: the caption keeps its size on the screen, so
+          a board drawn small on a phone must not run into it) */}
+      <text x={BOARD.x} y={BOARD.y + BOARD.size} dy="1.35em" className={c("ch-stageCaption")} data-on={at === "full" && caption ? "true" : "false"}>
         {caption}
       </text>
     </>

@@ -190,7 +190,10 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
     const node = nodes[current]?.firstElementChild
     const progress = node ? clamp((stepLine(node) - node.getBoundingClientRect().top) / (window.innerHeight * 0.42)) : 1
     return current + progress
-  }, setAt, { still, follow: 100, watch: box })
+  // (nothing on the chart changes past 8, when the pace chart is all there: held
+  // there, the crowd, the names and the lost games are not drawn again in every
+  // frame of scrolling, which on a phone made the page stutter)
+  }, value => setAt(Math.min(8, value)), { still, follow: 100, watch: box })
   const focus = useCamera(at < 6 || view === null ? null : view === "all" ? 0 : 1,
     still || keyboard, at < 6 ? 0 : smooth(at - 6))
   // "Your level" (with a Chess.com username): the same zoom, centred on the reader
@@ -279,6 +282,9 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
         : "My rating through 2026, last rating each day: 10-minute games, then 1-minute games from July."
   const fullLabel = you && (step === 5 || step === 6) ? `${label} You, in green: rapid ${you.rapid}, bullet ${you.bullet}, ${gapWords(you)}.` : label
   const chartStyle = { opacity: entry }
+  // A layer at no opacity is still painted, and on a phone its hundreds of dots
+  // were drawn again in every frame of scrolling: hidden, it costs nothing.
+  const gone = o => (o <= 0.001 ? "hidden" : undefined)
 
 
   return (
@@ -306,7 +312,7 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
           <clipPath id={`${id}-plot`}><rect x={left} y={top - 10} width={right - left} height={bottom - top + 10} /></clipPath>
           <clipPath id={`${id}-reveal`}><rect x={left} y={top - 10} width={Math.max(0, Math.min(right, tx(revealDate)) - left)} height={bottom - top + 10} /></clipPath>
         </defs>
-        <g opacity={timelineOpacity} aria-hidden="true" data-layer="timeline">
+        <g opacity={timelineOpacity} visibility={gone(timelineOpacity)} aria-hidden="true" data-layer="timeline">
           {/* no grid and no rating numbers: the two lines and the gap between them are the point */}
           <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={bottom} y2={bottom} />
           <g clipPath={`url(#${id}-plot)`}>
@@ -331,7 +337,7 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
             <path className={c("ch-ratingGap")} opacity={smooth(at - 2)} d={`M${right - 18} ${ty(T.rapid.at(-1)[1])} h8 V${ty(T.bullet.at(-1)[1])} h-8`} />
           </g>
         </g>
-        <g opacity={scatterOpacity} aria-hidden="true" data-layer="scatter">
+        <g opacity={scatterOpacity} visibility={gone(scatterOpacity)} aria-hidden="true" data-layer="scatter">
           {/* the grid and its numbers carry "Two ratings. One player."; once the other players come
               in they go (as on the ratings chart), leaving the diagonal and the axis names */}
           <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={bottom} y2={bottom} />
@@ -351,7 +357,7 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
           <g clipPath={`url(#${id}-plot)`}>
             <g transform={`matrix(${(right - left) / (xMax - xMin)},0,0,${(bottom - top) / (yMax - yMin)},${left - xMin * (right - left) / (xMax - xMin)},${bottom + yMin * (bottom - top) / (yMax - yMin)})`}>
               <line x1={0} y1={0} x2={3000} y2={-3000} className={c("ch-ratingRef")} vectorEffect="non-scaling-stroke" />
-              <g opacity={crowdOpacity * others} data-highlight={step === 5 ? "lower" : step >= 6 ? (view === "yours" ? "yours" : "near") : "none"}><RatingCloud dot={`${id}-player`} yours={you?.rapid} /></g>
+              <g opacity={crowdOpacity * others} visibility={gone(crowdOpacity * others)} data-highlight={step === 5 ? "lower" : step >= 6 ? (view === "yours" ? "yours" : "near") : "none"}><RatingCloud dot={`${id}-player`} yours={you?.rapid} /></g>
               <path className={c("ch-ratingTypical")} opacity={focus * others} vectorEffect="non-scaling-stroke" pathLength={1}
                 strokeDasharray="1 1" strokeDashoffset={1 - focus} d={path(S.curve.map(q => [q.rapid, -q.bullet]))} />
             </g>
@@ -389,16 +395,16 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
           })() : null}
         </g>
         {/* Both period summaries physically become the two coordinate guides. */}
-        <g opacity={guideOpacity} aria-hidden="true" data-layer="guides">
+        <g opacity={guideOpacity} visibility={gone(guideOpacity)} aria-hidden="true" data-layer="guides">
           <line className={c("ch-ratingRapid")} x1={mix(left, sx(S.me[0]), morph)} x2={mix(right, sx(S.me[0]), morph)}
             y1={mix(ty(S.me[0]), bottom, morph)} y2={mix(ty(S.me[0]), top, morph)} />
           <line className={c("ch-ratingBullet")} x1={left} x2={right} y1={mix(ty(S.me[1]), sy(S.me[1]), morph)} y2={mix(ty(S.me[1]), sy(S.me[1]), morph)} />
           <text className={c("ch-ratingPale")} x={mix(left + 8, sx(S.me[0]) + 8, morph)} y={mix(ty(S.me[0]) - 12, bottom - 12, morph)}>10-minute</text>
           <text className={c("ch-ratingClay")} x={left + 8} y={mix(ty(S.me[1]), sy(S.me[1]), morph) - 12}>1-minute</text>
         </g>
-        <g opacity={paceOpacity} aria-hidden="true" data-layer="pace-dots" data-highlight={step === 8}>
-          <g className={c("ch-paceSwap")} style={{ opacity: atYours ? 0 : 1 }}><PaceCloud swarm={swarm} targets={targets} /></g>
-          {yourSwarm ? <g className={c("ch-paceSwap")} style={{ opacity: atYours ? 1 : 0 }} data-layer="pace-yours"><YourPaceCloud swarm={yourSwarm} mine={pace.me.seconds} /></g> : null}
+        <g opacity={paceOpacity} visibility={gone(paceOpacity)} aria-hidden="true" data-layer="pace-dots" data-highlight={step === 8}>
+          <g className={c("ch-paceSwap")} data-off={atYours ? "true" : undefined}><PaceCloud swarm={swarm} targets={targets} /></g>
+          {yourSwarm ? <g className={c("ch-paceSwap")} data-off={atYours ? undefined : "true"} data-layer="pace-yours"><YourPaceCloud swarm={yourSwarm} mine={pace.me.seconds} /></g> : null}
         </g>
         <g aria-hidden="true" data-layer="pace" className={c("ch-crowdFade")} data-settled={step >= 8 ? "true" : undefined} style={{ opacity: stage ? 0 : paceOpacity }}>
           <line className={c("ch-ratingGrid")} x1={left} x2={right} y1={bottom} y2={bottom} />
@@ -432,9 +438,9 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
           </g>
         })() : null}
         {/* These are the same source players in both charts, never an arbitrary pairing. */}
-        <g className={c("ch-paceSwap")} style={{ opacity: atYours ? 0 : 1 }}>
+        <g className={c("ch-paceSwap")} data-off={atYours ? "true" : undefined}>
         <g clipPath={`url(#${id}-plot)`} aria-hidden="true" data-layer="linked-peers"
-          opacity={smooth((morph - 0.45) / 0.55) * crowdOpacity}>
+          opacity={smooth((morph - 0.45) / 0.55) * crowdOpacity} visibility={gone(smooth((morph - 0.45) / 0.55) * crowdOpacity)}>
           {swarm.points.filter(q => q.scatterIndex !== null).map(q => {
             const [rapid, bullet] = S.points[q.scatterIndex]
             const alpha = step >= 8 ? (q.seconds > pace.me.seconds ? 1 : 0.3)

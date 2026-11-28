@@ -1346,6 +1346,9 @@
 }
 @media (max-width: 60rem) {
   .ch-investigationHeader { --icon: 40px; --icons-top: 10px; left: var(--page-margin); gap: 10px; }
+  /* on a phone the boards' ground is there whenever they are, so nothing (an
+     opening's first line, the last chart before the recap) runs under them */
+  .ch-investigationHeader[data-on="true"]::before { opacity: 1; }
   /* no hover on a phone: the boards stay quiet and the bar above names the part */
   .ch-investigationName { display: none; }
 }
@@ -1384,7 +1387,7 @@
 .ch-hubOne { display: grid; justify-items: center; align-content: start; gap: 16px; text-align: center; }
 .ch-hubWords { display: grid; justify-items: center; gap: 14px; }
 /* the words come with the board, and go with it */
-.ch-hubWords { opacity: var(--here, 0); transform: translateY(calc((1 - var(--here, 0)) * 10px)); }
+.ch-hubWords { opacity: var(--words, var(--here, 0)); transform: translateY(calc((1 - var(--words, var(--here, 0))) * 10px)); }
 .ch-hubBoard { display: block; width: var(--hub-board); }
 .ch-hubBoard svg { display: block; width: 100%; height: auto; opacity: 0; }
 .ch-hubOne[data-here="true"] .ch-hubBoard svg { opacity: 1; }
@@ -1590,6 +1593,41 @@
 @media (max-width: 60rem) and (prefers-reduced-motion: reduce) {
   .ch-story .ch-pin[data-reading="true"] .ch-step .ch-card, .ch-story .ch-woodenWords > div { transition: none; }
 }
+/* A phone, the club and Part III (28 Nov): the words no longer cover the picture
+   they talk about. Each card comes up from the foot of the screen and stays
+   there, its foot 10px above the screen's (sticky; --card-h is its own height,
+   parts.js), while its step is read; the next one then pushes it up and out, and
+   it fades as it goes (data-past). The picture keeps the screen above the cards'
+   band (--sheet), so its buttons, boards and cards can be pressed while their
+   question is being read. */
+@media (max-width: 60rem) {
+  .ch-pin[data-sheet="true"] { --sheet: 30svh; --sheet-top: calc(var(--bar) + 8px); }
+  .ch-part3 .ch-pin[data-sheet="true"] {
+    --sheet-top: calc(var(--investigation-bottom) + 8px);
+    --investigation-graphic-height: calc(100svh - var(--investigation-bottom) - var(--sheet) - 24px);
+  }
+  .ch-story .ch-pin[data-sheet="true"] .ch-scene { bottom: calc(var(--sheet) + 8px); }
+  .ch-story .ch-pin[data-sheet="true"] .ch-step[data-step]:not([data-bare="true"]) { align-items: flex-start; min-height: max(92vh, calc(var(--card-h, 240px) + 62svh)); }
+  .ch-story .ch-pin[data-sheet="true"] .ch-step[data-step]:not([data-bare="true"]) > .ch-card {
+    position: sticky; z-index: 2;
+    top: max(var(--sheet-top), calc(100svh - var(--card-h, 240px) - 10px));
+  }
+  .ch-story .ch-pin[data-sheet="true"] .ch-step[data-past="true"] .ch-card { opacity: 0; }
+  /* the last card is held over the last chart long enough: less of the chart
+     alone after it, so the recap is not a screen away */
+  .ch-story .ch-part3 .ch-pin[data-sheet="true"] .ch-steps { padding-bottom: 30vh; }
+  /* Q2 and Q3 draw on one stage whose camera glides (its transition carries the
+     change): there the picture takes all the room above the card being read,
+     whatever its height (parts.js: --card-now) */
+  .ch-part3 :is(.ch-wrong, .ch-reveal)[data-sheet="true"] { --sheet: clamp(18svh, calc(var(--card-now, 30svh) + 16px), 58svh); }
+}
+/* small phones: the words of Part III a little smaller, so a card takes less of the screen */
+@media (max-width: 40rem) {
+  .ch-part3 .ch-pin[data-sheet="true"] .ch-card { --t-narr: 19px; }
+}
+@media (max-width: 40rem) and (max-height: 780px) {
+  .ch-part3 .ch-pin[data-sheet="true"] .ch-card { --t-narr: 18px; }
+}
 
 /* ── "When things go wrong" on one stage, as in the Part III prototype (wrong-stage.js):
    the same marks are opponents, games and her own games in turn; CSS carries each
@@ -1724,6 +1762,44 @@
 .ch-crowdYouMark[data-on="true"] { opacity: 1; }
 .ch-ratingYou .ch-ratingExpected { fill: var(--void); stroke: var(--form-data); }
 /* "Your level" on the pace chart (ratings.js): the clouds swap, the typical line slides */
-.ch-paceSwap { transition: opacity 600ms ease; }
+.ch-paceSwap { transition: opacity 600ms ease, visibility 0s; }
+/* the view not shown fades, then is hidden: its dots are no longer painted (ratings.js) */
+.ch-paceSwap[data-off="true"] { opacity: 0; visibility: hidden; transition: opacity 600ms ease, visibility 0s linear 600ms; }
 .ch-paceTypical { transition: transform 700ms cubic-bezier(0.65, 0, 0.25, 1); }
 @media (prefers-reduced-motion: reduce) { .ch-paceSwap, .ch-paceTypical { transition: none; } }
+
+/* A phone: a legend too long for one row (Q2's levels at 360px cut "Played on,
+   did not lose") goes on to a second, instead of being cut. */
+@media (max-width: 40rem) {
+  .ch-stageHead .ch-ratingChips { flex-wrap: wrap; height: auto; min-height: 19px; row-gap: 4px; overflow: visible; }
+}
+
+/* A phone, Part II (28 Nov): the part's name stands on a band of the page's own
+   ground, the screen's width, fading at its foot, so the words scrolling up pass
+   under it instead of showing through beside it. The London System's caption
+   stays readable over the hand that comes in from the near side. */
+@media (max-width: 60rem) {
+  .ch-people:not(.ch-part3) > .ch-peopleTitle { top: var(--bar); }
+  .ch-people:not(.ch-part3) > .ch-peopleTitle :is(h1, h2, h3, p) { text-align: left; }
+  .ch-people:not(.ch-part3) > .ch-peopleTitle .ch-text {
+    display: block; text-align: left; box-sizing: border-box; width: calc(100% + 2 * var(--page-margin)); margin-inline: calc(-1 * var(--page-margin));
+    padding: calc(1.2svh + 4px) var(--page-margin) 18px; background: linear-gradient(var(--void) 74%, transparent); box-shadow: none;
+  }
+  .ch-firstMove.ch-clubMove { z-index: 1001; width: auto; padding: 3px 6px; border-radius: 2px; background: color-mix(in srgb, var(--void) 84%, transparent); }
+  /* the words no longer lie over the club's board (the cards' band, above), so
+     on a phone it can take the scene's width */
+  .ch-club .ch-boardwrap[data-view="club"], .ch-club .ch-boardwrap[data-view="how"] { width: min(50svh, 96%); transform: translate(2%, 0); }
+}
+
+/* A phone: every control at least about 36px to a finger (28 Nov). Where a
+   larger button would move the chart (the views' switch, the names' Lower and
+   Higher), an invisible margin around it takes the touch instead. */
+@media (max-width: 60rem) {
+  .ch-ratingViews button, .ch-nameButton { position: relative; }
+  .ch-ratingViews button::after, .ch-nameButton::after { content: ""; position: absolute; inset: -7px -3px; }
+  .ch-nameButton { min-height: 32px; }
+  .ch-rvSeg button { padding: 11px 14px; }
+  .ch-rvShow { display: inline-block; padding: 11px 6px; margin-inline: -6px; }
+  .ch-wrongRange input { height: 36px; margin: 0; touch-action: pan-y pinch-zoom; }
+  .ch-card a[href^="#"] { display: inline-block; padding-block: 9px; }
+}

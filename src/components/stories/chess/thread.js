@@ -270,23 +270,36 @@ export const Thread = () => {
         }
         length = run.deepest[0] > line ? 0 : run.at[a]
       }
-      run.path.style.strokeDashoffset = run.length - length
+      // (only when it changes: each write restarts the drawing's transition and
+      // has the whole thread painted again, in every frame of scrolling)
+      const offset = run.length - length
+      if (run.offset !== offset) {
+        run.offset = offset
+        run.path.style.strokeDashoffset = offset
+      }
     })
-    asks.current.forEach(mark => {
-      mark.node.style.opacity = still || mark.y <= line ? 1 : 0
+    const show = (mark, on) => {
+      if (mark.on === on) return
+      mark.on = on
+      mark.node.style.opacity = on ? 1 : 0
+    }
+    asks.current.forEach(mark => show(mark, still || mark.y <= line))
+    beads.current.forEach(bead => show(bead, still || bead.y <= line))
+    reveals.current.forEach(reveal => {
+      const reached = still || reveal.y <= line ? "true" : "false"
+      if (reveal.reached === reached) return
+      reveal.reached = reached
+      reveal.node.dataset.reached = reached
     })
-    beads.current.forEach(bead => {
-      bead.node.style.opacity = still || bead.y <= line ? 1 : 0
-    })
-    reveals.current.forEach(({ node: item, y }) => {
-      item.dataset.reached = still || y <= line ? "true" : "false"
-    })
+    const top = node.getBoundingClientRect().top
     node.querySelectorAll("[data-trace]").forEach(trace => {
       const box = trace.getBoundingClientRect()
       trace.firstY ??= JSON.parse(trace.dataset.trace)[0][1]
-      const from = box.top - node.getBoundingClientRect().top + trace.firstY * box.height
-      const drawn = still ? 1 : Math.max(0, Math.min(1, (line - from) / traceSpan(box.height)))
-      trace.parentElement.style.setProperty("--drawn", drawn.toFixed(4))
+      const from = box.top - top + trace.firstY * box.height
+      const drawn = (still ? 1 : Math.max(0, Math.min(1, (line - from) / traceSpan(box.height)))).toFixed(4)
+      if (trace.drawn === drawn) return
+      trace.drawn = drawn
+      trace.parentElement.style.setProperty("--drawn", drawn)
     })
   }, [])
 
@@ -360,12 +373,22 @@ export const Thread = () => {
     // From here on what is revealed waits for the threads.
     node.dataset.live = "true"
     measure()
+    // The story's box changing size is a real change of layout. A window that
+    // only gets taller or shorter is a phone's address bar showing or hiding as
+    // the reader scrolls: nothing on the page has moved, and measuring every
+    // thread again then froze the scroll for a moment each time.
     const observer = new ResizeObserver(measure)
     observer.observe(node)
-    window.addEventListener("resize", measure)
+    let wide = window.innerWidth
+    const resized = () => {
+      if (window.innerWidth === wide) return
+      wide = window.innerWidth
+      measure()
+    }
+    window.addEventListener("resize", resized)
     return () => {
       observer.disconnect()
-      window.removeEventListener("resize", measure)
+      window.removeEventListener("resize", resized)
     }
   }, [draw])
 

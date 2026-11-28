@@ -104,6 +104,9 @@ export const Hub = ({ upto }) => {
       const y = (items.current[0]?.getBoundingClientRect().top ?? window.innerHeight) / window.innerHeight
       const arrive = still ? (y < 0.7 ? 1 : 0) : gently(within(ARRIVE[0] - y, 0, ARRIVE[0] - ARRIVE[1]))
       const q = arrive * (1 - leave)
+      // the words come sooner than the boards: as soon as their row is on the screen,
+      // so the screen is not left nearly empty while the boards travel (28 Nov)
+      const words = (still ? (y < 0.98 ? 1 : 0) : gently(within(0.98 - y, 0, 0.22))) * (1 - leave)
       const mine = q > 0.001
       const touch = mine || holding
       holding = mine
@@ -111,6 +114,7 @@ export const Hub = ({ upto }) => {
         if (!item) return
         const board = item.querySelector("svg")
         item.style.setProperty("--here", q.toFixed(4))
+        item.style.setProperty("--words", words.toFixed(4))
         item.dataset.here = q > 0.999 ? "true" : "false"
         const tab = tabs[i]
         const svg = tab?.querySelector("svg")

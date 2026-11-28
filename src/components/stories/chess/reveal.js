@@ -410,9 +410,11 @@ const youSay = (name, you, curve) => {
 }
 
 const pct = v => Math.round(v * 100)
-const DIAL_BOX = [128, 196, 672, 652]
+// (the boxes start above their first words, the dial's name at DY[0] − 34 and the
+// mystery card's label, so on a phone they stay clear of the caption above)
+const DIAL_BOX = [128, 164, 672, 652]
 const GAMES_BOX = [128, 232, 672, 520]
-const CARDS_BOX = [68, 172, 732, 690]
+const CARDS_BOX = [68, 146, 732, 690]
 const found = v => (v == null ? "–" : pct(v))
 
 // ── What the stage shows at each step.

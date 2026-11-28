@@ -200,7 +200,7 @@ export const useNarrow = () => {
 // `boxes(root)` gives [element marked, box measured] pairs, read again each
 // time, as a scene may add steps as it is read.
 const NEAR = 0.38
-export const useFocus = (root, on, boxes) => {
+export const useFocus = (root, on, boxes, at = 0.5, sheet = false) => {
   const find = React.useRef(boxes)
   find.current = boxes
   React.useEffect(() => {
@@ -209,7 +209,7 @@ export const useFocus = (root, on, boxes) => {
     const update = () => {
       frame = 0
       const screen = window.innerHeight
-      const middle = screen / 2
+      const middle = screen * at
       const pairs = find.current(root.current)
       let best = null
       let gap = Infinity
@@ -222,7 +222,18 @@ export const useFocus = (root, on, boxes) => {
         const centre = Math.abs((r.top + r.bottom) / 2 - middle)
         if (away < gap || (away === gap && centre < off)) [best, gap, off] = [box, away, centre]
       }
-      for (const [marked, box] of pairs) marked.dataset.focus = box === best && gap < screen * NEAR ? "true" : "false"
+      for (const [marked, box] of pairs) {
+        // (only when it changes: a write restyles the box and what is in it)
+        const focus = box === best && gap < screen * NEAR ? "true" : "false"
+        if (marked.dataset.focus !== focus) marked.dataset.focus = focus
+        if (!sheet || !box) continue
+        // With the cards held at the foot of the screen (Pinned, `sheet`), a card
+        // whose step has ended is being pushed up over the picture: it is "past",
+        // and fades as it goes (CSS), whether or not another card follows.
+        const r = box.getBoundingClientRect()
+        const past = r.height && marked.getBoundingClientRect().bottom <= r.bottom + 2 && r.top < screen ? "true" : "false"
+        if (marked.dataset.past !== past) marked.dataset.past = past
+      }
     }
     const onScroll = () => {
       if (!frame) frame = window.requestAnimationFrame(update)
@@ -234,9 +245,12 @@ export const useFocus = (root, on, boxes) => {
       window.removeEventListener("scroll", onScroll)
       window.removeEventListener("resize", onScroll)
       if (frame) window.cancelAnimationFrame(frame)
-      for (const [marked] of find.current(root.current)) delete marked.dataset.focus
+      for (const [marked] of find.current(root.current)) {
+        delete marked.dataset.focus
+        delete marked.dataset.past
+      }
     }
-  }, [root, on])
+  }, [root, on, at, sheet])
 }
 
 export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, reading = false, mark, className = "", overlay, children }) => {
@@ -247,11 +261,47 @@ export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, r
   // the picture holds the top of the screen and the words come up under it.
   const plain = plainOnly
   const scrolling = reading
-  // On a phone only the card being read is in focus (useFocus).
-  useFocus(root, narrow && scrolling, pin =>
-    [...pin.querySelectorAll(`.${c("ch-step")}[data-step]`)]
-      .filter(step => step.dataset.bare !== "true")
-      .map(step => [step, step.querySelector(`.${c("ch-card")}`)]),
+  // On a phone (the club, Part III), each card comes up from the foot of the screen and
+  // stays there, its foot at the screen's, while it is read (CSS: sticky, at the
+  // screen's height less its own); the chart keeps the screen above it, so what
+  // the words ask about (a board, the names' buttons, the cards of the lineup)
+  // is never under them. Each card's height is kept on its step as --card-h.
+  const [sheet, setSheet] = React.useState(false)
+  React.useLayoutEffect(() => {
+    setSheet(Boolean(narrow && scrolling))
+  }, [narrow, scrolling])
+  React.useLayoutEffect(() => {
+    if (!sheet) return
+    const cards = [...root.current.querySelectorAll(`.${c("ch-step")}:not([data-bare="true"]) > .${c("ch-card")}`)]
+    // (kept on the card's step, which also grows with it: every card, however
+    // tall, is held for the same stretch of scrolling)
+    const observer = new ResizeObserver(entries => {
+      for (const entry of entries) entry.target.parentElement.style.setProperty("--card-h", `${Math.ceil(entry.borderBoxSize?.[0]?.blockSize ?? entry.target.offsetHeight)}px`)
+    })
+    cards.forEach(card => observer.observe(card))
+    return () => {
+      observer.disconnect()
+      cards.forEach(card => card.parentElement.style.removeProperty("--card-h"))
+    }
+  }, [sheet, steps.length])
+  // The height of the card of the step being read (a step without one keeps the
+  // last), as --card-now on the scene: Q2 and Q3 fit their stage above it (CSS).
+  React.useLayoutEffect(() => {
+    if (!sheet) return
+    const card = refs.current[step]?.dataset.bare === "true" ? null : refs.current[step]?.querySelector(`:scope > .${c("ch-card")}`)
+    if (card?.offsetHeight) root.current.style.setProperty("--card-now", `${card.offsetHeight}px`)
+  }, [sheet, step])
+  // On a phone only the card being read is in focus (useFocus): the one at the
+  // foot of the screen.
+  useFocus(
+    root,
+    narrow && scrolling,
+    pin =>
+      [...pin.querySelectorAll(`.${c("ch-step")}[data-step]`)]
+        .filter(step => step.dataset.bare !== "true")
+        .map(step => [step, step.querySelector(`.${c("ch-card")}`)]),
+    sheet ? 0.8 : 0.5,
+    sheet,
   )
   React.useLayoutEffect(() => {
     const pin = root.current
@@ -271,6 +321,7 @@ export const Pinned = ({ label, steps, open = false, plain: plainOnly = false, r
       data-open={open ? "true" : undefined}
       data-plain={plain ? "true" : undefined}
       data-reading={scrolling ? "true" : undefined}
+      data-sheet={sheet ? "true" : undefined}
       aria-label={label}
     >
       {/* where the chapters' navigation opens this scene: at its top, as it is pinned */}

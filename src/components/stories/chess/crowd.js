@@ -88,7 +88,10 @@ const grids = (keys, { left, right, top, bottom, narrow }) => {
   const n = keys.length
   const cols = n === 4 ? 2 : n
   const lines = Math.ceil(n / cols)
-  const head = narrow ? 56 : 76, foot = 18
+  // (on a phone a square may be narrower than its name: the name then takes two
+  // lines, "Username / says bad", and the head one line more)
+  const two = narrow && (right - left) / cols < 170
+  const head = narrow ? (two ? 76 : 56) : 76, foot = 18
   // as large as the frame allows (up to Q2's dot size), the squares a little closer
   const cell = Math.max(5, Math.min(32, (right - left) / (cols * 10 + (cols - 1) * 2.2), (bottom - top - lines * (head + foot)) / (lines * 10)))
   const gap = cell * 2.2
@@ -97,7 +100,7 @@ const grids = (keys, { left, right, top, bottom, narrow }) => {
   const x0 = (left + right) / 2 - width / 2, y0 = top + (narrow ? 4 : 12)
   return Object.fromEntries(keys.map((key, k) => {
     const x = x0 + (k % cols) * (cell * 10 + gap), y = y0 + Math.floor(k / cols) * (head + cell * 10 + foot) + head
-    return [key, { key, x, y, cell, width: cell * 10, head, pitch: cell * 10 + gap }]
+    return [key, { key, x, y, cell, width: cell * 10, head, two, pitch: cell * 10 + gap }]
   }))
 }
 const cellAt = (g, i) => ({ x: g.x + (i % 10) * g.cell + g.cell / 2, y: g.y + Math.floor(i / 10) * g.cell + g.cell / 2 })
@@ -211,7 +214,8 @@ export const CrowdMarks = ({ layout, stage, revealed, guesses = {}, you, left, r
   const squares = stage === "us" ? layout.ours : layout.first
   // whose square, said in full where there is room ("Username says bad" where there is not)
   const LABEL = { bad: "Usernames that say they’re bad", everyone: "Everyone else", me: "Me", you: "You" }
-  const labelOf = g => (g.key === "bad" && g.pitch < 290 ? "Username says bad" : LABEL[g.key])
+  const SHORT = { bad: ["Username", "says bad"], everyone: ["Everyone", "else"] }
+  const labelOf = g => (g.two && SHORT[g.key]) || [g.key === "bad" && g.pitch < 290 ? "Username says bad" : LABEL[g.key]]
   return (
     <g className={c("ch-crowdMarks")}>
       <g {...on(stage === "crowd")}>
@@ -267,7 +271,9 @@ export const CrowdMarks = ({ layout, stage, revealed, guesses = {}, you, left, r
               <g key={g.key}>
                 {/* read top down: whose, how many in 100, then the hundred lost games */}
                 {who ? <circle cx={g.x + 4} cy={g.y - g.head + 12} r={4} className={c("ch-crowdWho")} data-who={who} data-dot={who} /> : null}
-                <text x={g.x + (who ? 14 : 0)} y={g.y - g.head + 18} className={c(who ? "ch-crowdLabelLit" : "ch-crowdLabel", "ch-crowdRowName", "ch-crowdGridName")}>{labelOf(g)}</text>
+                <text x={g.x + (who ? 14 : 0)} y={g.y - g.head + 18} className={c(who ? "ch-crowdLabelLit" : "ch-crowdLabel", "ch-crowdRowName", "ch-crowdGridName")}>
+                  {labelOf(g).map((line, k) => <tspan key={k} x={g.x + (who ? 14 : 0)} dy={k ? "1.1em" : undefined}>{line}</tspan>)}
+                </text>
                 <text x={g.x} y={g.y - (narrow ? 10 : 14)} className={c("ch-crowdBig")} data-who={who || undefined}>
                   {n}<tspan className={c("ch-crowdUnit")}> in 100</tspan>
                 </text>

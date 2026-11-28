@@ -34,16 +34,33 @@ const shown = (el, rect) => {
   return alpha
 }
 
-// The mark a dot goes to: the last one shown, in the order of the page (so in the
-// dials, the one just turned on).
-const markOf = (root, who) => {
-  let best = null
-  for (const el of root.querySelectorAll(`[data-dot="${who}"]`)) {
+// The marks a dot may go to, for both dots in one pass: for each, the last one
+// shown, in the order of the page (so in the dials, the one just turned on).
+const marksOf = root => {
+  const best = { me: null, you: null }
+  for (const el of root.querySelectorAll("[data-dot]")) {
+    const who = el.dataset.dot
+    if (!(who in best)) continue
     const rect = el.getBoundingClientRect()
-    if (shown(el, rect) >= SEEN) best = { el, rect }
+    if (shown(el, rect) >= SEEN) best[who] = { el, rect }
   }
   return best
 }
+
+// On a phone the words scroll over the picture in boxes (cards): is a point under
+// one? Read from the cards' boxes, not by hit-testing the page in every frame,
+// which made the browser lay out the page again each time. A card holding the
+// mark itself does not count.
+const cardsOf = root => {
+  const out = []
+  for (const card of root.querySelectorAll(`.${c("ch-step")}:not([data-bare="true"]) > .${c("ch-card")}`)) {
+    const rect = card.getBoundingClientRect()
+    if (rect.height && rect.bottom > 0 && rect.top < window.innerHeight) out.push({ card, rect })
+  }
+  return out
+}
+const coveredAt = (cards, x, y, el) =>
+  cards.some(({ card, rect }) => x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom && !card.contains(el))
 
 // Where they wait, side by side under a board. They always go forward: while a
 // question opens, under its board as it comes out, glides and flies up (opening.js
@@ -79,10 +96,15 @@ export const Travellers = () => {
     const part = root.current.closest('[data-part="investigation"]')
     part.dataset.travelling = "true"
     const state = {}
-    for (const who of ["me", "you"]) state[who] = { x: null, y: null, size: 8, on: 0, el: undefined, hop: null }
+    for (const who of ["me", "you"]) state[who] = { x: null, y: null, size: 8, drawn: null, on: 0, el: undefined, hop: null }
     let frame = 0
+    // The dots are drawn in every frame only while something moves: the page, a
+    // hop, a fade, or a chart's marks. Once all has been still for a while the
+    // loop rests, and the next scroll, tap or change in Part III wakes it.
+    let quiet = 0
+    const REST = 40
     const tick = time => {
-      frame = window.requestAnimationFrame(tick)
+      frame = 0
       const box = part.getBoundingClientRect()
       // only while Part III is on the screen
       if (box.bottom < 0 || box.top > window.innerHeight) {
@@ -90,21 +112,26 @@ export const Travellers = () => {
         return
       }
       const header = part.querySelector("[data-investigation-header]")
+      const marks = marksOf(part)
+      const cards = marks.me || marks.you ? cardsOf(part) : []
+      let moving = false
       for (const who of ["me", "you"]) {
         const dot = dots[who].current
         if (!dot) continue
         const s = state[who]
-        const mark = markOf(part, who)
+        const mark = marks[who]
         const goal = mark
           ? { x: mark.rect.left + mark.rect.width / 2, y: mark.rect.top + mark.rect.height / 2, size: Math.max(8, Math.min(14, mark.rect.width)), el: mark.el }
           : waiting(header, who, reader)
         if (!goal) {
           // nowhere to be: it fades where it is
+          if (s.on > 0) moving = true
           s.on = Math.max(0, s.on - 0.08)
           dot.style.opacity = s.on.toFixed(3)
           s.el = undefined
           continue
         }
+        const [x0, y0] = [s.x, s.y]
         if (s.x === null) {
           s.x = goal.x
           s.y = goal.y
@@ -128,19 +155,46 @@ export const Travellers = () => {
           s.y = goal.y
           s.size = goal.size
         }
-        // on a phone the words scroll over the picture in boxes: under one, the dot is
-        // hidden too (it goes on following its mark, and is back when the box has passed)
-        const hit = mark ? document.elementFromPoint(s.x, s.y) : null
-        const covered = Boolean(hit?.closest(`.${c("ch-card")}`))
-        s.on = covered ? Math.max(0, s.on - (still ? 1 : 0.12)) : Math.min(1, s.on + (still ? 1 : 0.08))
+        // under a word box the dot is hidden too (it goes on following its mark,
+        // and is back when the box has passed)
+        const covered = mark ? coveredAt(cards, s.x, s.y, mark.el) : false
+        const on = covered ? Math.max(0, s.on - (still ? 1 : 0.12)) : Math.min(1, s.on + (still ? 1 : 0.08))
+        if (s.hop || on !== s.on || x0 === null || Math.abs(s.x - x0) > 0.2 || Math.abs(s.y - y0) > 0.2) moving = true
+        s.on = on
         dot.style.opacity = s.on.toFixed(3)
         dot.style.transform = `translate(${(s.x - s.size / 2).toFixed(1)}px, ${(s.y - s.size / 2).toFixed(1)}px)`
-        dot.style.width = dot.style.height = `${s.size.toFixed(1)}px`
+        // its size only when it changes: writing it in every frame laid out the page
+        const size = Math.round(s.size * 2) / 2
+        if (size !== s.drawn) {
+          s.drawn = size
+          dot.style.width = dot.style.height = `${size}px`
+        }
       }
+      quiet = moving ? 0 : quiet + 1
+      if (quiet < REST) frame = window.requestAnimationFrame(tick)
     }
-    frame = window.requestAnimationFrame(tick)
+    const wake = () => {
+      quiet = 0
+      if (!frame) frame = window.requestAnimationFrame(tick)
+    }
+    wake()
+    // what can move a mark without a scroll: a tap, a key, a chart's transition or
+    // animation, React changing the scene
+    // (not the dots' own drawing, which would keep it awake for ever)
+    const watch = new MutationObserver(records => {
+      if (records.some(record => !root.current?.contains(record.target))) wake()
+    })
+    watch.observe(part, { attributes: true, childList: true, subtree: true })
+    const events = ["scroll", "resize", "pointerup", "keydown"]
+    for (const name of events) window.addEventListener(name, wake, { passive: true })
+    part.addEventListener("transitionrun", wake)
+    part.addEventListener("animationstart", wake)
     return () => {
-      window.cancelAnimationFrame(frame)
+      if (frame) window.cancelAnimationFrame(frame)
+      watch.disconnect()
+      for (const name of events) window.removeEventListener(name, wake)
+      part.removeEventListener("transitionrun", wake)
+      part.removeEventListener("animationstart", wake)
       delete part.dataset.travelling
     }
   }, [reader, still])

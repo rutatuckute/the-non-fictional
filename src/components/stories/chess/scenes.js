@@ -59,7 +59,14 @@ const Boards = () => {
         .catch(() => {})
   }
   return (
-    <div className={c("ch-minisBox")} onPointerMove={look} onPointerDown={look} onPointerLeave={() => setNote(null)}>
+    // A mouse shows the note as it moves; a finger only on a tap (a click), so a
+    // finger scrolling over the boards neither pops notes up nor costs a frame.
+    <div
+      className={c("ch-minisBox")}
+      onPointerMove={event => event.pointerType === "mouse" && look(event)}
+      onClick={look}
+      onPointerLeave={event => event.pointerType === "mouse" && setNote(null)}
+    >
       <img
         src="/images/stories/chess/boards.webp"
         alt="Hundreds of tiny chessboards in a grid: how the author’s last thousand games ended, her pieces in clay, her opponents’ in slate blue. Point at one to see the game."

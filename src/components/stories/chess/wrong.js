@@ -167,7 +167,9 @@ const SV = { lostX: 20, lostY: 70, lostCell: 24, x: 330, y: 70, row: 62, step: 3
 const CH = { resX: 20, playX: 330, rows: { won: 110, drew: 200, lost: 290 }, cell: 25 }
 const choiceOf = b => (b.end === "lost" ? "lost" : b.end === "won" ? "won" : "drew")
 // the clock: four hundreds, one per clock
-const CL = { at: [[40, 92], [330, 92], [40, 392], [330, 392]], cell: 20 }
+// (the second row a little lower, so on a phone, where the labels take more of the
+// drawing, its names stay clear of the first row's dots)
+const CL = { at: [[40, 92], [330, 92], [40, 420], [330, 420]], cell: 20 }
 // within each row, the order the marks take: who saved them (those who won their way
 // back first), the choice (by outcome)
 const SAVED_PLACE = (() => {
@@ -230,12 +232,12 @@ const both = value => ({ queen: value, king: value })
 const WHAT = { queen: "a queen down", king: "only the king left" }
 
 // ── The labels drawn on the stage, each shown in its own scenes.
-const T = ({ x, y, anchor = "start", kind = "", children }) => (
-  <text x={x} y={y} textAnchor={anchor} className={c("ch-stageText")} data-kind={kind || undefined}>
+const T = ({ x, y, dy, anchor = "start", kind = "", children }) => (
+  <text x={x} y={y} dy={dy} textAnchor={anchor} className={c("ch-stageText")} data-kind={kind || undefined}>
     {children}
   </text>
 )
-const Ring = ({ guess, at, r = 21 }) => {
+const RingDrawn = ({ guess, at, r = 21 }) => {
   const [x, y] = at(clamp(guess, 1, 100) - 1)
   return (
     <>
@@ -244,7 +246,7 @@ const Ring = ({ guess, at, r = 21 }) => {
     </>
   )
 }
-const PayoffLabels = ({ path, up }) => {
+const PayoffLabelsDrawn = ({ path, up }) => {
   const P = paths[path]
   const won = P.counts.won
   return (
@@ -266,7 +268,7 @@ const PayoffLabels = ({ path, up }) => {
     </>
   )
 }
-const LevelLabels = ({ you }) => {
+const LevelLabelsDrawn = ({ you }) => {
   const R = E.levels
   const few = R.filter(r => r.n < 2000)
   const youRow = you && you.cases ? { gave: (you.resigned + you.left) / you.cases, onLost: (you.on - you.saved) / you.cases, onSaved: you.saved / you.cases, of: you.on ? you.saved / you.on : null } : null
@@ -285,9 +287,12 @@ const LevelLabels = ({ you }) => {
   const foot = LV.y(R.length + (youRow ? 1 : 0)) + 4
   return (
     <>
-      <T x={LV.x0} y={30} kind="note">every 100 lost queens at that level</T>
-      <T x={590} y={22} anchor="end" kind="note">playing on costs</T>
-      <T x={590} y={40} anchor="end">for a chance of not losing</T>
+      {/* one above the other, stepped in the labels' own size (they keep their size
+          on screen, so on a phone they take more of the drawing): side by side
+          they ran into each other there */}
+      <T x={LV.x0} y={LV.y(0) - 8} dy="-2.9em" kind="note">every 100 lost queens at that level</T>
+      <T x={590} y={LV.y(0) - 8} dy="-1.65em" anchor="end" kind="note">playing on costs</T>
+      <T x={590} y={LV.y(0) - 8} dy="-0.45em" anchor="end">for a chance of not losing</T>
       {R.map((r, i) => {
         const mine = r.band === E.level.band
         return (
@@ -312,7 +317,7 @@ const LevelLabels = ({ you }) => {
   )
 }
 // who saved them: the lost counted at the left, each ending named above its row
-const SavedLabels = () => (
+const SavedLabelsDrawn = () => (
   <>
     <T x={SV.lostX} y={SV.lostY - 16} kind="note">lost ({E.level.counts.lost})</T>
     {HOWS.map((h, k) => (
@@ -321,7 +326,7 @@ const SavedLabels = () => (
   </>
 )
 // the choice: resigning is a hundred rings at −8; playing on, the hundred by outcome
-const ChoiceLabels = () => (
+const ChoiceLabelsDrawn = () => (
   <>
     <T x={CH.resX} y={40} kind="name">Resign</T>
     <T x={CH.resX} y={62}>now</T>
@@ -343,13 +348,13 @@ const ChoiceLabels = () => (
   </>
 )
 // the clock: a hundred for each of the other player's clocks, the saved lit
-const ClockLabels = () =>
+const ClockLabelsDrawn = () =>
   E.clock.map((g, k) => {
     const [x0, y0] = CL.at[k]
     const n = in100(g.notLost)
     return (
       <g key={g.label}>
-        <T x={x0} y={y0 - 50} kind="note">{g.label}</T>
+        <T x={x0} y={y0 - 14} dy="-2.8em" kind="note">{g.label}</T>
         <T x={x0} y={y0 - 14} kind="num">{n}<tspan className={c("ch-stageUnit")}> in 100</tspan></T>
         {Array.from({ length: 100 }, (_, i) => (
           <rect key={i} x={x0 + (i % 10) * CL.cell + 2} y={y0 + Math.floor(i / 10) * CL.cell + 2} width={CL.cell - 4} height={CL.cell - 4} rx={(CL.cell - 4) / 2} className={c("ch-stageDot")} data-on={i < n ? "true" : "false"} />
@@ -358,7 +363,7 @@ const ClockLabels = () =>
     )
   })
 // the reader's own games a queen down, in green under hers: saved, lost, gave up at once
-const YourGames = ({ you }) => {
+const YourGamesDrawn = ({ you }) => {
   const kinds = [...Array(you.saved).fill("saved"), ...Array(you.on - you.saved).fill("lost"), ...Array(you.resigned + you.left).fill("gave")]
   const top = 486
   const cols = [12, 24, 40, 60, 100].find(n => Math.ceil(kinds.length / n) * (VIEW / n) <= 110) || 100
@@ -373,12 +378,23 @@ const YourGames = ({ you }) => {
   )
 }
 // read as Q1's squares: whose (here, which game), then how many in 100, then the dots
+// The labels do not change while a game plays out or the hundred are revealed
+// (the stage is drawn again every 50–110 ms then): kept, not drawn again.
+const Ring = React.memo(RingDrawn)
+const PayoffLabels = React.memo(PayoffLabelsDrawn)
+const LevelLabels = React.memo(LevelLabelsDrawn)
+const SavedLabels = React.memo(SavedLabelsDrawn)
+const ChoiceLabels = React.memo(ChoiceLabelsDrawn)
+const ClockLabels = React.memo(ClockLabelsDrawn)
+const YourGames = React.memo(YourGamesDrawn)
+
 const MeetLabels = ({ guesses }) =>
   ["queen", "king"].map((path, k) => {
     const x = (k ? 318 : 10) + 4
     return (
       <g key={path}>
-        <T x={x} y={100} kind="name">{WHAT[path][0].toUpperCase() + WHAT[path].slice(1)}</T>
+        {/* (above its number by its own size, so on a phone the two do not touch) */}
+        <T x={x} y={142} dy="-2em" kind="name">{WHAT[path][0].toUpperCase() + WHAT[path].slice(1)}</T>
         <T x={x} y={142} kind="num">{PREP[path].lit}<tspan className={c("ch-stageUnit")}> in 100</tspan></T>
         {guesses[path] != null ? <Ring guess={guesses[path]} at={i => MEET(i, k === 1)} r={13} /> : null}
       </g>
@@ -656,7 +672,7 @@ export const Wrong = () => {
           return {
             head: { title: "Every 100 games, by the other player’s clock", chips: [["ivory", "Did not lose"], ["lost", "Lost"]] },
             num: { n: in100(E.clock[0].notLost), unit: "in 100, other player under a minute" },
-            box: [30, 30, 540, 600],
+            box: [30, -6, 540, 628],
             most: 0.95,
             atoms: () => null,
           }
@@ -665,7 +681,7 @@ export const Wrong = () => {
           const mine = R.find(r => r.band === E.level.band)
           const rows = R.length + (you && you.cases ? 1 : 0)
           return {
-            box: [0, 8, VIEW, LV.y(rows) + 14],
+            box: [0, -44, VIEW, LV.y(rows) + 14],
             most: 0.95,
             head: { title: "By rating, every lost queen", chips: [["dim", "Gave up at once"], ["lost", "Played on, lost"], ["ivory", "Played on, did not lose"], ...(you ? [["you", "You"]] : [])] },
             num: { n: mins(mine.gameSec / 60), unit: `for ${in100(mine.savedOfOn)} in 100 at my level` },
