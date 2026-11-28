@@ -37,7 +37,7 @@ import { ThreadBridge } from "./thread-bridge"
 // as one is found. Three strangers, one after another: each one's game on the
 // screen, each pictured beside it as the author imagines them (the picture
 // draws itself in), each one's life a grey thread that comes in from the
-// screen's edge, through the phone, and away. Then the phone goes, and 1,938
+// screen's edge, through the phone, and away. Then the phone goes, and 2,017
 // faint threads cross the screen: one for each person met.
 //
 // Beside it all, on a wide screen, the words scroll past in a column of their
@@ -131,9 +131,12 @@ const ASK_AT = DRAW_AT + 0.5
 const HANDOFF_AT = ASK_AT + 0.55
 const SEARCH_AT = HANDOFF_AT + 0.25
 export const TITLE_AT = HANDOFF_AT + 0.7
-const MET = [TITLE_AT, TITLE_AT + 1.45, TITLE_AT + 2.0]
+// Once drawn, each picture now stays for about two thirds of a screen before
+// the next (28 Nov, owner: they changed too fast; the first held a fifth of a
+// screen, the other two half a screen in all).
+const MET = [TITLE_AT, TITLE_AT + 1.85, TITLE_AT + 3.05]
 const PICTURE_AT = [TITLE_AT + 0.85, MET[1] + 0.1, MET[2] + 0.1]
-const MANY_AT = MET[2] + 0.55
+const MANY_AT = MET[2] + 1.15
 // Read all three statistics before this same thread field begins to weave.
 const WEAVE_AT = MANY_AT + 1.9
 export const SCREENS = WEAVE_AT + 1.4

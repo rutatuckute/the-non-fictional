@@ -60,6 +60,10 @@ const PLIES = [
   ["c2", "c3"],
 ]
 
+// White's moves as they are written, by ply (Black's are left out: the words
+// under the board name White's latest, as the board shows it).
+const WHITE_SAN = ["d4", null, "Bf4", null, "e3", null, "Nf3", null, "c3"]
+
 // A hand: how wide its picture is against the board, where in it the fingers
 // close, how it is turned about that point, and the way it goes to wait
 // beyond its own edge of the board.
@@ -254,9 +258,10 @@ export const ClubBoard = ({ during }) => {
           />
         )
       })}
-      {/* The first move, as Part I marked 1. e4 on every board: here, the other one. */}
+      {/* White's latest move, as the board shows it (28 Nov, owner: no move
+          number, and it follows the board): d4, then Bf4, e3, Nf3, c3. */}
       <span className={c("ch-firstMove", "ch-clubMove")} data-on={played >= 1 ? "true" : "false"} aria-hidden="true">
-        1. d4 · the London System
+        {WHITE_SAN.slice(0, Math.max(1, played)).filter(Boolean).pop()} · the London System
       </span>
       {HANDS.map(hand => (
         <img

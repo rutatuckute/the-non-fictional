@@ -120,9 +120,9 @@ Which random moment of their lives do they find themselves in?
 
 <!--step:people-many-->
 
-2007 games.\
-1938 different people.\
-1910 of them met once.
+2087 games.\
+2017 different people.\
+1988 of them met once.
 
 <!--step:club-->
 
@@ -145,11 +145,9 @@ How did he know?
 Maybe he was making a point about the London System.\
 Or maybe he saw something.
 
-[Later, I looked for it in my games ↓](#what-we-choose)
-
 <!--step:central-->
 
-How much can we understand about another person from such little information?
+How much can we understand about another person from so little?
 
 <!--step:boards-->
 
@@ -183,7 +181,7 @@ In human terms, that's just fast chess.
 
 <!--step:say-isolation-->
 
-Seven weeks later, I actually tried it.\
+7 weeks later, I actually tried it.\
 And now, in retrospect, I can cross-check the claims of my past self.
 
 <!--step:say-prediction-->
@@ -196,11 +194,12 @@ For **87%** of players, the bullet rating is indeed lower than the rapid rating.
 
 <!--step:say-perspective-->
 
-And that's me. My supposedly bad performance is the most ordinary.
+And that's me.\
+My supposedly bad performance is the most ordinary.
 
 <!--step:say-pace-->
 
-There is one funny detail, though. In ten-minute games, I take just **5 seconds per move**.
+There is one funny detail, though. Even in normal chess, I take just **5 seconds per move**.
 
 <!--step:say-hurry-->
 
@@ -210,7 +209,7 @@ That's faster than **9 in 10** players at my level. Apparently, I am playing in 
 
 ### And what about the others?
 
-That was my claim. Other people don't wait for a midnight text, they put it in their username.
+That was my claim. Other people put it right there in their username.
 
 <!--step:say-guess-->
 

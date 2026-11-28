@@ -1,10 +1,12 @@
 "use client"
 
 import * as React from "react"
+import { createPortal } from "react-dom"
 
 import { lookUp, MIN_GAMES } from "./chesscom"
 import { curveOf, MIN_DIALS, readDials } from "./dials"
-import { c, Text } from "./parts"
+import { useStill } from "./follow"
+import { c, PinSteps, stepLine, Text } from "./parts"
 import { countQueens, readRapid } from "./queens"
 import { useReader, useTell } from "./reader"
 import paths from "./wrong-paths.json"
@@ -15,15 +17,13 @@ import paths from "./wrong-paths.json"
 // Chess.com asked (chesscom.js); what comes back stays in this reading.
 
 const MONTH = new Intl.DateTimeFormat("en-GB", { month: "short", year: "numeric" })
-const YEAR = 365 * 24 * 3600 * 1000
-const old = f => (f.date && Date.now() - f.date > YEAR ? ` (last played ${MONTH.format(f.date)})` : "")
 
 const say = state => {
   switch (state.kind) {
     case "asking":
       return "Asking Chess.com…"
     case "found":
-      return `Found ${state.username}: rapid ${state.rapid.rating}${old(state.rapid)}, bullet ${state.bullet.rating}${old(state.bullet)}. You’re the green dot in the charts, and one of the thousand boards.`
+      return `Found ${state.username}! You’re the green dot in the charts now.`
     case "invalid":
       return "Chess.com usernames are 3 to 25 letters, digits, hyphens or underscores."
     case "missing":
@@ -37,6 +37,106 @@ const say = state => {
     default:
       return ""
   }
+}
+
+// The reader's green dot at the hinge (28 Nov, owner): once found it waits
+// beside the username box; when the reader scrolls on towards the dive into
+// the boards, it hops into its own place among the thousand boards (scenes.js,
+// data-you-board), and back to the box if they scroll up again. The two resting
+// dots are shown or hidden by the pin's data-you-dot (home, flying, board); in
+// between, one dot flies, drawn over the page.
+const HOP = 720 // ms
+// It leaves the box once the reader has scrolled on this far since the name was
+// found; on a phone, where the box is held at the screen's foot over the boards,
+// once the box has been pushed on and fades (its step's data-past, parts.js).
+// At the latest, when the dive's step is LEAVE screens from its line.
+const MOVED = 60 // px
+const LEAVE = 0.3
+const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
+const centreOf = el => {
+  const r = el?.getBoundingClientRect()
+  return r && r.width ? { x: r.left + r.width / 2, y: r.top + r.height / 2, size: r.width } : null
+}
+export const YouHop = ({ during }) => {
+  const steps = React.useContext(PinSteps)
+  const found = Boolean(useReader().chesscom)
+  const still = useStill()
+  const anchor = React.useRef(null)
+  const flier = React.useRef(null)
+  const [ready, setReady] = React.useState(false)
+  React.useEffect(() => setReady(true), [])
+  React.useEffect(() => {
+    const pin = anchor.current?.closest("section")
+    if (!found || !pin || !flier.current) return
+    let frame = 0
+    let landed = null
+    let hop = null
+    const since = window.scrollY
+    const dot = flier.current
+    const show = where => {
+      if (pin.dataset.youDot !== where) pin.dataset.youDot = where
+    }
+    const tick = time => {
+      frame = 0
+      const node = steps?.current?.[during]
+      const homeDot = pin.querySelector("[data-you-home]")
+      const home = centreOf(homeDot)
+      const held = homeDot?.closest("[data-step]")
+      const board = centreOf(pin.querySelector("[data-you-board]"))
+      if (!node || !home || !board) return
+      const on = held && held.dataset.past !== undefined ? held.dataset.past === "true" : window.scrollY > since + MOVED
+      const go = on || (node.getBoundingClientRect().top - stepLine()) / window.innerHeight < LEAVE
+      if (landed === null) landed = go
+      else if (go !== landed) {
+        landed = go
+        const from = hop ? hop.at : landed ? home : board
+        hop = still ? null : { from, start: time, at: from }
+      }
+      if (!hop) {
+        show(landed ? "board" : "home")
+        dot.style.opacity = "0"
+        return
+      }
+      const to = landed ? board : home
+      const t = Math.min(1, (time - hop.start) / HOP)
+      const k = easeInOut(t)
+      const far = Math.hypot(to.x - hop.from.x, to.y - hop.from.y)
+      const at = {
+        x: hop.from.x + (to.x - hop.from.x) * k,
+        y: hop.from.y + (to.y - hop.from.y) * k - Math.min(140, far * 0.3) * 4 * t * (1 - t),
+        size: hop.from.size + (to.size - hop.from.size) * k,
+      }
+      hop.at = at
+      show("flying")
+      dot.style.opacity = "1"
+      dot.style.width = dot.style.height = `${at.size.toFixed(1)}px`
+      dot.style.transform = `translate(${(at.x - at.size / 2).toFixed(1)}px, ${(at.y - at.size / 2).toFixed(1)}px)`
+      if (t >= 1) hop = null
+      frame = window.requestAnimationFrame(tick)
+    }
+    const wake = () => {
+      if (!frame) frame = window.requestAnimationFrame(tick)
+    }
+    wake()
+    window.addEventListener("scroll", wake, { passive: true })
+    window.addEventListener("resize", wake)
+    // (a phone's box is marked past in its own frame, after the scroll)
+    const watch = new MutationObserver(wake)
+    watch.observe(pin, { attributes: true, attributeFilter: ["data-past"], subtree: true })
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame)
+      watch.disconnect()
+      window.removeEventListener("scroll", wake)
+      window.removeEventListener("resize", wake)
+      delete pin.dataset.youDot
+    }
+  }, [found, still, steps, during])
+  return (
+    <>
+      <span ref={anchor} hidden />
+      {ready && found ? createPortal(<i ref={flier} className={c("ch-youFlier")} aria-hidden="true" />, document.body) : null}
+    </>
+  )
 }
 
 export const YouOnChessCom = ({ where }) => {
@@ -96,6 +196,10 @@ export const YouOnChessCom = ({ where }) => {
           Your Chess.com username
         </label>
         <div className={c("ch-youRow")}>
+          {/* the reader's green dot waits here once they are found, and hops into
+              the thousand boards as they scroll on (YouHop) */}
+          <span className={c("ch-youField")}>
+          {found && where === "hinge" ? <i className={c("ch-youHome")} data-you-home="" aria-hidden="true" /> : null}
           <input
             id={`${id}-name`}
             className={c("ch-youInput")}
@@ -111,6 +215,7 @@ export const YouOnChessCom = ({ where }) => {
             aria-describedby={`${id}-status ${id}-note`}
             aria-invalid={state.kind === "invalid" ? "true" : undefined}
           />
+          </span>
           <button type="submit" className={c("ch-ask")} aria-pressed={current} disabled={state.kind === "asking" || !typed.trim()}>
             <i aria-hidden="true" />
             {current ? "Found you" : "Show me"}

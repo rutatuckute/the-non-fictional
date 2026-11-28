@@ -46,6 +46,8 @@ import { Wooden } from "./wooden"
 const CHAPTERS = [
   { id: "the-thread", label: "The thread" },
   { id: "the-people", label: "The people" },
+  // where the reader is asked for their Chess.com username, easy to come back to (28 Nov, owner)
+  { id: "your-username", label: "Your username" },
   {
     id: "the-investigation",
     label: "The data",

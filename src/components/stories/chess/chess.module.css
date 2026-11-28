@@ -698,6 +698,9 @@
 .ch-people[data-diving="true"] > .ch-peopleTitle { opacity: 0; }
 .ch-club .ch-step { position: relative; }
 .ch-stepMark { position: absolute; left: 0; top: 80vh; width: 0; height: 0; }
+/* "Your username" in the chapters: lands with the username box in the middle of
+   the screen (on a phone, held at its foot) */
+.ch-step[data-place="username"] > .ch-stepMark { top: -20vh; top: -20svh; }
 /* The part opens on one centred group, as the prototype's opener: its name large, one
    quiet line under it, and the three questions. */
 .ch-diveThree {
@@ -751,6 +754,16 @@
 .ch-part3 .ch-pin[data-reading="true"] .ch-step[data-step="1"] { min-height: 74vh; }
 /* a step whose scene is small (the message) keeps its words nearer the middle, as in Parts I and II */
 @media (min-width: 60.01rem) { .ch-pin[data-reading="true"] .ch-step[data-place="near"] .ch-card { margin-right: 8%; } }
+/* A step on one line (place "line"): its box as wide as its words, from the
+   column's right edge (28 Nov, owner: "A professor stood nearby, watching." in one row). */
+@media (min-width: 60.01rem) {
+  .ch-pin[data-reading="true"] .ch-step[data-place="line"] .ch-card { width: auto; max-width: 64%; }
+  .ch-pin[data-reading="true"] .ch-step[data-place="line"] .ch-text p { white-space: nowrap; }
+  /* the club's turns (his question, "How did he know?", the central question) are
+     centred across the whole column, not only over the scene at its left (28 Nov, owner) */
+  .ch-club[data-reading="true"] .ch-layer.ch-big { right: calc(-100% * 40 / 60); }
+  .ch-club[data-reading="true"] .ch-big .ch-text { max-width: 20em; }
+}
 /* What our choices reveal (reveal.js): one stage, as in the Part III prototype and as
    "When things go wrong" (wrong-stage.js). The marks are players (slate), her (clay, the
    travelling dot), games, points; the lines, cards and words are drawn under them.
@@ -922,6 +935,10 @@
 }
 .ch-ratings { position: relative; margin: 0; width: 100%; color: var(--ink); }
 .ch-ratingTitle { font: 400 clamp(22px, 2.2vw, 29px) / 1.15 var(--font-title); letter-spacing: -0.02em; }
+/* a small line under a chart's title (only the 1-minute vs 10-minute scatter has one, 28 Nov);
+   its place is kept under every title so the charts never move */
+.ch-story .ch-ratingSub { display: block; height: 16px; margin-top: 4px; color: var(--ink-3); font: 400 12px / 16px var(--font-mono); letter-spacing: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ch-ratings[data-compact="true"] .ch-ratingSub { display: none; }
 /* Every chart's legend: coloured tags under its title, in one row of fixed height
    (the same for every chart, so the plot under it never moves). */
 .ch-ratingChips { display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; height: 19px; margin: 10px 0 8px; pointer-events: none; overflow: hidden; }
@@ -934,6 +951,12 @@
 .ch-ratingChip[data-tone="you"] { background: var(--form-data); color: #0c1a0e; }
 .ch-ratingChip[data-tone="crowd"] { background: var(--them); color: #0d1219; }
 .ch-ratingChip[data-shown="false"] { opacity: 0; }
+/* a tag with a small note under it (the ratings chart): the tag as wide as its note */
+.ch-ratingChips:has(.ch-ratingChipBox) { gap: 12px; overflow: visible; }
+.ch-ratingChipBox { display: inline-flex; flex-direction: column; align-items: stretch; transition: opacity 500ms ease; }
+.ch-ratingChipBox[data-shown="false"] { opacity: 0; }
+.ch-story .ch-ratingChipNote { display: block; height: 0; margin-top: 4px; color: var(--ink-3); font: 400 11px / 14px var(--font-mono); white-space: nowrap; }
+@media (max-width: 40rem) { .ch-story .ch-ratingChipNote { font-size: 10px; } }
 .ch-ratings svg { display: block; overflow: visible; max-width: 100%; }
 .ch-ratings svg text { fill: var(--ink-2); font: 400 12px / 1 var(--font-mono); }
 .ch-ratingGrid { stroke: var(--rule); stroke-width: 1; }
@@ -1438,6 +1461,15 @@
 /* the reader's own place among the thousand boards: green, beside the club's */
 .ch-yourBoard { position: absolute; display: grid; place-items: center; box-sizing: border-box; background: var(--void); box-shadow: inset 0 0 0 2px var(--form-data); pointer-events: none; animation: ch-yours 900ms var(--ch-ease, ease) both; }
 .ch-yourBoard i { width: 22%; aspect-ratio: 1; border-radius: 50%; background: var(--form-data); }
+/* the dot itself waits beside the username box until the reader scrolls on (you.js: YouHop) */
+.ch-yourBoard i { opacity: 0; }
+[data-you-dot="board"] .ch-yourBoard i { opacity: 1; }
+.ch-youField { position: relative; display: flex; flex: 0 1 16rem; min-width: 0; }
+.ch-story .ch-youField .ch-youInput { flex: 1 1 auto; width: 100%; }
+.ch-youHome { position: absolute; right: 100%; top: 50%; width: 10px; height: 10px; margin: -5px 12px 0 0; border-radius: 50%; background: var(--form-data); animation: ch-yours 600ms var(--ch-ease, ease) both; }
+[data-you-dot]:not([data-you-dot="home"]) .ch-youHome { opacity: 0; animation: none; }
+.ch-youFlier { position: fixed; left: 0; top: 0; z-index: 60; width: 10px; height: 10px; border-radius: 50%; background: var(--form-data); opacity: 0; pointer-events: none; will-change: transform; }
+@media (prefers-reduced-motion: reduce) { .ch-youHome { animation: none; } }
 @keyframes ch-yours { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .ch-yourBoard { animation: none; } }
 .ch-youForm { display: grid; justify-items: center; gap: 10px; text-align: center; }
@@ -1465,7 +1497,7 @@
 .ch-ratings .ch-ratingYou text { fill: var(--form-data); font-weight: 600; }
 @media (max-width: 40rem) {
   .ch-you { padding: 10vh 0 9vh; }
-  .ch-story .ch-youInput { flex: 1 1 100%; }
+  .ch-story .ch-youInput, .ch-youField { flex: 1 1 100%; }
   .ch-youRow .ch-ask { flex: 1 0 auto; justify-content: center; }
 }
 

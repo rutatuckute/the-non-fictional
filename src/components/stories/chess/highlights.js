@@ -15,20 +15,20 @@
 //   other   slate: the typical player   grey    neutral: the estimate, his bubble
 //   band    the shaded middle half (an ivory wash)
 const HIGHLIGHTS = {
-  // Part I: the thread takes the story's clay here; the time chart's grey estimate
+  // Part I: the thread takes the story's clay here (Chess.com and social media unmarked since 28 Nov, owner)
   mine: [["This is mine", "me"]],
-  // Chess.com in green, the owner's choice (27 Nov), though green is otherwise the reader's
-  "chess-com": [["Chess.com", "you"]],
   "not-a-player": [["who I am", "me"]],
-  obsession: [["social media", "grey"]],
   // Part II: the London System's squares turn clay on the club board
   "people-intro": [["randomly matched stranger", "crowd"]],
   club: [["the London System", "me"]],
 
+  "say-claim": [["I said", "me"]],
+  "say-isolation": [["my past self", "me"]],
   "say-crowd": [["bullet rating is indeed lower", "crowd"]],
   "say-perspective": [["that’s me", "me"]],
   "say-pace": [["5 seconds per move", "me"]],
   "say-hurry": [["9 in 10", "crowd"]],
+  "say-others": [["my claim", "me"]],
   "say-guess": [["higher or lower", "you"]],
   "say-giveup": [["quicker to give up", "crowd"]],
 

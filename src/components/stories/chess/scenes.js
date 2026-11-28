@@ -7,7 +7,7 @@ import { Dive } from "./dive"
 import { c, Pinned, Show, Text, useNarrow } from "./parts"
 import { RatingStory } from "./ratings"
 import { useReader, useTell } from "./reader"
-import { YouOnChessCom } from "./you"
+import { YouHop, YouOnChessCom } from "./you"
 import { GROUPS, crowdStage } from "./crowd"
 
 // The pinned scenes of the chess story: the club in London (Part II), and the
@@ -80,7 +80,7 @@ const Boards = () => {
           aria-hidden="true"
           style={{ left: `${(YOUR_COL / COLS) * 100}%`, top: `${(YOUR_ROW / ROWS) * 100}%`, width: `${100 / COLS}%`, height: `${100 / ROWS}%` }}
         >
-          <i />
+          <i data-you-board="" />
         </span>
       ) : null}
       {note ? (
@@ -109,7 +109,7 @@ export const People = () => {
     steps={[
       // the London System is set up on the board while this step's stretch passes
       { text: <Text name="club" look="lead" />, rest: CLUB_REST },
-      { text: <Text name="professor" look="lead" /> },
+      { text: <Text name="professor" look="lead" />, place: "line" },
       // his question, then "How did he know?", then the central question: each alone, in the scene
       {},
       {},
@@ -117,7 +117,7 @@ export const People = () => {
       {},
       { text: <Text name="boards" look="lead" /> },
       // the hinge: Chess.com keeps every game, so the reader's are in there too
-      { text: <YouOnChessCom where="hinge" />, rest: 0.4 },
+      { text: <YouOnChessCom where="hinge" />, rest: 0.4, mark: "your-username", place: "username" },
       { mark: "the-investigation", rest: narrow ? 1.7 : 2.6 },
     ]}
   >
@@ -157,6 +157,8 @@ export const People = () => {
             </Show>
           </div>
         </div>
+        {/* the reader's dot, from the username box into their board */}
+        <YouHop during={8} />
         {/* The turn of the story, each alone and quiet: everything else dims. */}
         <Show on={step === 2} className={c("ch-big")}>
           <Text name="professor-quote" look="statement" />

@@ -140,9 +140,16 @@ const PaceCloud = React.memo(function PaceCloud({ swarm, targets }) {
 })
 
 // The chart's legend: coloured tags under its title, one look for every chart.
+// A tag may carry a small note under it (the ratings chart: what "normal" and
+// "fast" chess are, 28 Nov, owner's mock-up); the note takes no height of its own.
 const Chips = ({ chips, extra }) => (
   <div className={c("ch-ratingChips")} aria-hidden="true">
-    {chips.map(([tone, text, shown = true]) => <span key={tone + text} className={c("ch-ratingChip")} data-tone={tone} data-shown={shown ? "true" : "false"}>{text}</span>)}
+    {chips.map(([tone, text, shown = true, note]) => note ? (
+      <span key={tone + text} className={c("ch-ratingChipBox")} data-shown={shown ? "true" : "false"}>
+        <span className={c("ch-ratingChip")} data-tone={tone}>{text}</span>
+        <span className={c("ch-ratingChipNote")}>{note}</span>
+      </span>
+    ) : <span key={tone + text} className={c("ch-ratingChip")} data-tone={tone} data-shown={shown ? "true" : "false"}>{text}</span>)}
     {extra}
   </div>
 )
@@ -172,7 +179,8 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
       const compact = window.matchMedia("(max-width: 60rem)").matches && scene.clientHeight < 440
       const fit = (less, most = 600) => Math.min(most, Math.max(100, scene.clientHeight - less))
       // the names and the lost games take the taller frame; the charts before them keep theirs
-      if (width) setSize({ width, compact, height: fit(150), tall: compact ? fit(112, 700) : fit(150, 700) })
+      // (150 for the title, its small line and the legend: 20 of it is the small line)
+      if (width) setSize({ width, compact, height: fit(170), tall: compact ? fit(112, 700) : fit(170, 700) })
     }
     const observer = new ResizeObserver(update)
     observer.observe(scene); observer.observe(box.current); update()
@@ -264,7 +272,9 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
   const mode = stage === "giveup" || stage === "us" ? "giveup" : stage && stage !== "crowd" ? "names" : stage ? "crowd" : step >= 7 ? "pace" : step >= 4 ? "scatter" : "timeline"
   // one title per chart, kept while the chart changes (the crowd has none)
   const title = stage === "us" ? "How our games end" : mode === "giveup" ? "How their games end" : mode === "names" ? "What their names say" : mode === "crowd" ? "\u00a0"
-    : mode === "pace" ? "How fast do I actually play" : mode === "scatter" ? "1-minute VS 10-minute games" : "My chess ratings"
+    : mode === "pace" ? "How fast do I actually play" : mode === "scatter" ? "Normal chess vs fast chess" : "My chess ratings"
+  // a small line under the title; its place is kept under every title so no chart moves
+  const subtitle = mode === "scatter" ? "Comparing ratings across the two time controls" : "\u00a0"
   const youChip = ["you", "You"]
   // the give-up squares: colour says whose, the mark says how it ended (a dot resigned, a ring did not)
   const chips = mode === "giveup" ? [["filled", "Resigned"], ["ring", "Ended otherwise"]]
@@ -272,14 +282,14 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
       : mode === "crowd" ? []
         : mode === "pace" ? [["me", "Me"], ["crowd", atYours ? "Players at your level" : "Players at my level"], ...(yourPace !== null ? [youChip] : [])]
           : step >= 5 ? [["me", "Me"], ["crowd", "Other players"], ...(you ? [youChip] : [])]
-            : [["rapid", "10-minute games"], ["bullet", "1-minute games", at >= 2.35]]
+            : [["rapid", "Normal chess", true, "Rapid · 10-minute games"], ["bullet", "Fast chess", at >= 2.35, "Bullet · 1-minute games"]]
   const resignWords = key => `${resignedOf(key, yourResign)} in 100`
   const label = mode === "giveup" ? `Of 100 lost rapid games, players whose names say they are bad resigned ${resignWords("bad")}; everyone else ${resignWords("everyone")}.${stage === "us" ? ` Me: ${MY_RESIGN.resigned} of my ${MY_RESIGN.losses} losses.${yourResign ? ` You: ${yourResign.resigned} of your ${yourResign.losses}.` : ""}` : ""}`
     : mode === "names" ? `Rapid ratings by what usernames say, against a typical opponent at ${TYPICAL}. ${GROUPS.filter(g => revealed[g.key]).map(g => `${g.label}: median ${g.median}`).join(". ")}`
       : mode === "crowd" ? "The pace chart's axis goes; its dots become a crowd of other players, some wearing usernames."
         : step >= 7 ? `My pace: 5 seconds per move. Typical peer: 7.7 seconds. Faster than 93% of a separate sample of peers.${yourPace !== null ? ` You, in green: ${yourPace} seconds.` : ""}${atYours ? ` Shown: ${level.seconds.length} players rated ${level.from}–${level.to}, typical ${level.median} seconds${yourShare !== null ? `; you are faster than ${yourShare} in 100 of them` : ""}.` : ""}`
-      : step >= 4 ? `10-minute rating is horizontal; 1-minute rating is vertical. ${step >= 5 ? "87% of sampled players are rated lower in 1-minute games." : ""} ${step === 6 ? "My gap is about typical at my level." : ""}`
-        : "My rating through 2026, last rating each day: 10-minute games, then 1-minute games from July."
+      : step >= 4 ? `Normal chess (10-minute) rating is horizontal; fast chess (1-minute) rating is vertical. ${step >= 5 ? "87% of sampled players are rated lower in fast chess." : ""} ${step === 6 ? "My gap is about typical at my level." : ""}`
+        : "My rating through 2026, last rating each day: normal chess (rapid, 10-minute games), then fast chess (bullet, 1-minute games) from July."
   const fullLabel = you && (step === 5 || step === 6) ? `${label} You, in green: rapid ${you.rapid}, bullet ${you.bullet}, ${gapWords(you)}.` : label
   const chartStyle = { opacity: entry }
   // A layer at no opacity is still painted, and on a phone its hundreds of dots
@@ -293,7 +303,7 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
       <div className={c("ch-ratingPhone")} aria-hidden={step >= 3} style={{ visibility: entry >= 1 ? "hidden" : "visible" }}>
         <Message collapse={entry} revealed={step >= 1} target={{ x: tx(T.claim), y: top + canvasTop }} />
       </div>
-      <figcaption className={c("ch-ratingTitle")} style={chartStyle} aria-hidden={step < 2}>{title}</figcaption>
+      <figcaption className={c("ch-ratingTitle")} style={chartStyle} aria-hidden={step < 2}>{title}<span className={c("ch-ratingSub")}>{subtitle}</span></figcaption>
       {/* the legend, and at its right the view switch (where a chart has one), close to the chart */}
       <div className={c("ch-ratingHeadRow")} style={chartStyle} inert={step < 2} aria-hidden={step < 2}>
         <Chips chips={chips} extra={mode === "names" ? <NameScore guesses={guesses} /> : null} />
@@ -332,8 +342,8 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
             return x >= left - 2 && x <= right + 2 && (period > 0.3 || m % 2) ? <text key={m} x={x} y={bottom + 22} textAnchor="middle">{["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov"][m - 1]}{m === 1 ? " 2026" : ""}</text> : null
           })}
           <g opacity={1 - period}>
-            {rapid && <text x={right} y={ty(rapid[1]) - 11} textAnchor="end" className={c("ch-ratingPale")}>10-minute</text>}
-            {bullet && <text x={right} y={ty(bullet[1]) + 18} textAnchor="end" className={c("ch-ratingClay")}>1-minute</text>}
+            {rapid && <text x={right} y={ty(rapid[1]) - 11} textAnchor="end" className={c("ch-ratingPale")}>Normal chess</text>}
+            {bullet && <text x={right} y={ty(bullet[1]) + 18} textAnchor="end" className={c("ch-ratingClay")}>Fast chess</text>}
             <path className={c("ch-ratingGap")} opacity={smooth(at - 2)} d={`M${right - 18} ${ty(T.rapid.at(-1)[1])} h8 V${ty(T.bullet.at(-1)[1])} h-8`} />
           </g>
         </g>
@@ -353,7 +363,7 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
             </g>
           })}
           </g>
-          <text x={left} y={16}>1-minute rating ↑</text><text x={right} y={bottom + 22 + 16} textAnchor="end">10-minute rating →</text>
+          <text x={left} y={16}>Fast chess rating ↑</text><text x={right} y={bottom + 22 + 16} textAnchor="end">Normal chess rating →</text>
           <g clipPath={`url(#${id}-plot)`}>
             <g transform={`matrix(${(right - left) / (xMax - xMin)},0,0,${(bottom - top) / (yMax - yMin)},${left - xMin * (right - left) / (xMax - xMin)},${bottom + yMin * (bottom - top) / (yMax - yMin)})`}>
               <line x1={0} y1={0} x2={3000} y2={-3000} className={c("ch-ratingRef")} vectorEffect="non-scaling-stroke" />
@@ -362,7 +372,9 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
                 strokeDasharray="1 1" strokeDashoffset={1 - focus} d={path(S.curve.map(q => [q.rapid, -q.bullet]))} />
             </g>
           </g>
-          <text opacity={crowdOpacity * (1 - focus) * others} x={sx(1800)} y={sy(1800) - 12} textAnchor="middle">Same in both</text>
+          {/* along the diagonal, just above it (28 Nov, owner) */}
+          <text opacity={sx(1800) > right - 30 || sy(1800) < top + 10 ? 0 : crowdOpacity * (1 - focus) * others} x={sx(1800)} y={sy(1800) - 8} textAnchor="middle"
+            transform={`rotate(${(Math.atan2(sy(1900) - sy(1700), sx(1900) - sx(1700)) * 180 / Math.PI).toFixed(2)} ${sx(1800).toFixed(1)} ${sy(1800).toFixed(1)})`}>Same in both</text>
           {you?.typical != null ? (
             <g className={c("ch-ratingYou")} opacity={focus * pan * others}>
               <circle cx={sx(you.rapid)} cy={sy(you.typical)} r={4} className={c("ch-ratingExpected")} />
@@ -399,8 +411,8 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
           <line className={c("ch-ratingRapid")} x1={mix(left, sx(S.me[0]), morph)} x2={mix(right, sx(S.me[0]), morph)}
             y1={mix(ty(S.me[0]), bottom, morph)} y2={mix(ty(S.me[0]), top, morph)} />
           <line className={c("ch-ratingBullet")} x1={left} x2={right} y1={mix(ty(S.me[1]), sy(S.me[1]), morph)} y2={mix(ty(S.me[1]), sy(S.me[1]), morph)} />
-          <text className={c("ch-ratingPale")} x={mix(left + 8, sx(S.me[0]) + 8, morph)} y={mix(ty(S.me[0]) - 12, bottom - 12, morph)}>10-minute</text>
-          <text className={c("ch-ratingClay")} x={left + 8} y={mix(ty(S.me[1]), sy(S.me[1]), morph) - 12}>1-minute</text>
+          <text className={c("ch-ratingPale")} x={mix(left + 8, sx(S.me[0]) + 8, morph)} y={mix(ty(S.me[0]) - 12, bottom - 12, morph)}>Normal chess</text>
+          <text className={c("ch-ratingClay")} x={left + 8} y={mix(ty(S.me[1]), sy(S.me[1]), morph) - 12}>Fast chess</text>
         </g>
         <g opacity={paceOpacity} visibility={gone(paceOpacity)} aria-hidden="true" data-layer="pace-dots" data-highlight={step === 8}>
           <g className={c("ch-paceSwap")} data-off={atYours ? "true" : undefined}><PaceCloud swarm={swarm} targets={targets} /></g>

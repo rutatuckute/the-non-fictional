@@ -137,9 +137,9 @@ export const crossing = (index, narrow, width, height, through) => {
   return `M${a[0].toFixed(1)},${a[1].toFixed(1)} Q${((a[0] + cx) / 2).toFixed(1)},${cy.toFixed(1)} ${cx.toFixed(1)},${cy.toFixed(1)} T${b[0].toFixed(1)},${b[1].toFixed(1)}`
 }
 
-// 2,007 games, 1,938 different people: one faint thread for each, each from
-// one edge to another, the same every time (seeded).
-export const PEOPLE = 1938
+// 2,087 games, 2,017 different people (all her games to 28 Nov 2026): one
+// faint thread for each, each from one edge to another, the same every time (seeded).
+export const PEOPLE = 2017
 export const strands = (width, height) => {
   let h = 2166136261
   const random = () => {
