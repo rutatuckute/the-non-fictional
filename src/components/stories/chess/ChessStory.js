@@ -101,12 +101,14 @@ const LINES = {
   arrive: {
     b: [[14, "7vh", 6, "7vh"]],
   },
-  // Part IV: the reader's thread (kept at the opening) comes back beside the story's:
-  // the story's at the left of the phone, theirs at its right, then the two side by
-  // side down the left, and on together into the others
+  // Part IV: the reader's thread (kept at the opening) comes back beside the story's.
+  // It left by the right edge of the screen during the years, so it comes back in by
+  // the right edge (28 Nov, owner), crosses above the words, runs down between the
+  // message and the words, and then goes beside the story's down the left, and on
+  // together into the others
   encounter: {
-    b: [[3, 30, -3, 2], [6, 60, -3, 50], [8, 104, -3, 99]],
-    "you-back": [[47, 4, 101.5, 4], [50, 40, 101.5, 50], [46, 86, 101.5, 86], [22, 103, 101.5, 102]],
+    b: [[1, 30, -3, 2], [2, 60, -3, 50], [6, 104, -3, 99]],
+    "you-back": [[OFF_RIGHT, 0, OFF_RIGHT, 0], [104, 3, 112, 2], [92, 8, 101.5, 8], [66, 14, 101.5, 30], [53, 34, 101.5, 60], [52, 72, 101.5, 86], [22, 103, 101.5, 102]],
   },
   close: {
     b: [[9, 35, -3, 50], [10, 96, -3, 100]],
@@ -258,9 +260,14 @@ const ChessStory = ({ steps = [], names = [], title, date, dateLabel, form, minu
           <Mark id="the-ending" />
           {/* the thread arrives from the last recap, clear of the title */}
           <Knots of={LINES.arrive} />
-          <Text name="ending-title" look="partTitle" className={c("ch-endingTitle")} />
+          {/* the part's name, as Part II's: at the left, then held at the top of
+              the screen, on the page's own ground, to the end of the part */}
+          <div className={c("ch-peopleTitle", "ch-endingTitle")}>
+            <Text name="ending-title" look="partTitle" />
+          </div>
           <div className={c("ch-row", "ch-encounter")}>
-            {/* the message that started it, and her answer (phone-scenes.js) */}
+            {/* the message that started it, and her answer, as at the start of
+                Part III: no phone (phone-scenes.js) */}
             <Chat />
             <Text name="encounter" look="lead" className={c("ch-col")} />
             <Knots of={LINES.encounter} />

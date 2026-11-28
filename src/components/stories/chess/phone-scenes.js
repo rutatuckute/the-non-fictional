@@ -151,9 +151,10 @@ export const Message = ({ collapse = 0, target, revealed = true }) => {
   )
 }
 
-// Part IV: the message that started it, and her answer, written on the blank
-// phone as the page's own text (not a screenshot of any app): her bubble in
-// the thread's clay, his in a quiet grey, the day above them.
+// Part IV: the message that started it, and her answer, drawn as at the start
+// of Part III (Message, above): no phone, just the day, his message in a quiet
+// grey, now with its words, and hers in the thread's clay. His grows in as the
+// reader comes to it, as hers did there.
 export const Chat = () => {
   const him = useIsHim()
   const box = React.useRef(null)
@@ -162,25 +163,23 @@ export const Chat = () => {
   useFollow(
     () => Math.max(0, Math.min(1, (window.innerHeight * 0.9 - box.current.getBoundingClientRect().top) / (window.innerHeight * 0.35))),
     progress => {
-      bubble.current.style.transform = `translate(-50%, -50%) scale(${still ? 1 : 0.55 + 0.45 * progress})`
+      bubble.current.style.transform = `scale(${still ? 1 : 0.55 + 0.45 * progress})`
       bubble.current.style.opacity = still ? "1" : String(0.78 + 0.22 * progress)
     },
     { still, watch: box },
   )
   return (
-    <div className={c("ch-chat")} ref={box} data-still={still} role="img" aria-label="A phone showing two messages, 18 May 2026. His: “heyy, do you play on chess.com? what’s your rating on blitz? xd”. Mine: “Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀”.">
-      <div className={c("ch-chatFrame")}>
-        <img src="/images/stories/chess/phone-empty.webp" width={800} height={1704} alt="" loading="lazy" decoding="async" />
-        <p className={c("ch-chatDay")} aria-hidden="true">18 May 2026</p>
-        <div className={c("ch-chatScreen")} aria-hidden="true">
-          <p className={c("ch-chatTheirs")}>heyy, do you play on chess.com? what’s your rating on blitz? xd</p>
-          <p className={c("ch-chatMine")}>Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀</p>
-        </div>
-      </div>
-      <p className={c("ch-messagePop", "ch-chatPop")} ref={bubble} aria-hidden="true">
+    <div className={c("ch-sayMessage", "ch-chat")} ref={box} data-still={still} role="img" aria-label="Two messages, 18 May 2026. His: “heyy, do you play on chess.com? what’s your rating on blitz? xd”. Mine: “Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀”.">
+      <p className={c("ch-sayMessageDay")} aria-hidden="true">18 May 2026</p>
+      <p className={c("ch-sayTheirs", "ch-chatTheirs")} ref={bubble} aria-hidden="true">
         {/* his green dot again, now beside his words (no dot travels in Part IV: it simply waits here) */}
         {him ? <b className={c("ch-dotMark", "ch-dotBeside", "ch-dotYou")} /> : null}
         heyy, do you play on chess.com? what’s your rating on blitz? xd
+      </p>
+      <p className={c("ch-sayBubble")} aria-hidden="true">
+        {/* my dot beside my words, as at the start of Part III (drawn: nothing travels here) */}
+        <b className={c("ch-dotMark", "ch-dotBeside", "ch-dotMe")} />
+        Hey! I do, but I only play 10/10min games, I would be soooo bad at blitz 😀
       </p>
     </div>
   )

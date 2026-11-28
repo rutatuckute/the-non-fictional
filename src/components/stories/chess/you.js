@@ -188,9 +188,25 @@ export const YouOnChessCom = ({ where }) => {
   useTell("rapidRead", reading.kind === "done" ? name : null)
   // the button says so only while the box still holds the name that was found
   const current = found && typed.trim() === state.username
+  // how the reader's data is used: one line under the box opens the note
+  const [told, setTold] = React.useState(false)
+  // (only what went wrong, or that it is being asked, is said in words: once found,
+  // the rating and the games read say it)
+  const status = found ? "" : say(state)
+  const games =
+    reading.kind === "done"
+      ? reading.games == null ? "–" : reading.games.toLocaleString("en-GB")
+      : "…"
+  const gamesLabel =
+    reading.kind === "done"
+      ? reading.games == null ? "Couldn’t read your games just now" : "Games analysed"
+      : reading.month ? `Reading your games… ${MONTH.format(reading.month)}` : "Reading your games…"
+  // Laid out as the owner's mock-ups (28 Nov): a title and one line, the field and
+  // its button; once found, the rating and the games read, and how to be removed.
   return (
-    <section className={c("ch-you")} aria-labelledby={`${id}-label`} data-found={found ? "true" : "false"} data-where={where}>
-      <Text name="you-chesscom" look="lead" className={c("ch-youWords")} />
+    <section className={c("ch-you")} aria-labelledby={`${id}-title`} data-found={found ? "true" : "false"} data-where={where}>
+      <h3 id={`${id}-title`} className={c("ch-youTitle")}>What about you?</h3>
+      <p className={c("ch-youSub")}>{found ? "You’re in the story." : "Play on Chess.com? Add your username and see where you fit."}</p>
       <form className={c("ch-youForm")} onSubmit={submit} noValidate>
         <label id={`${id}-label`} htmlFor={`${id}-name`} className={c("ch-youLabel")}>
           Your Chess.com username
@@ -205,6 +221,7 @@ export const YouOnChessCom = ({ where }) => {
             className={c("ch-youInput")}
             type="text"
             value={typed}
+            placeholder="Chess.com username"
             onChange={event => setTyped(event.target.value)}
             maxLength={25}
             autoComplete="off"
@@ -212,36 +229,47 @@ export const YouOnChessCom = ({ where }) => {
             autoCorrect="off"
             spellCheck={false}
             enterKeyHint="go"
-            aria-describedby={`${id}-status ${id}-note`}
+            aria-describedby={`${id}-status`}
             aria-invalid={state.kind === "invalid" ? "true" : undefined}
           />
           </span>
-          <button type="submit" className={c("ch-ask")} aria-pressed={current} disabled={state.kind === "asking" || !typed.trim()}>
-            <i aria-hidden="true" />
-            {current ? "Found you" : "Show me"}
+          <button type="submit" className={c("ch-youGo")} aria-pressed={current} disabled={state.kind === "asking" || !typed.trim()}>
+            {current ? <i aria-hidden="true" /> : null}
+            {current ? "Found you" : "Find me"}
           </button>
-          {found ? (
-            <button type="button" className={c("ch-youForget")} onClick={forget}>
-              Remove
-            </button>
-          ) : null}
         </div>
         <p id={`${id}-status`} className={c("ch-youStatus")} role="status" data-kind={state.kind}>
-          {say(state)}
+          {status}
         </p>
         {found ? (
-          <p className={c("ch-youStatus")} role="status" data-kind={reading.kind === "done" ? "counted" : "asking"}>
-            {reading.kind === "done"
-              ? reading.games == null
-                ? "Couldn’t read your games just now: the later steps will say so."
-                : `Read ${reading.games.toLocaleString("en-GB")} of your rapid games.`
-              : reading.month
-                ? `Reading your rapid games… ${MONTH.format(reading.month)}`
-                : "Reading your rapid games…"}
-          </p>
-        ) : null}
-        <p id={`${id}-note`} className={c("ch-youNote")}>
-          Read from Chess.com’s public data, in your browser. Nothing is sent to this site or saved: it’s gone when you close the page. Any public username works. It reads your rapid games of the last 12 months (up to 1,000: a few megabytes) to count your lost queens and your dials later. No account? Keep scrolling: the story works without one.
+          <>
+            <dl className={c("ch-youStats")}>
+              <div>
+                <dt>Rapid rating</dt>
+                <dd>{state.rapid.rating.toLocaleString("en-GB")}</dd>
+              </div>
+              <div role="status" data-kind={reading.kind}>
+                <dt>{gamesLabel}</dt>
+                <dd>{games}</dd>
+              </div>
+            </dl>
+            <p className={c("ch-youFollow")}>Follow the green dot in the charts.</p>
+          </>
+        ) : (
+          <p className={c("ch-youFine")}>No account needed to follow the story.</p>
+        )}
+        <div className={c("ch-youLinks")}>
+          {found ? (
+            <button type="button" className={c("ch-youLink")} onClick={forget}>
+              Remove me
+            </button>
+          ) : null}
+          <button type="button" className={c("ch-youLink")} aria-expanded={told} aria-controls={`${id}-note`} onClick={() => setTold(open => !open)}>
+            How your data is used
+          </button>
+        </div>
+        <p id={`${id}-note`} className={c("ch-youNote")} hidden={!told}>
+          Read from Chess.com’s public data, in your browser. Nothing is sent to this site or saved: it’s gone when you close the page. Any public username works. It reads your rapid games of the last 12 months (up to 1,000: a few megabytes) to count your lost queens and your dials later.
         </p>
       </form>
     </section>

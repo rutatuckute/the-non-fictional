@@ -908,8 +908,6 @@
 }
 /* What we say about ourselves. */
 .ch-messageCopy h3 { margin: 0 0 16px; font: 500 26px / 1.1 var(--font-title); letter-spacing: -0.02em; }
-/* The message opens the inquiry. The same green point survives the change of axes. */
-.ch-story .ch-messagePop { position: absolute; z-index: 2; left: 50%; top: 48%; width: clamp(260px, 145%, 440px); box-sizing: border-box; padding: 18px 22px; border-radius: 22px 22px 6px 22px; background: var(--thread); color: #fff8ef; font: 400 clamp(15px, 1.4vw, 20px) / 1.42 var(--font-mono, sans-serif); box-shadow: 0 18px 40px rgba(17, 16, 15, 0.45); transform-origin: 50% 50%; transform: translate(-50%, -50%) scale(0.55); }
 /* Her message on its own: the day above, then her bubble. Until its words come, the
    bubble holds their place with soft lines, so nothing moves when it is read. */
 .ch-sayMessage { position: relative; width: min(27rem, 90%); }
@@ -1108,26 +1106,17 @@
 .ch-two > * { max-width: none; padding: 18px 20px; border: 1px solid var(--rule-strong); }
 
 /* Part IV, and what follows the story. */
-.ch-encounter { padding-top: 6vh; }
-/* the phone close: its lower part, where the chat is, fading out upwards. The
-   messages are the page's own text: hers in clay, his in a quiet grey. */
-.ch-chat {
-  grid-column: 1 / 7; justify-self: center; position: relative; z-index: 2; width: 100%; max-width: 460px; aspect-ratio: 800 / 1000; container-type: inline-size;
-}
-.ch-chatFrame { position: absolute; inset: 0; overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%); mask-image: linear-gradient(to bottom, transparent, #000 22%);
-}
-.ch-chat img { position: absolute; left: 0; bottom: 0; display: block; width: 100%; height: auto; }
-.ch-chatScreen { position: absolute; left: 13%; right: 13%; bottom: 12%; display: grid; gap: 3.2cqw; font: 400 3.5cqw / 1.42 var(--font-mono); }
-.ch-story .ch-chatDay { justify-self: center; color: var(--ink-3); font-size: 2.9cqw; letter-spacing: 0.04em; }
-.ch-chatFrame > .ch-chatDay { position: absolute; left: 50%; top: 25%; transform: translateX(-50%); white-space: nowrap; font-family: var(--font-mono); }
-.ch-story .ch-chatTheirs, .ch-story .ch-chatMine { max-width: 78%; padding: 2.6cqw 3.6cqw; }
-.ch-story .ch-chatTheirs { justify-self: start; border-radius: 3.8cqw 3.8cqw 3.8cqw 1cqw; background: #34322f; color: var(--ink); }
-.ch-chatScreen .ch-chatTheirs { visibility: hidden; }
-.ch-story .ch-messagePop.ch-chatPop { top: 43%; width: min(110%, 440px, calc(100vw - 2 * var(--page-margin))); border-radius: 22px 22px 22px 6px; background: #34322f; color: #f0e9df; }
-.ch-story .ch-chatMine { justify-self: end; border-radius: 3.8cqw 3.8cqw 1cqw 3.8cqw; background: var(--thread); color: #fff8ef; }
-.ch-endingTitle { position: relative; z-index: 2; padding-top: 12vh; }
+/* The part's name, as Part II's (28 Nov, owner): at the left, then held at the
+   top of the screen to the end of the part. It takes no room: the encounter
+   below leaves it its own. */
+.ch-back > .ch-endingTitle { opacity: 1; margin-top: 12vh; margin-top: 12svh; }
+.ch-encounter { padding-top: calc(22vh + 40px); padding-top: calc(22svh + 40px); }
+/* the message that started it, and her answer, as at the start of Part III
+   (.ch-sayMessage): no phone. His words are shown now. */
+.ch-chat { grid-column: 1 / 7; justify-self: center; align-self: center; z-index: 2; }
+.ch-story .ch-chatTheirs { display: block; color: #f0e9df; font: 400 clamp(15px, 1.4vw, 20px) / 1.42 var(--font-mono, sans-serif); transform-origin: 0 100%; }
 .ch-encounter .ch-col { grid-column: 8 / 12; align-self: center; }
+@media (max-width: 60rem) { .ch-encounter { padding-top: calc(12svh + 40px); } }
 .ch-close { padding-top: 22vh; }
 .ch-close .ch-col { grid-column: 3 / 11; display: grid; gap: 9vh; }
 /* The threads go on past the end of the story, into the page's ground. */
@@ -1337,10 +1326,12 @@
 .ch-dotMark { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
 .ch-dotInline { margin-right: 8px; vertical-align: -1px; }
 .ch-dotBeside { position: absolute; left: -24px; top: 50%; margin-top: -6px; }
-/* his dot at the end (Part IV): no dot travels there, so this one is drawn */
+/* the dots at the end (Part IV): no dot travels there, so they are drawn; mine
+   always, his when he is the one reading */
 .ch-dotYou { background: var(--form-data); }
-/* on a phone his bubble is nearly as wide as the screen: the dot comes in to stay on it */
-@media (max-width: 40rem) { .ch-chatPop .ch-dotYou { left: -15px; } }
+.ch-dotMe { background: var(--thread); }
+/* on a phone the bubbles are nearly as wide as the screen: the dots come in to stay on them */
+@media (max-width: 40rem) { .ch-chat .ch-dotBeside { left: -15px; } }
 .ch-investigationTab svg { transform-origin: 50% 50%; }
 /* a question's board is out, large, while it opens (opening.js): its place here waits */
 .ch-investigationHeader[data-fly1="true"] .ch-investigationTab:nth-child(2),
@@ -1450,13 +1441,33 @@
    their green dot on the rapid/bullet chart (ratings.js). Quiet: one line of
    her words, one field, one button, and what happened, in the story's mono. */
 .ch-you { position: relative; z-index: 3; width: min(100% - 2 * var(--page-margin, 20px), 36rem); margin: 0 auto; padding: 14vh 0 12vh; background: var(--void); }
-.ch-youWords { margin-bottom: 22px; }
-/* asked at the hinge, in the reading column beside the thousand boards */
-.ch-you[data-where="hinge"] { width: 100%; padding: 0; background: none; }
-.ch-you[data-where="hinge"] .ch-youWords { text-align: center; }
+/* asked at the hinge, in the reading column beside the thousand boards: a card,
+   as in the owner's mock-ups (28 Nov) */
+.ch-you[data-where="hinge"] {
+  box-sizing: border-box; width: 100%; padding: 34px 28px 22px; border-radius: 18px; text-align: center;
+  background: color-mix(in srgb, var(--ink) 3.5%, var(--void));
+}
+.ch-story .ch-youTitle {
+  margin: 0; padding: 0; border: 0; color: var(--ink); text-transform: none; text-align: center;
+  font: 400 clamp(32px, 3.2vw, 46px) / 1.06 var(--font-title); letter-spacing: var(--tracking-display);
+}
+.ch-story .ch-youSub { margin: 10px 0 24px; color: var(--ink-2); text-align: center; text-wrap: balance; font: 400 clamp(19px, 1.7vw, 24px) / 1.3 var(--font-title); }
 @media (max-width: 60rem) {
-  /* over the thousand boards: a soft scrim keeps the words readable */
-  .ch-you[data-where="hinge"] { padding: 14px 8px; border-radius: 18px; background: color-mix(in srgb, var(--void) 88%, transparent); box-shadow: 0 0 30px 24px color-mix(in srgb, var(--void) 88%, transparent); }
+  /* a phone: the step's own card, held at the screen's foot, is the box already,
+     so this one has no ground of its own, and is tighter, to fit found */
+  .ch-you[data-where="hinge"] { padding: 8px 0 0; background: none; }
+  .ch-story .ch-youTitle { font-size: clamp(28px, 8vw, 34px); }
+  .ch-story .ch-youSub { margin: 6px 0 16px; font-size: clamp(17px, 4.8vw, 20px); }
+  .ch-story .ch-youLabel { margin-bottom: 8px; }
+  .ch-story .ch-youStats { margin-top: 16px; }
+  .ch-story .ch-youStats dd { font-size: 34px; }
+  .ch-story .ch-youStats dt { font-size: 13px; }
+  .ch-story .ch-youFollow { margin-top: 14px; font-size: 15px; }
+  .ch-story .ch-youFine { margin-top: 12px; font-size: 14px; }
+  .ch-youLinks { margin-top: 2px; }
+  /* the green dot waits inside the field, before the name, clear of the card's edge */
+  .ch-youHome { right: auto; left: 16px; margin: -5px 0 0; }
+  .ch-you[data-found="true"] .ch-youInput { padding-left: 36px; }
 }
 /* the reader's own place among the thousand boards: green, beside the club's */
 .ch-yourBoard { position: absolute; display: grid; place-items: center; box-sizing: border-box; background: var(--void); box-shadow: inset 0 0 0 2px var(--form-data); pointer-events: none; animation: ch-yours 900ms var(--ch-ease, ease) both; }
@@ -1464,41 +1475,69 @@
 /* the dot itself waits beside the username box until the reader scrolls on (you.js: YouHop) */
 .ch-yourBoard i { opacity: 0; }
 [data-you-dot="board"] .ch-yourBoard i { opacity: 1; }
-.ch-youField { position: relative; display: flex; flex: 0 1 16rem; min-width: 0; }
-.ch-story .ch-youField .ch-youInput { flex: 1 1 auto; width: 100%; }
 .ch-youHome { position: absolute; right: 100%; top: 50%; width: 10px; height: 10px; margin: -5px 12px 0 0; border-radius: 50%; background: var(--form-data); animation: ch-yours 600ms var(--ch-ease, ease) both; }
 [data-you-dot]:not([data-you-dot="home"]) .ch-youHome { opacity: 0; animation: none; }
 .ch-youFlier { position: fixed; left: 0; top: 0; z-index: 60; width: 10px; height: 10px; border-radius: 50%; background: var(--form-data); opacity: 0; pointer-events: none; will-change: transform; }
 @media (prefers-reduced-motion: reduce) { .ch-youHome { animation: none; } }
 @keyframes ch-yours { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .ch-yourBoard { animation: none; } }
-.ch-youForm { display: grid; justify-items: center; gap: 10px; text-align: center; }
-.ch-story .ch-youLabel { color: var(--ink-3); font: 500 10.5px / 1.4 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; }
-.ch-youRow { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; width: 100%; }
+.ch-youForm { display: grid; justify-items: center; text-align: center; }
+/* the field's name shows once a name is in it (found); until then the field says it */
+.ch-story .ch-youLabel { margin: 0 0 12px; color: var(--ink-3); font: 500 10.5px / 1.4 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; }
+.ch-you[data-found="false"] .ch-youLabel { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ch-youRow { display: flex; align-items: center; gap: 12px; width: 100%; }
+.ch-youField { position: relative; display: flex; flex: 1 1 auto; min-width: 0; }
 .ch-story .ch-youInput {
-  flex: 0 1 16rem; min-width: 0; min-height: 44px; margin: 0; padding: 8px 16px;
+  flex: 1 1 auto; width: 100%; min-width: 0; min-height: 52px; box-sizing: border-box; margin: 0; padding: 8px 22px;
   border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--void); color: var(--ink);
   font: 400 16px / 1.2 var(--font-mono);
   transition: border-color 200ms ease;
 }
+.ch-story .ch-youInput::placeholder { color: var(--ink-3); opacity: 1; }
 .ch-story .ch-youInput:hover { border-color: var(--ink-3); }
 .ch-story .ch-youInput:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .ch-story .ch-youInput[aria-invalid="true"] { border-color: var(--thread); }
-.ch-you .ch-ask { min-height: 44px; }
-.ch-you .ch-ask i { border-top-color: var(--form-data); }
-.ch-story .ch-youForget { min-height: 44px; padding: 8px 4px; border: 0; background: none; color: var(--ink-3); font: 400 13px / 1.2 var(--font-mono); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-.ch-story .ch-youForget:hover { color: var(--ink); }
-.ch-story .ch-youForget:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
-.ch-story .ch-youStatus { min-height: 1.5em; margin: 2px 0 0; color: var(--ink-2); font: 400 13px / 1.5 var(--font-mono); }
-.ch-story .ch-youStatus[data-kind="found"] { color: var(--form-data); }
-.ch-story .ch-youNote { max-width: 30rem; margin: 0; color: var(--ink-3); font: 400 12px / 1.5 var(--font-mono); }
+/* "Find me": filled, in the page's ivory; "Found you": the reader's green, outlined */
+.ch-story .ch-youGo {
+  display: inline-flex; flex: 0 0 auto; align-items: center; gap: 12px; min-height: 52px; box-sizing: border-box; padding: 0 24px;
+  border: 1px solid var(--ink); border-radius: 999px; background: var(--ink); color: var(--void); cursor: pointer; white-space: nowrap;
+  font: 500 16px / 1 var(--font-mono); transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+}
+.ch-story .ch-youGo:disabled { cursor: default; }
+.ch-story .ch-youGo:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.ch-story .ch-youGo[aria-pressed="true"] { border-color: var(--form-data); background: color-mix(in srgb, var(--form-data) 6%, var(--void)); color: var(--form-data); font-weight: 400; }
+.ch-story .ch-youGo i { width: 18px; height: 0; border-top: 1.5px solid currentColor; }
+.ch-story .ch-youStatus { min-height: 1.5em; margin: 12px 0 0; color: var(--ink-2); font: 400 13px / 1.5 var(--font-mono); }
+.ch-story .ch-youStatus:empty { min-height: 0; margin: 0; }
+/* once found: the rating and the games read, side by side, a rule between */
+.ch-story .ch-youStats { display: flex; justify-content: center; margin: 26px 0 0; padding: 0; }
+.ch-youStats > div { display: flex; flex-direction: column-reverse; align-items: center; gap: 6px; min-width: 0; padding: 4px 30px; }
+.ch-youStats > div + div { border-left: 1px solid var(--rule-strong); }
+.ch-story .ch-youStats dd { margin: 0; color: var(--ink); font: 400 clamp(38px, 3.4vw, 50px) / 1 var(--font-title); font-variant-numeric: lining-nums; }
+.ch-story .ch-youStats dt { color: var(--ink-2); font: 400 15px / 1.3 var(--font-mono); }
+.ch-story .ch-youFollow { margin: 26px 0 0; color: var(--form-data); font: 400 17px / 1.4 var(--font-mono); }
+.ch-story .ch-youFine { margin: 18px 0 0; color: var(--ink-2); font: 400 15px / 1.4 var(--font-mono); }
+.ch-youLinks { display: flex; flex-wrap: wrap; justify-content: center; column-gap: 40px; margin-top: 8px; }
+.ch-story .ch-youLink {
+  min-height: 40px; padding: 6px 0; border: 0; background: none; cursor: pointer;
+  color: var(--ink-2); font: 400 14px / 1.2 var(--font-mono); text-decoration: underline; text-decoration-color: var(--ink-3); text-underline-offset: 5px;
+}
+.ch-story .ch-youLink:hover { color: var(--ink); }
+.ch-story .ch-youLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.ch-story .ch-youNote { max-width: 30rem; margin: 2px 0 6px; color: var(--ink-3); font: 400 12px / 1.5 var(--font-mono); }
+.ch-story .ch-youNote[hidden] { display: none; }
 .ch-ratingYou circle { fill: var(--form-data); stroke: var(--void); stroke-width: 2; }
 .ch-ratingYou[data-off="true"] circle { fill: var(--void); stroke: var(--form-data); stroke-width: 1.5; }
 .ch-ratings .ch-ratingYou text { fill: var(--form-data); font-weight: 600; }
 @media (max-width: 40rem) {
   .ch-you { padding: 10vh 0 9vh; }
-  .ch-story .ch-youInput, .ch-youField { flex: 1 1 100%; }
-  .ch-youRow .ch-ask { flex: 1 0 auto; justify-content: center; }
+  .ch-story .ch-youInput, .ch-story .ch-youGo { min-height: 46px; }
+  .ch-youRow { gap: 8px; }
+  .ch-story .ch-youInput { padding-inline: 16px; }
+  .ch-story .ch-youGo { gap: 8px; padding-inline: 16px; font-size: 15px; }
+  .ch-story .ch-youGo i { width: 12px; }
+  .ch-youStats > div { padding-inline: 16px; }
+  .ch-story .ch-youStats dt { white-space: nowrap; }
 }
 
 /* "When things go wrong", for the reader (you.js YourQueens, wrong.js): their
@@ -1573,12 +1612,13 @@
 @media (prefers-reduced-motion: reduce) { .ch-story mark.ch-hl { transition: none; } }
 
 /* The method: a reading column, set left. */
-.ch-method .ch-text { max-width: 44rem; margin-inline: auto; }
+/* at the left of the column, not centred (28 Nov, owner) */
+.ch-method .ch-text { max-width: 44rem; margin-inline: 0; }
 .ch-story .ch-method .ch-text :is(p, h2, h3, h4, li) { text-align: left; }
 .ch-method .ch-text ul { padding-left: 1.1em; }
 .ch-method .ch-text li { margin: 0 0 0.8em; font-size: 17px; line-height: 1.55; color: var(--ink-2); }
 .ch-method .ch-text li strong { color: var(--ink); }
-.ch-method .ch-storyMeta { max-width: 44rem; margin-inline: auto; }
+.ch-method .ch-storyMeta { max-width: 44rem; margin-inline: 0; }
 
 /* ── A phone: the words scroll over the picture (27 Nov, owner: as on The
    Pudding's love story) ──
@@ -1811,9 +1851,9 @@
    under it instead of showing through beside it. The London System's caption
    stays readable over the hand that comes in from the near side. */
 @media (max-width: 60rem) {
-  .ch-people:not(.ch-part3) > .ch-peopleTitle { top: var(--bar); }
-  .ch-people:not(.ch-part3) > .ch-peopleTitle :is(h1, h2, h3, p) { text-align: left; }
-  .ch-people:not(.ch-part3) > .ch-peopleTitle .ch-text {
+  .ch-people:not(.ch-part3) > .ch-peopleTitle, .ch-back > .ch-endingTitle { top: var(--bar); }
+  .ch-people:not(.ch-part3) > .ch-peopleTitle :is(h1, h2, h3, p), .ch-back > .ch-endingTitle :is(h1, h2, h3, p) { text-align: left; }
+  .ch-people:not(.ch-part3) > .ch-peopleTitle .ch-text, .ch-back > .ch-endingTitle .ch-text {
     display: block; text-align: left; box-sizing: border-box; width: calc(100% + 2 * var(--page-margin)); margin-inline: calc(-1 * var(--page-margin));
     padding: calc(1.2svh + 4px) var(--page-margin) 18px; background: linear-gradient(var(--void) 74%, transparent); box-shadow: none;
   }
