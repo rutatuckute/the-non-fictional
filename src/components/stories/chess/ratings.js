@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { c, PinSteps, stepLine } from "./parts"
+import { c, PinSteps, stepBox, stepLine } from "./parts"
 import { useFollow, useStill } from "./follow"
 import data from "./ratings.json"
 import pace from "./pace.json"
@@ -192,12 +192,12 @@ export const RatingStory = ({ step, revealed = {}, guesses = {}, onGuess = () =>
     const nodes = steps?.current || []
     const line = stepLine(nodes.find(Boolean))
     let current = 0
-    nodes.forEach((node, index) => { if (node?.firstElementChild.getBoundingClientRect().top < line) current = index })
+    nodes.forEach((node, index) => { if (node && stepBox(node).getBoundingClientRect().top < line) current = index })
     if (!current) return 0
     if (still) return current + 1
-    const node = nodes[current]?.firstElementChild
+    const node = stepBox(nodes[current])
     const progress = node ? clamp((stepLine(node) - node.getBoundingClientRect().top) / (window.innerHeight * 0.42)) : 1
-    return current + progress
+    return Math.min(8, current + progress)
   // (nothing on the chart changes past 8, when the pace chart is all there: held
   // there, the crowd, the names and the lost games are not drawn again in every
   // frame of scrolling, which on a phone made the page stutter)

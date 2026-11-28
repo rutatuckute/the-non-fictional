@@ -77,6 +77,11 @@ export const stepLine = node =>
   window.innerHeight *
   (window.matchMedia("(max-width: 60rem)").matches ? 0.8 : node?.closest?.('[data-part="investigation"]') ? 0.7 : 0.5)
 
+// Sticky cards stop moving at their reading position. Their step remains in
+// document flow, so it is the scroll clock on phones; desktop keeps the card.
+export const stepBox = node =>
+  node?.closest('[data-sheet="true"]') ? node : node?.firstElementChild || node
+
 // The steps of the pinned scene a graphic stands in, by number: for a graphic
 // that follows the scroll within a step (club.js) to find that step's card.
 export const PinSteps = React.createContext(null)
@@ -91,7 +96,7 @@ const useStep = count => {
     const update = () => {
       frame = 0
       const line = stepLine(refs.current.find(Boolean))
-      const top = node => (node.firstElementChild || node).getBoundingClientRect().top
+      const top = node => stepBox(node).getBoundingClientRect().top
       const passed = refs.current.slice(0, count).filter(node => node && top(node) < line)
       setStep(passed.length ? Number(passed[passed.length - 1].dataset.step) : 0)
     }
@@ -122,7 +127,7 @@ export const useSince = (step, every, most) => {
       frame = 0
       const node = steps?.current?.[step]
       if (!node) return
-      const top = (node.firstElementChild || node).getBoundingClientRect().top
+      const top = stepBox(node).getBoundingClientRect().top
       setPart(Math.max(0, Math.min(most, Math.floor((stepLine(node) - top) / window.innerHeight / every))))
     }
     const onScroll = () => {
@@ -214,24 +219,23 @@ export const useFocus = (root, on, boxes, at = 0.5, sheet = false) => {
       let best = null
       let gap = Infinity
       let off = Infinity
-      for (const [, box] of pairs) {
-        if (!box) continue
-        const r = box.getBoundingClientRect()
-        if (!r.height || r.bottom < 0 || r.top > screen) continue
+      // Read every rectangle before changing focus/past attributes. Interleaving
+      // these writes with geometry reads forced a layout for each card.
+      const measured = pairs.map(([marked, box]) => ({
+        marked, box, rect: box?.getBoundingClientRect(),
+        end: sheet ? marked.getBoundingClientRect().bottom : null,
+      }))
+      for (const { box, rect: r } of measured) {
+        if (!r?.height || r.bottom < 0 || r.top > screen) continue
         const away = r.top > middle ? r.top - middle : r.bottom < middle ? middle - r.bottom : 0
         const centre = Math.abs((r.top + r.bottom) / 2 - middle)
         if (away < gap || (away === gap && centre < off)) [best, gap, off] = [box, away, centre]
       }
-      for (const [marked, box] of pairs) {
-        // (only when it changes: a write restyles the box and what is in it)
+      for (const { marked, box, rect: r, end } of measured) {
         const focus = box === best && gap < screen * NEAR ? "true" : "false"
         if (marked.dataset.focus !== focus) marked.dataset.focus = focus
-        if (!sheet || !box) continue
-        // With the cards held at the foot of the screen (Pinned, `sheet`), a card
-        // whose step has ended is being pushed up over the picture: it is "past",
-        // and fades as it goes (CSS), whether or not another card follows.
-        const r = box.getBoundingClientRect()
-        const past = r.height && marked.getBoundingClientRect().bottom <= r.bottom + 2 && r.top < screen ? "true" : "false"
+        if (!sheet || !r) continue
+        const past = r.height && end <= r.bottom + 2 && r.top < screen ? "true" : "false"
         if (marked.dataset.past !== past) marked.dataset.past = past
       }
     }

@@ -36,9 +36,15 @@ const shown = (el, rect) => {
 
 // The marks a dot may go to, for both dots in one pass: for each, the last one
 // shown, in the order of the page (so in the dials, the one just turned on).
-const marksOf = root => {
+// Only query marks/cards inside scenes currently on screen. The investigation
+// contains thousands of SVG nodes across three questions.
+const visibleScenes = root => [...root.querySelectorAll('section[aria-label]')].filter(scene => {
+  const r = scene.getBoundingClientRect()
+  return r.bottom >= 0 && r.top <= window.innerHeight
+})
+const marksOf = scenes => {
   const best = { me: null, you: null }
-  for (const el of root.querySelectorAll("[data-dot]")) {
+  for (const el of scenes.flatMap(scene => [...scene.querySelectorAll("[data-dot]")])) {
     const who = el.dataset.dot
     if (!(who in best)) continue
     const rect = el.getBoundingClientRect()
@@ -51,9 +57,9 @@ const marksOf = root => {
 // one? Read from the cards' boxes, not by hit-testing the page in every frame,
 // which made the browser lay out the page again each time. A card holding the
 // mark itself does not count.
-const cardsOf = root => {
+const cardsOf = scenes => {
   const out = []
-  for (const card of root.querySelectorAll(`.${c("ch-step")}:not([data-bare="true"]) > .${c("ch-card")}`)) {
+  for (const card of scenes.flatMap(scene => [...scene.querySelectorAll(`.${c("ch-step")}:not([data-bare="true"]) > .${c("ch-card")}`)])) {
     const rect = card.getBoundingClientRect()
     if (rect.height && rect.bottom > 0 && rect.top < window.innerHeight) out.push({ card, rect })
   }
@@ -112,8 +118,9 @@ export const Travellers = () => {
         return
       }
       const header = part.querySelector("[data-investigation-header]")
-      const marks = marksOf(part)
-      const cards = marks.me || marks.you ? cardsOf(part) : []
+      const scenes = visibleScenes(part)
+      const marks = marksOf(scenes)
+      const cards = marks.me || marks.you ? cardsOf(scenes) : []
       let moving = false
       for (const who of ["me", "you"]) {
         const dot = dots[who].current
@@ -184,7 +191,12 @@ export const Travellers = () => {
     const watch = new MutationObserver(records => {
       if (records.some(record => !root.current?.contains(record.target))) wake()
     })
-    watch.observe(part, { attributes: true, childList: true, subtree: true })
+    watch.observe(part, {
+      attributes: true, childList: true, subtree: true,
+      // Animation style writes are output, not new work; observing all of them
+      // kept restarting the loop after the scroll had stopped.
+      attributeFilter: ["data-dot", "data-on", "data-mode", "data-rating-step", "data-focus", "data-past", "aria-current"],
+    })
     const events = ["scroll", "resize", "pointerup", "keydown"]
     for (const name of events) window.addEventListener(name, wake, { passive: true })
     part.addEventListener("transitionrun", wake)

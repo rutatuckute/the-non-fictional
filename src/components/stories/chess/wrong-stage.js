@@ -36,26 +36,30 @@ export const parse = fen => {
   return out
 }
 
-// A small board: a chequer, the pieces as dots (white ivory, black dark and ringed).
-const Mini = React.memo(function Mini({ fen, flip, pattern }) {
+// Each miniature is one cached SVG image. Its exact position is unchanged,
+// but updating three of the hundred games no longer reconciles thousands of
+// individual piece circles or repaints their enclosing SVG subtree.
+const miniImages = new Map()
+const miniImage = (fen, flip) => {
+  const key = `${placement(fen)}:${Boolean(flip)}`
+  if (miniImages.has(key)) return miniImages.get(key)
   const q = MINI / 8
-  return (
-    <>
-      <rect width={MINI} height={MINI} fill={`url(#${pattern})`} />
-      {parse(fen).map(([r, f, ch]) => {
-        const kind = ch.toLowerCase()
-        return (
-          <circle
-            key={`${r}${f}`}
-            cx={(flip ? 7 - f : f) * q + q / 2}
-            cy={(flip ? 7 - r : r) * q + q / 2}
-            r={q * (kind === "k" ? 0.42 : kind === "p" ? 0.26 : 0.34)}
-            className={c(ch === ch.toUpperCase() ? "ch-miniWhite" : "ch-miniBlack")}
-          />
-        )
-      })}
-    </>
-  )
+  const pieces = parse(fen).map(([r, f, ch]) => {
+    const kind = ch.toLowerCase()
+    const x = (flip ? 7 - f : f) * q + q / 2
+    const y = (flip ? 7 - r : r) * q + q / 2
+    const radius = q * (kind === "k" ? 0.42 : kind === "p" ? 0.26 : 0.34)
+    const colour = ch === ch.toUpperCase() ? 'fill="#efe8dc"' : 'fill="#151413" stroke="#8d867b" stroke-width="0.6"'
+    return `<circle cx="${x}" cy="${y}" r="${radius}" ${colour}/>`
+  }).join("")
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${MINI}" height="${MINI}" viewBox="0 0 ${MINI} ${MINI}"><defs><pattern id="board" width="13" height="13" patternUnits="userSpaceOnUse"><rect width="13" height="13" fill="#2b2927"/><path d="M0 0h6.5v6.5H0zM6.5 6.5H13V13H6.5z" fill="#3a3734"/></pattern></defs><rect width="${MINI}" height="${MINI}" fill="url(#board)"/>${pieces}</svg>`
+  const uri = `data:image/svg+xml,${encodeURIComponent(svg)}`
+  if (miniImages.size >= 512) miniImages.delete(miniImages.keys().next().value)
+  miniImages.set(key, uri)
+  return uri
+}
+const Mini = React.memo(function Mini({ fen, flip }) {
+  return <image width={MINI} height={MINI} href={miniImage(fen, flip)} aria-hidden="true" />
 })
 
 const Atom = React.memo(function Atom({ x, y, s, r, role, o, b, bs, fen, flip, delay, dot, pattern, title }) {
@@ -176,7 +180,8 @@ export const Stage = ({ scene, cell, label }) => {
   // (the charts with axes and words, the price and the ratings, may take more: scene.most)
   const k = Math.min(room_ / (x1 - x0), h / (y1 - y0), scene.most ?? MOST)
   const dx = Math.max(0, (room_ - (x1 - x0) * k) / 2)
-  const camera = { transform: `translate(${(dx - x0 * k).toFixed(1)}px, ${(-y0 * k).toFixed(1)}px) scale(${k.toFixed(4)})`, "--u": (1 / k).toFixed(4) }
+  const camera = { transform: `translate(${(dx - x0 * k).toFixed(1)}px, ${(-y0 * k).toFixed(1)}px) scale(${k.toFixed(4)})` }
+  const labelScale = { "--u": (1 / k).toFixed(4) }
   const pattern = `ch-stage-check-${React.useId().replace(/:/g, "")}`
   const specs = React.useMemo(() => Array.from({ length: ATOMS }, (_, i) => scene.atoms?.(i) || null), [scene])
   // a mark that is not in the scene fades where it is (it keeps its last place)
@@ -200,8 +205,10 @@ export const Stage = ({ scene, cell, label }) => {
           </pattern>
         </defs>
         <g className={c("ch-stageCamera")} style={camera}>
-          {scene.labels}
-          <BigBoard fen={board.fen} flip={board.flip} at={board.at} cell={cell} caption={board.caption} />
+          <g style={labelScale}>
+            {scene.labels}
+            <BigBoard fen={board.fen} flip={board.flip} at={board.at} cell={cell} caption={board.caption} />
+          </g>
           <g>
             {atoms.map((a, i) => (
               <Atom key={i} {...a} pattern={pattern} />

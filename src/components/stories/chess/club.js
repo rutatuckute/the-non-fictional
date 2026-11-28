@@ -4,7 +4,7 @@ import * as React from "react"
 
 import SIZES from "./club-pieces.json"
 import { useFollow, useStill } from "./follow"
-import { c, PinSteps, stepLine } from "./parts"
+import { c, PinSteps, stepBox, stepLine } from "./parts"
 
 // The board at the London chess club, and the game on it: from the starting
 // position the London System is set up, move by move, as the reader scrolls
@@ -170,7 +170,7 @@ export const ClubBoard = ({ during }) => {
   const goal = () => {
     const node = steps?.current?.[during]
     if (!node) return 0
-    const top = (node.firstElementChild || node).getBoundingClientRect().top
+    const top = stepBox(node).getBoundingClientRect().top
     // The opening position first arrives from the weave. A card can enter
     // before its stage pins; wait for the board to land before moving a hand.
     const arrived = -node.closest("section").getBoundingClientRect().top / window.innerHeight

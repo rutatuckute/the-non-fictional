@@ -95,7 +95,11 @@ const GAMES = {
 // position when the step is left.
 const PLY = 110
 const START = 600
-const usePlay = (on, last, still) => {
+// Automatic playback yields while a touch scroll is in progress. The ref is
+// updated without rendering; a paused timer resumes rather than restarting.
+const SCROLL_PAUSE = 160
+const scrolling = lastScroll => performance.now() - lastScroll.current < SCROLL_PAUSE
+const usePlay = (on, last, still, lastScroll) => {
   const [at, setAt] = React.useState(0)
   React.useEffect(() => {
     if (!on) {
@@ -109,12 +113,13 @@ const usePlay = (on, last, still) => {
     let k = 0
     setAt(0)
     let timer = window.setTimeout(function next() {
+      if (scrolling(lastScroll)) { timer = window.setTimeout(next, SCROLL_PAUSE); return }
       k += 1
       setAt(k)
       if (k < last) timer = window.setTimeout(next, PLY)
     }, START)
     return () => window.clearTimeout(timer)
-  }, [on, last, still])
+  }, [on, last, still, lastScroll])
   return Math.min(at, last)
 }
 
@@ -402,6 +407,14 @@ const MeetLabels = ({ guesses }) =>
   })
 
 export const Wrong = () => {
+  const lastScroll = React.useRef(-Infinity)
+  React.useEffect(() => {
+    const moved = () => {
+      if (window.matchMedia("(pointer: coarse)").matches) lastScroll.current = performance.now()
+    }
+    window.addEventListener("scroll", moved, { passive: true })
+    return () => window.removeEventListener("scroll", moved)
+  }, [])
   const [guess, setGuess] = React.useState(both(30))
   const [guessed, setGuessed] = React.useState(both(false))
   const [revealed, setRevealed] = React.useState(both(0))
@@ -422,8 +435,8 @@ export const Wrong = () => {
   const set = (setter, path, value) => setter(all => ({ ...all, [path]: typeof value === "function" ? value(all[path]) : value }))
 
   // her two games play out on their own when their step is reached
-  const queenAt = usePlay(name === "outcome", GAMES.queen.fens.length - 1, still)
-  const kingAt = usePlay(name === "king", GAMES.king.fens.length - 1, still)
+  const queenAt = usePlay(name === "outcome", GAMES.queen.fens.length - 1, still, lastScroll)
+  const kingAt = usePlay(name === "king", GAMES.king.fens.length - 1, still, lastScroll)
 
   // the hundred play out once the reader reaches them, three games a beat
   const playing = kindOf(name) === "play" ? pathOf(name) : null
@@ -433,7 +446,10 @@ export const Wrong = () => {
       set(setRevealed, playing, 100)
       return
     }
-    const timer = window.setTimeout(() => set(setRevealed, playing, n => Math.min(100, n + 3)), revealed[playing] ? 50 : 700)
+    let timer = window.setTimeout(function next() {
+      if (scrolling(lastScroll)) { timer = window.setTimeout(next, SCROLL_PAUSE); return }
+      set(setRevealed, playing, n => Math.min(100, n + 3))
+    }, revealed[playing] ? 50 : 700)
     return () => window.clearTimeout(timer)
   }, [playing, revealed, still])
   // what they came to is told once they have played out, not before (and stays told)

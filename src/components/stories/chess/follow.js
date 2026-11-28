@@ -2,10 +2,8 @@
 
 import * as React from "react"
 
-// A scene led by the scroll does not sit on the scroll position itself: it
-// follows it, closing a share of the distance in every frame, so a turn of a
-// mouse wheel or an uneven swipe is drawn as one glide and not as the steps it
-// arrives in.
+// Mouse-wheel scenes ease between scroll events. Direct touch manipulation
+// tracks the finger immediately, with no second smoothing loop after release.
 
 // Has the reader asked for less motion?
 export const useStill = () => {
@@ -35,16 +33,20 @@ export const useFollow = (goal, paint, { still = false, follow = 150, watch } = 
     let frame = 0
     let shown = null
     let last = 0
+    let dirty = true
+    const touch = window.matchMedia("(pointer: coarse)")
     const tick = time => {
       frame = 0
+      const before = shown
       const to = now.current.goal()
-      if (shown === null || still || Math.abs(to - shown) > 1.2) shown = to
+      if (shown === null || still || touch.matches || Math.abs(to - shown) > 1.2) shown = to
       else {
         shown += (to - shown) * (1 - Math.exp(-Math.min(64, time - last) / follow))
         if (Math.abs(to - shown) < 0.0004) shown = to
       }
       last = time
-      now.current.paint(shown)
+      if (dirty || shown !== before) now.current.paint(shown)
+      dirty = false
       if (shown !== to) frame = window.requestAnimationFrame(tick)
     }
     const wake = () => {
@@ -54,18 +56,21 @@ export const useFollow = (goal, paint, { still = false, follow = 150, watch } = 
     }
     // a new size changes what a square is in pixels
     const resized = () => {
-      if (shown !== null) now.current.paint(shown)
+      dirty = true
       wake()
     }
+    const inputChanged = () => { shown = null; wake() }
+    touch.addEventListener("change", inputChanged)
     wake()
     const observer = new ResizeObserver(resized)
     if (watch?.current) observer.observe(watch.current)
     window.addEventListener("scroll", wake, { passive: true })
-    window.addEventListener("resize", resized)
+    window.addEventListener("resize", wake)
     return () => {
       observer.disconnect()
+      touch.removeEventListener("change", inputChanged)
       window.removeEventListener("scroll", wake)
-      window.removeEventListener("resize", resized)
+      window.removeEventListener("resize", wake)
       if (frame) window.cancelAnimationFrame(frame)
     }
   }, [still, follow, watch])
