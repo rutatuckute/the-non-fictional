@@ -142,8 +142,7 @@ How did he know?
 
 <!--step:professor-maybe-->
 
-Maybe he was making a point about the London System.\
-Or maybe he saw something.
+Maybe he just had something against the London System. Or maybe he genuinely saw something.
 
 <!--step:central-->
 
@@ -209,11 +208,12 @@ That's faster than **9 in 10** players at my level. Apparently, I am playing in 
 
 ### And what about the others?
 
-That was my claim. Other people put it right there in their username.
+That was my claim.\
+Other people put it right there in their username.
 
 <!--step:say-guess-->
 
-Four kinds of claims. Before I show you their ratings: higher or lower than a typical opponent?
+4 kinds of claims. Before I show you their ratings: better or worse than a typical opponent?
 
 <!--step:say-me-->
 
@@ -221,23 +221,29 @@ And me? Right next to badatchess. Maybe that should have been my username.
 
 <!--step:say-giveup-->
 
-Calling yourself bad doesn't make you worse. It does make you quicker to give up: **52** of every 100 of their losses end with them pressing resign. Everyone else: **45**.
+Calling yourself bad doesn’t make you worse. It does make you quicker to give up, though.
 
 <!--step:say-giveup-us-->
 
-[Text to come: and us? Me: 5 in 100.]
+And that's me.
+
+<!--step:say-giveup-us-you-->
+
+And that's me and you.
 
 <!--step:wrong-observation-->
 
 ### When things go wrong
 
-Over the board, I kept noticing the same thing: an opponent loses their queen, and a few seconds later, they resign.
+While playing, I kept noticing the same thing: an opponent loses their queen and they resign, instantly.
 
-Of 100 opponents who lost their queen against me, 60 resigned. 38 of them straight away.
+Of 100 opponents who lost their queen against me, 60 resigned. Most straight away.
 
 <!--step:wrong-decide-->
 
-Now it's you. Move 9, playing White. Your queen is gone, and the engine agrees: you are lost.
+Now it's you.\
+Move 9, playing White.\
+Your queen is gone, and the engine agrees: you are lost.
 
 Would you resign?
 
@@ -245,7 +251,7 @@ Would you resign?
 
 I didn't.
 
-Thirty-seven moves later, it was my opponent who resigned.
+Later on, it was my opponent who resigned.
 
 <!--step:wrong-guess-->
 
@@ -343,37 +349,37 @@ A queen down, I played on 102 times out of 108. I saved 14.
 
 ### What our *choices* reveal
 
-He watched me for a few moves. I was playing the London System: the safest opening I knew, and the opposite of me.
+I was playing the safest opening I knew, and against my own nature.
 
 He still saw it.
 
 Can you hide who you are at the board? First I needed a way to describe how someone plays.
 
-<!--step:you-dials-->
-
-Play on Chess.com? Your own ten-minute games are on these lines too.
-
 <!--step:choose-contact-->
 
-**Contact.** How often a move forces something: a check, a capture, a threat. Builders rarely; attackers often.
+**Contact.**\
+How often a move forces something: a check, a capture, a threat. Builders rarely; attackers often.
 
 Each grey dot is a player rated 600–900. I'm more forcing than 93 in 100.
 
 <!--step:choose-pace-->
 
-**Pace.** How often a move is made in under two seconds. Deep thinkers rarely; blitz thinkers often.
+**Pace.**\
+How often a move is made in under two seconds. Deep thinkers rarely; blitz thinkers often.
 
 Whatever I say about fast chess, I play fast: quicker than 85 in 100.
 
 <!--step:choose-persistence-->
 
-**Persistence.** Of the games lost, how many are played to the end instead of resigned.
+**Persistence.**\
+Of the games lost, how many are played to the end instead of resigned.
 
 I keep going, more than 99 in 100.
 
 <!--step:choose-habit-->
 
-**Habit.** How often the same first three moves come back. Explorers vary; creatures of habit repeat.
+**Habit.**\
+How often the same first three moves come back. Explorers vary; creatures of habit repeat.
 
 I repeat myself more than 87 in 100.
 
@@ -391,7 +397,7 @@ Take one player: sixty of their ten-minute games.
 
 <!--step:choose-split-->
 
-Thirty are what we know about them: they make the player's card, the four dials.
+Thirty are what we know about them: they make the player's card, the four dimensions.
 
 The other thirty are hidden.
 
@@ -405,19 +411,19 @@ Picking blind, you'd be right one time in ten.
 
 Your turn, with a new mystery player and nine new cards. From **one game**, which card is theirs?
 
-The computer picks too: it adds up the gaps on the four dials and takes the smallest.
+The computer picks too: it adds up the gaps on the four dimensions and takes the smallest.
 
 <!--step:choose-round-10-->
 
 The same player, from **ten games**.
 
-One game left two dials blank: a game that wasn't lost says nothing about giving up, and one opening is not yet a habit.
+One game left two dimensions blank: a game that wasn't lost says nothing about giving up, and one opening is not yet a habit.
 
 <!--step:choose-round-30-->
 
 And from **thirty**.
 
-The more games, the less one odd game pulls the dials around.
+The more games, the less one odd game pulls the dimensions around.
 
 <!--step:choose-play-->
 
@@ -439,7 +445,7 @@ The further from typical, the sooner you're found.
 
 <!--step:choose-findme-->
 
-You've seen my dials. Find me: five of my games, nine players of my level, and me.
+You've seen my dimensions. Find me: five of my games, nine players of my level, and me.
 
 <!--step:choose-findyou-->
 
@@ -458,12 +464,6 @@ And I wasn't playing like me.
 <!--step:choose-disguise-->
 
 But I can play the game with my London games. From one, the computer can't find me at all: 10 in 100, a blind pick. From thirty, 42, and only through my persistence and my habits. Never through contact, the attacker he named.
-
-<!--step:choose-end-->
-
-The London System hid it from the numbers. Not from him.
-
-The dials describe how I play, not who I am.
 
 <!--step:hub-title-->
 
@@ -518,8 +518,8 @@ Is yours still there?
 - **Usernames.** Names sorted into groups by 47 hand-checked rules; each group's ratings set against a typical opponent's, with 95% ranges from resampling.
 - **Losing the queen.** Every rapid game of the sample (and 1 in 5 blitz and bullet games): the first queen lost from an even position, counted by material, 389,170 cases; a Stockfish 19 check (depth 12) on 1 in 45 found 96% of them lost. Rating points are Chess.com's usual ±8 between equal ratings, adjusted for the rating gap. My own games (and my opponents') are counted by the same rules: rapid, to 15 November.
 - **Only the king left.** All 4.65 million games: 337,234 in which one side had only its king left and the other could still checkmate. My own: rapid games.
-- **The four dials.** Ten-minute rapid games of at least 20 half-moves. Contact: the share of moves 5 to 25 that check, capture or directly threaten a piece. Pace: the share of moves from move 8 made in under 2 seconds with at least a minute on the clock. Persistence: the share of lost games not ended by resigning or leaving. Habit: the share of games in a player's most common first three moves, per colour, in draws of 30 games. Mine are from my games since 23 March 2026, against the 1,635 sample players rated 600–900 with at least 30 such games.
-- **The game.** 5,160 sample players with at least 60 ten-minute games: 30 at random describe them, the mystery games come from the other 30. Ten players within 75 rating points; the computer picks the smallest distance across the four dials, each measured against all players' spread; 8 trials per player for each number of games (41,280 in all). Mine: 3,000 trials each, from my games since 23 March, and from my 157 London-months games (1 February to 23 March). The first lineup shown was chosen to show the idea; the others are drawn at random.
-- **Your dials.** If you put your games in, the same rules run in your browser on your rated ten-minute games among your last 12 months' rapid games (up to 1,000; at least 30 needed). "Your level" is the sample players within 150 rating points of your average rating in those games (wider where players are few). "Find you" draws 30 of your games for your card and 5 others as the mystery, among nine players within 75 points, not chosen to work. Your line is 1,000 trials at each number of games, as far as your games allow (30 for the card, plus the mystery games). The port to the browser was checked against my games, game by game.
+- **The four dimensions.** Ten-minute rapid games of at least 20 half-moves. Contact: the share of moves 5 to 25 that check, capture or directly threaten a piece. Pace: the share of moves from move 8 made in under 2 seconds with at least a minute on the clock. Persistence: the share of lost games not ended by resigning or leaving. Habit: the share of games in a player's most common first three moves, per colour, in draws of 30 games. Mine are from my games since 23 March 2026, against the 1,635 sample players rated 600–900 with at least 30 such games.
+- **The game.** 5,160 sample players with at least 60 ten-minute games: 30 at random describe them, the mystery games come from the other 30. Ten players within 75 rating points; the computer picks the smallest distance across the four dimensions, each measured against all players' spread; 8 trials per player for each number of games (41,280 in all). Mine: 3,000 trials each, from my games since 23 March, and from my 157 London-months games (1 February to 23 March). The first lineup shown was chosen to show the idea; the others are drawn at random.
+- **Your dimensions.** If you put your games in, the same rules run in your browser on your rated ten-minute games among your last 12 months' rapid games (up to 1,000; at least 30 needed). "Your level" is the sample players within 150 rating points of your average rating in those games (wider where players are few). "Find you" draws 30 of your games for your card and 5 others as the mystery, among nine players within 75 points, not chosen to work. Your line is 1,000 trials at each number of games, as far as your games allow (30 for the card, plus the mystery games). The port to the browser was checked against my games, game by game.
 
 <!--/story-->

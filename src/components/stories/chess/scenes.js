@@ -32,8 +32,8 @@ const ROWS = 27
 const MIDDLE = ((ROWS - 1) / 2) * COLS + (COLS - 1) / 2
 // Where the reader's own place goes, once they have given their username: one
 // board beside the club's, drawn over one of hers.
-const YOUR_COL = (COLS - 1) / 2 + 3
-const YOUR_ROW = (ROWS - 1) / 2 + 1
+const YOUR_COL = (COLS - 1) / 2 + 1
+const YOUR_ROW = (ROWS - 1) / 2
 const YOURS = YOUR_ROW * COLS + YOUR_COL
 const Boards = () => {
   const [note, setNote] = React.useState(null)
@@ -203,6 +203,7 @@ const SayGraphics = ({ step, revealed, guesses, onGuess }) => {
 export const Say = () => {
   // What the reader guessed for each kind of username (this reading only).
   const [guesses, setGuesses] = React.useState({})
+  const withYou = Boolean(useReader().chesscom)
   useTell("names", guesses)
   const guess = (key, value) => setGuesses(all => ({ ...all, [key]: value }))
   return (
@@ -229,8 +230,8 @@ export const Say = () => {
           // the guesses are on the chart itself (say.js), beside each row
           { text: <Text name="say-guess" look="lead" />, rest: 0.6 },
           { text: <Text name="say-giveup" look="lead" />, rest: 0.2 },
-          // the hundred lost games become hers, and the reader's (words: the owner's, to come)
-          { text: <Text name="say-giveup-us" look="lead" />, rest: 0.35 },
+          // the hundred lost games become hers, and the reader's when a username is in
+          { text: <Text name={withYou ? "say-giveup-us-you" : "say-giveup-us"} look="lead" />, rest: 0.35 },
         ]}
       >
         {step => {

@@ -1688,17 +1688,16 @@
   /* the last card is held over the last chart long enough: less of the chart
      alone after it, so the recap is not a screen away */
   .ch-story .ch-part3 .ch-pin[data-sheet="true"] .ch-steps { padding-bottom: 30vh; }
-  /* Q2 and Q3 draw on one stage whose camera glides (its transition carries the
-     change): there the picture takes all the room above the card being read,
-     whatever its height (parts.js: --card-now) */
-  .ch-part3 :is(.ch-wrong, .ch-reveal)[data-sheet="true"] { --sheet: clamp(18svh, calc(var(--card-now, 30svh) + 16px), 58svh); }
+  /* In every data section the picture takes the room above the current card,
+     whatever its height (parts.js: --card-now). Q2 and Q3 also glide their camera. */
+  .ch-part3 .ch-pin[data-sheet="true"] { --sheet: clamp(18svh, calc(var(--card-now, 30svh) + 16px), 58svh); }
 }
 /* small phones: the words of Part III a little smaller, so a card takes less of the screen */
 @media (max-width: 40rem) {
-  .ch-part3 .ch-pin[data-sheet="true"] .ch-card { --t-narr: 19px; }
+  .ch-part3 .ch-pin[data-sheet="true"] .ch-card { --t-narr: 18px; }
 }
 @media (max-width: 40rem) and (max-height: 780px) {
-  .ch-part3 .ch-pin[data-sheet="true"] .ch-card { --t-narr: 18px; }
+  .ch-part3 .ch-pin[data-sheet="true"] .ch-card { --t-narr: 17px; }
 }
 
 /* ── "When things go wrong" on one stage, as in the Part III prototype (wrong-stage.js):
@@ -1867,7 +1866,7 @@
    larger button would move the chart (the views' switch, the names' Lower and
    Higher), an invisible margin around it takes the touch instead. */
 @media (max-width: 60rem) {
-  .ch-ratingViews button, .ch-nameButton { position: relative; }
+  .ch-ratingViews button { position: relative; }
   .ch-ratingViews button::after, .ch-nameButton::after { content: ""; position: absolute; inset: -7px -3px; }
   .ch-nameButton { min-height: 32px; }
   .ch-rvSeg button { padding: 11px 14px; }
@@ -1887,4 +1886,11 @@
   }
   .ch-atomDot rect { transition: none; }
   .ch-stageLabels[data-on="true"] { transition: opacity 160ms ease; }
+}
+
+/* Data narration leaves more room for the evidence in all three questions. */
+.ch-part3 { --t-narr: clamp(19px, 1.8vw, 26px); }
+@media (min-width: 60.01rem) {
+  .ch-story .ch-part3 .ch-pin[data-reading="true"] .ch-scene { right: 32%; }
+  .ch-story .ch-part3 .ch-pin[data-reading="true"] .ch-card { width: 30%; }
 }

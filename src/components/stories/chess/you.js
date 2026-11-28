@@ -269,7 +269,7 @@ export const YouOnChessCom = ({ where }) => {
           </button>
         </div>
         <p id={`${id}-note`} className={c("ch-youNote")} hidden={!told}>
-          Read from Chess.com’s public data, in your browser. Nothing is sent to this site or saved: it’s gone when you close the page. Any public username works. It reads your rapid games of the last 12 months (up to 1,000: a few megabytes) to count your lost queens and your dials later.
+          Read from Chess.com’s public data, in your browser. Nothing is sent to this site or saved: it’s gone when you close the page. Any public username works. It reads your rapid games of the last 12 months (up to 1,000: a few megabytes) to count your lost queens and your dimensions later.
         </p>
       </form>
     </section>
@@ -373,11 +373,11 @@ const sayDials = (state, month) => {
     case "asking":
       return month ? `Reading your games on Chess.com… ${MONTH.format(month)}` : "Asking Chess.com…"
     case "read":
-      return `Read ${state.games.toLocaleString("en-GB")} of your ten-minute games. You’re the green dot on every line.`
+      return ""
     case "few":
       return state.games
-        ? `Only ${state.games} rated ten-minute games in your last 12 months on Chess.com: the dials need ${MIN_DIALS}.`
-        : "No rated ten-minute games in your last 12 months on Chess.com, so no dials to draw."
+        ? `Only ${state.games} rated ten-minute games in your last 12 months on Chess.com: the dimensions need ${MIN_DIALS}.`
+        : "No rated ten-minute games in your last 12 months on Chess.com, so no dimensions to draw."
     case "missing":
       return `Chess.com has no games for “${state.username}”.`
     case "busy":
@@ -390,11 +390,10 @@ const sayDials = (state, month) => {
   }
 }
 
-export const YourDials = ({ found, state, month }) => {
-  if (!found) return null
+export const YourDimensions = ({ found, state, month }) => {
+  if (!found || !sayDials(state, month)) return null
   return (
     <div className={c("ch-youQueens", "ch-youDials")} data-kind={state.kind}>
-      <Text name="you-dials" look="lead" className={c("ch-youQueensWords")} />
       <p className={c("ch-youStatus")} role="status" data-kind={state.kind}>
         {sayDials(state, month)}
       </p>

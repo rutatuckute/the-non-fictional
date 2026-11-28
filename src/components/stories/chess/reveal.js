@@ -4,7 +4,7 @@ import * as React from "react"
 
 import { c, Pinned, Text, useNarrow } from "./parts"
 import { useTell } from "./reader"
-import { useYourDials, YourDials } from "./you"
+import { useYourDials, YourDimensions } from "./you"
 import { Stage } from "./wrong-stage"
 import data from "./choose.json"
 
@@ -342,7 +342,6 @@ const STEPS = [
   ["choose-you", { view: "curve", lines: ["typical", "her", "you"], drawn: "you", you: true }],
   ["choose-club", { view: "club" }],
   ["choose-disguise", { view: "curve", lines: ["typical", "her", "disguise"], drawn: "disguise" }],
-  ["choose-end", { view: "curve", lines: ["typical", "her", "disguise"] }],
 ]
 
 // The lineup a step plays: a round of the first lineup, a random one, her, or the reader.
@@ -420,7 +419,7 @@ const found = v => (v == null ? "–" : pct(v))
 // ── What the stage shows at each step.
 const sceneOf = (v, { you, curve, game, setGame, narrow }) => {
   const head = (title, ...chips) => ({ title, chips })
-  const dialHead = head("Four dials · players rated 600–900", ["crowd", "A player"], ["band", "The middle half"], ["me", "Me"], ...(you ? [["you", "You"]] : []))
+  const dialHead = head("How we play · 4 dimensions", ["crowd", "A player"], ["band", "The middle half"], ["me", "Me"], ...(you ? [["you", "You"]] : []))
   switch (v.view) {
     case "cloud":
       return {
@@ -683,7 +682,7 @@ export const Reveal = () => {
               <Text name={name} look="lead" className={name === "choose-question" ? c("ch-afterFirst") : ""} />
               {green ? <p className={c("ch-rvSaid")}>{green}</p> : null}
               {controls(v)}
-              {name === "choose-question" ? <YourDials {...dials} /> : null}
+              {name === "choose-question" ? <YourDimensions {...dials} /> : null}
             </>
           ),
         }
