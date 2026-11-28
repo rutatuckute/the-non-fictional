@@ -23,6 +23,7 @@ const HIGHLIGHTS = {
   club: [["the London System", "me"]],
   "professor-quote": [["your nature", "me"]],
   "professor-maybe": [["London System", "me"]],
+  central: [["another person", "crowd"]],
 
   "say-claim": [["Soooo bad", "me"]],
   "say-prediction": [["soooo bad", "me"]],

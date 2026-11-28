@@ -142,7 +142,7 @@ How did he know?
 
 <!--step:professor-maybe-->
 
-Maybe he just had something against the London System. Or maybe he genuinely saw something.
+Maybe he just really disliked the London System. Or maybe he genuinely saw something.
 
 <!--step:central-->
 
